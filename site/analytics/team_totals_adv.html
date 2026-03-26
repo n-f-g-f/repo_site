@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>League Team Advanced Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #38bdf8;
+      --neg: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .card, .chart-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .chart-card {
+      margin-bottom: 18px;
+      padding: 16px;
+    }
+    .chart-header {
+      margin-bottom: 10px;
+    }
+    .chart-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .chart-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      overflow: auto;
+    }
+    #ratings-scatter {
+      width: 100%;
+      min-width: 980px;
+      height: auto;
+      display: block;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border-radius: 12px;
+    }
+    .scatter-tooltip {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, calc(-100% - 12px));
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: nowrap;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+      z-index: 20;
+    }
+    .table-wrap {
+      overflow: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--panel-2);
+      z-index: 2;
+      font-weight: 700;
+    }
+    thead th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th.sortable:hover {
+      color: var(--accent);
+    }
+    thead th.sortable::after {
+      content: " ↕";
+      color: var(--muted);
+      font-weight: 400;
+    }
+    thead th.sorted-asc::after {
+      content: " ↑";
+      color: var(--accent);
+    }
+    thead th.sorted-desc::after {
+      content: " ↓";
+      color: var(--accent);
+    }
+    tbody tr:hover {
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .sticky-left {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      text-align: left;
+      background: var(--panel);
+    }
+    thead .sticky-left {
+      z-index: 3;
+      background: var(--panel-2);
+    }
+    .team-col {
+      min-width: 220px;
+    }
+    .team-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .team-avatar {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+      flex: 0 0 auto;
+    }
+    .team-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .team-name {
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .team-key {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.1;
+    }
+    .neg {
+      color: var(--neg);
+      font-weight: 700;
+    }
+    .notes {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .axis-label {
+      fill: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .axis-tick {
+      fill: var(--muted);
+      font-size: 11px;
+    }
+    .grid-line {
+      stroke: rgba(148,163,184,0.22);
+      stroke-width: 1;
+    }
+    .avg-line {
+      stroke: rgba(56,189,248,0.65);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 6;
+    }
+    .quadrant-good {
+      fill: rgba(34,197,94,0.08);
+    }
+    .quadrant-bad {
+      fill: rgba(239,68,68,0.08);
+    }
+    .plot-frame {
+      stroke: var(--line);
+      fill: none;
+      stroke-width: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>League Team Advanced Dashboard</h1>
+    <div class="subtitle">Default sort: Net Rating</div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Offensive Rating vs Defensive Rating</div>
+        <div class="chart-subtitle">X = OffRtg (higher is better) · Y = DefRtg (lower is better, so the best defenses sit higher)</div>
+      </div>
+      <div class="chart-wrap">
+        <svg id="ratings-scatter" viewBox="0 0 980 620" role="img" aria-label="Offensive and Defensive Rating scatter plot"></svg>
+        <div id="scatter-tooltip" class="scatter-tooltip"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table class="league-table" id="league-table"><thead><tr><th class="sticky-left sortable" data-type="text">Team</th><th class="sortable" data-type="number">G</th><th class="sortable" data-type="number">OffRtg</th><th class="sortable" data-type="number">DefRtg</th><th class="sortable" data-type="number">NetRtg</th><th class="sortable" data-type="number">Pace</th><th class="sortable" data-type="number">eFG% Off</th><th class="sortable" data-type="number">ORB% Off</th><th class="sortable" data-type="number">TOV% Off</th><th class="sortable" data-type="number">FTr Off</th><th class="sortable" data-type="number">eFG% Def</th><th class="sortable" data-type="number">ORB% Def</th><th class="sortable" data-type="number">TOV% Def</th><th class="sortable" data-type="number">FTr Def</th></tr></thead><tbody><tr><td class="sticky-left team-col" data-sort="SL Benfica"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/91e901e2d15a54bcace15263aceec2826941e413.png" alt="SLB logo"><div class="team-meta"><div class="team-name">SL Benfica</div><div class="team-key">SLB</div></div></div></td><td data-sort="16">16</td><td class="" data-sort="120.0825567578">120.1</td><td class="" data-sort="95.2820160080">95.3</td><td class="" data-sort="24.8005407498">24.8</td><td class="" data-sort="79.9525000000">80.0</td><td class="" data-sort="0.5563770795">55.6%</td><td class="" data-sort="0.3918228279">39.2%</td><td class="" data-sort="0.1798111201">18.0%</td><td class="" data-sort="0.4140480591">41.4%</td><td class="" data-sort="0.4649375600">46.5%</td><td class="" data-sort="0.2765321375">27.7%</td><td class="" data-sort="0.2040082541">20.4%</td><td class="" data-sort="0.3544668588">35.4%</td></tr><tr><td class="sticky-left team-col" data-sort="Sporting Clube Portugal"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/ce805355e5ac769c25025099ce63dd788cf53ab6.png" alt="SCP logo"><div class="team-meta"><div class="team-name">Sporting Clube Portugal</div><div class="team-key">SCP</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="113.5740819682">113.6</td><td class="" data-sort="100.9969325153">101.0</td><td class="" data-sort="12.5771494529">12.6</td><td class="" data-sort="76.9905882353">77.0</td><td class="" data-sort="0.5278514589">52.8%</td><td class="" data-sort="0.3698630137">37.0%</td><td class="" data-sort="0.1910663175">19.1%</td><td class="" data-sort="0.3510167993">35.1%</td><td class="" data-sort="0.4911426041">49.1%</td><td class="" data-sort="0.2812960236">28.1%</td><td class="" data-sort="0.1794478528">17.9%</td><td class="" data-sort="0.2657218778">26.6%</td></tr><tr><td class="sticky-left team-col" data-sort="Futebol Clube do Porto"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/09f9341b75c2110e56d161418843109287acc59f.png" alt="FCP logo"><div class="team-meta"><div class="team-name">Futebol Clube do Porto</div><div class="team-key">FCP</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="113.6928247845">113.7</td><td class="" data-sort="103.3434203955">103.3</td><td class="" data-sort="10.3494043890">10.3</td><td class="" data-sort="80.2964705882">80.3</td><td class="" data-sort="0.5568576389">55.7%</td><td class="" data-sort="0.3140625000">31.4%</td><td class="" data-sort="0.1797457256">18.0%</td><td class="" data-sort="0.3385416667">33.9%</td><td class="" data-sort="0.5008873114">50.1%</td><td class="" data-sort="0.3125000000">31.2%</td><td class="" data-sort="0.1997825895">20.0%</td><td class="" data-sort="0.3478260870">34.8%</td></tr><tr><td class="sticky-left team-col" data-sort="AD Ovarense"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/a71b2bb9ecaf1d20ae374287893f63223a68326f.png" alt="ADO logo"><div class="team-meta"><div class="team-name">AD Ovarense</div><div class="team-key">ADO</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="106.8903264631">106.9</td><td class="" data-sort="101.7082151265">101.7</td><td class="" data-sort="5.1821113366">5.2</td><td class="" data-sort="77.5112408759">77.5</td><td class="" data-sort="0.5247131509">52.5%</td><td class="" data-sort="0.3098591549">31.0%</td><td class="" data-sort="0.1857981044">18.6%</td><td class="" data-sort="0.2956751986">29.6%</td><td class="" data-sort="0.4735401460">47.4%</td><td class="" data-sort="0.2830725462">28.3%</td><td class="" data-sort="0.1758012917">17.6%</td><td class="" data-sort="0.4051094891">40.5%</td></tr><tr><td class="sticky-left team-col" data-sort="UD Oliveirense"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/f7cccf99224d95b4063d2876ff7967d3a9e3d67b.png" alt="UDO logo"><div class="team-meta"><div class="team-name">UD Oliveirense</div><div class="team-key">UDO</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="107.5675355099">107.6</td><td class="" data-sort="105.7821604662">105.8</td><td class="" data-sort="1.7853750437">1.8</td><td class="" data-sort="79.0447058824">79.0</td><td class="" data-sort="0.5249332146">52.5%</td><td class="" data-sort="0.2682170543">26.8%</td><td class="" data-sort="0.1675414406">16.8%</td><td class="" data-sort="0.3499554764">35.0%</td><td class="" data-sort="0.5372848948">53.7%</td><td class="" data-sort="0.2944162437">29.4%</td><td class="" data-sort="0.2121619603">21.2%</td><td class="" data-sort="0.3967495220">39.7%</td></tr><tr><td class="sticky-left team-col" data-sort="Imortal LUZiGÁS"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/b5eb5c00a25e62fbdf0789ba00e2bec0a66d8721.png" alt="IBC logo"><div class="team-meta"><div class="team-name">Imortal LUZiGÁS</div><div class="team-key">IBC</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="107.0490367776">107.0</td><td class="" data-sort="107.6376709926">107.6</td><td class="neg" data-sort="-0.5886342151">-0.6</td><td class="" data-sort="79.3878260870">79.4</td><td class="" data-sort="0.5130890052">51.3%</td><td class="" data-sort="0.3429394813">34.3%</td><td class="" data-sort="0.1977524810">19.8%</td><td class="" data-sort="0.3795811518">38.0%</td><td class="" data-sort="0.5209281165">52.1%</td><td class="" data-sort="0.3006230530">30.1%</td><td class="" data-sort="0.1877996025">18.8%</td><td class="" data-sort="0.4249317561">42.5%</td></tr><tr><td class="sticky-left team-col" data-sort="Sporting Clube de Braga"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/732466afabaf6957ff6153bedbccfd62b1dcf7d6.png" alt="SCB logo"><div class="team-meta"><div class="team-name">Sporting Clube de Braga</div><div class="team-key">SCB</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="103.5080252918">103.5</td><td class="" data-sort="105.7168784029">105.7</td><td class="neg" data-sort="-2.2088531111">-2.2</td><td class="" data-sort="77.5952941176">77.6</td><td class="" data-sort="0.4937163375">49.4%</td><td class="" data-sort="0.3104477612">31.0%</td><td class="" data-sort="0.1907526751">19.1%</td><td class="" data-sort="0.3240574506">32.4%</td><td class="" data-sort="0.4995602463">50.0%</td><td class="" data-sort="0.3142437592">31.4%</td><td class="" data-sort="0.1822444041">18.2%</td><td class="" data-sort="0.3166226913">31.7%</td></tr><tr><td class="sticky-left team-col" data-sort="Queluz O NOSSO PREGO"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/d469ed54ffee46c761a3a0d28691a286f7d2f6b3.png" alt="CAQ logo"><div class="team-meta"><div class="team-name">Queluz O NOSSO PREGO</div><div class="team-key">CAQ</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="107.8326996198">107.8</td><td class="" data-sort="112.6240583523">112.6</td><td class="neg" data-sort="-4.7913587325">-4.8</td><td class="" data-sort="78.0317647059">78.0</td><td class="" data-sort="0.5094765343">50.9%</td><td class="" data-sort="0.3022900763">30.2%</td><td class="" data-sort="0.1825095057">18.3%</td><td class="" data-sort="0.3384476534">33.8%</td><td class="" data-sort="0.5274579274">52.7%</td><td class="" data-sort="0.3242835596">32.4%</td><td class="" data-sort="0.1666567021">16.7%</td><td class="" data-sort="0.4047829938">40.5%</td></tr><tr><td class="sticky-left team-col" data-sort="Esgueira Aveiro OLI"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/184a2c58a0e7b9ab26646a81d0947bbd17aa0b9f.png" alt="ESG logo"><div class="team-meta"><div class="team-name">Esgueira Aveiro OLI</div><div class="team-key">ESG</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="107.0778534523">107.1</td><td class="" data-sort="112.4041258926">112.4</td><td class="neg" data-sort="-5.3262724403">-5.3</td><td class="" data-sort="79.5246715328">79.5</td><td class="" data-sort="0.5122807018">51.2%</td><td class="" data-sort="0.2703488372">27.0%</td><td class="" data-sort="0.1629286050">16.3%</td><td class="" data-sort="0.3719298246">37.2%</td><td class="" data-sort="0.5371762740">53.7%</td><td class="" data-sort="0.3408408408">34.1%</td><td class="" data-sort="0.1777895325">17.8%</td><td class="" data-sort="0.2832080201">28.3%</td></tr><tr><td class="sticky-left team-col" data-sort="Vitória Sport Clube"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/e78ddb5cce6ce4fcd9c9c9bf95f5329e6496aeba.png" alt="VSC logo"><div class="team-meta"><div class="team-name">Vitória Sport Clube</div><div class="team-key">VSC</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="102.3953324733">102.4</td><td class="" data-sort="112.0717259046">112.1</td><td class="neg" data-sort="-9.6763934313">-9.7</td><td class="" data-sort="80.5423529412">80.5</td><td class="" data-sort="0.5113843352">51.1%</td><td class="" data-sort="0.3230293663">32.3%</td><td class="" data-sort="0.2184238302">21.8%</td><td class="" data-sort="0.3670309654">36.7%</td><td class="" data-sort="0.5240506329">52.4%</td><td class="" data-sort="0.3461538462">34.6%</td><td class="" data-sort="0.1804791430">18.0%</td><td class="" data-sort="0.3358649789">33.6%</td></tr><tr><td class="sticky-left team-col" data-sort="Galitos BARREIRO"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/932a36ee380e2cf0ec7a237f866bbeeec37b001a.png" alt="GFC logo"><div class="team-meta"><div class="team-name">Galitos BARREIRO</div><div class="team-key">GFC</div></div></div></td><td data-sort="16">16</td><td class="" data-sort="102.9757243540">103.0</td><td class="" data-sort="116.2264268765">116.2</td><td class="neg" data-sort="-13.2507025225">-13.3</td><td class="" data-sort="79.3215503876">79.3</td><td class="" data-sort="0.4940036900">49.4%</td><td class="" data-sort="0.2776911076">27.8%</td><td class="" data-sort="0.1785434612">17.9%</td><td class="" data-sort="0.2998154982">30.0%</td><td class="" data-sort="0.5647810219">56.5%</td><td class="" data-sort="0.3271812081">32.7%</td><td class="" data-sort="0.1771887099">17.7%</td><td class="" data-sort="0.3175182482">31.8%</td></tr><tr><td class="sticky-left team-col" data-sort="SC Vasco da Gama"><div class="team-cell"><img class="team-avatar" src="../assets/embedded/03b0f3356d06ef4b0b19174a811aa724943aaefb.png" alt="VGA logo"><div class="team-meta"><div class="team-name">SC Vasco da Gama</div><div class="team-key">VGA</div></div></div></td><td data-sort="17">17</td><td class="" data-sort="99.5971036542">99.6</td><td class="" data-sort="116.5626772547">116.6</td><td class="neg" data-sort="-16.9655736004">-17.0</td><td class="" data-sort="82.6312408759">82.6</td><td class="" data-sort="0.4806534824">48.1%</td><td class="" data-sort="0.2653631285">26.5%</td><td class="" data-sort="0.1866565238">18.7%</td><td class="" data-sort="0.3551160791">35.5%</td><td class="" data-sort="0.5570469799">55.7%</td><td class="" data-sort="0.3354134165">33.5%</td><td class="" data-sort="0.1793817357">17.9%</td><td class="" data-sort="0.3439597315">34.4%</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="notes">
+      Possessions estimated with FGA - ORB + TOV + 0.44*FTA. Pace adjusted to 40 minutes.
+    </div>
+  </div>
+
+  <script>
+    const SCATTER_DATA = {"points": [{"team_key": "SLB", "team_name": "SL Benfica", "off_rating": 120.08255675777096, "def_rating": 95.282016008004, "logo_uri": "../assets/embedded/91e901e2d15a54bcace15263aceec2826941e413.png"}, {"team_key": "SCP", "team_name": "Sporting Clube Portugal", "off_rating": 113.57408196821144, "def_rating": 100.99693251533743, "logo_uri": "../assets/embedded/ce805355e5ac769c25025099ce63dd788cf53ab6.png"}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "off_rating": 113.69282478445126, "def_rating": 103.343420395452, "logo_uri": "../assets/embedded/09f9341b75c2110e56d161418843109287acc59f.png"}, {"team_key": "ADO", "team_name": "AD Ovarense", "off_rating": 106.89032646306605, "def_rating": 101.7082151264562, "logo_uri": "../assets/embedded/a71b2bb9ecaf1d20ae374287893f63223a68326f.png"}, {"team_key": "UDO", "team_name": "UD Oliveirense", "off_rating": 107.56753550988938, "def_rating": 105.78216046615869, "logo_uri": "../assets/embedded/f7cccf99224d95b4063d2876ff7967d3a9e3d67b.png"}, {"team_key": "IBC", "team_name": "Imortal LUZiG\u00c1S", "off_rating": 107.04903677758315, "def_rating": 107.63767099263416, "logo_uri": "../assets/embedded/b5eb5c00a25e62fbdf0789ba00e2bec0a66d8721.png"}, {"team_key": "SCB", "team_name": "Sporting Clube de Braga", "off_rating": 103.50802529182882, "def_rating": 105.7168784029038, "logo_uri": "../assets/embedded/732466afabaf6957ff6153bedbccfd62b1dcf7d6.png"}, {"team_key": "CAQ", "team_name": "Queluz O NOSSO PREGO", "off_rating": 107.83269961977186, "def_rating": 112.62405835226596, "logo_uri": "../assets/embedded/d469ed54ffee46c761a3a0d28691a286f7d2f6b3.png"}, {"team_key": "ESG", "team_name": "Esgueira Aveiro OLI", "off_rating": 107.07785345232504, "def_rating": 112.40412589262098, "logo_uri": "../assets/embedded/184a2c58a0e7b9ab26646a81d0947bbd17aa0b9f.png"}, {"team_key": "VSC", "team_name": "Vit\u00f3ria Sport Clube", "off_rating": 102.39533247332004, "def_rating": 112.07172590457894, "logo_uri": "../assets/embedded/e78ddb5cce6ce4fcd9c9c9bf95f5329e6496aeba.png"}, {"team_key": "GFC", "team_name": "Galitos BARREIRO", "off_rating": 102.9757243539546, "def_rating": 116.22642687648306, "logo_uri": "../assets/embedded/932a36ee380e2cf0ec7a237f866bbeeec37b001a.png"}, {"team_key": "VGA", "team_name": "SC Vasco da Gama", "off_rating": 99.59710365424168, "def_rating": 116.56267725467951, "logo_uri": "../assets/embedded/03b0f3356d06ef4b0b19174a811aa724943aaefb.png"}], "avg_off": 107.6869250922012, "avg_def": 107.52969234896456};
+
+    (function() {
+      const table = document.getElementById("league-table");
+      if (!table) return;
+
+      const headers = Array.from(table.querySelectorAll("thead th.sortable"));
+      const tbody = table.querySelector("tbody");
+      let currentIndex = 3;
+      let currentDirection = "desc";
+
+      function clearHeaderState() {
+        headers.forEach(th => {
+          th.classList.remove("sorted-asc");
+          th.classList.remove("sorted-desc");
+        });
+      }
+
+      function sortTable(index, direction) {
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const header = headers[index];
+        const isNumber = header.dataset.type === "number";
+
+        rows.sort((a, b) => {
+          const aCell = a.children[index];
+          const bCell = b.children[index];
+
+          const aVal = aCell.dataset.sort ?? aCell.textContent.trim();
+          const bVal = bCell.dataset.sort ?? bCell.textContent.trim();
+
+          let cmp = 0;
+          if (isNumber) {
+            const aNum = aVal === "" ? Number.NEGATIVE_INFINITY : parseFloat(aVal);
+            const bNum = bVal === "" ? Number.NEGATIVE_INFINITY : parseFloat(bVal);
+            cmp = aNum - bNum;
+          } else {
+            cmp = String(aVal).localeCompare(String(bVal), undefined, { sensitivity: "base" });
+          }
+
+          return direction === "asc" ? cmp : -cmp;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+
+        clearHeaderState();
+        header.classList.add(direction === "asc" ? "sorted-asc" : "sorted-desc");
+        currentIndex = index;
+        currentDirection = direction;
+      }
+
+      headers.forEach((th, index) => {
+        th.addEventListener("click", () => {
+          const nextDirection = currentIndex === index && currentDirection === "desc" ? "asc" : "desc";
+          sortTable(index, nextDirection);
+        });
+      });
+
+      sortTable(currentIndex, currentDirection);
+    })();
+
+    (function() {
+      const svg = document.getElementById("ratings-scatter");
+      const tooltip = document.getElementById("scatter-tooltip");
+      const payload = SCATTER_DATA;
+      if (!svg || !tooltip || !payload) return;
+
+      const points = payload.points.filter(p => p.off_rating !== null && p.def_rating !== null);
+      if (!points.length) return;
+
+      const width = 980;
+      const height = 620;
+      const margin = { top: 40, right: 40, bottom: 70, left: 80 };
+      const plotX = margin.left;
+      const plotY = margin.top;
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+
+      const offValues = points.map(p => p.off_rating);
+      const defValues = points.map(p => p.def_rating);
+
+      const minOff = Math.min(...offValues);
+      const maxOff = Math.max(...offValues);
+      const minDef = Math.min(...defValues);
+      const maxDef = Math.max(...defValues);
+
+      const padOff = Math.max(1.5, (maxOff - minOff) * 0.08);
+      const padDef = Math.max(1.5, (maxDef - minDef) * 0.08);
+
+      const xMin = minOff - padOff;
+      const xMax = maxOff + padOff;
+      const yMin = minDef - padDef;
+      const yMax = maxDef + padDef;
+
+      const avgOff = payload.avg_off;
+      const avgDef = payload.avg_def;
+
+      function sx(v) {
+        return plotX + ((v - xMin) / (xMax - xMin)) * plotW;
+      }
+
+      function sy(v) {
+        return plotY + ((v - yMin) / (yMax - yMin)) * plotH;
+      }
+
+      function line(x1, y1, x2, y2, cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        el.setAttribute("x1", x1);
+        el.setAttribute("y1", y1);
+        el.setAttribute("x2", x2);
+        el.setAttribute("y2", y2);
+        el.setAttribute("class", cls);
+        return el;
+      }
+
+      function rect(x, y, w, h, cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        el.setAttribute("x", x);
+        el.setAttribute("y", y);
+        el.setAttribute("width", w);
+        el.setAttribute("height", h);
+        el.setAttribute("class", cls);
+        return el;
+      }
+
+      function text(x, y, value, cls, anchor = "middle", rotate = null) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        el.setAttribute("x", x);
+        el.setAttribute("y", y);
+        el.setAttribute("class", cls);
+        el.setAttribute("text-anchor", anchor);
+        if (rotate !== null) {
+          el.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
+        }
+        el.textContent = value;
+        return el;
+      }
+
+      svg.innerHTML = "";
+
+      const avgX = sx(avgOff);
+      const avgY = sy(avgDef);
+
+      svg.appendChild(rect(plotX, plotY, avgX - plotX, avgY - plotY, "quadrant-bad"));
+      svg.appendChild(rect(avgX, plotY, plotX + plotW - avgX, avgY - plotY, "quadrant-bad"));
+      svg.appendChild(rect(plotX, avgY, avgX - plotX, plotY + plotH - avgY, "quadrant-bad"));
+      svg.appendChild(rect(avgX, avgY, plotX + plotW - avgX, plotY + plotH - avgY, "quadrant-good"));
+
+      const ticks = 5;
+      for (let i = 0; i <= ticks; i++) {
+        const xVal = xMin + ((xMax - xMin) * i / ticks);
+        const yVal = yMin + ((yMax - yMin) * i / ticks);
+        const gx = sx(xVal);
+        const gy = sy(yVal);
+
+        svg.appendChild(line(gx, plotY, gx, plotY + plotH, "grid-line"));
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+
+        svg.appendChild(text(gx, plotY + plotH + 24, xVal.toFixed(1), "axis-tick"));
+        svg.appendChild(text(plotX - 12, gy + 4, yVal.toFixed(1), "axis-tick", "end"));
+      }
+
+      svg.appendChild(rect(plotX, plotY, plotW, plotH, "plot-frame"));
+      svg.appendChild(line(avgX, plotY, avgX, plotY + plotH, "avg-line"));
+      svg.appendChild(line(plotX, avgY, plotX + plotW, avgY, "avg-line"));
+
+      svg.appendChild(text(plotX + plotW / 2, height - 20, "Offensive Rating", "axis-label"));
+      svg.appendChild(text(22, plotY + plotH / 2, "Defensive Rating", "axis-label", "middle", -90));
+
+      svg.appendChild(text(avgX + 6, plotY + 16, "League Avg OffRtg: " + avgOff.toFixed(1), "axis-tick", "start"));
+      svg.appendChild(text(plotX + plotW - 6, avgY - 8, "League Avg DefRtg: " + avgDef.toFixed(1), "axis-tick", "end"));
+
+      points.forEach((p) => {
+        const x = sx(p.off_rating);
+        const y = sy(p.def_rating);
+
+        const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        hit.setAttribute("cx", x);
+        hit.setAttribute("cy", y);
+        hit.setAttribute("r", 18);
+        hit.setAttribute("fill", "transparent");
+        hit.style.cursor = "pointer";
+        svg.appendChild(hit);
+
+        if (p.logo_uri) {
+          const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+          img.setAttributeNS("http://www.w3.org/1999/xlink", "href", p.logo_uri);
+          img.setAttribute("x", x - 14);
+          img.setAttribute("y", y - 14);
+          img.setAttribute("width", 28);
+          img.setAttribute("height", 28);
+          img.style.pointerEvents = "none";
+          svg.appendChild(img);
+        } else {
+          const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          c.setAttribute("cx", x);
+          c.setAttribute("cy", y);
+          c.setAttribute("r", 10);
+          c.setAttribute("fill", "#38bdf8");
+          c.setAttribute("stroke", "#e5e7eb");
+          c.setAttribute("stroke-width", "1.5");
+          svg.appendChild(c);
+        }
+
+        function showTooltip(evt) {
+          const rect = svg.getBoundingClientRect();
+          tooltip.style.opacity = "1";
+          tooltip.style.left = (evt.clientX - rect.left) + "px";
+          tooltip.style.top = (evt.clientY - rect.top) + "px";
+          tooltip.innerHTML =
+            "<strong>" + p.team_name + "</strong><br>" +
+            p.team_key + "<br>" +
+            "OffRtg: " + p.off_rating.toFixed(1) + "<br>" +
+            "DefRtg: " + p.def_rating.toFixed(1);
+        }
+
+        function moveTooltip(evt) {
+          const rect = svg.getBoundingClientRect();
+          tooltip.style.left = (evt.clientX - rect.left) + "px";
+          tooltip.style.top = (evt.clientY - rect.top) + "px";
+        }
+
+        function hideTooltip() {
+          tooltip.style.opacity = "0";
+        }
+
+        hit.addEventListener("mouseenter", showTooltip);
+        hit.addEventListener("mousemove", moveTooltip);
+        hit.addEventListener("mouseleave", hideTooltip);
+      });
+    })();
+  </script>
+</body>
+</html>
