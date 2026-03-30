@@ -56,6 +56,7 @@
     .player-link:hover { text-decoration:underline; }
     .player-cell { display:flex; align-items:center; gap:10px; }
     .player-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; background:#0b1220; border:1px solid var(--line); flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; }
+    .player-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
     .player-avatar-empty { color:var(--muted); font-size:12px; font-weight:700; }
     .player-name { font-weight:700; color:var(--text); line-height:1.1; }
     .team-key-only { font-weight:700; color:var(--text); }
@@ -116,7 +117,10 @@ function playerCellHtml(row) {
   const name = escapeHtml(row.player_name || "");
   const href = row.player_hub_href || "";
   const nameHtml = href ? `<a class="player-link" href="${escapeHtml(href)}"><div class="player-name">${name}</div></a>` : `<div class="player-name">${name}</div>`;
-  return `<div class="player-cell"><span class="player-avatar player-avatar-empty">?</span>${nameHtml}</div>`;
+  const avatar = row.photo_relpath
+    ? `<span class="player-avatar"><img src="../${escapeHtml(row.photo_relpath)}" alt="${name}"></span>`
+    : `<span class="player-avatar player-avatar-empty">?</span>`;
+  return `<div class="player-cell">${avatar}${nameHtml}</div>`;
 }
 
 function teamCellHtml(row) { return `<div class="team-key-only">${escapeHtml(row.team_key || "")}</div>`; }
