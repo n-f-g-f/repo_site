@@ -722,12 +722,12 @@
     </section>
     
 
-        <div class="section-title">Resumo da equipa</div>
+        <div class="section-title">Team Summary</div>
         <div class="summary-grid">
             
     <section class="block notes-block">
         <h2>Quick read</h2>
-        <ul class="notes-list"><li>H. Ferreira lidera o perfil ofensivo; o volume concentra-se sobretudo em above the break 3.</li><li>Closeouts prioritários: D. Barnstable, H. Ferreira, M. Gordon JR.</li><li>Zone mais procurada: Above the Break 3; zona mais eficiente: restricted area.</li><li>Pode-se viver mais com o volume exterior de N. Bilamu, T. Barreto.</li></ul>
+        <ul class="notes-list"><li>H. Ferreira leads the offensive profile; volume is concentrated mostly in above the break 3.</li><li>Priority closeouts: D. Barnstable, H. Ferreira, M. Gordon JR.</li><li>Most-used zone: Above the Break 3; most efficient zone: restricted area.</li><li>You can live more with the perimeter volume from N. Bilamu, T. Barreto.</li></ul>
     </section>
     
     <section class="block">
@@ -751,7 +751,7 @@
     </section>
     
     <section class="block">
-        <h2>Volume exterior aceitável</h2>
+        <h2>Outside Volume</h2>
         <div class="table-wrap">
             <table class="summary-table">
                 <thead><tr><th>Player</th><th>3PA</th><th>3PT%</th><th>3PA Rate</th></tr></thead>
@@ -854,21 +854,32 @@ function fillSelect(selectEl, values, defaultLabel) {
     }
 }
 
-function updatePlayerHubLink() {
-    const player = playerFilter.value;
-    if (player === "__all__") {
-        playerHubLink.setAttribute("href", "#");
-        playerHubLink.classList.add("is-disabled");
-        playerHubLink.setAttribute("aria-disabled", "true");
-        return;
+function updatePlayerHubLink(shots) {
+    const explicitPlayer = playerFilter.value;
+
+    let match = null;
+    if (explicitPlayer !== "__all__") {
+        match = SHOTS_DATA.find(s => s.player_name === explicitPlayer && s.player_id && s.team_key);
+    } else if (Array.isArray(shots) && shots.length) {
+        const uniquePlayers = new Map();
+        for (const shot of shots) {
+            if (!shot.player_name || !shot.player_id || !shot.team_key) continue;
+            const key = [shot.team_key, shot.player_id, shot.player_name].join("|");
+            if (!uniquePlayers.has(key)) uniquePlayers.set(key, shot);
+            if (uniquePlayers.size > 1) break;
+        }
+        if (uniquePlayers.size === 1) {
+            match = [...uniquePlayers.values()][0];
+        }
     }
-    const match = SHOTS_DATA.find(s => s.player_name === player && s.player_id && s.team_key);
+
     if (!match) {
         playerHubLink.setAttribute("href", "#");
         playerHubLink.classList.add("is-disabled");
         playerHubLink.setAttribute("aria-disabled", "true");
         return;
     }
+
     playerHubLink.setAttribute("href", "../player_hubs/player_hub_" + match.team_key + "_" + match.player_id + ".html");
     playerHubLink.classList.remove("is-disabled");
     playerHubLink.setAttribute("aria-disabled", "false");
@@ -1106,6 +1117,7 @@ function refreshChart() {
     const filtered = applyFilters();
     renderShots(filtered);
     updateStats(filtered);
+    updatePlayerHubLink(filtered);
     renderRelativeHex(filtered);
     renderRelativeZoneTable(filtered);
 }
