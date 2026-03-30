@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Opponent Game Plan - Imortal LUZiGÁS</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+body {
+    margin:0;
+    background:#f5f7fa;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#111827;
+}
+.container {
+    max-width:1500px; margin:auto; padding:24px;
+}
+.block {
+    background:white; border-radius:14px; padding:18px; margin-bottom:24px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+}
+.block h2 {
+    margin:0 0 14px 0;
+    font-size:22px;
+}
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:#111827; color:white; padding:9px 8px; text-align:left; white-space:nowrap; }
+td { padding:9px 8px; border-bottom:1px solid #eee; vertical-align:middle; }
+tbody tr:hover { background:#fafafa; }
+.player-cell { display:flex; align-items:center; gap:8px; }
+.avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; background:#ccc; flex:0 0 28px; }
+.avatar img { width:100%; height:100%; object-fit:cover; }
+.avatar-empty {
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:#111827; font-weight:bold;
+}
+.card-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.card {
+    background:#fafafa; border:1px solid #ddd; border-radius:12px; padding:14px;
+}
+.card-title {
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.card-value {
+    font-size:18px;
+    font-weight:700;
+    line-height:1.35;
+}
+.notes-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+}
+.note-card {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px;
+    background:#fafafa;
+}
+.note-card h3 {
+    margin:0 0 10px 0;
+    font-size:16px;
+}
+.note-card ul, .keys-card ul {
+    margin:0;
+    padding-left:18px;
+}
+.note-card li, .keys-card li {
+    margin-bottom:8px;
+    line-height:1.45;
+}
+.keys-card {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px 16px;
+    background:#fafafa;
+}
+.mini-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.mini-card {
+    background:#fafafa;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:14px;
+}
+.mini-label {
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.mini-value {
+    font-size:16px;
+    font-weight:700;
+    line-height:1.4;
+}
+.empty {
+    color:#6b7280; font-style:italic;
+}
+.section-grid {
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+}
+@media (max-width: 1100px) {
+    .section-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Imortal LUZiGÁS</h1><div class="sub">Opponent Game Plan - IBC</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/embedded/b5eb5c00a25e62fbdf0789ba00e2bec0a66d8721.png" alt="Imortal LUZiGÁS logo"></div></div></div></div>
+
+
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8a17fd0d2f508e842cb0039dbcbe564184f2218a.png"></div><span class="player-name">K. Kennedy</span></div></td><td></td><td></td><td>18</td><td>31.3</td><td>17.2</td><td>5.2</td><td>2.3</td><td>1.7</td><td>1.9</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8634d45a806b1d13e3dfb8d6596805d706102db5.png"></div><span class="player-name">A. Silva</span></div></td><td></td><td></td><td>18</td><td>25.7</td><td>13.7</td><td>3.4</td><td>5.6</td><td>1.2</td><td>3.2</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/6381dc58f89064b9a111c98b943610bf95664140.png"></div><span class="player-name">R. Jones</span></div></td><td></td><td></td><td>18</td><td>23.3</td><td>9.2</td><td>6.4</td><td>1.4</td><td>0.8</td><td>1.8</td><td>0.4</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d68729e7ac56e06243a8f1cf060a5ebed4a03f4a.png"></div><span class="player-name">F. Lima</span></div></td><td></td><td></td><td>17</td><td>21.3</td><td>7.2</td><td>4.1</td><td>1.8</td><td>0.9</td><td>0.6</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/9e3b5dd53ab47856874d8cf2fb33ff94154812fe.png"></div><span class="player-name">N. Lane</span></div></td><td></td><td></td><td>15</td><td>22.6</td><td>9.0</td><td>3.1</td><td>1.2</td><td>0.9</td><td>1.3</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/84a3567ff13aa85b353c6bb105d554fb3e439a66.png"></div><span class="player-name">S. Victo</span></div></td><td></td><td></td><td>15</td><td>17.3</td><td>7.5</td><td>1.9</td><td>2.7</td><td>0.5</td><td>2.1</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d7056a1eba482badf8271047e66f065f7de0b45e.png"></div><span class="player-name">L. Silva</span></div></td><td></td><td></td><td>13</td><td>18.4</td><td>8.4</td><td>3.0</td><td>0.8</td><td>0.8</td><td>1.0</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/94e39646e96dd73efc7f00e3f27901972f0eeb81.png"></div><span class="player-name">T. Barnes</span></div></td><td></td><td></td><td>12</td><td>18.4</td><td>7.3</td><td>4.9</td><td>1.1</td><td>0.7</td><td>1.4</td><td>1.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/99481a0c89491f87c1cc6676b699336950c6ad21.png"></div><span class="player-name">M. Baker</span></div></td><td></td><td></td><td>17</td><td>13.0</td><td>2.4</td><td>2.8</td><td>0.4</td><td>0.8</td><td>0.6</td><td>0.4</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/c1c1712979578232406fb39a4f98da77933f87a6.png"></div><span class="player-name">E. Svalbe</span></div></td><td></td><td></td><td>15</td><td>7.7</td><td>2.3</td><td>1.5</td><td>0.5</td><td>0.5</td><td>1.4</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/17e16f1bff3c7e05173138a77b71e63493a03fdc.png"></div><span class="player-name">F. Thomas</span></div></td><td></td><td></td><td>3</td><td>25.9</td><td>10.3</td><td>2.3</td><td>2.0</td><td>1.7</td><td>1.0</td><td>0.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Game Plan in 4 Keys</h2>
+        <div class="keys-card">
+            <ul><li><strong>Top perimeter threats:</strong> F. Lima, L. Silva, A. Silva</li><li><strong>Primary scoring area:</strong> Paint Non-RA</li><li><strong>Take away:</strong> early paint touches and direct rim pressure</li><li><strong>Live with:</strong> contested volume from K. Kennedy, N. Lane</li></ul>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Most-Used Player</div>
+                <div class="card-value">K. Kennedy</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Primary Scorer</div>
+                <div class="card-value">K. Kennedy</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Top 3PT Threat</div>
+                <div class="card-value">F. Lima (34.8%)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Preferred Team Scoring Area</div>
+                <div class="card-value">Paint Non-RA (350 L)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Most-Used Lineup</div>
+                <div class="card-value">A. Silva | K. Kennedy | N. Lane | R. Jones | T. Barnes</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Best-Performing Lineup</div>
+                <div class="card-value">A. Silva | K. Kennedy | N. Lane | R. Jones | T. Barnes</div>
+            </div>
+            </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>Primary scorer: K. Kennedy (17.2 PPG).</li><li>A. Silva is the main on-ball organizer and advantage creator.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts: A. Silva, L. Silva, S. Victo, F. Lima, and T. Barnes, based on their combination of 3PT volume and efficiency.</li><li>High-volume but more manageable perimeter shooters: K. Kennedy and N. Lane.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Main team scoring area: Paint Non-RA.</li><li>Preferred scoring areas are clearly defined for players such as K. Kennedy, R. Jones, F. Lima, A. Silva, S. Victo, L. Silva, N. Lane, and M. Baker.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup: A. Silva | K. Kennedy | N. Lane | R. Jones | T. Barnes.</li><li>Alternate lineup to recognize: A. Silva | F. Lima | K. Kennedy | N. Lane | R. Jones.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Take away clean perimeter looks for A. Silva, L. Silva, S. Victo, F. Lima, and T. Barnes.</li><li>Protect the Paint Non-RA due to the team&#x27;s shot concentration there.</li></ul>
+            </div>
+            </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8a17fd0d2f508e842cb0039dbcbe564184f2218a.png"></div><span class="player-name">K. Kennedy</span></div></td><td>31.3</td><td>17.2</td><td>126</td><td>32.5%</td><td>Above the Break 3</td><td>primary scorer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8634d45a806b1d13e3dfb8d6596805d706102db5.png"></div><span class="player-name">A. Silva</span></div></td><td>25.7</td><td>13.7</td><td>52</td><td>46.2%</td><td>Paint Non-RA</td><td>primary handler</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/6381dc58f89064b9a111c98b943610bf95664140.png"></div><span class="player-name">R. Jones</span></div></td><td>23.3</td><td>9.2</td><td>0</td><td></td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d68729e7ac56e06243a8f1cf060a5ebed4a03f4a.png"></div><span class="player-name">F. Lima</span></div></td><td>21.3</td><td>7.2</td><td>69</td><td>34.8%</td><td>Above the Break 3</td><td>spot-up shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/9e3b5dd53ab47856874d8cf2fb33ff94154812fe.png"></div><span class="player-name">N. Lane</span></div></td><td>22.6</td><td>9.0</td><td>19</td><td>31.6%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/84a3567ff13aa85b353c6bb105d554fb3e439a66.png"></div><span class="player-name">S. Victo</span></div></td><td>17.3</td><td>7.5</td><td>12</td><td>33.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<div class="section-grid">
+    <div>
+        
+    <section class="block">
+        <h2>Primary Shooting Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8634d45a806b1d13e3dfb8d6596805d706102db5.png"></div><span class="player-name">A. Silva</span></div></td><td>Closeout | Preferred Area</td><td>52.0</td><td>46.2%</td><td>34.2%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d7056a1eba482badf8271047e66f065f7de0b45e.png"></div><span class="player-name">L. Silva</span></div></td><td>Closeout | Preferred Area</td><td>55.0</td><td>34.5%</td><td>58.5%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/84a3567ff13aa85b353c6bb105d554fb3e439a66.png"></div><span class="player-name">S. Victo</span></div></td><td>Closeout | Preferred Area</td><td>12.0</td><td>33.3%</td><td>12.9%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d68729e7ac56e06243a8f1cf060a5ebed4a03f4a.png"></div><span class="player-name">F. Lima</span></div></td><td>Closeout | Preferred Area</td><td>69.0</td><td>34.8%</td><td>75.8%</td><td>Above the Break 3</td><td>No-help closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/94e39646e96dd73efc7f00e3f27901972f0eeb81.png"></div><span class="player-name">T. Barnes</span></div></td><td>Closeout</td><td>21.0</td><td>42.9%</td><td>39.6%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8a17fd0d2f508e842cb0039dbcbe564184f2218a.png"></div><span class="player-name">K. Kennedy</span></div></td><td>Volume 3PT | Preferred Area</td><td>126.0</td><td>32.5%</td><td>46.3%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/9e3b5dd53ab47856874d8cf2fb33ff94154812fe.png"></div><span class="player-name">N. Lane</span></div></td><td>Volume 3PT | Preferred Area</td><td>19.0</td><td>31.6%</td><td>20.4%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/6381dc58f89064b9a111c98b943610bf95664140.png"></div><span class="player-name">R. Jones</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/99481a0c89491f87c1cc6676b699336950c6ad21.png"></div><span class="player-name">M. Baker</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8634d45a806b1d13e3dfb8d6596805d706102db5.png"></div><span class="player-name">A. Silva</span></div></td><td>52.0</td><td>46.2%</td><td>34.2%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d7056a1eba482badf8271047e66f065f7de0b45e.png"></div><span class="player-name">L. Silva</span></div></td><td>55.0</td><td>34.5%</td><td>58.5%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/84a3567ff13aa85b353c6bb105d554fb3e439a66.png"></div><span class="player-name">S. Victo</span></div></td><td>12.0</td><td>33.3%</td><td>12.9%</td><td>0.9</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d68729e7ac56e06243a8f1cf060a5ebed4a03f4a.png"></div><span class="player-name">F. Lima</span></div></td><td>69.0</td><td>34.8%</td><td>75.8%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/94e39646e96dd73efc7f00e3f27901972f0eeb81.png"></div><span class="player-name">T. Barnes</span></div></td><td>21.0</td><td>42.9%</td><td>39.6%</td><td>1.2</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8a17fd0d2f508e842cb0039dbcbe564184f2218a.png"></div><span class="player-name">K. Kennedy</span></div></td><td>126.0</td><td>32.5%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/9e3b5dd53ab47856874d8cf2fb33ff94154812fe.png"></div><span class="player-name">N. Lane</span></div></td><td>19.0</td><td>31.6%</td><td>1.1</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+    <div>
+        
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8a17fd0d2f508e842cb0039dbcbe564184f2218a.png"></div><span class="player-name">K. Kennedy</span></div></td><td>Above the Break 3</td><td>34.6%</td><td>30.9%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/6381dc58f89064b9a111c98b943610bf95664140.png"></div><span class="player-name">R. Jones</span></div></td><td>Restricted Area</td><td>52.3%</td><td>57.0%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d68729e7ac56e06243a8f1cf060a5ebed4a03f4a.png"></div><span class="player-name">F. Lima</span></div></td><td>Above the Break 3</td><td>62.6%</td><td>36.8%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/8634d45a806b1d13e3dfb8d6596805d706102db5.png"></div><span class="player-name">A. Silva</span></div></td><td>Paint Non-RA</td><td>33.6%</td><td>49.0%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/84a3567ff13aa85b353c6bb105d554fb3e439a66.png"></div><span class="player-name">S. Victo</span></div></td><td>Paint Non-RA</td><td>48.4%</td><td>42.2%</td><td>0.8</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/d7056a1eba482badf8271047e66f065f7de0b45e.png"></div><span class="player-name">L. Silva</span></div></td><td>Above the Break 3</td><td>45.7%</td><td>30.2%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/9e3b5dd53ab47856874d8cf2fb33ff94154812fe.png"></div><span class="player-name">N. Lane</span></div></td><td>Paint Non-RA</td><td>40.9%</td><td>60.5%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/embedded/99481a0c89491f87c1cc6676b699336950c6ad21.png"></div><span class="player-name">M. Baker</span></div></td><td>Restricted Area</td><td>57.6%</td><td>47.4%</td><td>0.9</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Paint Non-RA</td><td>350.0</td><td>45.7%</td><td>0.9</td><td>28.9%</td></tr><tr><td>Above the Break 3</td><td>341.0</td><td>34.3%</td><td>1.0</td><td>28.2%</td></tr><tr><td>Restricted Area</td><td>278.0</td><td>57.2%</td><td>1.1</td><td>23.0%</td></tr><tr><td>Mid-Range</td><td>133.0</td><td>45.1%</td><td>0.9</td><td>11.0%</td></tr><tr><td>Corner 3 Left</td><td>58.0</td><td>37.9%</td><td>1.1</td><td>4.8%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+</div>
+
+
+    <section class="block">
+        <h2>Lineups to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>A. Silva | K. Kennedy | N. Lane | R. Jones | T. Barnes</td><td>37.5</td><td>86.5</td><td>90.7</td><td>-4.3</td></tr><tr><td>Rotation lineup</td><td>A. Silva | F. Lima | K. Kennedy | N. Lane | R. Jones</td><td>34.9</td><td>87.0</td><td>81.3</td><td>5.7</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>A. Silva | K. Kennedy</td><td>368.3</td><td>87.7</td><td>85.4</td><td>2.4</td></tr><tr><td>trio</td><td>A. Silva | K. Kennedy | R. Jones</td><td>246.7</td><td>86.7</td><td>85.1</td><td>1.6</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">A. Silva, L. Silva, S. Victo</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Paint help rule</div>
+                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">A. Silva | K. Kennedy | N. Lane | R. Jones | T. Barnes</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Closeout discipline</div>
+                <div class="mini-value">Do not over-help off F. Lima</div>
+            </div>
+            </div>
+    </section>
+    
+
+</div>
+</body>
+</html>

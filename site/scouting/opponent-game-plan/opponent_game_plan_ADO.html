@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Opponent Game Plan - Ovarense GAVEX</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+body {
+    margin:0;
+    background:#f5f7fa;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#111827;
+}
+.container {
+    max-width:1500px; margin:auto; padding:24px;
+}
+.block {
+    background:white; border-radius:14px; padding:18px; margin-bottom:24px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+}
+.block h2 {
+    margin:0 0 14px 0;
+    font-size:22px;
+}
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:#111827; color:white; padding:9px 8px; text-align:left; white-space:nowrap; }
+td { padding:9px 8px; border-bottom:1px solid #eee; vertical-align:middle; }
+tbody tr:hover { background:#fafafa; }
+.player-cell { display:flex; align-items:center; gap:8px; }
+.avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; background:#ccc; flex:0 0 28px; }
+.avatar img { width:100%; height:100%; object-fit:cover; }
+.avatar-empty {
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:#111827; font-weight:bold;
+}
+.card-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.card {
+    background:#fafafa; border:1px solid #ddd; border-radius:12px; padding:14px;
+}
+.card-title {
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.card-value {
+    font-size:18px;
+    font-weight:700;
+    line-height:1.35;
+}
+.notes-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+}
+.note-card {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px;
+    background:#fafafa;
+}
+.note-card h3 {
+    margin:0 0 10px 0;
+    font-size:16px;
+}
+.note-card ul, .keys-card ul {
+    margin:0;
+    padding-left:18px;
+}
+.note-card li, .keys-card li {
+    margin-bottom:8px;
+    line-height:1.45;
+}
+.keys-card {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px 16px;
+    background:#fafafa;
+}
+.mini-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.mini-card {
+    background:#fafafa;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:14px;
+}
+.mini-label {
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.mini-value {
+    font-size:16px;
+    font-weight:700;
+    line-height:1.4;
+}
+.empty {
+    color:#6b7280; font-style:italic;
+}
+.section-grid {
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+}
+@media (max-width: 1100px) {
+    .section-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Ovarense GAVEX</h1><div class="sub">Opponent Game Plan - ADO</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/embedded/a71b2bb9ecaf1d20ae374287893f63223a68326f.png" alt="Ovarense GAVEX logo"></div></div></div></div>
+
+
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Heath JR</span></div></td><td></td><td></td><td>18</td><td>26.6</td><td>17.2</td><td>4.0</td><td>1.5</td><td>0.6</td><td>1.9</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Jenkins</span></div></td><td></td><td></td><td>18</td><td>25.8</td><td>11.9</td><td>5.8</td><td>1.8</td><td>0.6</td><td>2.1</td><td>0.4</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Woods</span></div></td><td></td><td></td><td>17</td><td>23.2</td><td>7.9</td><td>2.7</td><td>3.9</td><td>0.8</td><td>1.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Soeiro</span></div></td><td></td><td></td><td>18</td><td>20.4</td><td>4.9</td><td>2.1</td><td>0.7</td><td>0.8</td><td>0.4</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Pavicevic</span></div></td><td></td><td></td><td>18</td><td>19.1</td><td>5.9</td><td>4.8</td><td>0.8</td><td>0.2</td><td>1.2</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Stormo</span></div></td><td></td><td></td><td>12</td><td>27.9</td><td>12.4</td><td>9.3</td><td>2.0</td><td>0.3</td><td>1.5</td><td>0.6</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Monteiro</span></div></td><td></td><td></td><td>18</td><td>17.3</td><td>8.8</td><td>1.6</td><td>3.6</td><td>0.6</td><td>2.0</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Teixeira</span></div></td><td></td><td></td><td>18</td><td>15.7</td><td>6.7</td><td>2.8</td><td>3.0</td><td>0.7</td><td>2.3</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Silva</span></div></td><td></td><td></td><td>16</td><td>16.0</td><td>4.6</td><td>4.1</td><td>0.6</td><td>0.6</td><td>1.1</td><td>0.9</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Morais</span></div></td><td></td><td></td><td>18</td><td>7.1</td><td>3.8</td><td>0.3</td><td>0.4</td><td>0.1</td><td>0.2</td><td>0.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Game Plan in 4 Keys</h2>
+        <div class="keys-card">
+            <ul><li><strong>Top perimeter threats:</strong> J. Heath JR, R. Woods, M. Monteiro</li><li><strong>Primary scoring area:</strong> Above the Break 3</li><li><strong>Take away:</strong> rhythm looks in Above the Break 3</li><li><strong>Live with:</strong> contested volume from J. Jenkins, R. Soeiro</li></ul>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Most-Used Player</div>
+                <div class="card-value">J. Heath JR</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Primary Scorer</div>
+                <div class="card-value">J. Heath JR</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Top 3PT Threat</div>
+                <div class="card-value">J. Heath JR (37.9%)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Preferred Team Scoring Area</div>
+                <div class="card-value">Above the Break 3 (381 L)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Most-Used Lineup</div>
+                <div class="card-value">I. Pavicevic | J. Heath JR | J. Jenkins | R. Soeiro | R. Woods</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Best-Performing Lineup</div>
+                <div class="card-value">I. Pavicevic | J. Heath JR | J. Jenkins | R. Soeiro | R. Woods</div>
+            </div>
+            </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>Primary scorer: J. Heath JR (17.2 PPG).</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts: J. Heath JR, R. Woods, M. Monteiro, G. Teixeira, and N. Morais, based on their combination of 3PT volume and efficiency.</li><li>High-volume but more manageable perimeter shooters: J. Jenkins, R. Soeiro, and I. Pavicevic.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Main team scoring area: Above the Break 3.</li><li>Preferred scoring areas are clearly defined for players such as J. Stormo, J. Heath JR, J. Jenkins, R. Woods, M. Monteiro, R. Soeiro, I. Pavicevic, and G. Teixeira.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup: I. Pavicevic | J. Heath JR | J. Jenkins | R. Soeiro | R. Woods.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Take away clean perimeter looks for J. Heath JR, R. Woods, M. Monteiro, G. Teixeira, and N. Morais.</li><li>Protect the Above the Break 3 due to the team&#x27;s shot concentration there.</li></ul>
+            </div>
+            </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Heath JR</span></div></td><td>26.6</td><td>17.2</td><td>116</td><td>37.9%</td><td>Above the Break 3</td><td>movement shooter</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Jenkins</span></div></td><td>25.8</td><td>11.9</td><td>43</td><td>11.6%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Woods</span></div></td><td>23.2</td><td>7.9</td><td>61</td><td>34.4%</td><td>Above the Break 3</td><td>spot-up shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Soeiro</span></div></td><td>20.4</td><td>4.9</td><td>77</td><td>31.2%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Pavicevic</span></div></td><td>19.1</td><td>5.9</td><td>23</td><td>17.4%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Stormo</span></div></td><td>27.9</td><td>12.4</td><td>1</td><td>0.0%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<div class="section-grid">
+    <div>
+        
+    <section class="block">
+        <h2>Primary Shooting Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Heath JR</span></div></td><td>Closeout | Preferred Area</td><td>116.0</td><td>37.9%</td><td>50.4%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Woods</span></div></td><td>Closeout | Preferred Area</td><td>61.0</td><td>34.4%</td><td>48.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Monteiro</span></div></td><td>Closeout | Preferred Area</td><td>57.0</td><td>33.3%</td><td>47.9%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Teixeira</span></div></td><td>Closeout | Preferred Area</td><td>41.0</td><td>48.8%</td><td>49.4%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Morais</span></div></td><td>Closeout</td><td>46.0</td><td>37.0%</td><td>90.2%</td><td>Above the Break 3</td><td>No-help closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Jenkins</span></div></td><td>Volume 3PT | Preferred Area</td><td>43.0</td><td>11.6%</td><td>25.1%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Soeiro</span></div></td><td>Volume 3PT | Preferred Area</td><td>77.0</td><td>31.2%</td><td>80.2%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Pavicevic</span></div></td><td>Volume 3PT | Preferred Area</td><td>23.0</td><td>17.4%</td><td>26.7%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Stormo</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Heath JR</span></div></td><td>116.0</td><td>37.9%</td><td>50.4%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Woods</span></div></td><td>61.0</td><td>34.4%</td><td>48.0%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Monteiro</span></div></td><td>57.0</td><td>33.3%</td><td>47.9%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Teixeira</span></div></td><td>41.0</td><td>48.8%</td><td>49.4%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Morais</span></div></td><td>46.0</td><td>37.0%</td><td>90.2%</td><td>1.0</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Jenkins</span></div></td><td>43.0</td><td>11.6%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Soeiro</span></div></td><td>77.0</td><td>31.2%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Pavicevic</span></div></td><td>23.0</td><td>17.4%</td><td>1.0</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+    <div>
+        
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Stormo</span></div></td><td>Restricted Area</td><td>72.2%</td><td>70.5%</td><td>1.4</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Heath JR</span></div></td><td>Above the Break 3</td><td>33.0%</td><td>35.5%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Jenkins</span></div></td><td>Restricted Area</td><td>42.1%</td><td>76.4%</td><td>1.5</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Woods</span></div></td><td>Above the Break 3</td><td>40.2%</td><td>37.3%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Monteiro</span></div></td><td>Above the Break 3</td><td>42.0%</td><td>34.0%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Soeiro</span></div></td><td>Above the Break 3</td><td>51.0%</td><td>38.8%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Pavicevic</span></div></td><td>Restricted Area</td><td>44.2%</td><td>71.1%</td><td>1.4</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Teixeira</span></div></td><td>Above the Break 3</td><td>44.6%</td><td>45.9%</td><td>1.4</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Above the Break 3</td><td>381.0</td><td>32.5%</td><td>1.0</td><td>31.9%</td></tr><tr><td>Restricted Area</td><td>364.0</td><td>67.0%</td><td>1.3</td><td>30.5%</td></tr><tr><td>Paint Non-RA</td><td>210.0</td><td>41.9%</td><td>0.8</td><td>17.6%</td></tr><tr><td>Mid-Range</td><td>113.0</td><td>38.9%</td><td>0.8</td><td>9.5%</td></tr><tr><td>Corner 3 Left</td><td>74.0</td><td>31.1%</td><td>0.9</td><td>6.2%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+</div>
+
+
+    <section class="block">
+        <h2>Lineups to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>I. Pavicevic | J. Heath JR | J. Jenkins | R. Soeiro | R. Woods</td><td>27.0</td><td>84.3</td><td>71.0</td><td>13.3</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>J. Heath JR | J. Jenkins</td><td>306.2</td><td>84.7</td><td>82.6</td><td>2.1</td></tr><tr><td>trio</td><td>J. Heath JR | J. Jenkins | R. Woods</td><td>160.0</td><td>84.7</td><td>72.5</td><td>12.2</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">J. Heath JR, R. Woods, M. Monteiro</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Primary area</div>
+                <div class="mini-value">Above the Break 3</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">I. Pavicevic | J. Heath JR | J. Jenkins | R. Soeiro | R. Woods</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Closeout discipline</div>
+                <div class="mini-value">Do not over-help off N. Morais</div>
+            </div>
+            </div>
+    </section>
+    
+
+</div>
+</body>
+</html>
