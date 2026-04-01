@@ -7,7 +7,6 @@
 <title>Opponent Shot Report - Sporting Clube de Braga</title>
 
 <style>
-/* Mantém todo o estilo original + estilos do spotlight */
 body {
  margin:0;
  font-family:Arial, Helvetica, sans-serif;
@@ -99,7 +98,6 @@ body {
  font-size:12px;
  font-weight:700;
 }
-/* Spotlight */
 .player-spotlight-layout {
  display:grid;
  grid-template-columns:160px 1fr;
@@ -166,6 +164,15 @@ body {
  font-weight:700;
  color:#111827;
 }
+.grid-two {
+ display:grid;
+ grid-template-columns:repeat(2, minmax(0, 1fr));
+ gap:20px;
+}
+@media (max-width: 980px) {
+ .grid-two { grid-template-columns:1fr; }
+ .player-spotlight-layout { grid-template-columns:1fr; }
+}
 </style>
 
 </head>
@@ -180,7 +187,7 @@ body {
 
     <section class="player-spotlight block">
         <div class="player-spotlight-layout">
-            <div class="player-spotlight-photo"><img src="../../assets/embedded/22ddb7689457256c2ec9dd5eec39f691d1286342.png" alt="D. Blaylock"></div>
+            <div class="player-spotlight-photo"><img src="../../assets/player_photos/SCB/SCB_D._BLAYLOCK.png" alt="D. Blaylock"></div>
             <div class="player-spotlight-copy">
                 <div class="player-spotlight-kicker">Spotlight</div>
                 <h2>D. Blaylock</h2>
