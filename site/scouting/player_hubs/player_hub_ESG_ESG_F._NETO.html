@@ -51,6 +51,12 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
 .metric-card { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; }
 .metric-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; font-weight:700; }
 .metric-value { font-size:22px; font-weight:700; color:#111827; line-height:1.1; }
+.snapshot-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
+.snapshot-card { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; }
+.snapshot-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; font-weight:700; }
+.snapshot-value { font-size:20px; font-weight:700; color:#111827; line-height:1.2; }
+.story-list { margin:0; padding-left:20px; color:#374151; line-height:1.6; }
+.story-list li { margin-bottom:8px; }
 .two-col { display:grid; grid-template-columns: 1.3fr 1fr; gap:18px; }
 .controls-row { display:grid; grid-template-columns: repeat(4, minmax(110px, 160px)); gap:14px; align-items:end; margin-bottom:16px; }
 .control { display:flex; flex-direction:column; gap:6px; }
@@ -95,6 +101,7 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
 <div class="container">
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>F. Neto</h1><div class="sub">G · 12 G · 0.0 MPG</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/embedded/184a2c58a0e7b9ab26646a81d0947bbd17aa0b9f.png" alt="F. Neto logo"></div></div></div></div>
 <div class="hub-nav">
+  <a href="../team_hub.html?team=ESG">Open team hub</a>
   <a href="../visual-shot/visual_shot_dashboard_ESG.html">Open team shot dashboard</a>
   <a class="secondary" href="index.html">All player hubs</a>
 </div>
@@ -109,6 +116,8 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
     </div>
   </div>
 </section>
+<section class="block"><h2>Identity snapshot</h2><div class="snapshot-grid"><div class="snapshot-card"><div class="snapshot-label">Team</div><div class="snapshot-value">Esgueira Aveiro OLI</div></div><div class="snapshot-card"><div class="snapshot-label">Position</div><div class="snapshot-value">G</div></div><div class="snapshot-card"><div class="snapshot-label">Games</div><div class="snapshot-value">12</div></div><div class="snapshot-card"><div class="snapshot-label">Minutes</div><div class="snapshot-value">0.0</div></div><div class="snapshot-card"><div class="snapshot-label">Points</div><div class="snapshot-value">0.0</div></div><div class="snapshot-card"><div class="snapshot-label">3PA Rate</div><div class="snapshot-value">—</div></div></div></section>
+<section class="block"><h2>Why he matters</h2><div class="empty">No automatic summary available</div></section>
 <section class="shot-block">
   <h2>Interactive shot chart</h2>
   <div class="controls-row">
