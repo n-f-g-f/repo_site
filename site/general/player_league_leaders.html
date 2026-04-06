@@ -200,7 +200,10 @@
 
       const categorySelectKey = state.group === 'advanced' ? state.advanced : (state.group === 'impact' ? state.impact : state.regular);
       const categories = (group.categories || []).map(cat => {
-        const filtered_rows = (cat.rows || []).filter(row => passesFilters(row, state)).slice(0, 10);
+        const filtered_rows = (cat.rows || [])
+          .filter(row => passesFilters(row, state))
+          .slice(0, 10)
+          .map((row, idx) => ({ ...row, rank: idx + 1 }));
         return { ...cat, filtered_rows };
       });
 
