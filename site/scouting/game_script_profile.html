@@ -83,6 +83,7 @@
     const RECENT_GAMES_COUNT = 8;
     function escapeHtml(s) { return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
     function fmtNumber(v) { return (v===null||v===undefined||Number.isNaN(v)) ? '—' : Number(v).toFixed(1); }
+    function fmtInt(v) { return (v===null||v===undefined||Number.isNaN(v)) ? '—' : String(Math.round(Number(v))); }
     function avg(values) { const clean = values.filter(v => v!==null && v!==undefined && !Number.isNaN(v)); return clean.length ? clean.reduce((a,b)=>a+b,0)/clean.length : null; }
     function parseDate(v) { if(v===null||v===undefined) return null; const raw=String(v).trim(); if(!raw) return null; const ts=Date.parse(raw); return Number.isNaN(ts)?null:ts; }
     function sortGamesChronologically(games, desc=false) { return [...games].sort((a,b) => { const da=parseDate(a.game_date), db=parseDate(b.game_date); if(da!==null&&db!==null&&da!==db) return desc ? db-da : da-db; if(da!==null&&db===null) return desc?-1:1; if(da===null&&db!==null) return desc?1:-1; const ra=a.round??-Infinity, rb=b.round??-Infinity; if(ra!==rb) return desc?rb-ra:ra-rb; const ga=Number(a.game_code), gb=Number(b.game_code); if(!Number.isNaN(ga)&&!Number.isNaN(gb)&&ga!==gb) return desc?gb-ga:ga-gb; return String(a.game_code||'').localeCompare(String(b.game_code||'')); }); }
