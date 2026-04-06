@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>League Lineup Chemistry Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #08111f;
+      --panel: #0f172a;
+      --panel-2: #111c31;
+      --panel-3: #16233c;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #2c3f5f;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --warn: #f59e0b;
+      --neg: #f87171;
+      --chip: #0b1220;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, #12203b 0%, #08111f 38%, #050b14 100%); color: var(--text); }
+    .wrap { max-width: 1760px; margin: 0 auto; padding: 24px; }
+    h1 { margin: 0 0 8px 0; font-size: 30px; }
+    .subtitle { color: var(--muted); margin-bottom: 18px; font-size: 14px; line-height: 1.5; }
+    .toolbar {
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; align-items: end; margin-bottom: 18px;
+      background: rgba(15, 23, 42, 0.92); border: 1px solid var(--line); border-radius: 18px; padding: 14px;
+      backdrop-filter: blur(12px);
+    }
+    .control { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .control label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+    .control select, .control input {
+      background: #07101f; color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 12px; font-size: 13px; width: 100%;
+    }
+    .status-box { display:flex; flex-direction:column; justify-content:center; gap:6px; padding: 10px 12px; background:#07101f; border:1px solid var(--line); border-radius:10px; min-height: 74px; }
+    .status-main { font-size: 20px; font-weight: 800; }
+    .status-sub { font-size: 12px; color: var(--muted); }
+    .summary-card, .panel-card, .table-card {
+      background: rgba(15, 23, 42, 0.94); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; margin-bottom: 18px;
+      backdrop-filter: blur(10px);
+    }
+    .summary-card, .panel-card { padding: 16px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+    .metric-card { background: #07101f; border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+    .metric-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+    .metric-value { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1.1; }
+    .metric-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .main-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(320px, 0.95fr); gap: 18px; align-items: start; margin-bottom: 18px; }
+    .chart-card { padding: 16px; }
+    .chart-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom: 10px; }
+    .chart-title { font-size: 20px; font-weight: 800; margin: 0 0 4px 0; }
+    .chart-subtitle { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .legend-row { display:flex; gap:14px; flex-wrap:wrap; color: var(--muted); font-size: 12px; margin: 10px 0 12px 0; }
+    .legend-chip { display:inline-flex; align-items:center; gap:7px; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 999px; display:inline-block; }
+    .chart-wrap { position: relative; width: 100%; overflow: auto; }
+    #ratings-scatter { width: 100%; min-width: 980px; height: auto; display: block; border-radius: 14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+    .scatter-tooltip {
+      position: absolute; pointer-events: none; opacity: 0; transform: translate(-50%, calc(-100% - 12px));
+      background: rgba(6, 11, 20, 0.98); color: var(--text); border: 1px solid var(--line);
+      border-radius: 12px; padding: 10px 12px; font-size: 12px; line-height: 1.45; white-space: nowrap;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.35); z-index: 20;
+    }
+    .side-panel { display:flex; flex-direction:column; gap:14px; }
+    .panel-title { font-size: 18px; font-weight: 800; margin: 0 0 6px 0; }
+    .panel-subtitle { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .selected-empty { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .selected-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom: 12px; }
+    .selected-name { font-size: 18px; font-weight: 800; line-height: 1.35; }
+    .selected-team { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .chip-row { display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; }
+    .chip { display:inline-flex; align-items:center; padding: 6px 10px; border-radius: 999px; background: var(--chip); border: 1px solid var(--line); font-size: 12px; font-weight: 700; }
+    .chip.good { border-color: rgba(34,197,94,0.5); color: #bbf7d0; }
+    .chip.warn { border-color: rgba(245,158,11,0.5); color: #fde68a; }
+    .chip.bad { border-color: rgba(248,113,113,0.5); color: #fecaca; }
+    .selected-summary { background:#07101f; border:1px solid var(--line); border-radius:14px; padding:12px 14px; color: var(--text); font-size: 13px; line-height: 1.55; }
+    .player-list { display:grid; grid-template-columns: 1fr; gap:8px; }
+    .player-pill { background:#07101f; border:1px solid var(--line); border-radius:12px; padding:9px 12px; font-size:13px; }
+    .mini-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; }
+    .mini-card { background:#07101f; border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+    .mini-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-bottom: 4px; }
+    .mini-value { font-size: 20px; font-weight: 800; line-height: 1.15; }
+    .table-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 16px 16px 0 16px; }
+    .table-title { font-size: 18px; font-weight: 800; }
+    .table-subtitle { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow: auto; padding: 14px 16px 16px 16px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1300px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid rgba(148,163,184,0.14); text-align: right; white-space: nowrap; font-size: 13px; }
+    thead th { position: sticky; top: 0; background: var(--panel-3); z-index: 2; font-weight: 800; }
+    thead th.sortable { cursor: pointer; user-select: none; }
+    thead th.sortable:hover { color: var(--accent); }
+    thead th.sortable::after { content: " ↕"; color: var(--muted); font-weight: 400; }
+    thead th.sorted-asc::after { content: " ↑"; color: var(--accent); }
+    thead th.sorted-desc::after { content: " ↓"; color: var(--accent); }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: rgba(56, 189, 248, 0.08); }
+    tbody tr.selected-row { background: rgba(56, 189, 248, 0.16); }
+    .sticky-left { position: sticky; left: 0; z-index: 1; text-align: left; background: rgba(15,23,42,0.98); }
+    thead .sticky-left { z-index: 3; background: var(--panel-3); }
+    .lineup-cell { display:flex; align-items:flex-start; gap:10px; min-width: 360px; }
+    .lineup-meta { display:flex; flex-direction:column; gap:4px; }
+    .lineup-players { font-weight: 800; white-space: normal; line-height: 1.35; }
+    .lineup-team { color: var(--muted); font-size: 12px; }
+    .tag-cell { text-align:left; }
+    .pill { display:inline-flex; align-items:center; padding: 5px 9px; border-radius: 999px; background:#07101f; border:1px solid var(--line); font-size: 11px; font-weight: 800; }
+    .pill.good { color:#bbf7d0; border-color: rgba(34,197,94,0.45); }
+    .pill.warn { color:#fde68a; border-color: rgba(245,158,11,0.45); }
+    .pill.bad { color:#fecaca; border-color: rgba(248,113,113,0.45); }
+    .neg { color: var(--neg); }
+    .muted-note { color: var(--muted); font-size: 12px; padding: 0 16px 16px 16px; }
+    .empty-state { padding: 18px; color: var(--muted); }
+    @media (max-width: 1350px) { .main-grid { grid-template-columns: 1fr; } .toolbar { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 950px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 680px) { .wrap { padding: 16px; } .summary-grid, .toolbar, .mini-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>League Lineup Chemistry Map</h1>
+    <div class="subtitle">Interactive lineup explorer built around OffRtg vs DefRtg. The scatter is now the main reading layer, while the table becomes support instead of punishment.</div>
+
+    <div class="toolbar">
+      <div class="control">
+        <label for="team-filter">Team</label>
+        <select id="team-filter"><option value="">All teams</option></select>
+      </div>
+      <div class="control">
+        <label for="minutes-filter">Min Minutes</label>
+        <input id="minutes-filter" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="control">
+        <label for="search-filter">Lineup contains</label>
+        <input id="search-filter" type="text" placeholder="Search lineup players">
+      </div>
+      <div class="control">
+        <label for="sample-filter">Sample bucket</label>
+        <select id="sample-filter">
+          <option value="">All samples</option>
+          <option value="Core">Core</option>
+          <option value="Rotation">Rotation</option>
+          <option value="Small sample">Small sample</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="color-by-filter">Color by</label>
+        <select id="color-by-filter">
+          <option value="net_rating">NetRtg</option>
+          <option value="minutes">Minutes</option>
+          <option value="pace">Pace</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="size-by-filter">Size by</label>
+        <select id="size-by-filter">
+          <option value="minutes">Minutes</option>
+          <option value="games">Games</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-grid" id="summary-grid"></div>
+    </div>
+
+    <div class="main-grid">
+      <div class="panel-card chart-card">
+        <div class="chart-head">
+          <div>
+            <div class="chart-title">Lineup chemistry scatter</div>
+            <div class="chart-subtitle">Bigger bubbles mean larger samples. Higher OffRtg and lower DefRtg is better. Click any bubble to lock a lineup and read it properly.</div>
+          </div>
+          <div class="status-box">
+            <div class="status-main" id="status-main">0</div>
+            <div class="status-sub" id="status-sub">lineups shown</div>
+          </div>
+        </div>
+        <div class="legend-row">
+          <span class="legend-chip"><span class="legend-dot" style="background:#22c55e"></span>Positive profile</span>
+          <span class="legend-chip"><span class="legend-dot" style="background:#f59e0b"></span>Mixed profile</span>
+          <span class="legend-chip"><span class="legend-dot" style="background:#f87171"></span>Negative profile</span>
+          <span class="legend-chip">Solid outline = selected lineup</span>
+        </div>
+        <div class="chart-wrap">
+          <svg id="ratings-scatter" viewBox="0 0 1160 620" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="scatter-tooltip" id="scatter-tooltip"></div>
+        </div>
+      </div>
+
+      <div class="panel-card side-panel">
+        <div>
+          <div class="panel-title">Selected lineup</div>
+          <div class="panel-subtitle">The selected lineup becomes the reading anchor for the page. Use this block to replace the old habit of scrolling forever through the table.</div>
+        </div>
+        <div id="selected-panel" class="selected-empty">Choose a lineup from the scatter or the table. Then this panel will show the sample, tags, automatic read and key metrics.</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <div>
+          <div class="table-title">Filtered lineups</div>
+          <div class="table-subtitle">Support table for scanning the current selection. Click any row to sync with the chart and selected-lineup panel.</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="lineups-table" id="lineups-table">
+          <thead><tr><th class="sticky-left sortable" data-col="lineup_players" data-type="text">Lineup</th><th class="sortable" data-col="sample_bucket" data-type="text">Sample</th><th class="sortable" data-col="quality_tag" data-type="text">Tag</th><th class="sortable" data-col="minutes" data-type="number">Minutes</th><th class="sortable" data-col="games" data-type="number">Games</th><th class="sortable" data-col="points_for" data-type="number">Points For</th><th class="sortable" data-col="points_against" data-type="number">Points Against</th><th class="sortable" data-col="pace" data-type="number">Pace</th><th class="sortable" data-col="off_rating" data-type="number">OffRtg</th><th class="sortable" data-col="def_rating" data-type="number">DefRtg</th><th class="sortable" data-col="net_rating" data-type="number">NetRtg</th></tr></thead>
+          <tbody id="lineups-tbody"></tbody>
+        </table>
+      </div>
+      <div class="muted-note">Data loaded from external JSON to keep deployment lightweight. This page is now designed as an explorer, not a spreadsheet punishment device.</div>
+    </div>
+  </div>
+
+<script>
+const DATA_URL = "data/lineups_adv_data.json";
+const DISPLAY_COLUMNS = [["minutes", "Minutes", "number"], ["games", "Games", "int"], ["points_for", "Points For", "number"], ["points_against", "Points Against", "number"], ["pace", "Pace", "number"], ["off_rating", "OffRtg", "number"], ["def_rating", "DefRtg", "number"], ["net_rating", "NetRtg", "number"]];
+let DATASET = null;
+let CURRENT_ROWS = [];
+let SELECTED_LINEUP_ID = null;
+let sortCol = 'net_rating';
+let sortDirection = 'desc';
+
+function escapeHtml(text) { return String(text ?? "").replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+function parseNumber(value) { const num = Number(value); return Number.isFinite(num) ? num : null; }
+function fmtNumber(value, digits = 1) { return value === null || value === undefined || Number.isNaN(Number(value)) ? '—' : Number(value).toFixed(digits); }
+function fmtInt(value) { return value === null || value === undefined || Number.isNaN(Number(value)) ? '—' : String(Math.round(Number(value))); }
+function metricCard(label, value, sub = '') { return `<div class="metric-card"><div class="metric-label">${label}</div><div class="metric-value">${value}</div>${sub ? `<div class="metric-sub">${sub}</div>` : ''}</div>`; }
+
+function setTeamOptions(teamKeys, teamNames) {
+  const sel = document.getElementById('team-filter');
+  sel.innerHTML = '<option value="">All teams</option>' + teamKeys.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(teamNames?.[v] || v)} · ${escapeHtml(v)}</option>`).join('');
+}
+
+function scoreClass(label) {
+  const text = String(label || '').toLowerCase();
+  if (text.includes('dominant') || text.includes('strong') || text.includes('two-way') || text.includes('positive')) return 'good';
+  if (text.includes('weak') || text.includes('poor') || text.includes('struggling') || text.includes('negative') || text.includes('cold')) return 'bad';
+  return 'warn';
+}
+
+function buildSummary(rows) {
+  const summaryGrid = document.getElementById('summary-grid');
+  const statusMain = document.getElementById('status-main');
+  const statusSub = document.getElementById('status-sub');
+  statusMain.textContent = String(rows.length);
+  statusSub.textContent = rows.length === 1 ? 'lineup shown' : 'lineups shown';
+
+  if (!rows.length) {
+    summaryGrid.innerHTML = metricCard('Selection', '0', 'No lineups match current filters');
+    return;
+  }
+
+  const avg = col => {
+    const vals = rows.map(r => parseNumber(r[col])).filter(v => v !== null);
+    return vals.length ? vals.reduce((a,b)=>a+b,0) / vals.length : null;
+  };
+
+  const positiveCount = rows.filter(r => parseNumber(r.net_rating) !== null && Number(r.net_rating) > 0).length;
+  const best = rows.reduce((bestRow, row) => bestRow == null || (parseNumber(row.net_rating) ?? -Infinity) > (parseNumber(bestRow.net_rating) ?? -Infinity) ? row : bestRow, null);
+  const worst = rows.reduce((worstRow, row) => worstRow == null || (parseNumber(row.net_rating) ?? Infinity) < (parseNumber(worstRow.net_rating) ?? Infinity) ? row : worstRow, null);
+  const mostUsed = rows.reduce((bestRow, row) => bestRow == null || (parseNumber(row.minutes) ?? -Infinity) > (parseNumber(bestRow.minutes) ?? -Infinity) ? row : bestRow, null);
+
+  summaryGrid.innerHTML = [
+    metricCard('Lineups shown', String(rows.length), `${positiveCount} with positive NetRtg`),
+    metricCard('Avg NetRtg', fmtNumber(avg('net_rating'))),
+    metricCard('Avg OffRtg', fmtNumber(avg('off_rating'))),
+    metricCard('Avg DefRtg', fmtNumber(avg('def_rating'))),
+    metricCard('Best lineup', best ? fmtNumber(best.net_rating) : '—', best ? escapeHtml(best.lineup_players) : ''),
+    metricCard('Most-used lineup', mostUsed ? fmtNumber(mostUsed.minutes) : '—', mostUsed ? escapeHtml(mostUsed.lineup_players) : ''),
+  ].join('');
+}
+
+function buildTableRows(rows) {
+  const tbody = document.getElementById('lineups-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td class="empty-state" colspan="${3 + DISPLAY_COLUMNS.length}">No lineups match the current filters.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(row => {
+    const selectedClass = row.lineup_id === SELECTED_LINEUP_ID ? 'selected-row' : '';
+    let cells = `
+      <td class="sticky-left" data-col="lineup_players">
+        <div class="lineup-cell">
+          <div class="lineup-meta">
+            <div class="lineup-players">${escapeHtml(row.lineup_players || '')}</div>
+            <div class="lineup-team">${escapeHtml(row.team_name || '')} · ${escapeHtml(row.team_key || '')} · ${escapeHtml(row.quadrant_tag || '')}</div>
+          </div>
+        </div>
+      </td>
+      <td class="tag-cell"><span class="pill ${scoreClass(row.sample_bucket)}">${escapeHtml(row.sample_bucket || '')}</span></td>
+      <td class="tag-cell"><span class="pill ${scoreClass(row.quality_tag)}">${escapeHtml(row.quality_tag || '')}</span></td>`;
+
+    for (const [col, , kind] of DISPLAY_COLUMNS) {
+      const val = row[col];
+      const text = kind === 'int' ? fmtInt(val) : fmtNumber(val);
+      const cls = (col === 'net_rating' && val !== null && Number(val) < 0) ? 'neg' : '';
+      cells += `<td class="${cls}">${escapeHtml(text)}</td>`;
+    }
+    return `<tr class="${selectedClass}" data-lineup-id="${escapeHtml(row.lineup_id)}">${cells}</tr>`;
+  }).join('');
+
+  Array.from(tbody.querySelectorAll('tr[data-lineup-id]')).forEach(tr => {
+    tr.addEventListener('click', () => {
+      SELECTED_LINEUP_ID = tr.dataset.lineupId;
+      syncSelection();
+    });
+  });
+}
+
+function buildSelectedPanel(row) {
+  const el = document.getElementById('selected-panel');
+  if (!row) {
+    el.className = 'selected-empty';
+    el.innerHTML = 'Choose a lineup from the scatter or the table. Then this panel will show the sample, tags, automatic read and key metrics.';
+    return;
+  }
+
+  const playersHtml = (row.player_list || []).map(player => `<div class="player-pill">${escapeHtml(player)}</div>`).join('');
+  el.className = '';
+  el.innerHTML = `
+    <div class="selected-head">
+      <div>
+        <div class="selected-name">${escapeHtml(row.lineup_players || '')}</div>
+        <div class="selected-team">${escapeHtml(row.team_name || '')} · ${escapeHtml(row.team_key || '')}</div>
+        <div class="chip-row">
+          <span class="chip ${scoreClass(row.sample_bucket)}">${escapeHtml(row.sample_bucket || '')}</span>
+          <span class="chip ${scoreClass(row.quality_tag)}">${escapeHtml(row.quality_tag || '')}</span>
+          <span class="chip ${scoreClass(row.quadrant_tag)}">${escapeHtml(row.quadrant_tag || '')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="selected-summary">${escapeHtml(row.auto_summary || '')}</div>
+
+    <div class="mini-grid">
+      <div class="mini-card"><div class="mini-label">Minutes</div><div class="mini-value">${fmtNumber(row.minutes)}</div></div>
+      <div class="mini-card"><div class="mini-label">Games</div><div class="mini-value">${fmtInt(row.games)}</div></div>
+      <div class="mini-card"><div class="mini-label">OffRtg</div><div class="mini-value">${fmtNumber(row.off_rating)}</div></div>
+      <div class="mini-card"><div class="mini-label">DefRtg</div><div class="mini-value">${fmtNumber(row.def_rating)}</div></div>
+      <div class="mini-card"><div class="mini-label">NetRtg</div><div class="mini-value">${fmtNumber(row.net_rating)}</div></div>
+      <div class="mini-card"><div class="mini-label">Pace</div><div class="mini-value">${fmtNumber(row.pace)}</div></div>
+    </div>
+
+    <div>
+      <div class="panel-title" style="font-size:15px; margin-bottom:10px;">Lineup players</div>
+      <div class="player-list">${playersHtml || '<div class="player-pill">No player names available</div>'}</div>
+    </div>`;
+}
+
+function getSelectedRow() {
+  if (!SELECTED_LINEUP_ID) return null;
+  return CURRENT_ROWS.find(r => r.lineup_id === SELECTED_LINEUP_ID) || null;
+}
+
+function interpolateColor(value, min, max) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return '#94a3b8';
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return '#38bdf8';
+  const t = Math.max(0, Math.min(1, (Number(value) - min) / (max - min)));
+  if (t <= 0.5) {
+    const local = t / 0.5;
+    return mixColor([248,113,113], [245,158,11], local);
+  }
+  const local = (t - 0.5) / 0.5;
+  return mixColor([245,158,11], [34,197,94], local);
+}
+
+function mixColor(a, b, t) {
+  const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+}
+
+function bubbleRadius(value, min, max) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return 6;
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 10;
+  const t = Math.max(0, Math.min(1, (Number(value) - min) / (max - min)));
+  return 6 + t * 15;
+}
+
+function drawScatter(rows) {
+  const svg = document.getElementById('ratings-scatter');
+  const tooltip = document.getElementById('scatter-tooltip');
+  const colorBy = document.getElementById('color-by-filter').value || 'net_rating';
+  const sizeBy = document.getElementById('size-by-filter').value || 'minutes';
+  const points = rows.filter(p => p.off_rating !== null && p.def_rating !== null);
+  const width = 1160, height = 620;
+  const margin = { top: 26, right: 34, bottom: 72, left: 72 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  svg.innerHTML = '';
+  if (!points.length) return;
+
+  const xVals = points.map(p => p.off_rating);
+  const yVals = points.map(p => p.def_rating);
+  const colorVals = points.map(p => parseNumber(p[colorBy])).filter(v => v !== null);
+  const sizeVals = points.map(p => parseNumber(p[sizeBy])).filter(v => v !== null);
+
+  let xMin = Math.min(...xVals), xMax = Math.max(...xVals), yMin = Math.min(...yVals), yMax = Math.max(...yVals);
+  const xPad = Math.max(3, (xMax - xMin) * 0.10 || 3);
+  const yPad = Math.max(3, (yMax - yMin) * 0.10 || 3);
+  xMin -= xPad; xMax += xPad; yMin -= yPad; yMax += yPad;
+
+  const xScale = x => margin.left + ((x - xMin) / (xMax - xMin || 1)) * innerW;
+  const yScale = y => margin.top + innerH - ((y - yMin) / (yMax - yMin || 1)) * innerH;
+
+  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  bg.setAttribute('x', margin.left);
+  bg.setAttribute('y', margin.top);
+  bg.setAttribute('width', innerW);
+  bg.setAttribute('height', innerH);
+  bg.setAttribute('rx', '16');
+  bg.setAttribute('fill', 'rgba(255,255,255,0.015)');
+  bg.setAttribute('stroke', 'rgba(148,163,184,0.20)');
+  svg.appendChild(bg);
+
+  for (let i = 0; i < 5; i++) {
+    const tx = xMin + (i * (xMax - xMin) / 4);
+    const ty = yMin + (i * (yMax - yMin) / 4);
+    const gx = xScale(tx);
+    const gy = yScale(ty);
+
+    const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    vLine.setAttribute('x1', gx); vLine.setAttribute('x2', gx); vLine.setAttribute('y1', margin.top); vLine.setAttribute('y2', margin.top + innerH);
+    vLine.setAttribute('stroke', 'rgba(148,163,184,0.12)');
+    svg.appendChild(vLine);
+
+    const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    hLine.setAttribute('x1', margin.left); hLine.setAttribute('x2', margin.left + innerW); hLine.setAttribute('y1', gy); hLine.setAttribute('y2', gy);
+    hLine.setAttribute('stroke', 'rgba(148,163,184,0.12)');
+    svg.appendChild(hLine);
+
+    const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    xLabel.setAttribute('x', gx); xLabel.setAttribute('y', height - 28); xLabel.setAttribute('fill', '#94a3b8'); xLabel.setAttribute('font-size', '12'); xLabel.setAttribute('text-anchor', 'middle');
+    xLabel.textContent = tx.toFixed(1);
+    svg.appendChild(xLabel);
+
+    const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    yLabel.setAttribute('x', margin.left - 12); yLabel.setAttribute('y', gy + 4); yLabel.setAttribute('fill', '#94a3b8'); yLabel.setAttribute('font-size', '12'); yLabel.setAttribute('text-anchor', 'end');
+    yLabel.textContent = ty.toFixed(1);
+    svg.appendChild(yLabel);
+  }
+
+  const leagueOff = parseNumber(DATASET?.league_averages?.off_rating);
+  const leagueDef = parseNumber(DATASET?.league_averages?.def_rating);
+  if (leagueOff !== null) {
+    const refX = xScale(leagueOff);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', refX); line.setAttribute('x2', refX); line.setAttribute('y1', margin.top); line.setAttribute('y2', margin.top + innerH);
+    line.setAttribute('stroke', 'rgba(56,189,248,0.75)'); line.setAttribute('stroke-dasharray', '6 6');
+    svg.appendChild(line);
+  }
+  if (leagueDef !== null) {
+    const refY = yScale(leagueDef);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', margin.left); line.setAttribute('x2', margin.left + innerW); line.setAttribute('y1', refY); line.setAttribute('y2', refY);
+    line.setAttribute('stroke', 'rgba(56,189,248,0.75)'); line.setAttribute('stroke-dasharray', '6 6');
+    svg.appendChild(line);
+  }
+
+  const xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  xTitle.setAttribute('x', margin.left + innerW / 2); xTitle.setAttribute('y', height - 4); xTitle.setAttribute('fill', '#e5e7eb'); xTitle.setAttribute('font-size', '13'); xTitle.setAttribute('text-anchor', 'middle');
+  xTitle.textContent = 'OffRtg';
+  svg.appendChild(xTitle);
+
+  const yTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  yTitle.setAttribute('transform', `translate(18 ${margin.top + innerH / 2}) rotate(-90)`); yTitle.setAttribute('fill', '#e5e7eb'); yTitle.setAttribute('font-size', '13'); yTitle.setAttribute('text-anchor', 'middle');
+  yTitle.textContent = 'DefRtg';
+  svg.appendChild(yTitle);
+
+  const colorMin = colorVals.length ? Math.min(...colorVals) : 0;
+  const colorMax = colorVals.length ? Math.max(...colorVals) : 1;
+  const sizeMin = sizeVals.length ? Math.min(...sizeVals) : 0;
+  const sizeMax = sizeVals.length ? Math.max(...sizeVals) : 1;
+
+  points.forEach(point => {
+    const cx = xScale(point.off_rating);
+    const cy = yScale(point.def_rating);
+    const bubbleValue = parseNumber(point[sizeBy]);
+    const colorValue = parseNumber(point[colorBy]);
+    const radius = bubbleRadius(bubbleValue, sizeMin, sizeMax);
+    const fill = interpolateColor(colorValue, colorMin, colorMax);
+    const selected = point.lineup_id === SELECTED_LINEUP_ID;
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', radius);
+    circle.setAttribute('fill', fill);
+    circle.setAttribute('fill-opacity', selected ? '0.95' : '0.82');
+    circle.setAttribute('stroke', selected ? '#ffffff' : 'rgba(229,231,235,0.75)');
+    circle.setAttribute('stroke-width', selected ? '3' : '1.1');
+    circle.style.cursor = 'pointer';
+
+    circle.addEventListener('mouseenter', (event) => {
+      tooltip.style.opacity = '1';
+      tooltip.innerHTML = `
+        <strong>${escapeHtml(point.lineup_players || '')}</strong><br>
+        ${escapeHtml(point.team_name || '')} · ${escapeHtml(point.team_key || '')}<br>
+        Sample: ${escapeHtml(point.sample_bucket || '')} · ${escapeHtml(point.quality_tag || '')}<br>
+        Minutes: ${fmtNumber(point.minutes)} · Games: ${fmtInt(point.games)}<br>
+        OffRtg: ${fmtNumber(point.off_rating)} · DefRtg: ${fmtNumber(point.def_rating)} · NetRtg: ${fmtNumber(point.net_rating)}`;
+      positionTooltip(event);
+    });
+    circle.addEventListener('mousemove', positionTooltip);
+    circle.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+    circle.addEventListener('click', () => {
+      SELECTED_LINEUP_ID = point.lineup_id;
+      syncSelection();
+    });
+
+    svg.appendChild(circle);
+  });
+
+  function positionTooltip(event) {
+    const rect = svg.getBoundingClientRect();
+    tooltip.style.left = `${event.clientX - rect.left}px`;
+    tooltip.style.top = `${event.clientY - rect.top}px`;
+  }
+}
+
+function applyFiltersAndSort() {
+  const team = (document.getElementById('team-filter').value || '').trim().toLowerCase();
+  const minMinutes = Number(document.getElementById('minutes-filter').value || 0);
+  const search = (document.getElementById('search-filter').value || '').trim().toLowerCase();
+  const sample = (document.getElementById('sample-filter').value || '').trim().toLowerCase();
+
+  CURRENT_ROWS = DATASET.rows.filter(row => {
+    const lineupText = `${row.team_key || ''} ${row.team_name || ''} ${row.lineup_players || ''} ${(row.player_list || []).join(' ')}`.trim().toLowerCase();
+    if (team && (row.team_key || '').toLowerCase() !== team) return false;
+    if (search && !lineupText.includes(search)) return false;
+    if ((row.minutes ?? 0) < minMinutes) return false;
+    if (sample && (row.sample_bucket || '').toLowerCase() !== sample) return false;
+    return true;
+  });
+
+  CURRENT_ROWS.sort((a, b) => {
+    const type = ['lineup_players', 'sample_bucket', 'quality_tag'].includes(sortCol) ? 'text' : 'number';
+    let cmp = 0;
+    if (type === 'text') cmp = String(a[sortCol] ?? '').localeCompare(String(b[sortCol] ?? ''));
+    else cmp = (a[sortCol] ?? -Infinity) - (b[sortCol] ?? -Infinity);
+    return sortDirection === 'asc' ? cmp : -cmp;
+  });
+
+  if (SELECTED_LINEUP_ID && !CURRENT_ROWS.some(r => r.lineup_id === SELECTED_LINEUP_ID)) {
+    SELECTED_LINEUP_ID = CURRENT_ROWS.length ? CURRENT_ROWS[0].lineup_id : null;
+  } else if (!SELECTED_LINEUP_ID && CURRENT_ROWS.length) {
+    SELECTED_LINEUP_ID = CURRENT_ROWS[0].lineup_id;
+  }
+
+  syncSelection();
+}
+
+function syncSelection() {
+  buildSummary(CURRENT_ROWS);
+  buildTableRows(CURRENT_ROWS);
+  buildSelectedPanel(getSelectedRow());
+  drawScatter(CURRENT_ROWS);
+  document.querySelectorAll('thead tr:first-child th.sortable').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+  const th = document.querySelector(`thead tr:first-child th[data-col="${sortCol}"]`);
+  if (th) th.classList.add(sortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
+}
+
+async function init() {
+  const response = await fetch(DATA_URL);
+  if (!response.ok) throw new Error(`Failed to load ${DATA_URL}`);
+  DATASET = await response.json();
+  setTeamOptions(DATASET.team_keys || [], DATASET.team_names || {});
+
+  document.querySelectorAll('thead tr:first-child th.sortable').forEach(th => th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (sortCol === col) sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    else { sortCol = col; sortDirection = ['lineup_players', 'sample_bucket', 'quality_tag'].includes(col) ? 'asc' : 'desc'; }
+    applyFiltersAndSort();
+  }));
+
+  [
+    document.getElementById('team-filter'),
+    document.getElementById('minutes-filter'),
+    document.getElementById('search-filter'),
+    document.getElementById('sample-filter'),
+    document.getElementById('color-by-filter'),
+    document.getElementById('size-by-filter'),
+  ].forEach(el => el.addEventListener('input', applyFiltersAndSort));
+
+  applyFiltersAndSort();
+}
+
+init().catch(err => {
+  document.getElementById('status-main').textContent = '—';
+  document.getElementById('status-sub').textContent = 'Failed to load data';
+  document.getElementById('selected-panel').className = 'selected-empty';
+  document.getElementById('selected-panel').textContent = 'Failed to load lineup data.';
+  console.error(err);
+});
+</script>
+</body>
+</html>
