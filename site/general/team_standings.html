@@ -5,40 +5,297 @@
   <title>Team Standings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root { --bg:#0f172a; --panel:#111827; --panel-2:#1f2937; --text:#e5e7eb; --muted:#94a3b8; --line:#334155; --accent:#38bdf8; --good:#4ade80; --bad:#fca5a5; }
+    :root {
+      --bg:#0f172a; --panel:#111827; --panel-2:#1f2937; --panel-3:#0b1220;
+      --text:#e5e7eb; --muted:#94a3b8; --line:#334155; --line-soft:rgba(148,163,184,.14);
+      --accent:#38bdf8; --good:#4ade80; --bad:#fca5a5; --warn:#f59e0b;
+    }
     * { box-sizing:border-box; }
-    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); }
-    .wrap { max-width:1700px; margin:0 auto; padding:18px; }
-    h1 { margin:0 0 6px 0; font-size:24px; }
-    .subtitle { color:var(--muted); margin-bottom:14px; font-size:13px; }
-    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:linear-gradient(180deg,#081120 0%, var(--bg) 16%, var(--bg) 100%); color:var(--text); }
+    .wrap { max-width:1720px; margin:0 auto; padding:20px; }
+    h1 { margin:0 0 6px 0; font-size:32px; line-height:1.05; letter-spacing:-.02em; }
+    .subtitle { color:var(--muted); margin-bottom:16px; font-size:14px; max-width:960px; }
+    .cards-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; margin-bottom:14px; }
+    .summary-card { background:rgba(17,24,39,.94); border:1px solid var(--line); border-radius:16px; padding:14px 16px; box-shadow:0 10px 24px rgba(2,6,23,.12); }
+    .summary-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+    .summary-value { font-size:22px; font-weight:700; line-height:1.1; }
+    .summary-sub { font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4; }
+    .card { background:rgba(17,24,39,.94); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 26px rgba(2,6,23,.14); }
+    .section-head { padding:14px 16px; border-bottom:1px solid var(--line); }
+    .tabs { display:flex; flex-wrap:wrap; gap:8px; }
+    .tab-btn { appearance:none; border:1px solid var(--line); background:var(--panel-3); color:var(--text); border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer; }
+    .tab-btn.active { background:rgba(56,189,248,.12); border-color:rgba(56,189,248,.24); color:var(--accent); }
     .table-wrap { overflow:auto; }
-    table { width:100%; border-collapse:collapse; min-width:1180px; }
-    th, td { padding:10px 12px; border-bottom:1px solid var(--line); white-space:nowrap; font-size:13px; text-align:right; }
+    table { width:100%; border-collapse:collapse; min-width:1220px; }
+    th, td { padding:11px 12px; border-bottom:1px solid var(--line-soft); white-space:nowrap; font-size:13px; text-align:right; vertical-align:middle; }
     th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align:left; }
     thead th { position:sticky; top:0; z-index:1; background:var(--panel-2); }
+    tbody tr:hover { background:rgba(255,255,255,.015); }
+    tbody tr.rank-top { background:linear-gradient(90deg, rgba(56,189,248,.06), rgba(56,189,248,0)); }
+    tbody tr.rank-bottom { background:linear-gradient(90deg, rgba(248,113,113,.05), rgba(248,113,113,0)); }
+    .rank-cell { font-weight:700; }
     .team-link { color:inherit; text-decoration:none; font-weight:700; }
     .team-link:hover { text-decoration:underline; }
     .team-sub { font-size:12px; color:var(--muted); margin-top:2px; }
-    .form-pill { display:inline-flex; align-items:center; justify-content:center; min-width:24px; height:24px; border-radius:999px; font-size:11px; font-weight:700; margin-right:4px; border:1px solid var(--line); }
-    .form-pill.win { background:rgba(74, 222, 128, 0.14); color:var(--good); }
-    .form-pill.loss { background:rgba(252, 165, 165, 0.14); color:var(--bad); }
+    .record-line { font-size:12px; color:var(--muted); margin-top:4px; }
+    .last5-stack { display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+    .last5-record { font-size:12px; font-weight:700; color:var(--text); }
+    .last5-pills { display:flex; gap:4px; }
+    .form-pill { display:inline-flex; align-items:center; justify-content:center; min-width:24px; height:24px; border-radius:999px; font-size:11px; font-weight:700; border:1px solid var(--line); }
+    .form-pill.win { background:rgba(74,222,128,.14); color:var(--good); }
+    .form-pill.loss { background:rgba(252,165,165,.14); color:var(--bad); }
+    .form-pill.tie { background:rgba(148,163,184,.16); color:#e2e8f0; }
+    .pos { color:var(--good); font-weight:700; }
+    .neg { color:var(--bad); font-weight:700; }
+    @media (max-width: 1100px) { .cards-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 720px) { .wrap { padding:14px; } .cards-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Team Standings</h1>
-    <div class="subtitle">League table with direct links to Team Hub pages. Ties are broken first by head-to-head record among tied teams, then by head-to-head point differential.</div>
+    <div class="subtitle">League table with direct links to Team Hub pages. View the league overall, split home vs away, or isolate recent form without leaving the page. Ties are broken first by head-to-head record among tied teams, then by head-to-head point differential.</div>
+
+    <div class="cards-grid" id="summary-cards"></div>
+
     <div class="card">
+      <div class="section-head">
+        <div class="tabs" id="section-tabs">
+          <button class="tab-btn active" data-section="overall">Overall</button>
+          <button class="tab-btn" data-section="home">Home</button>
+          <button class="tab-btn" data-section="away">Away</button>
+          <button class="tab-btn" data-section="last5">Last 5</button>
+        </div>
+      </div>
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr><th>#</th><th>Team</th><th>G</th><th>W</th><th>L</th><th>Win%</th><th>Diff</th><th>OffRtg</th><th>DefRtg</th><th>NetRtg</th><th>Pace</th><th>Last 5</th></tr>
-          </thead>
-          <tbody><tr><td>1</td><td><a class="team-link" href="../scouting/team_hub.html?team=SLB">SL Benfica</a><div class='team-sub'>SLB</div></td><td>19</td><td>17</td><td>2</td><td>89.5%</td><td>20.2</td><td>120.4</td><td>95.4</td><td>25.0</td><td>80.4</td><td><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill win">W</span></td></tr><tr><td>2</td><td><a class="team-link" href="../scouting/team_hub.html?team=SCP">Sporting Clube Portugal</a><div class='team-sub'>SCP</div></td><td>19</td><td>16</td><td>3</td><td>84.2%</td><td>11.7</td><td>115.4</td><td>101.0</td><td>14.4</td><td>77.2</td><td><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill win">W</span></td></tr><tr><td>3</td><td><a class="team-link" href="../scouting/team_hub.html?team=ADO">AD Ovarense</a><div class='team-sub'>ADO</div></td><td>19</td><td>13</td><td>6</td><td>68.4%</td><td>4.1</td><td>106.3</td><td>101.4</td><td>4.9</td><td>77.3</td><td><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill loss">L</span></td></tr><tr><td>4</td><td><a class="team-link" href="../scouting/team_hub.html?team=FCP">Futebol Clube do Porto</a><div class='team-sub'>FCP</div></td><td>19</td><td>13</td><td>6</td><td>68.4%</td><td>6.9</td><td>112.6</td><td>104.3</td><td>8.2</td><td>80.0</td><td><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill win">W</span></td></tr><tr><td>5</td><td><a class="team-link" href="../scouting/team_hub.html?team=UDO">UD Oliveirense</a><div class='team-sub'>UDO</div></td><td>19</td><td>10</td><td>9</td><td>52.6%</td><td>2.5</td><td>108.9</td><td>106.5</td><td>2.4</td><td>79.2</td><td><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill win">W</span></td></tr><tr><td>6</td><td><a class="team-link" href="../scouting/team_hub.html?team=ESG">Esgueira Aveiro OLI</a><div class='team-sub'>ESG</div></td><td>19</td><td>8</td><td>11</td><td>42.1%</td><td>-3.8</td><td>107.1</td><td>112.1</td><td>-5.0</td><td>79.2</td><td><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span></td></tr><tr><td>7</td><td><a class="team-link" href="../scouting/team_hub.html?team=SCB">Sporting Clube de Braga</a><div class='team-sub'>SCB</div></td><td>19</td><td>8</td><td>11</td><td>42.1%</td><td>-1.4</td><td>103.8</td><td>105.2</td><td>-1.4</td><td>78.0</td><td><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill win">W</span></td></tr><tr><td>8</td><td><a class="team-link" href="../scouting/team_hub.html?team=IBC">Imortal LUZiGÁS</a><div class='team-sub'>IBC</div></td><td>19</td><td>7</td><td>12</td><td>36.8%</td><td>-0.7</td><td>106.0</td><td>106.7</td><td>-0.7</td><td>79.4</td><td><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span></td></tr><tr><td>9</td><td><a class="team-link" href="../scouting/team_hub.html?team=VSC">Vitória Sport Clube</a><div class='team-sub'>VSC</div></td><td>19</td><td>6</td><td>13</td><td>31.6%</td><td>-8.5</td><td>102.7</td><td>112.4</td><td>-9.6</td><td>80.5</td><td><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span></td></tr><tr><td>10</td><td><a class="team-link" href="../scouting/team_hub.html?team=CAQ">Queluz O NOSSO PREGO</a><div class='team-sub'>CAQ</div></td><td>19</td><td>6</td><td>13</td><td>31.6%</td><td>-4.6</td><td>108.6</td><td>112.7</td><td>-4.2</td><td>78.3</td><td><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span></td></tr><tr><td>11</td><td><a class="team-link" href="../scouting/team_hub.html?team=VGA">SC Vasco da Gama</a><div class='team-sub'>VGA</div></td><td>19</td><td>5</td><td>14</td><td>26.3%</td><td>-14.8</td><td>99.8</td><td>118.3</td><td>-18.5</td><td>82.7</td><td><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill win">W</span><span class="form-pill loss">L</span></td></tr><tr><td>12</td><td><a class="team-link" href="../scouting/team_hub.html?team=GFC">Galitos BARREIRO</a><div class='team-sub'>GFC</div></td><td>19</td><td>5</td><td>14</td><td>26.3%</td><td>-11.6</td><td>102.8</td><td>117.0</td><td>-14.2</td><td>79.8</td><td><span class="form-pill loss">L</span><span class="form-pill win">W</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span><span class="form-pill loss">L</span></td></tr></tbody>
+          <thead id="standings-head"></thead>
+          <tbody id="standings-body"></tbody>
         </table>
       </div>
     </div>
   </div>
+
+  <script>
+    const STANDINGS = [{"team_key":"SLB","team_name":"SL Benfica","games":19.0,"wins":17.0,"losses":2.0,"point_diff":20.210526315789473,"win_pct":0.8947368421052632,"last5":"WWLWW","last5_games":5.0,"last5_wins":4.0,"last5_losses":1.0,"last5_win_pct":0.8,"last5_point_diff":19.8,"home_games":9.0,"home_wins":8.0,"home_losses":1.0,"home_point_diff":21.555555555555557,"home_win_pct":0.8888888888888888,"away_games":10.0,"away_wins":9.0,"away_losses":1.0,"away_point_diff":19.0,"away_win_pct":0.9,"off_rating":120.39678592927999,"def_rating":95.36534884330216,"net_rating":25.031437085977828,"pace":80.39578947368422,"h2h_wins":0.0,"h2h_losses":0.0,"h2h_games":0.0,"h2h_win_pct":0.0,"h2h_point_diff":0.0,"rank":1.0,"team_hub_href":"../scouting/team_hub.html?team=SLB"},{"team_key":"SCP","team_name":"Sporting Clube Portugal","games":19.0,"wins":16.0,"losses":3.0,"point_diff":11.68421052631579,"win_pct":0.8421052631578947,"last5":"WWWWW","last5_games":5.0,"last5_wins":5.0,"last5_losses":0.0,"last5_win_pct":1.0,"last5_point_diff":12.8,"home_games":9.0,"home_wins":7.0,"home_losses":2.0,"home_point_diff":8.222222222222221,"home_win_pct":0.7777777777777778,"away_games":10.0,"away_wins":9.0,"away_losses":1.0,"away_point_diff":14.8,"away_win_pct":0.9,"off_rating":115.40551555495178,"def_rating":101.02599179206567,"net_rating":14.379523762886109,"pace":77.21578947368421,"h2h_wins":0.0,"h2h_losses":0.0,"h2h_games":0.0,"h2h_win_pct":0.0,"h2h_point_diff":0.0,"rank":2.0,"team_hub_href":"../scouting/team_hub.html?team=SCP"},{"team_key":"ADO","team_name":"AD Ovarense","games":19.0,"wins":13.0,"losses":6.0,"point_diff":4.052631578947368,"win_pct":0.6842105263157895,"last5":"WLLWL","last5_games":5.0,"last5_wins":2.0,"last5_losses":3.0,"last5_win_pct":0.4,"last5_point_diff":-1.6,"home_games":9.0,"home_wins":6.0,"home_losses":3.0,"home_point_diff":2.4444444444444446,"home_win_pct":0.6666666666666666,"away_games":10.0,"away_wins":7.0,"away_losses":3.0,"away_point_diff":5.5,"away_win_pct":0.7,"off_rating":106.3456029403816,"def_rating":101.41726735678283,"net_rating":4.928335583598766,"pace":77.28522875816994,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":11.0,"rank":3.0,"team_hub_href":"../scouting/team_hub.html?team=ADO"},{"team_key":"FCP","team_name":"Futebol Clube do Porto","games":19.0,"wins":13.0,"losses":6.0,"point_diff":6.894736842105263,"win_pct":0.6842105263157895,"last5":"LWWWW","last5_games":5.0,"last5_wins":4.0,"last5_losses":1.0,"last5_win_pct":0.8,"last5_point_diff":10.8,"home_games":9.0,"home_wins":8.0,"home_losses":1.0,"home_point_diff":13.555555555555555,"home_win_pct":0.8888888888888888,"away_games":10.0,"away_wins":5.0,"away_losses":5.0,"away_point_diff":0.9,"away_win_pct":0.5,"off_rating":112.56530756911445,"def_rating":104.34782608695652,"net_rating":8.217481482157936,"pace":80.04105263157895,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":-11.0,"rank":4.0,"team_hub_href":"../scouting/team_hub.html?team=FCP"},{"team_key":"UDO","team_name":"UD Oliveirense","games":19.0,"wins":10.0,"losses":9.0,"point_diff":2.526315789473684,"win_pct":0.5263157894736842,"last5":"LWLWW","last5_games":5.0,"last5_wins":3.0,"last5_losses":2.0,"last5_win_pct":0.6,"last5_point_diff":6.4,"home_games":10.0,"home_wins":7.0,"home_losses":3.0,"home_point_diff":7.6,"home_win_pct":0.7,"away_games":9.0,"away_wins":3.0,"away_losses":6.0,"away_point_diff":-3.111111111111111,"away_win_pct":0.3333333333333333,"off_rating":108.87417218543047,"def_rating":106.45109652633265,"net_rating":2.423075659097819,"pace":79.19157894736843,"h2h_wins":0.0,"h2h_losses":0.0,"h2h_games":0.0,"h2h_win_pct":0.0,"h2h_point_diff":0.0,"rank":5.0,"team_hub_href":"../scouting/team_hub.html?team=UDO"},{"team_key":"ESG","team_name":"Esgueira Aveiro OLI","games":19.0,"wins":8.0,"losses":11.0,"point_diff":-3.8421052631578947,"win_pct":0.42105263157894735,"last5":"WLWLL","last5_games":5.0,"last5_wins":2.0,"last5_losses":3.0,"last5_win_pct":0.4,"last5_point_diff":-6.4,"home_games":10.0,"home_wins":6.0,"home_losses":4.0,"home_point_diff":-0.6,"home_win_pct":0.6,"away_games":9.0,"away_wins":2.0,"away_losses":7.0,"away_point_diff":-7.444444444444445,"away_win_pct":0.2222222222222222,"off_rating":107.10355308667856,"def_rating":112.10291415069574,"net_rating":-4.9993610640171795,"pace":79.22493506493507,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":3.0,"rank":6.0,"team_hub_href":"../scouting/team_hub.html?team=ESG"},{"team_key":"SCB","team_name":"Sporting Clube de Braga","games":19.0,"wins":8.0,"losses":11.0,"point_diff":-1.368421052631579,"win_pct":0.42105263157894735,"last5":"WLLLW","last5_games":5.0,"last5_wins":2.0,"last5_losses":3.0,"last5_win_pct":0.4,"last5_point_diff":2.4,"home_games":10.0,"home_wins":5.0,"home_losses":5.0,"home_point_diff":-0.5,"home_win_pct":0.5,"away_games":9.0,"away_wins":3.0,"away_losses":6.0,"away_point_diff":-2.3333333333333335,"away_win_pct":0.3333333333333333,"off_rating":103.77256512809426,"def_rating":105.18518518518518,"net_rating":-1.412620057090919,"pace":78.03052631578947,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":-3.0,"rank":7.0,"team_hub_href":"../scouting/team_hub.html?team=SCB"},{"team_key":"IBC","team_name":"Imortal LUZiGÁS","games":19.0,"wins":7.0,"losses":12.0,"point_diff":-0.6842105263157895,"win_pct":0.3684210526315789,"last5":"LWWLL","last5_games":5.0,"last5_wins":2.0,"last5_losses":3.0,"last5_win_pct":0.4,"last5_point_diff":-2.0,"home_games":9.0,"home_wins":4.0,"home_losses":5.0,"home_point_diff":1.1111111111111112,"home_win_pct":0.4444444444444444,"away_games":10.0,"away_wins":3.0,"away_losses":7.0,"away_point_diff":-2.3,"away_win_pct":0.3,"off_rating":106.01763925384395,"def_rating":106.74653707216923,"net_rating":-0.7288978183252794,"pace":79.39716129032257,"h2h_wins":0.0,"h2h_losses":0.0,"h2h_games":0.0,"h2h_win_pct":0.0,"h2h_point_diff":0.0,"rank":8.0,"team_hub_href":"../scouting/team_hub.html?team=IBC"},{"team_key":"VSC","team_name":"Vitória Sport Clube","games":19.0,"wins":6.0,"losses":13.0,"point_diff":-8.526315789473685,"win_pct":0.3157894736842105,"last5":"LLWLL","last5_games":5.0,"last5_wins":1.0,"last5_losses":4.0,"last5_win_pct":0.2,"last5_point_diff":-16.0,"home_games":9.0,"home_wins":3.0,"home_losses":6.0,"home_point_diff":-9.555555555555555,"home_win_pct":0.3333333333333333,"away_games":10.0,"away_wins":3.0,"away_losses":7.0,"away_point_diff":-7.6,"away_win_pct":0.3,"off_rating":102.72533935463544,"def_rating":112.35297179140211,"net_rating":-9.627632436766675,"pace":80.5421052631579,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":3.0,"rank":9.0,"team_hub_href":"../scouting/team_hub.html?team=VSC"},{"team_key":"CAQ","team_name":"Queluz O NOSSO PREGO","games":19.0,"wins":6.0,"losses":13.0,"point_diff":-4.578947368421052,"win_pct":0.3157894736842105,"last5":"WLLLL","last5_games":5.0,"last5_wins":1.0,"last5_losses":4.0,"last5_win_pct":0.2,"last5_point_diff":-9.6,"home_games":10.0,"home_wins":3.0,"home_losses":7.0,"home_point_diff":-5.0,"home_win_pct":0.3,"away_games":9.0,"away_wins":3.0,"away_losses":6.0,"away_point_diff":-4.111111111111111,"away_win_pct":0.3333333333333333,"off_rating":108.57785364003361,"def_rating":112.73581129759587,"net_rating":-4.157957657562264,"pace":78.30105263157895,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":-3.0,"rank":10.0,"team_hub_href":"../scouting/team_hub.html?team=CAQ"},{"team_key":"VGA","team_name":"SC Vasco da Gama","games":19.0,"wins":5.0,"losses":14.0,"point_diff":-14.789473684210526,"win_pct":0.2631578947368421,"last5":"LLWWL","last5_games":5.0,"last5_wins":2.0,"last5_losses":3.0,"last5_win_pct":0.4,"last5_point_diff":-14.8,"home_games":10.0,"home_wins":2.0,"home_losses":8.0,"home_point_diff":-20.0,"home_win_pct":0.2,"away_games":9.0,"away_wins":3.0,"away_losses":6.0,"away_point_diff":-9.0,"away_win_pct":0.3333333333333333,"off_rating":99.81347986086607,"def_rating":118.29552950728169,"net_rating":-18.482049646415618,"pace":82.70640522875817,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":20.0,"rank":11.0,"team_hub_href":"../scouting/team_hub.html?team=VGA"},{"team_key":"GFC","team_name":"Galitos BARREIRO","games":19.0,"wins":5.0,"losses":14.0,"point_diff":-11.578947368421053,"win_pct":0.2631578947368421,"last5":"LWLLL","last5_games":5.0,"last5_wins":1.0,"last5_losses":4.0,"last5_win_pct":0.2,"last5_point_diff":-11.6,"home_games":10.0,"home_wins":2.0,"home_losses":8.0,"home_point_diff":-14.2,"home_win_pct":0.2,"away_games":9.0,"away_wins":3.0,"away_losses":6.0,"away_point_diff":-8.666666666666666,"away_win_pct":0.3333333333333333,"off_rating":102.77384510513346,"def_rating":117.0034551355879,"net_rating":-14.229610030454438,"pace":79.83895424836602,"h2h_wins":1.0,"h2h_losses":1.0,"h2h_games":2.0,"h2h_win_pct":0.5,"h2h_point_diff":-20.0,"rank":12.0,"team_hub_href":"../scouting/team_hub.html?team=GFC"}];
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function fmtNum(v, digits=1) {
+      return (v === null || v === undefined || Number.isNaN(Number(v))) ? "—" : Number(v).toFixed(digits);
+    }
+
+    function fmtPct(v) {
+      return (v === null || v === undefined || Number.isNaN(Number(v))) ? "—" : (Number(v) * 100).toFixed(1) + "%";
+    }
+
+    function fmtDiff(v) {
+      if (v === null || v === undefined || Number.isNaN(Number(v))) return "—";
+      const n = Number(v);
+      const cls = n > 0 ? "pos" : (n < 0 ? "neg" : "");
+      const prefix = n > 0 ? "+" : "";
+      return `<span class="${cls}">${prefix}${n.toFixed(1)}</span>`;
+    }
+
+    function renderLast5(text, wins=null, losses=null) {
+      const chars = String(text || "").trim().split("").filter(Boolean);
+      const pills = chars.map(ch => {
+        const up = ch.toUpperCase();
+        const cls = up === "W" ? "win" : (up === "L" ? "loss" : "tie");
+        return `<span class="form-pill ${cls}">${escapeHtml(up)}</span>`;
+      }).join("");
+      const record = (wins !== null && losses !== null) ? `${wins}-${losses}` : "";
+      return `<div class="last5-stack"><div class="last5-record">${escapeHtml(record)}</div><div class="last5-pills">${pills}</div></div>`;
+    }
+
+    function teamCell(row, section) {
+      const name = escapeHtml(row.team_name || "");
+      const key = escapeHtml(row.team_key || "");
+      const href = row.team_hub_href ? escapeHtml(row.team_hub_href) : "";
+      const team = href ? `<a class="team-link" href="${href}">${name}</a>` : name;
+      let sub = `<div class="team-sub">${key}</div>`;
+      if (section === "home") {
+        sub += `<div class="record-line">Home: ${Math.round(Number(row.home_wins || 0))}-${Math.round(Number(row.home_losses || 0))}</div>`;
+      } else if (section === "away") {
+        sub += `<div class="record-line">Away: ${Math.round(Number(row.away_wins || 0))}-${Math.round(Number(row.away_losses || 0))}</div>`;
+      } else if (section === "last5") {
+        sub += `<div class="record-line">Last 5: ${Math.round(Number(row.last5_wins || 0))}-${Math.round(Number(row.last5_losses || 0))}</div>`;
+      }
+      return `${team}${sub}`;
+    }
+
+    const SECTION_CONFIG = {
+      overall: {
+        headers: ["#", "Team", "G", "W", "L", "Win%", "Diff", "OffRtg", "DefRtg", "NetRtg", "Pace", "Last 5"],
+        row: (row) => [
+          `<span class="rank-cell">${Math.round(Number(row.rank || 0))}</span>`,
+          teamCell(row, "overall"),
+          Math.round(Number(row.games || 0)),
+          Math.round(Number(row.wins || 0)),
+          Math.round(Number(row.losses || 0)),
+          fmtPct(row.win_pct),
+          fmtDiff(row.point_diff),
+          fmtNum(row.off_rating),
+          fmtNum(row.def_rating),
+          fmtDiff(row.net_rating),
+          fmtNum(row.pace),
+          renderLast5(row.last5, Math.round(Number(row.last5_wins || 0)), Math.round(Number(row.last5_losses || 0))),
+        ],
+      },
+      home: {
+        headers: ["#", "Team", "Home G", "Home W", "Home L", "Home Win%", "Home Diff", "OffRtg", "DefRtg", "NetRtg", "Pace", "Last 5"],
+        row: (row) => [
+          `<span class="rank-cell">${Math.round(Number(row.rank || 0))}</span>`,
+          teamCell(row, "home"),
+          Math.round(Number(row.home_games || 0)),
+          Math.round(Number(row.home_wins || 0)),
+          Math.round(Number(row.home_losses || 0)),
+          fmtPct(row.home_win_pct),
+          fmtDiff(row.home_point_diff),
+          fmtNum(row.off_rating),
+          fmtNum(row.def_rating),
+          fmtDiff(row.net_rating),
+          fmtNum(row.pace),
+          renderLast5(row.last5, Math.round(Number(row.last5_wins || 0)), Math.round(Number(row.last5_losses || 0))),
+        ],
+      },
+      away: {
+        headers: ["#", "Team", "Away G", "Away W", "Away L", "Away Win%", "Away Diff", "OffRtg", "DefRtg", "NetRtg", "Pace", "Last 5"],
+        row: (row) => [
+          `<span class="rank-cell">${Math.round(Number(row.rank || 0))}</span>`,
+          teamCell(row, "away"),
+          Math.round(Number(row.away_games || 0)),
+          Math.round(Number(row.away_wins || 0)),
+          Math.round(Number(row.away_losses || 0)),
+          fmtPct(row.away_win_pct),
+          fmtDiff(row.away_point_diff),
+          fmtNum(row.off_rating),
+          fmtNum(row.def_rating),
+          fmtDiff(row.net_rating),
+          fmtNum(row.pace),
+          renderLast5(row.last5, Math.round(Number(row.last5_wins || 0)), Math.round(Number(row.last5_losses || 0))),
+        ],
+      },
+      last5: {
+        headers: ["#", "Team", "L5 G", "L5 W", "L5 L", "L5 Win%", "L5 Diff", "OffRtg", "DefRtg", "NetRtg", "Pace", "Form"],
+        row: (row) => [
+          `<span class="rank-cell">${Math.round(Number(row.rank || 0))}</span>`,
+          teamCell(row, "last5"),
+          Math.round(Number(row.last5_games || 0)),
+          Math.round(Number(row.last5_wins || 0)),
+          Math.round(Number(row.last5_losses || 0)),
+          fmtPct(row.last5_win_pct),
+          fmtDiff(row.last5_point_diff),
+          fmtNum(row.off_rating),
+          fmtNum(row.def_rating),
+          fmtDiff(row.net_rating),
+          fmtNum(row.pace),
+          renderLast5(row.last5, Math.round(Number(row.last5_wins || 0)), Math.round(Number(row.last5_losses || 0))),
+        ],
+      },
+    };
+
+    function sectionSorter(section) {
+      if (section === "home") {
+        return (a, b) =>
+          (Number(b.home_win_pct || -1) - Number(a.home_win_pct || -1)) ||
+          (Number(b.home_wins || -1) - Number(a.home_wins || -1)) ||
+          (Number(b.home_point_diff || -999) - Number(a.home_point_diff || -999)) ||
+          (Number(b.net_rating || -999) - Number(a.net_rating || -999)) ||
+          String(a.team_name || "").localeCompare(String(b.team_name || ""));
+      }
+      if (section === "away") {
+        return (a, b) =>
+          (Number(b.away_win_pct || -1) - Number(a.away_win_pct || -1)) ||
+          (Number(b.away_wins || -1) - Number(a.away_wins || -1)) ||
+          (Number(b.away_point_diff || -999) - Number(a.away_point_diff || -999)) ||
+          (Number(b.net_rating || -999) - Number(a.net_rating || -999)) ||
+          String(a.team_name || "").localeCompare(String(b.team_name || ""));
+      }
+      if (section === "last5") {
+        return (a, b) =>
+          (Number(b.last5_win_pct || -1) - Number(a.last5_win_pct || -1)) ||
+          (Number(b.last5_wins || -1) - Number(a.last5_wins || -1)) ||
+          (Number(b.last5_point_diff || -999) - Number(a.last5_point_diff || -999)) ||
+          (Number(b.net_rating || -999) - Number(a.net_rating || -999)) ||
+          String(a.team_name || "").localeCompare(String(b.team_name || ""));
+      }
+      return (a, b) => Number(a.rank || 999) - Number(b.rank || 999);
+    }
+
+    function renderSummaryCards() {
+      const leader = STANDINGS.slice().sort((a,b) => Number(a.rank || 999) - Number(b.rank || 999))[0];
+      const bestOff = STANDINGS.slice().sort((a,b) => Number(b.off_rating || -999) - Number(a.off_rating || -999))[0];
+      const bestDef = STANDINGS.slice().sort((a,b) => Number(a.def_rating || 999) - Number(b.def_rating || 999))[0];
+      const hottest = STANDINGS.slice().sort((a,b) =>
+        (Number(b.last5_win_pct || -1) - Number(a.last5_win_pct || -1)) ||
+        (Number(b.last5_point_diff || -999) - Number(a.last5_point_diff || -999))
+      )[0];
+
+      const cards = [
+        {
+          label: "League leader",
+          value: leader ? escapeHtml(leader.team_name || "") : "—",
+          sub: leader ? `#${Math.round(Number(leader.rank || 0))} · ${Math.round(Number(leader.wins || 0))}-${Math.round(Number(leader.losses || 0))} · ${fmtPct(leader.win_pct)}` : "No data"
+        },
+        {
+          label: "Best offense",
+          value: bestOff ? escapeHtml(bestOff.team_name || "") : "—",
+          sub: bestOff ? `OffRtg ${fmtNum(bestOff.off_rating)} · NetRtg ${fmtDiff(bestOff.net_rating)}` : "No data"
+        },
+        {
+          label: "Best defense",
+          value: bestDef ? escapeHtml(bestDef.team_name || "") : "—",
+          sub: bestDef ? `DefRtg ${fmtNum(bestDef.def_rating)} · Diff ${fmtDiff(bestDef.point_diff)}` : "No data"
+        },
+        {
+          label: "Hottest recent team",
+          value: hottest ? escapeHtml(hottest.team_name || "") : "—",
+          sub: hottest ? `Last 5: ${Math.round(Number(hottest.last5_wins || 0))}-${Math.round(Number(hottest.last5_losses || 0))} · Diff ${fmtDiff(hottest.last5_point_diff)}` : "No data"
+        },
+      ];
+
+      document.getElementById("summary-cards").innerHTML = cards.map(card => `
+        <div class="summary-card">
+          <div class="summary-label">${card.label}</div>
+          <div class="summary-value">${card.value}</div>
+          <div class="summary-sub">${card.sub}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderTable(section) {
+      const config = SECTION_CONFIG[section] || SECTION_CONFIG.overall;
+      const rows = STANDINGS.slice().sort(sectionSorter(section));
+      const head = document.getElementById("standings-head");
+      const body = document.getElementById("standings-body");
+
+      head.innerHTML = `<tr>${config.headers.map(h => `<th>${escapeHtml(h)}</th>`).join("")}</tr>`;
+      body.innerHTML = rows.map((row, idx) => {
+        const cls = idx < 4 ? "rank-top" : (idx >= rows.length - 2 ? "rank-bottom" : "");
+        return `<tr class="${cls}">${config.row(row).map(cell => `<td>${cell}</td>`).join("")}</tr>`;
+      }).join("");
+    }
+
+    function bindTabs() {
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".tab-btn").forEach(x => x.classList.remove("active"));
+          btn.classList.add("active");
+          renderTable(btn.dataset.section || "overall");
+        });
+      });
+    }
+
+    renderSummaryCards();
+    bindTabs();
+    renderTable("overall");
+  </script>
 </body>
 </html>
