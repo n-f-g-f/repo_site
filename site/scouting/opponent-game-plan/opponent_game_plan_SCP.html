@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Opponent Game Plan - Sporting Clube Portugal</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+body {
+    margin:0;
+    background:#f5f7fa;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#111827;
+}
+.container {
+    max-width:1500px; margin:auto; padding:24px;
+}
+.block {
+    background:white; border-radius:14px; padding:18px; margin-bottom:24px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+}
+.block h2 {
+    margin:0 0 14px 0;
+    font-size:22px;
+}
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:#111827; color:white; padding:9px 8px; text-align:left; white-space:nowrap; }
+td { padding:9px 8px; border-bottom:1px solid #eee; vertical-align:middle; }
+tbody tr:hover { background:#fafafa; }
+.player-cell { display:flex; align-items:center; gap:8px; }
+.avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; background:#ccc; flex:0 0 28px; }
+.avatar img { width:100%; height:100%; object-fit:cover; }
+.avatar-empty {
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:#111827; font-weight:bold;
+}
+.card-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.card {
+    background:#fafafa; border:1px solid #ddd; border-radius:12px; padding:14px;
+}
+.card-title {
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.card-value {
+    font-size:18px;
+    font-weight:700;
+    line-height:1.35;
+}
+.notes-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+}
+.note-card {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px;
+    background:#fafafa;
+}
+.note-card h3 {
+    margin:0 0 10px 0;
+    font-size:16px;
+}
+.note-card ul, .keys-card ul {
+    margin:0;
+    padding-left:18px;
+}
+.note-card li, .keys-card li {
+    margin-bottom:8px;
+    line-height:1.45;
+}
+.keys-card {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px 16px;
+    background:#fafafa;
+}
+.mini-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.mini-card {
+    background:#fafafa;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:14px;
+}
+.mini-label {
+    font-size:13px;
+    color:#6b7280;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.mini-value {
+    font-size:16px;
+    font-weight:700;
+    line-height:1.4;
+}
+.empty {
+    color:#6b7280; font-style:italic;
+}
+.section-grid {
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+}
+@media (max-width: 1100px) {
+    .section-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Sporting Clube Portugal</h1><div class="sub">Opponent Game Plan - SCP</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/SCP.png" alt="Sporting Clube Portugal logo"></div></div></div></div>
+
+
+    <section class="block">
+        <h2>Team Identity vs League</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
+                <tbody><tr><td>Pace</td><td>77.2</td><td>79.3</td><td>12</td><td>-2.1</td></tr><tr><td>OffRtg</td><td>115.4</td><td>107.9</td><td>2</td><td>7.5</td></tr><tr><td>DefRtg</td><td>101</td><td>107.8</td><td>2</td><td>-6.7</td></tr><tr><td>NetRtg</td><td>14.4</td><td>0.1</td><td>2</td><td>14.3</td></tr><tr><td>AST/G</td><td>20.9</td><td>18.5</td><td>2</td><td>2.4</td></tr><tr><td>TOV%</td><td>19</td><td>18.4</td><td>9</td><td>0.6</td></tr><tr><td>ORB%</td><td>38.3</td><td>31.4</td><td>2</td><td>6.8</td></tr><tr><td>PF/G</td><td>18.9</td><td>21</td><td>2</td><td>-2.1</td></tr><tr><td>FT Rate</td><td>33.5</td><td>35.2</td><td>8</td><td>-1.7</td></tr><tr><td>3PA Rate</td><td>47.7</td><td>40.9</td><td>1</td><td>6.9</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Below-average pace; they are more comfortable when the game stays organized in the half court.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Above-average assist profile; expect cleaner passing sequences and more extra-pass possessions.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Above-average three-point volume; spacing discipline and clean closeouts matter.</div></div></div></section>
+
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Most-Used Player</div>
+                <div class="card-value">F. Amarante</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Primary Scorer</div>
+                <div class="card-value">B. Johns</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Top 3PT Threat</div>
+                <div class="card-value">M. Morgan (34.8%)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Preferred Team Scoring Area</div>
+                <div class="card-value">Above the Break 3</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Most-Used Lineup</div>
+                <div class="card-value">B. Johns | C. Robinson | M. Harden Hayes | M. Morgan | S. Swenson</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Best-Performing Lineup</div>
+                <div class="card-value">B. Johns | C. Robinson | M. Harden Hayes | M. Morgan | S. Swenson</div>
+            </div>
+            </div>
+    </section>
+    
+
+<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Control the rhythm: they are more comfortable in a controlled half-court game, so do not let them play cleanly into structure.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Stay connected to spacing: their perimeter volume can bend the floor if your help and recovery are sloppy.</li><li>Know the first reference: B. Johns is a paint finisher, and the plan should start with taking away his comfort.</li></ul></div></section>
+
+
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_F._AMARANTE.png"></div><span class="player-name">F. Amarante</span></div></td><td>28.0</td><td>11.3</td><td>95</td><td>30.5%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_B._JOHNS.png"></div><span class="player-name">B. Johns</span></div></td><td>26.6</td><td>14.1</td><td>12</td><td>25.0%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._MORGAN.png"></div><span class="player-name">M. Morgan</span></div></td><td>24.2</td><td>12.2</td><td>141</td><td>34.8%</td><td>Above the Break 3</td><td>spot-up shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._HARDEN_HAYES.png"></div><span class="player-name">M. Harden Hayes</span></div></td><td>19.2</td><td>8.3</td><td>45</td><td>33.3%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_C._ROBINSON.png"></div><span class="player-name">C. Robinson</span></div></td><td>18.9</td><td>7.6</td><td>59</td><td>33.9%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_S._SWENSON.png"></div><span class="player-name">S. Swenson</span></div></td><td>18.3</td><td>8.7</td><td>94</td><td>31.9%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>The main offensive references are F. Amarante and B. Johns; load the scouting plan into those names first.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts start with D. Ventura, M. Morgan, and M. Correia; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from F. Amarante and S. Swenson; contest, but do not over-help into secondary advantages.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Their offense naturally flows toward Above the Break 3; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially M. Morgan, B. Johns, and S. Swenson; force them away from preferred areas.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup to rehearse first: B. Johns | C. Robinson | M. Harden Hayes | M. Morgan | S. Swenson.</li><li>Secondary lineup to recognize: B. Johns | C. Robinson | F. Amarante | M. Morgan | S. Swenson.</li><li>Recognize the main duo/trio combinations: B. Johns | F. Amarante and B. Johns | F. Amarante | M. Morgan.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Second-chance threat; the first stop is not enough against this team.</li><li>Do not lose D. Ventura and M. Morgan in help-and-recover situations.</li></ul>
+            </div>
+            </div>
+    </section>
+    
+
+<div class="section-grid">
+    <div>
+        
+    <section class="block">
+        <h2>Primary Shooting Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_D._VENTURA.png"></div><span class="player-name">D. Ventura</span></div></td><td>Closeout | Preferred Area</td><td>70</td><td>41.4%</td><td>63.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._MORGAN.png"></div><span class="player-name">M. Morgan</span></div></td><td>Closeout | Preferred Area</td><td>141</td><td>34.8%</td><td>71.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._CORREIA.png"></div><span class="player-name">M. Correia</span></div></td><td>Closeout</td><td>32</td><td>34.4%</td><td>69.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_C._ROBINSON.png"></div><span class="player-name">C. Robinson</span></div></td><td>Closeout | Preferred Area</td><td>59</td><td>33.9%</td><td>45.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_F._AMARANTE.png"></div><span class="player-name">F. Amarante</span></div></td><td>Volume 3PT | Preferred Area</td><td>95</td><td>30.5%</td><td>54.0%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_S._SWENSON.png"></div><span class="player-name">S. Swenson</span></div></td><td>Volume 3PT | Preferred Area</td><td>94</td><td>31.9%</td><td>67.6%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_J._FERNANDES.png"></div><span class="player-name">J. Fernandes</span></div></td><td>Volume 3PT</td><td>28</td><td>32.1%</td><td>40.6%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_U._RAZAQUE.png"></div><span class="player-name">U. Razaque</span></div></td><td>Volume 3PT</td><td>9</td><td>11.1%</td><td>50.0%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_B._JOHNS.png"></div><span class="player-name">B. Johns</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_R._PALHARES.png"></div><span class="player-name">R. Palhares</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._HARDEN_HAYES.png"></div><span class="player-name">M. Harden Hayes</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_D._VENTURA.png"></div><span class="player-name">D. Ventura</span></div></td><td>70</td><td>41.4%</td><td>63.6%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._MORGAN.png"></div><span class="player-name">M. Morgan</span></div></td><td>141</td><td>34.8%</td><td>71.6%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._CORREIA.png"></div><span class="player-name">M. Correia</span></div></td><td>32</td><td>34.4%</td><td>69.6%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_C._ROBINSON.png"></div><span class="player-name">C. Robinson</span></div></td><td>59</td><td>33.9%</td><td>45.0%</td><td>0.9</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_F._AMARANTE.png"></div><span class="player-name">F. Amarante</span></div></td><td>95</td><td>30.5%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_S._SWENSON.png"></div><span class="player-name">S. Swenson</span></div></td><td>94</td><td>31.9%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_J._FERNANDES.png"></div><span class="player-name">J. Fernandes</span></div></td><td>28</td><td>32.1%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_U._RAZAQUE.png"></div><span class="player-name">U. Razaque</span></div></td><td>9</td><td>11.1%</td><td>0.6</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+    <div>
+        
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._MORGAN.png"></div><span class="player-name">M. Morgan</span></div></td><td>Above the Break 3</td><td>66.0%</td><td>36.2%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_B._JOHNS.png"></div><span class="player-name">B. Johns</span></div></td><td>Restricted Area</td><td>65.2%</td><td>83.2%</td><td>1.7</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_S._SWENSON.png"></div><span class="player-name">S. Swenson</span></div></td><td>Above the Break 3</td><td>59.7%</td><td>32.5%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_F._AMARANTE.png"></div><span class="player-name">F. Amarante</span></div></td><td>Above the Break 3</td><td>41.5%</td><td>31.5%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_D._VENTURA.png"></div><span class="player-name">D. Ventura</span></div></td><td>Above the Break 3</td><td>56.4%</td><td>40.3%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_C._ROBINSON.png"></div><span class="player-name">C. Robinson</span></div></td><td>Above the Break 3</td><td>38.2%</td><td>30.0%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_R._PALHARES.png"></div><span class="player-name">R. Palhares</span></div></td><td>Restricted Area</td><td>62.9%</td><td>64.1%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._HARDEN_HAYES.png"></div><span class="player-name">M. Harden Hayes</span></div></td><td>Restricted Area</td><td>29.1%</td><td>68.8%</td><td>1.4</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Above the Break 3</td><td>509</td><td>32.8%</td><td>1.0</td><td>39.6%</td></tr><tr><td>Restricted Area</td><td>395</td><td>71.9%</td><td>1.4</td><td>30.8%</td></tr><tr><td>Paint Non-RA</td><td>181</td><td>37.6%</td><td>0.8</td><td>14.1%</td></tr><tr><td>Mid-Range</td><td>95</td><td>33.7%</td><td>0.7</td><td>7.4%</td></tr><tr><td>Corner 3 Left</td><td>58</td><td>39.7%</td><td>1.2</td><td>4.5%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Lineups to Prepare For</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>B. Johns | C. Robinson | M. Harden Hayes | M. Morgan | S. Swenson</td><td>55.2</td><td>97.1</td><td>75.3</td><td>21.7</td></tr><tr><td>Rotation lineup</td><td>B. Johns | C. Robinson | F. Amarante | M. Morgan | S. Swenson</td><td>54.4</td><td>99.2</td><td>86.0</td><td>13.2</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+</div>
+
+
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_F._AMARANTE.png"></div><span class="player-name">F. Amarante</span></div></td><td></td><td></td><td>19</td><td>28.0</td><td>11.3</td><td>6.7</td><td>2.9</td><td>1.2</td><td>2.3</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_B._JOHNS.png"></div><span class="player-name">B. Johns</span></div></td><td></td><td></td><td>19</td><td>26.6</td><td>14.1</td><td>7.3</td><td>2.1</td><td>0.9</td><td>2.5</td><td>0.8</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._MORGAN.png"></div><span class="player-name">M. Morgan</span></div></td><td></td><td></td><td>19</td><td>24.2</td><td>12.2</td><td>3.3</td><td>3.3</td><td>1.0</td><td>1.5</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._HARDEN_HAYES.png"></div><span class="player-name">M. Harden Hayes</span></div></td><td></td><td></td><td>19</td><td>19.2</td><td>8.3</td><td>5.2</td><td>0.8</td><td>0.5</td><td>0.7</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_C._ROBINSON.png"></div><span class="player-name">C. Robinson</span></div></td><td></td><td></td><td>19</td><td>18.9</td><td>7.6</td><td>5.2</td><td>2.4</td><td>0.6</td><td>0.8</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_S._SWENSON.png"></div><span class="player-name">S. Swenson</span></div></td><td></td><td></td><td>19</td><td>18.3</td><td>8.7</td><td>1.8</td><td>3.0</td><td>0.9</td><td>1.2</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_J._FERNANDES.png"></div><span class="player-name">J. Fernandes</span></div></td><td></td><td></td><td>19</td><td>16.2</td><td>5.0</td><td>3.0</td><td>1.1</td><td>0.4</td><td>1.5</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_D._VENTURA.png"></div><span class="player-name">D. Ventura</span></div></td><td></td><td></td><td>15</td><td>20.5</td><td>10.9</td><td>1.2</td><td>3.6</td><td>1.2</td><td>1.8</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_R._PALHARES.png"></div><span class="player-name">R. Palhares</span></div></td><td></td><td></td><td>19</td><td>11.3</td><td>4.6</td><td>2.9</td><td>0.7</td><td>0.3</td><td>0.8</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_M._CORREIA.png"></div><span class="player-name">M. Correia</span></div></td><td></td><td></td><td>18</td><td>9.8</td><td>3.6</td><td>1.1</td><td>1.3</td><td>0.7</td><td>0.4</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SCP/SCP_A._CRUZ.png"></div><span class="player-name">A. Cruz</span></div></td><td></td><td></td><td>8</td><td>11.3</td><td>6.9</td><td>2.6</td><td>0.8</td><td>0.4</td><td>0.8</td><td>0.1</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>B. Johns | F. Amarante</td><td>355.4</td><td>89.6</td><td>82.4</td><td>7.2</td></tr><tr><td>trio</td><td>B. Johns | F. Amarante | M. Morgan</td><td>222.3</td><td>90.1</td><td>83.5</td><td>6.7</td></tr><tr><td>duo</td><td>D. Ventura | J. Fernandes</td><td>125.7</td><td>88.8</td><td>63.0</td><td>25.8</td></tr><tr><td>duo</td><td>A. Cruz | R. Palhares</td><td>60.6</td><td>106.2</td><td>73.2</td><td>33.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">D. Ventura, M. Morgan, M. Correia</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Primary area</div>
+                <div class="mini-value">Above the Break 3</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">B. Johns | C. Robinson | M. Harden Hayes | M. Morgan | S. Swenson</div>
+            </div>
+            </div>
+    </section>
+    
+
+</div>
+</body>
+</html>
