@@ -91,6 +91,19 @@
     .trend-mini-table { width:100%; border-collapse:collapse; margin-top:10px; min-width:0; }
     .trend-mini-table th, .trend-mini-table td { padding:6px 0; border-bottom:1px solid rgba(148,163,184,0.12); font-size:12px; text-align:right; white-space:nowrap; }
     .trend-mini-table th:first-child, .trend-mini-table td:first-child { text-align:left; }
+    .role-cluster-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+    .role-cluster-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .role-cluster-title { font-size:14px; font-weight:700; margin:0 0 8px 0; }
+    .role-cluster-copy { color:var(--muted); font-size:12px; line-height:1.45; margin-bottom:10px; }
+    .role-cluster-list { display:flex; flex-direction:column; gap:8px; }
+    .role-cluster-item { display:flex; justify-content:space-between; gap:12px; align-items:center; font-size:13px; }
+    .role-cluster-item a { color:var(--accent); text-decoration:none; font-weight:700; }
+    .role-cluster-item a:hover { text-decoration:underline; }
+    .role-chip { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+    .role-chip.guard { background:rgba(56,189,248,0.18); color:#bae6fd; }
+    .role-chip.wing { background:rgba(168,85,247,0.18); color:#e9d5ff; }
+    .role-chip.big { background:rgba(74,222,128,0.18); color:#bbf7d0; }
+    .role-chip.hybrid { background:rgba(245,158,11,0.18); color:#fde68a; }
     @media (max-width: 1300px) {
       .hero, .two-col, .three-col { grid-template-columns: 1fr; }
       .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -149,6 +162,23 @@
     <div class="card">
       <div class="section-head">Trending Players</div>
       <div class="section-body" id="trending-players-panel"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Player Role Map</div>
+        <div class="section-body">
+          <div class="chart-wrap">
+            <svg id="role-map-chart" viewBox="0 0 980 560" role="img" aria-label="Player role map"></svg>
+            <div id="role-map-tooltip" class="tooltip"></div>
+          </div>
+          <div class="legend" id="role-map-legend"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-head">Role Clusters</div>
+        <div class="section-body" id="role-clusters-panel"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -425,6 +455,238 @@
           <div class="trend-player-meta" style="margin-top:10px;">Δ PPG ${ppgDelta} · Δ TS ${tsDelta} · Δ 3PA rate ${threeDelta}</div>
         </div>`;
       }).join("")}</div>`;
+    }
+
+    function positionBucket(position) {
+      const pos = String(position || "").toUpperCase();
+      if (pos.includes("C") || pos.includes("5") || pos.includes("P")) return "big";
+      if (pos.includes("PF") || pos.includes("4") || pos.includes("F")) return "hybrid";
+      if (pos.includes("SF") || pos.includes("3") || pos.includes("W")) return "wing";
+      if (pos.includes("SG") || pos.includes("PG") || pos.includes("1") || pos.includes("2") || pos.includes("G")) return "guard";
+      return "hybrid";
+    }
+
+    function positionColor(bucket) {
+      const palette = {
+        guard: "#38bdf8",
+        wing: "#a855f7",
+        hybrid: "#f59e0b",
+        big: "#4ade80",
+      };
+      return palette[bucket] || "#94a3b8";
+    }
+
+    function clamp01(v) {
+      const n = Number(v);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(1, n));
+    }
+
+    function roleScoreCreator(player) {
+      const ast = player.ast_pct === null || player.ast_pct === undefined ? 0 : Number(player.ast_pct);
+      const usg = player.usg_pct === null || player.usg_pct === undefined ? 0 : Number(player.usg_pct);
+      return clamp01(ast * 2.6 + usg * 1.5);
+    }
+
+    function roleScoreImpact(player) {
+      const ts = player.ts_pct === null || player.ts_pct === undefined ? 0 : Number(player.ts_pct);
+      const swing = player.on_off_net_diff_per40 === null || player.on_off_net_diff_per40 === undefined ? 0 : Number(player.on_off_net_diff_per40);
+      return clamp01(((ts - 0.45) / 0.20) * 0.6 + ((swing + 8) / 20) * 0.4);
+    }
+
+    function playerRoleLabel(player) {
+      const ast = player.ast_pct === null || player.ast_pct === undefined ? 0 : Number(player.ast_pct);
+      const usg = player.usg_pct === null || player.usg_pct === undefined ? 0 : Number(player.usg_pct);
+      const ts = player.ts_pct === null || player.ts_pct === undefined ? 0 : Number(player.ts_pct);
+      const rpg = player.rpg === null || player.rpg === undefined ? 0 : Number(player.rpg);
+      const threeRate = player.season_three_rate === null || player.season_three_rate === undefined ? 0 : Number(player.season_three_rate);
+      const swing = player.on_off_net_diff_per40 === null || player.on_off_net_diff_per40 === undefined ? 0 : Number(player.on_off_net_diff_per40);
+      const posBucket = positionBucket(player.position);
+
+      if (ast >= 0.20 && usg >= 0.22) return "Primary Creator";
+      if (threeRate >= 0.38 && ts >= 0.52) return "Spacing Piece";
+      if ((rpg >= 5.5 && (posBucket === "big" || posBucket === "hybrid")) || (posBucket === "big" && usg < 0.22)) return "Rebound / Interior";
+      if (ts >= 0.56 && usg >= 0.18 && ast < 0.16) return "Finisher";
+      if (swing >= 4.0) return "Positive Swing";
+      return "Connector";
+    }
+
+    function buildRoleClusters(players) {
+      const clusters = [
+        { key: "Primary Creator", title: "Primary creators", copy: "Higher creation load from usage plus playmaking." },
+        { key: "Finisher", title: "Finishers", copy: "More about converting possessions than initiating them." },
+        { key: "Spacing Piece", title: "Spacing pieces", copy: "Players who stretch the floor through three-point tendency and acceptable efficiency." },
+        { key: "Rebound / Interior", title: "Rebound / interior presence", copy: "Bigger profiles and glass work around the interior." },
+        { key: "Positive Swing", title: "Positive swing", copy: "Players whose on/off profile gives the team a stronger push." },
+      ];
+
+      return clusters.map(cluster => {
+        let ranked = [...players]
+          .filter(p => playerRoleLabel(p) === cluster.key)
+          .sort((a, b) => {
+            if (cluster.key === "Primary Creator") return roleScoreCreator(b) - roleScoreCreator(a);
+            if (cluster.key === "Spacing Piece") return ((Number(b.season_three_rate || 0) + Number(b.ts_pct || 0)) - (Number(a.season_three_rate || 0) + Number(a.ts_pct || 0)));
+            if (cluster.key === "Rebound / Interior") return ((Number(b.rpg || 0) + Number(b.mpg || 0) * 0.1) - (Number(a.rpg || 0) + Number(a.mpg || 0) * 0.1));
+            if (cluster.key === "Positive Swing") return Number(b.on_off_net_diff_per40 || 0) - Number(a.on_off_net_diff_per40 || 0);
+            return roleScoreImpact(b) - roleScoreImpact(a);
+          })
+          .slice(0, 3);
+        return { ...cluster, players: ranked };
+      });
+    }
+
+    function renderRoleClusters(teamKey) {
+      const root = document.getElementById("role-clusters-panel");
+      if (!root) return;
+      const players = teamPlayers(teamKey)
+        .filter(p => p.mpg !== null && p.mpg !== undefined && Number(p.mpg) >= 8)
+        .sort((a,b) => Number(b.mpg || 0) - Number(a.mpg || 0));
+      if (!players.length) {
+        root.innerHTML = '<div class="empty">No player roles available.</div>';
+        return;
+      }
+
+      const clusters = buildRoleClusters(players);
+      root.innerHTML = `<div class="role-cluster-grid">${clusters.map(cluster => {
+        const listHtml = cluster.players.length
+          ? `<div class="role-cluster-list">${cluster.players.map(p => `
+              <div class="role-cluster-item">
+                <a href="${p.player_hub_href || '#'}">${escapeHtml(p.player_name)}</a>
+                <span class="role-chip ${positionBucket(p.position)}">${escapeHtml(p.position || "—")}</span>
+              </div>
+            `).join("")}</div>`
+          : `<div class="empty">No clear matches.</div>`;
+        return `
+          <div class="role-cluster-card">
+            <div class="role-cluster-title">${escapeHtml(cluster.title)}</div>
+            <div class="role-cluster-copy">${escapeHtml(cluster.copy)}</div>
+            ${listHtml}
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function renderRoleMap(teamKey) {
+      const svg = document.getElementById("role-map-chart");
+      const tooltip = document.getElementById("role-map-tooltip");
+      const legend = document.getElementById("role-map-legend");
+      if (!svg || !tooltip || !legend) return;
+
+      const players = teamPlayers(teamKey)
+        .filter(p => p.mpg !== null && p.mpg !== undefined && Number(p.mpg) >= 8)
+        .sort((a,b) => Number(b.mpg || 0) - Number(a.mpg || 0));
+
+      if (!players.length) {
+        svg.innerHTML = "";
+        legend.innerHTML = "";
+        return;
+      }
+
+      const width = 980, height = 560;
+      const margin = { top: 28, right: 22, bottom: 54, left: 58 };
+      const plotX = margin.left, plotY = margin.top, plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+      const sx = (x) => plotX + x * plotW;
+      const sy = (y) => plotY + plotH - y * plotH;
+      const NS = "http://www.w3.org/2000/svg";
+
+      function line(x1, y1, x2, y2, cls) {
+        const e = document.createElementNS(NS, "line");
+        e.setAttribute("x1", x1); e.setAttribute("y1", y1); e.setAttribute("x2", x2); e.setAttribute("y2", y2); e.setAttribute("class", cls);
+        return e;
+      }
+      function textNode(x, y, val, cls, anchor="middle") {
+        const e = document.createElementNS(NS, "text");
+        e.setAttribute("x", x); e.setAttribute("y", y); e.setAttribute("class", cls); e.setAttribute("text-anchor", anchor);
+        e.textContent = val;
+        return e;
+      }
+
+      svg.innerHTML = "";
+
+      [0, 0.25, 0.5, 0.75, 1].forEach(v => {
+        const gx = sx(v), gy = sy(v);
+        svg.appendChild(line(gx, plotY, gx, plotY + plotH, "grid-line"));
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+      });
+
+      svg.appendChild(line(sx(0.5), plotY, sx(0.5), plotY + plotH, "series-b"));
+      svg.appendChild(line(plotX, sy(0.5), plotX + plotW, sy(0.5), "series-b"));
+
+      const frame = document.createElementNS(NS, "rect");
+      frame.setAttribute("x", plotX);
+      frame.setAttribute("y", plotY);
+      frame.setAttribute("width", plotW);
+      frame.setAttribute("height", plotH);
+      frame.setAttribute("class", "plot-frame");
+      svg.appendChild(frame);
+
+      svg.appendChild(textNode(plotX + plotW / 2, height - 12, "Creation load (usage + playmaking)", "axis-label"));
+      const yLabel = textNode(18, plotY + plotH / 2, "Efficiency / impact", "axis-label");
+      yLabel.setAttribute("transform", `rotate(-90 18 ${plotY + plotH / 2})`);
+      svg.appendChild(yLabel);
+
+      const cornerLabels = [
+        [plotX + 8, plotY + 18, "High impact / low creation", "start"],
+        [plotX + plotW - 8, plotY + 18, "Primary creators", "end"],
+        [plotX + 8, plotY + plotH - 8, "Low-volume connectors", "start"],
+        [plotX + plotW - 8, plotY + plotH - 8, "High-usage / lower impact", "end"],
+      ];
+      cornerLabels.forEach(([x,y,val,anchor]) => svg.appendChild(textNode(x,y,val,"axis-tick",anchor)));
+
+      players.forEach(player => {
+        const x = roleScoreCreator(player);
+        const y = roleScoreImpact(player);
+        const bucket = positionBucket(player.position);
+        const radius = 7 + Math.max(0, Math.min(16, Number(player.mpg || 0) * 0.35));
+
+        const dot = document.createElementNS(NS, "circle");
+        dot.setAttribute("cx", sx(x));
+        dot.setAttribute("cy", sy(y));
+        dot.setAttribute("r", radius);
+        dot.setAttribute("fill", positionColor(bucket));
+        dot.setAttribute("fill-opacity", "0.80");
+        dot.setAttribute("stroke", "#e5e7eb");
+        dot.setAttribute("stroke-width", "1.2");
+        dot.style.cursor = "pointer";
+        dot.addEventListener("mouseenter", (evt) => {
+          const box = svg.getBoundingClientRect();
+          tooltip.style.opacity = "1";
+          tooltip.style.left = (evt.clientX - box.left) + "px";
+          tooltip.style.top = (evt.clientY - box.top) + "px";
+          tooltip.innerHTML = `<strong>${escapeHtml(player.player_name)}</strong><br>${escapeHtml(playerRoleLabel(player))} · ${escapeHtml(player.position || "—")}<br>USG ${fmtPct(player.usg_pct)} · AST ${fmtPct(player.ast_pct)}<br>TS ${fmtPct(player.ts_pct)} · On/Off ${fmtNumber(player.on_off_net_diff_per40)}`;
+        });
+        dot.addEventListener("mousemove", (evt) => {
+          const box = svg.getBoundingClientRect();
+          tooltip.style.left = (evt.clientX - box.left) + "px";
+          tooltip.style.top = (evt.clientY - box.top) + "px";
+        });
+        dot.addEventListener("mouseleave", () => { tooltip.style.opacity = "0"; });
+        dot.addEventListener("click", () => {
+          if (player.player_hub_href) window.location.href = player.player_hub_href;
+        });
+        svg.appendChild(dot);
+
+        const label = document.createElementNS(NS, "text");
+        label.setAttribute("x", sx(x));
+        label.setAttribute("y", sy(y) - radius - 6);
+        label.setAttribute("class", "axis-tick");
+        label.setAttribute("text-anchor", "middle");
+        label.textContent = player.player_name;
+        svg.appendChild(label);
+      });
+
+      const buckets = [
+        ["guard", "Guards"],
+        ["wing", "Wings"],
+        ["hybrid", "Hybrids"],
+        ["big", "Bigs"],
+      ];
+      legend.innerHTML = buckets.map(([bucket, label]) => `
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:${positionColor(bucket)}"></span>
+          <span>${escapeHtml(label)}</span>
+        </div>
+      `).join("");
     }
 
     function renderHero(team, games) {
@@ -750,6 +1012,8 @@
       renderIdentity(team, games, players, lineups);
       renderWatch(team.team_key, games, players, lineups);
       renderTrendingPlayers(team.team_key);
+      renderRoleMap(team.team_key);
+      renderRoleClusters(team.team_key);
       renderRecentForm(team.team_key);
       renderTrend(team.team_key);
       document.getElementById("games-table").innerHTML = buildGamesTable(gamesDesc);

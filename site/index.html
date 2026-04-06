@@ -4,7 +4,9 @@
 <style>
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;color:#111827;}
 .container{max-width:1180px;margin:0 auto;padding:40px 20px 56px;}
-.hero{background:linear-gradient(135deg,#0f172a 0%,#111827 100%);color:#fff;border-radius:20px;padding:32px;margin-bottom:24px;}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#111827 100%);color:#fff;border-radius:20px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero-league-logo{position:absolute;top:22px;right:24px;display:flex;align-items:center;justify-content:center;max-width:180px;}
+.hero-league-logo img{display:block;max-width:180px;max-height:72px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 14px rgba(0,0,0,.22));}
 .hero h1{margin:0 0 10px 0;font-size:38px;}
 .hero .sub{color:rgba(255,255,255,.88);font-size:16px;line-height:1.55;max-width:860px;}
 .hero-meta{margin-top:16px;color:rgba(255,255,255,.78);font-size:13px;}
@@ -33,12 +35,13 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;color:#1
 .quick-path-title{font-size:22px;font-weight:700;margin-bottom:8px;}
 .quick-path-sub{color:#4b5563;font-size:14px;line-height:1.5;}
 .empty{color:#6b7280;font-style:italic;}
-@media (max-width:980px){.choice-grid,.story-grid,.quick-path-grid{grid-template-columns:1fr;}}
+@media (max-width:980px){.choice-grid,.story-grid,.quick-path-grid{grid-template-columns:1fr;} .hero-league-logo{position:static;justify-content:flex-end;margin-bottom:18px;} .hero-league-logo img{max-height:60px;}}
 </style></head>
 <body><div class="container"><section class="hero">
+<div class="hero-league-logo"><img src="assets/logos/Betclic_logo.png" alt="Betclic logo"></div>
 <h1>Betclic Site</h1>
 <div class="sub">Entry point for the local static site. Use the three main areas below, then jump into the freshest reports, hottest players, featured teams and reference pages from the editorial layer.</div>
-<div class="hero-meta">Generated: 2026-04-06 03:07 · Reports: 36 · Analytics pages: 6 · General pages: 3</div>
+<div class="hero-meta">Generated: 2026-04-06 09:44 · Reports: 36 · Analytics pages: 6 · General pages: 3</div>
 </section>
 <section class="choice-grid">
 <a class="choice-card" href="analytics/index.html"><div class="choice-label">Area</div><div class="choice-title">Analytics</div><div class="choice-sub">League-wide advanced dashboards and tables for teams and players.</div><div class="choice-meta">Pages available: 6</div></a>
