@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>League Team Advanced Dashboard</title>
+  <title>Team Advanced Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -13,13 +13,32 @@
       --muted: #94a3b8;
       --line: #334155;
       --accent: #38bdf8;
+      --accent-2: #22c55e;
       --neg: #fca5a5;
+      --warn: #fbbf24;
     }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
     .wrap { max-width: 1600px; margin: 0 auto; padding: 24px; }
-    h1 { margin: 0 0 8px 0; font-size: 28px; }
-    .subtitle { color: var(--muted); margin-bottom: 18px; }
+    .hero {
+      display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center;
+      background: linear-gradient(180deg, rgba(17,24,39,0.96), rgba(15,23,42,0.96));
+      border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-bottom: 18px;
+      box-shadow: 0 18px 36px rgba(0,0,0,0.22);
+    }
+    .hero h1 { margin: 0 0 8px 0; font-size: 30px; }
+    .subtitle { color: var(--muted); margin-bottom: 14px; }
+    .hero-notes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hero-note {
+      background: #0b1220; border: 1px solid var(--line); color: var(--muted);
+      border-radius: 999px; padding: 8px 10px; font-size: 12px;
+    }
+    .hero-logo-wrap {
+      width: 92px; height: 92px; border-radius: 18px; border: 1px solid var(--line);
+      background: #0b1220; display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-logo-wrap img { width: 66px; height: 66px; object-fit: contain; }
     .toolbar {
       display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 18px;
       background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px;
@@ -35,7 +54,20 @@
       background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
     }
     .chart-card { margin-bottom: 18px; padding: 16px; }
+    .chart-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chart-badge {
+      background: #0b1220; border: 1px solid var(--line); border-radius: 999px;
+      padding: 7px 10px; font-size: 12px; color: var(--muted);
+    }
     .summary-card { margin-bottom: 18px; padding: 16px; }
+    .summary-topline {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px;
+    }
+    .summary-insight {
+      background: #0b1220; border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+    }
+    .summary-insight-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .summary-insight-value { font-size: 14px; line-height: 1.45; }
     .summary-empty { color: var(--muted); font-size: 14px; }
     .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .summary-logo {
@@ -99,14 +131,32 @@
     .quadrant-good { fill: rgba(34,197,94,0.08); }
     .quadrant-bad { fill: rgba(239,68,68,0.08); }
     .plot-frame { stroke: var(--line); fill: none; stroke-width: 1.2; }
-    @media (max-width: 1200px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 720px) { .summary-grid { grid-template-columns: 1fr; } }
+    .quad-label { fill: var(--muted); font-size: 12px; font-weight: 700; }
+    @media (max-width: 1200px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .summary-topline { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-logo-wrap { width: 78px; height: 78px; }
+      .hero-logo-wrap img { width: 56px; height: 56px; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>League Team Advanced Dashboard</h1>
-    <div class="subtitle">Dynamic splits from the canonical game context layer</div>
+    <div class="hero">
+      <div>
+        <h1>Team Advanced Profile</h1>
+        <div class="subtitle">Split explorer for league team ratings, pace and four-factor style indicators from the canonical game context layer</div>
+        <div class="hero-notes">
+          <span class="hero-note">Ratings view by team and split</span>
+          <span class="hero-note">OffRtg vs DefRtg scatter</span>
+          <span class="hero-note">Four factors and pace in one table</span>
+        </div>
+      </div>
+      <div class="hero-logo-wrap">
+        <img src="../assets/logos/LPB.png" alt="League logo" onerror="this.style.display='none'">
+      </div>
+    </div>
 
     <div class="toolbar">
       <div class="control">
@@ -127,7 +177,12 @@
     <div class="chart-card">
       <div class="chart-header">
         <div class="chart-title">Offensive Rating vs Defensive Rating</div>
-        <div class="chart-subtitle">X = OffRtg (higher is better) · Y = DefRtg (lower is better, so the best defenses sit higher)</div>
+        <div class="chart-subtitle">X = OffRtg (higher is better) · Y = DefRtg inverted visually, so the best defenses sit higher</div>
+        <div class="chart-badges">
+          <span class="chart-badge">Top-right = strong offense + strong defense</span>
+          <span class="chart-badge">Bottom-left = weak offense + weak defense</span>
+          <span class="chart-badge">Dashed lines = split averages</span>
+        </div>
       </div>
       <div class="chart-wrap">
         <svg id="ratings-scatter" viewBox="0 0 980 620" role="img" aria-label="Offensive and Defensive Rating scatter plot"></svg>
@@ -146,7 +201,7 @@
       </div>
     </div>
     <div class="notes">
-      Splits available: Season, Home, Away, Wins, Losses, Last 3, Last 5.
+      Splits available: Season, Home, Away, Wins, Losses, Last 3, Last 5. Use the summary card for one-team reading and the scatter/table for league positioning.
     </div>
   </div>
 
@@ -177,6 +232,65 @@
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
+    }
+
+    function metricRankPhrase(rank, total, ascending) {
+      if (!rank || !total) return "Rank unavailable";
+      if (rank === 1) return "Best in league";
+      if (rank <= 3) return `Top ${rank}`;
+      if (rank === total) return "Bottom of league";
+      if (rank >= Math.max(1, total - 2)) return `Bottom ${total - rank + 1}`;
+      return `Rank ${rank}/${total}`;
+    }
+
+    function buildMetricInsight(team, rankInfo, totalTeams) {
+      const candidates = SUMMARY_METRICS
+        .map(meta => {
+          const value = team[meta.key];
+          const rank = rankInfo[meta.key];
+          if (value === null || value === undefined || Number.isNaN(value) || !rank) return null;
+          return {
+            key: meta.key,
+            label: meta.label,
+            kind: meta.kind,
+            order: meta.order,
+            value,
+            rank,
+            distance: Math.abs(((totalTeams + 1) / 2) - rank),
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.distance - a.distance);
+
+      if (!candidates.length) return ["No clear edge", "No clear concern"];
+
+      let strength = null;
+      let concern = null;
+      const topCut = Math.max(1, Math.floor(totalTeams / 3));
+      const lowCut = Math.min(totalTeams, totalTeams - topCut + 1);
+
+      for (const c of candidates) {
+        const shown = c.kind === "pct" ? fmtPct(c.value) : fmtNumber(c.value);
+        if (!strength && c.rank <= topCut) {
+          strength = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+        }
+        if (!concern && c.rank >= lowCut) {
+          concern = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+        }
+        if (strength && concern) break;
+      }
+
+      if (!strength) {
+        const c = candidates[0];
+        const shown = c.kind === "pct" ? fmtPct(c.value) : fmtNumber(c.value);
+        strength = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+      }
+      if (!concern) {
+        const c = candidates[candidates.length - 1];
+        const shown = c.kind === "pct" ? fmtPct(c.value) : fmtNumber(c.value);
+        concern = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+      }
+      return [strength, concern];
     }
 
     function buildTeamCell(teamKey, teamName, logoSrc) {
@@ -397,7 +511,7 @@
       const ranks = computeRanks(rows);
 
       if (!teamValue) {
-        root.innerHTML = '<div class="summary-empty">Select one team to view its values and league rankings for the selected split.</div>';
+        root.innerHTML = '<div class="summary-empty">Select one team to view its split profile, league ranks and quick read.</div>';
         return;
       }
 
@@ -408,11 +522,32 @@
       }
 
       const rankInfo = ranks[team.team_key] || {};
+      const totalTeams = rows.length;
+      const insightPair = buildMetricInsight(team, rankInfo, totalTeams);
       const logo = team.logo_src ? `<img class="summary-logo" src="../${team.logo_src}" alt="${escapeHtml(team.team_key)} logo">` : "";
+      const splitLabel = (document.getElementById("split-filter")?.selectedOptions?.[0]?.textContent || splitValue || "Season");
+
+      const summaryTopline = `
+        <div class="summary-topline">
+          <div class="summary-insight">
+            <div class="summary-insight-label">Quick read</div>
+            <div class="summary-insight-value">${escapeHtml(team.team_name)} · ${escapeHtml(splitLabel)} · ${team.games} games</div>
+          </div>
+          <div class="summary-insight">
+            <div class="summary-insight-label">Top strength</div>
+            <div class="summary-insight-value">${escapeHtml(insightPair[0])}</div>
+          </div>
+          <div class="summary-insight">
+            <div class="summary-insight-label">Main concern</div>
+            <div class="summary-insight-value">${escapeHtml(insightPair[1])}</div>
+          </div>
+        </div>
+      `;
+
       const metricCards = SUMMARY_METRICS.map(meta => {
         const value = meta.kind === "pct" ? fmtPct(team[meta.key]) : fmtNumber(team[meta.key]);
         const rank = rankInfo[meta.key];
-        const rankText = rank ? `Rank: ${rank}/${rows.length}` : "Rank: —";
+        const rankText = rank ? metricRankPhrase(rank, totalTeams, meta.order === "asc") : "Rank unavailable";
         return `
           <div class="metric-card">
             <div class="metric-label">${meta.label}</div>
@@ -422,7 +557,6 @@
         `;
       }).join("");
 
-      const splitLabel = (document.getElementById("split-filter")?.selectedOptions?.[0]?.textContent || splitValue || "Season");
       root.innerHTML = `
         <div class="summary-header">
           ${logo}
@@ -431,6 +565,7 @@
             <div class="summary-team-meta">${escapeHtml(team.team_key)} · Split: ${escapeHtml(splitLabel)} · Games: ${team.games}</div>
           </div>
         </div>
+        ${summaryTopline}
         <div class="summary-grid">${metricCards}</div>
       `;
     }
@@ -520,6 +655,11 @@
 
       svg.appendChild(text(plotX + plotW / 2, height - 20, "Offensive Rating", "axis-label"));
       svg.appendChild(text(22, plotY + plotH / 2, "Defensive Rating", "axis-label", "middle", -90));
+
+      svg.appendChild(text(plotX + 12, plotY + 18, "Low Off · Best Def", "quad-label", "start"));
+      svg.appendChild(text(plotX + plotW - 12, plotY + 18, "High Off · Best Def", "quad-label", "end"));
+      svg.appendChild(text(plotX + 12, plotY + plotH - 12, "Low Off · Weak Def", "quad-label", "start"));
+      svg.appendChild(text(plotX + plotW - 12, plotY + plotH - 12, "High Off · Weak Def", "quad-label", "end"));
 
       allPoints.forEach((p) => {
         const x = sx(p.off_rating);
