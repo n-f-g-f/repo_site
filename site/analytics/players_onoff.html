@@ -733,7 +733,18 @@
         });
       }
 
-      window.drawPlayersScatter("", "", null, null, "");
+      const teamValue = (document.getElementById("team-filter")?.value || "").trim().toLowerCase();
+      const positionValue = (document.getElementById("position-filter")?.value || "").trim().toLowerCase();
+      const minGames = parseFloat(document.getElementById("min-games-filter")?.value || "");
+      const minMinutesOn = parseFloat(document.getElementById("min-minutes-on-filter")?.value || "");
+      const playerValue = (document.getElementById("player-search")?.value || "").trim().toLowerCase();
+      window.drawPlayersScatter(
+        teamValue,
+        positionValue,
+        Number.isNaN(minGames) ? null : minGames,
+        Number.isNaN(minMinutesOn) ? null : minMinutesOn,
+        playerValue
+      );
     })();
   </script>
 </body>
