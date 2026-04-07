@@ -380,39 +380,39 @@
       let currentIndex = 15;
       let currentDirection = "desc";
 
-      function clearHeaderState() {{
-        headers.forEach(th => {{
+      function clearHeaderState() {
+        headers.forEach(th => {
           th.classList.remove("sorted-asc");
           th.classList.remove("sorted-desc");
-        }});
-      }}
+        });
+      }
 
-      function getVisibleRows() {{
+      function getVisibleRows() {
         return allRows.filter(row => row.style.display !== "none");
-      }}
+      }
 
-      function sortTable(index, direction) {{
+      function sortTable(index, direction) {
         const header = headers[index];
         const isNumber = header.dataset.type === "number";
         const rows = getVisibleRows();
 
-        rows.sort((a, b) => {{
+        rows.sort((a, b) => {
           const aCell = a.children[index];
           const bCell = b.children[index];
           const aVal = aCell.dataset.sort ?? aCell.textContent.trim();
           const bVal = bCell.dataset.sort ?? bCell.textContent.trim();
 
           let cmp = 0;
-          if (isNumber) {{
+          if (isNumber) {
             const aNum = aVal === "" ? Number.NEGATIVE_INFINITY : parseFloat(aVal);
             const bNum = bVal === "" ? Number.NEGATIVE_INFINITY : parseFloat(bVal);
             cmp = aNum - bNum;
-          }} else {{
-            cmp = String(aVal).localeCompare(String(bVal), undefined, {{ sensitivity: "base" }});
-          }}
+          } else {
+            cmp = String(aVal).localeCompare(String(bVal), undefined, { sensitivity: "base" });
+          }
 
           return direction === "asc" ? cmp : -cmp;
-        }});
+        });
 
         rows.forEach(row => tbody.appendChild(row));
 
@@ -420,7 +420,7 @@
         header.classList.add(direction === "asc" ? "sorted-asc" : "sorted-desc");
         currentIndex = index;
         currentDirection = direction;
-      }}
+      }
 
       function syncSelectedPlayer(rowsVisible) {
         const visibleIds = rowsVisible.map(r => r.dataset.playerId).filter(Boolean);
@@ -431,7 +431,7 @@
         allRows.forEach(r => r.classList.toggle('selected-row', r.dataset.playerId === SELECTED_PLAYER_ID));
       }
 
-      function applyFilters() {{
+      function applyFilters() {
         const teamValue = (teamFilter.value || "").trim().toLowerCase();
         const positionValue = (positionFilter.value || "").trim().toLowerCase();
         const minGames = parseFloat(minGamesFilter.value || "");
@@ -440,7 +440,7 @@
 
         let visible = 0;
 
-        allRows.forEach(row => {{
+        allRows.forEach(row => {
           let show = true;
 
           const teamCell = row.querySelector('[data-col="team_key"]');
@@ -449,62 +449,62 @@
           const minutesOnCell = row.querySelector('[data-col="minutes_on"]');
           const playerCell = row.querySelector('[data-col="player_name"]');
 
-          if (teamValue) {{
+          if (teamValue) {
             const teamFilterVal = (teamCell?.dataset.filter || "").toLowerCase();
             if (teamFilterVal !== teamValue) show = false;
-          }}
+          }
 
-          if (show && positionValue) {{
+          if (show && positionValue) {
             const posFilterVal = (posCell?.dataset.filter || "").toLowerCase();
             if (posFilterVal !== positionValue) show = false;
-          }}
+          }
 
-          if (show && !Number.isNaN(minGames)) {{
+          if (show && !Number.isNaN(minGames)) {
             const g = parseFloat(gamesCell?.dataset.sort || "");
             if (Number.isNaN(g) || g < minGames) show = false;
-          }}
+          }
 
-          if (show && !Number.isNaN(minMinutesOn)) {{
+          if (show && !Number.isNaN(minMinutesOn)) {
             const mins = parseFloat(minutesOnCell?.dataset.sort || "");
             if (Number.isNaN(mins) || mins < minMinutesOn) show = false;
-          }}
+          }
 
-          if (show && playerValue) {{
+          if (show && playerValue) {
             const p = (playerCell?.dataset.filter || "").toLowerCase();
             if (!p.includes(playerValue)) show = false;
-          }}
+          }
 
-          if (show) {{
-            for (const input of colFilters) {{
+          if (show) {
+            for (const input of colFilters) {
               const col = input.dataset.col;
               const type = input.dataset.type;
               const raw = (input.value || "").trim();
               if (!raw) continue;
 
-              const cell = row.querySelector(`[data-col="${{col}}"]`);
+              const cell = row.querySelector(`[data-col="${col}"]`);
               if (!cell) continue;
 
-              if (type === "text") {{
+              if (type === "text") {
                 const filterVal = (cell.dataset.filter || "").toLowerCase();
-                if (!filterVal.includes(raw.toLowerCase())) {{
+                if (!filterVal.includes(raw.toLowerCase())) {
                   show = false;
                   break;
-                }}
-              }} else if (type === "number_min") {{
+                }
+              } else if (type === "number_min") {
                 const cellNum = parseFloat(cell.dataset.sort || "");
                 const minVal = parseFloat(raw);
                 if (Number.isNaN(minVal)) continue;
-                if (Number.isNaN(cellNum) || cellNum < minVal) {{
+                if (Number.isNaN(cellNum) || cellNum < minVal) {
                   show = false;
                   break;
-                }}
-              }}
-            }}
-          }}
+                }
+              }
+            }
+          }
 
           row.style.display = show ? "" : "none";
           if (show) visible += 1;
-        }});
+        });
 
         const visibleRows = getVisibleRows();
         rowsSummary.textContent = `${visible} / ${allRows.length} players`;
@@ -537,10 +537,10 @@
         });
       });
 
-      [teamFilter, positionFilter, minGamesFilter, minMinutesOnFilter, playerSearch, ...colFilters].forEach(el => {{
+      [teamFilter, positionFilter, minGamesFilter, minMinutesOnFilter, playerSearch, ...colFilters].forEach(el => {
         el.addEventListener("input", applyFilters);
         el.addEventListener("change", applyFilters);
-      }});
+      });
 
       applyFilters();
     })();
@@ -552,7 +552,7 @@
 
       const width = 980;
       const height = 620;
-      const margin = {{ top: 40, right: 40, bottom: 70, left: 80 }};
+      const margin = { top: 40, right: 40, bottom: 70, left: 80 };
       const plotX = margin.left;
       const plotY = margin.top;
       const plotW = width - margin.left - margin.right;
@@ -575,43 +575,43 @@
       const yMin = minY - padY;
       const yMax = maxY + padY;
 
-      function sx(v) {{
+      function sx(v) {
         return plotX + ((v - xMin) / (xMax - xMin)) * plotW;
-      }}
+      }
 
-      function sy(v) {{
+      function sy(v) {
         return plotY + ((yMax - v) / (yMax - yMin)) * plotH;
-      }}
+      }
 
-      function line(x1, y1, x2, y2, cls) {{
+      function line(x1, y1, x2, y2, cls) {
         const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
         el.setAttribute("x1", x1); el.setAttribute("y1", y1); el.setAttribute("x2", x2); el.setAttribute("y2", y2); el.setAttribute("class", cls);
         return el;
-      }}
+      }
 
-      function rect(x, y, w, h, cls) {{
+      function rect(x, y, w, h, cls) {
         const el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("width", w); el.setAttribute("height", h); el.setAttribute("class", cls);
         return el;
-      }}
+      }
 
-      function text(x, y, value, cls, anchor = "middle", rotate = null) {{
+      function text(x, y, value, cls, anchor = "middle", rotate = null) {
         const el = document.createElementNS("http://www.w3.org/2000/svg", "text");
         el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("class", cls); el.setAttribute("text-anchor", anchor);
         if (rotate !== null) el.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
         el.textContent = value;
         return el;
-      }}
+      }
 
-      window.drawPlayersScatter = function(teamValue, positionValue, minGames, minMinutesOn, playerValue) {{
-        let points = allPoints.filter(p => {{
+      window.drawPlayersScatter = function(teamValue, positionValue, minGames, minMinutesOn, playerValue) {
+        let points = allPoints.filter(p => {
           if (teamValue && p.team_key.toLowerCase() !== teamValue) return false;
           if (positionValue && (p.position || "").toLowerCase() !== positionValue) return false;
           if (minGames !== null && ((p.games ?? -1) < minGames)) return false;
           if (minMinutesOn !== null && ((p.minutes_on ?? -1) < minMinutesOn)) return false;
           if (playerValue && !p.player_name.toLowerCase().includes(playerValue)) return false;
           return true;
-        }});
+        });
 
         svg.innerHTML = "";
         if (!points.length) return;
@@ -620,7 +620,7 @@
         const avgY = sy(SCATTER_DATA.avg_diff);
 
         const ticks = 5;
-        for (let i = 0; i <= ticks; i++) {{
+        for (let i = 0; i <= ticks; i++) {
           const xVal = xMin + ((xMax - xMin) * i / ticks);
           const yVal = yMin + ((yMax - yMin) * i / ticks);
           const gx = sx(xVal);
@@ -631,7 +631,7 @@
 
           svg.appendChild(text(gx, plotY + plotH + 24, xVal.toFixed(1), "axis-tick"));
           svg.appendChild(text(plotX - 12, gy + 4, yVal.toFixed(1), "axis-tick", "end"));
-        }}
+        }
 
         svg.appendChild(rect(plotX, plotY, plotW, plotH, "plot-frame"));
         svg.appendChild(line(avgX, plotY, avgX, plotY + plotH, "avg-line"));
@@ -644,7 +644,7 @@
         svg.appendChild(text(plotX + 12, plotY + plotH - 12, "Weak on-court · Negative swing", "quad-label", "start"));
         svg.appendChild(text(plotX + plotW - 12, plotY + plotH - 12, "Strong on-court · Negative swing", "quad-label", "end"));
 
-        points.forEach((p) => {{
+        points.forEach((p) => {
           const x = sx(p.net_on_per40);
           const y = sy(p.on_off_net_diff_per40);
 
@@ -656,7 +656,7 @@
           hit.style.cursor = "pointer";
           svg.appendChild(hit);
 
-          if (p.photo_relpath) {{
+          if (p.photo_relpath) {
             const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
             img.setAttributeNS("http://www.w3.org/1999/xlink", "href", "../" + p.photo_relpath);
             img.setAttribute("x", x - 10);
@@ -675,7 +675,7 @@
             ring.setAttribute("stroke-width", "1");
             ring.style.pointerEvents = "none";
             svg.appendChild(ring);
-          }} else {{
+          } else {
             const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             c.setAttribute("cx", x);
             c.setAttribute("cy", y);
@@ -684,9 +684,9 @@
             c.setAttribute("stroke", "#e5e7eb");
             c.setAttribute("stroke-width", "1.5");
             svg.appendChild(c);
-          }}
+          }
 
-          function showTooltip(evt) {{
+          function showTooltip(evt) {
             const rect = svg.getBoundingClientRect();
             tooltip.style.opacity = "1";
             tooltip.style.left = (evt.clientX - rect.left) + "px";
@@ -696,17 +696,17 @@
               p.team_key + (p.position ? " · " + p.position : "") + "<br>" +
               "Net On/40: " + p.net_on_per40.toFixed(1) + "<br>" +
               "On-Off Net/40: " + p.on_off_net_diff_per40.toFixed(1);
-          }}
+          }
 
-          function moveTooltip(evt) {{
+          function moveTooltip(evt) {
             const rect = svg.getBoundingClientRect();
             tooltip.style.left = (evt.clientX - rect.left) + "px";
             tooltip.style.top = (evt.clientY - rect.top) + "px";
-          }}
+          }
 
-          function hideTooltip() {{
+          function hideTooltip() {
             tooltip.style.opacity = "0";
-          }}
+          }
 
           hit.addEventListener("mouseenter", showTooltip);
           hit.addEventListener("mousemove", moveTooltip);
@@ -730,8 +730,8 @@
             ring2.style.pointerEvents = "none";
             svg.appendChild(ring2);
           }
-        }});
-      }}
+        });
+      }
 
       window.drawPlayersScatter("", "", null, null, "");
     })();
