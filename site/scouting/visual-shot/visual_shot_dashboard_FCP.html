@@ -29,22 +29,41 @@
     .hero-logo { max-height: 68px; max-width: 132px; }
 }
 
+    :root {
+        --bg:#08111f;
+        --panel:rgba(15,23,42,.95);
+        --panel-soft:#111c31;
+        --panel-muted:#07101f;
+        --text:#e5e7eb;
+        --muted:#94a3b8;
+        --line:#2c3f5f;
+        --accent:#38bdf8;
+    }
     body {
         margin: 0;
         font-family: Arial, Helvetica, sans-serif;
-        background: #f5f7fa;
-        color: #1f2937;
+        background: radial-gradient(circle at top, #12203b 0%, #08111f 38%, #050b14 100%);
+        color: var(--text);
     }
     .container {
         max-width: 1720px;
         margin: 0 auto;
         padding: 24px;
     }
+    .hero-shell {
+        margin-bottom: 24px;
+    }
+    .hero-shell > * {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 18px 40px rgba(0,0,0,.22);
+    }
     .section-title {
         margin: 28px 0 14px 0;
         font-size: 22px;
         font-weight: 700;
-        color: #111827;
+        color: var(--text);
     }
     .player-spotlight {
         margin-bottom: 24px;
@@ -60,8 +79,8 @@
         height: 160px;
         border-radius: 16px;
         overflow: hidden;
-        background: #f3f4f6;
-        border: 1px solid #e5e7eb;
+        background: var(--panel-muted);
+        border: 1px solid var(--line);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -73,31 +92,31 @@
         display: block;
     }
     .player-spotlight-photo-empty {
-        color: #6b7280;
+        color: var(--muted);
         font-size: 14px;
         font-weight: 700;
     }
     .player-spotlight-copy h2 {
         margin: 0 0 6px 0;
         font-size: 28px;
-        color: #111827;
+        color: var(--text);
     }
     .player-spotlight-kicker {
         font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #6b7280;
+        color: var(--muted);
         margin-bottom: 8px;
     }
     .player-spotlight-sub {
         font-size: 14px;
-        color: #374151;
+        color: var(--muted);
         margin-bottom: 10px;
     }
     .player-spotlight-note {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--muted);
         margin-bottom: 12px;
     }
     .player-spotlight-metrics {
@@ -106,8 +125,8 @@
         gap: 10px;
     }
     .player-spotlight-metric {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
+        background: var(--panel-muted);
+        border: 1px solid var(--line);
         border-radius: 12px;
         padding: 10px 12px;
     }
@@ -116,13 +135,13 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: #6b7280;
+        color: var(--muted);
         margin-bottom: 6px;
     }
     .player-spotlight-metric-value {
         font-size: 20px;
         font-weight: 700;
-        color: #111827;
+        color: var(--text);
         line-height: 1.1;
     }
     .threat-player-cell {
@@ -135,8 +154,8 @@
         height: 36px;
         border-radius: 999px;
         overflow: hidden;
-        background: #f3f4f6;
-        border: 1px solid #e5e7eb;
+        background: var(--panel-muted);
+        border: 1px solid var(--line);
         flex: 0 0 36px;
         display: inline-flex;
         align-items: center;
@@ -149,7 +168,7 @@
         display: block;
     }
     .threat-avatar-empty {
-        color: #6b7280;
+        color: var(--muted);
         font-size: 12px;
         font-weight: 700;
     }
@@ -167,8 +186,8 @@
         min-height: 40px;
         padding: 0 14px;
         border-radius: 10px;
-        background: #111827;
-        color: #ffffff;
+        background: var(--text);
+        color: var(--panel);
         font-size: 13px;
         font-weight: 700;
         text-decoration: none;
@@ -182,11 +201,25 @@
         justify-content: flex-end;
         margin-bottom: 12px;
     }
+    .player-filter-with-link {
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+    }
+    .player-filter-inline {
+        display:flex;
+        gap:10px;
+        align-items:center;
+    }
+    .player-filter-inline select {
+        flex:1 1 auto;
+    }
     .shot-block {
-        background: white;
-        border-radius: 14px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
         padding: 18px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        box-shadow: 0 14px 34px rgba(0,0,0,.16);
         margin-bottom: 24px;
     }
     .shot-block h2 {
@@ -208,18 +241,18 @@
     .control label {
         font-size: 12px;
         font-weight: 700;
-        color: #374151;
+        color: var(--muted);
         text-transform: uppercase;
         letter-spacing: 0.03em;
     }
     .control select {
         height: 40px;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--line);
         border-radius: 10px;
-        background: white;
+        background: var(--panel);
         padding: 0 12px;
         font-size: 14px;
-        color: #111827;
+        color: var(--text);
     }
     .shot-chart-wrap {
         display: flex;
@@ -233,21 +266,22 @@
         margin: 0 auto;
         display: block;
         border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: white;
+        border: 1px solid var(--line);
+        background: var(--panel);
     }
     .shot-bg {
-        fill: #fafafa;
-        stroke: #d1d5db;
+        fill: #06090f;
+        stroke: var(--line);
         stroke-width: 1;
     }
     .court-line {
-        stroke: #6b7280;
+        stroke: var(--muted);
         stroke-width: 2;
     }
     .subtle-line {
-        stroke: #9ca3af;
+        stroke: var(--muted);
         stroke-dasharray: 4 4;
+        opacity: 0.7;
     }
     .shot-made {
         fill: #16a34a;
@@ -262,7 +296,7 @@
         display: flex;
         gap: 20px;
         font-size: 13px;
-        color: #374151;
+        color: var(--muted);
         flex-wrap: wrap;
     }
     .legend-dot {
@@ -286,14 +320,14 @@
         margin-top: 6px;
     }
     .stat-card {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
+        background: var(--panel-muted);
+        border: 1px solid var(--line);
         border-radius: 12px;
         padding: 12px 14px;
     }
     .stat-label {
         font-size: 11px;
-        color: #6b7280;
+        color: var(--muted);
         text-transform: uppercase;
         letter-spacing: 0.04em;
         margin-bottom: 6px;
@@ -302,20 +336,21 @@
     .stat-value {
         font-size: 22px;
         font-weight: 700;
-        color: #111827;
+        color: var(--text);
         line-height: 1.1;
     }
     .summary-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 18px;
         margin-bottom: 28px;
     }
     .block {
-        background: white;
+        background: var(--panel);
+        border: 1px solid var(--line);
         border-radius: 14px;
         padding: 18px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        box-shadow: 0 14px 34px rgba(0,0,0,.16);
     }
     .block h2 {
         margin: 0 0 14px 0;
@@ -330,17 +365,17 @@
     }
     .bar-label {
         font-size: 13px;
-        color: #374151;
+        color: var(--muted);
     }
     .bar-track {
         height: 18px;
-        background: #e5e7eb;
+        background: var(--line);
         border-radius: 999px;
         overflow: hidden;
     }
     .bar-fill {
         height: 100%;
-        background: #111827;
+        background: var(--text);
         border-radius: 999px;
     }
     .bar-value {
@@ -349,7 +384,7 @@
         font-size: 13px;
     }
     .empty {
-        color: #6b7280;
+        color: var(--muted);
         font-style: italic;
     }
     .notes-list {
@@ -357,7 +392,7 @@
         padding-left: 18px;
         display: grid;
         gap: 10px;
-        color: #374151;
+        color: var(--muted);
     }
     .notes-list li {
         line-height: 1.45;
@@ -373,15 +408,16 @@
     .summary-table th {
         text-align: left;
         padding: 10px 8px;
-        border-bottom: 1px solid #d1d5db;
-        color: #374151;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.03em;
+        background: var(--panel-soft);
     }
     .summary-table td {
         padding: 10px 8px;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid var(--line);
         vertical-align: top;
     }
     .league-relative-block {
@@ -389,7 +425,7 @@
     }
     .league-relative-sub {
         margin: -6px 0 14px 0;
-        color: #5b6577;
+        color: var(--muted);
         font-size: 13px;
     }
     .league-relative-layout {
@@ -411,15 +447,15 @@
         border-radius: 12px;
     }
     .league-detail-card {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
+        background: var(--panel-muted);
+        border: 1px solid var(--line);
         border-radius: 14px;
         padding: 16px;
     }
     .league-detail-card h3 {
         margin: 0 0 12px 0;
         font-size: 18px;
-        color: #111827;
+        color: var(--text);
     }
     .league-summary-table th, .league-summary-table td {
         white-space: nowrap;
@@ -435,7 +471,7 @@
     .league-legend-title {
         font-size: 14px;
         font-weight: 700;
-        color: #f3f4f6;
+        color: var(--muted);
     }
     .league-legend-bar {
         width: 320px;
@@ -488,18 +524,23 @@
 </head>
 <body>
     <div class="container">
-        <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Futebol Clube do Porto</h1><div class="sub">Visual Shot Dashboard · FCP</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/FCP.png" alt="Futebol Clube do Porto logo"></div></div></div></div>
+        <div class="hero-shell">
+            <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Futebol Clube do Porto</h1><div class="sub">Visual Shot Dashboard · FCP</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/FCP.png" alt="Futebol Clube do Porto logo"></div></div></div></div>
+        </div>
 
         <section class="shot-block">
             <h2>Interactive shot chart - Futebol Clube do Porto</h2>
 
             <div class="controls-row">
-                <div class="control">
+                <div class="control player-filter-with-link">
                     <label for="playerFilter">Player</label>
-                    <select id="playerFilter">
-                        <option value="__all__">Whole team</option>
-                        <option value="C. Allen Williams">C. Allen Williams</option><option value="C. Hudson">C. Hudson</option><option value="G. Delgado">G. Delgado</option><option value="J. Davis">J. Davis</option><option value="J. Dunn">J. Dunn</option><option value="J. Guerreiro">J. Guerreiro</option><option value="M. Maria">M. Maria</option><option value="M. Queiroz">M. Queiroz</option><option value="R. Beran JR">R. Beran JR</option><option value="S. Silva">S. Silva</option><option value="T. Omlid">T. Omlid</option><option value="V. Voytso">V. Voytso</option><option value="W. Washpun">W. Washpun</option><option value="Y. Carrera">Y. Carrera</option>
-                    </select>
+                    <div class="player-filter-inline">
+                        <select id="playerFilter">
+                            <option value="__all__">Whole team</option>
+                            <option value="C. Allen Williams">C. Allen Williams</option><option value="C. Hudson">C. Hudson</option><option value="G. Delgado">G. Delgado</option><option value="J. Davis">J. Davis</option><option value="J. Dunn">J. Dunn</option><option value="J. Guerreiro">J. Guerreiro</option><option value="M. Maria">M. Maria</option><option value="M. Queiroz">M. Queiroz</option><option value="R. Beran JR">R. Beran JR</option><option value="S. Silva">S. Silva</option><option value="T. Omlid">T. Omlid</option><option value="V. Voytso">V. Voytso</option><option value="W. Washpun">W. Washpun</option><option value="Y. Carrera">Y. Carrera</option>
+                        </select>
+                        <a id="playerHubLink" class="button-link is-disabled" href="#">Open player hub</a>
+                    </div>
                 </div>
 
                 <div class="control">
@@ -751,7 +792,7 @@
     </section>
     
     <section class="block">
-        <h2>Outside Volume</h2>
+        <h2>Live-with Volume</h2>
         <div class="table-wrap">
             <table class="summary-table">
                 <thead><tr><th>Player</th><th>3PA</th><th>3PT%</th><th>3PA Rate</th></tr></thead>
@@ -796,6 +837,7 @@ const zoneFilter = document.getElementById("zoneFilter");
 const shotsLayer = document.getElementById("shots-layer");
 const leagueHexLayer = document.getElementById("leagueHexLayer");
 const leagueZoneTableBody = document.getElementById("leagueZoneTableBody");
+const playerHubLink = document.getElementById("playerHubLink");
 
 const statSelection = document.getElementById("statSelection");
 const statFGA = document.getElementById("statFGA");
@@ -855,6 +897,7 @@ function fillSelect(selectEl, values, defaultLabel) {
 }
 
 function updatePlayerHubLink(shots) {
+    if (!playerHubLink) return;
     const explicitPlayer = playerFilter.value;
 
     let match = null;

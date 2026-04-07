@@ -7,38 +7,62 @@
 <title>Opponent Shot Report - SC Vasco da Gama</title>
 
 <style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+:root {
+ --bg:#08111f; --panel:#0f172a; --panel-2:#111c31; --panel-3:#16233c; --text:#e5e7eb;
+ --muted:#94a3b8; --line:#2c3f5f; --accent:#38bdf8;
+}
 body {
  margin:0;
  font-family:Arial, Helvetica, sans-serif;
- background:#f5f7fa;
- color:#111827;
+ background:radial-gradient(circle at top, #12203b 0%, #08111f 42%, #050b14 100%);
+ color:var(--text);
 }
 .container {
  max-width:1500px;
  margin:0 auto;
  padding:24px;
 }
-.hero {
- background:#111827;
- color:white;
- padding:24px;
- border-radius:14px;
+.hero-shell {
  margin-bottom:24px;
 }
-.hero h1 {
- margin:0 0 6px 0;
- font-size:30px;
-}
-.hero .sub {
- opacity:0.9;
- font-size:15px;
+.hero-shell > * {
+ background:rgba(15,23,42,.95);
+ border:1px solid var(--line);
+ border-radius:18px;
+ box-shadow:0 18px 40px rgba(0,0,0,.22);
 }
 .block {
- background:white;
- border-radius:14px;
+ background:rgba(15,23,42,.95);
+ border:1px solid var(--line);
+ border-radius:18px;
  padding:18px;
  margin-bottom:20px;
- box-shadow:0 1px 3px rgba(0,0,0,0.08);
+ box-shadow:0 10px 24px rgba(0,0,0,.18);
 }
 .block h2 {
  margin:0 0 14px 0;
@@ -51,23 +75,29 @@ body {
  width:100%;
  border-collapse:collapse;
  font-size:13px;
+ min-width:720px;
 }
 .summary-table th {
  text-align:left;
  padding:10px 8px;
- border-bottom:1px solid #d1d5db;
- background:#f9fafb;
+ border-bottom:1px solid var(--line);
+ background:var(--panel-3);
+ color:var(--text);
  font-size:12px;
  text-transform:uppercase;
  letter-spacing:0.03em;
 }
 .summary-table td {
  padding:10px 8px;
- border-bottom:1px solid #e5e7eb;
+ border-bottom:1px solid rgba(148,163,184,.14);
  vertical-align:top;
+ color:var(--text);
+}
+tbody tr:hover {
+ background:rgba(56,189,248,.08);
 }
 .empty {
- color:#6b7280;
+ color:var(--muted);
  font-style:italic;
 }
 .threat-player-cell {
@@ -80,8 +110,8 @@ body {
  height:36px;
  border-radius:999px;
  overflow:hidden;
- background:#f3f4f6;
- border:1px solid #e5e7eb;
+ background:#07101f;
+ border:1px solid var(--line);
  flex:0 0 36px;
  display:flex;
  align-items:center;
@@ -94,7 +124,7 @@ body {
  display:block;
 }
 .threat-avatar-empty {
- color:#6b7280;
+ color:var(--muted);
  font-size:12px;
  font-weight:700;
 }
@@ -109,8 +139,8 @@ body {
  height:160px;
  border-radius:16px;
  overflow:hidden;
- background:#f3f4f6;
- border:1px solid #e5e7eb;
+ background:#07101f;
+ border:1px solid var(--line);
  display:flex;
  align-items:center;
  justify-content:center;
@@ -119,7 +149,7 @@ body {
  width:100%; height:100%; object-fit:cover;
 }
 .player-spotlight-photo-empty {
- color:#6b7280;
+ color:var(--muted);
  font-size:14px;
  font-weight:700;
 }
@@ -128,17 +158,17 @@ body {
  font-weight:700;
  text-transform:uppercase;
  letter-spacing:0.05em;
- color:#6b7280;
+ color:var(--muted);
  margin-bottom:8px;
 }
 .player-spotlight-copy h2 {
  margin:0 0 6px 0;
  font-size:26px;
- color:#111827;
+ color:var(--text);
 }
 .player-spotlight-sub {
  font-size:14px;
- color:#374151;
+ color:var(--muted);
  margin-bottom:10px;
 }
 .player-spotlight-metrics {
@@ -147,8 +177,8 @@ body {
  gap:10px;
 }
 .player-spotlight-metric {
- background:#f9fafb;
- border:1px solid #e5e7eb;
+ background:#07101f;
+ border:1px solid var(--line);
  border-radius:12px;
  padding:10px 12px;
 }
@@ -156,18 +186,47 @@ body {
  font-size:11px;
  font-weight:700;
  text-transform:uppercase;
- color:#6b7280;
+ color:var(--muted);
  margin-bottom:6px;
 }
 .player-spotlight-metric-value {
  font-size:20px;
  font-weight:700;
- color:#111827;
+ color:var(--text);
+}
+.card-grid {
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:14px;
+}
+.card {
+ background:#07101f;
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:14px;
+}
+.card-title {
+ font-size:12px;
+ color:var(--muted);
+ margin-bottom:8px;
+ text-transform:uppercase;
+ letter-spacing:.04em;
+}
+.card-value {
+ font-size:20px;
+ font-weight:800;
+ line-height:1.35;
+}
+.card-sub {
+ margin-top:6px;
+ font-size:12px;
+ color:var(--muted);
 }
 .grid-two {
  display:grid;
  grid-template-columns:repeat(2, minmax(0, 1fr));
  gap:20px;
+ align-items:start;
 }
 @media (max-width: 980px) {
  .grid-two { grid-template-columns:1fr; }
@@ -179,9 +238,8 @@ body {
 <body>
 <div class="container">
 
-<div class="hero">
-    <h1>SC Vasco da Gama</h1>
-    <div class="sub">Shot report · team_key: VGA</div>
+<div class="hero-shell">
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>SC Vasco da Gama</h1><div class="sub">Opponent shot report · VGA</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/VGA.png" alt="SC Vasco da Gama logo"></div></div></div></div>
 </div>
 
 
@@ -213,9 +271,36 @@ body {
     </section>
     
 
-<section class="block">
-    <h2>Overview</h2>
-</section>
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+        <div class="card">
+            <div class="card-title">Primary threat</div>
+            <div class="card-value">S. Clancey</div>
+            <div class="card-sub">298 attempts</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Top closeout</div>
+            <div class="card-value">S. Clancey</div>
+            <div class="card-sub">26.8%</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Main team zone</div>
+            <div class="card-value">Restricted Area</div>
+            <div class="card-sub">30.7%</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Top preferred area</div>
+            <div class="card-value">S. Clancey · Above the Break 3</div>
+            
+        </div>
+        </div>
+    </section>
+    
 
 <section class="block"><h2>Primary Shot Threats</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Player</th><th>Attempts</th><th>Pts/Shot</th><th>3PA</th><th>3PT%</th><th>Main Zone</th></tr></thead><tbody><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/2486e5c748221d3a6631bacdc45ba6480328ee20.png" alt="S. Clancey"></div><span class="player-name">S. Clancey</span></div></td><td>298</td><td>0.8</td><td>127</td><td>26.8%</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/f3dd88cb82b0aa5b197796141f6d652af11e1857.png" alt="A. Yuot"></div><span class="player-name">A. Yuot</span></div></td><td>230</td><td>1.1</td><td>56</td><td>32.1%</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/a6750313ce05a3439cf82e8dfe2249c7fde84440.png" alt="L. Lindsey"></div><span class="player-name">L. Lindsey</span></div></td><td>145</td><td>0.9</td><td>76</td><td>23.7%</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/9070a86c787d3da4d404124aa5cc509be5fa0a34.png" alt="R. Nobre"></div><span class="player-name">R. Nobre</span></div></td><td>142</td><td>0.9</td><td>57</td><td>26.3%</td><td>Paint Non-RA</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/c1daf8fd6ebd35b90347d0a39a693ba04fd3d3dc.png" alt="Z. McLean"></div><span class="player-name">Z. McLean</span></div></td><td>122</td><td>1.1</td><td>42</td><td>33.3%</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/cadecf1452dd728eb412d9514149afd78184ed0c.png" alt="F. Ferreira"></div><span class="player-name">F. Ferreira</span></div></td><td>111</td><td>0.9</td><td>30</td><td>43.3%</td><td>Restricted Area</td></tr></tbody></table></div></section>
 
