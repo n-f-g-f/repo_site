@@ -52,7 +52,7 @@
     .summary-reading-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
     .summary-reading-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
     .summary-reading-value { font-size: 14px; font-weight: 700; line-height:1.4; }
-    .summary-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
     .metric-card { background: #0b1220; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
     .metric-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
     .metric-value { font-size: 20px; font-weight: 700; color: var(--text); }
@@ -137,12 +137,12 @@
     .avg-line { stroke: rgba(56,189,248,0.65); stroke-width: 1.5; stroke-dasharray: 6 6; }
     .plot-frame { stroke: var(--line); fill: none; stroke-width: 1.2; }
     @media (max-width: 1300px) {
-      .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .summary-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
       .summary-reading { grid-template-columns:1fr; }
       .main-grid { grid-template-columns:1fr; }
     }
     @media (max-width: 760px) {
-      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-grid { grid-template-columns: 1fr; }
       .hero { grid-template-columns:1fr; }
     }
   </style>
@@ -187,6 +187,7 @@
     </div>
 
     <div class="summary-card">
+      <div class="summary-reading" id="summary-reading"></div>
       <div class="summary-grid" id="summary-grid"></div>
     </div>
 
@@ -301,10 +302,12 @@
     }
 
     function setSummary(rows) {
+      const readingRoot = document.getElementById("summary-reading");
       const root = document.getElementById("summary-grid");
-      if (!root) return;
+      if (!root || !readingRoot) return;
 
       if (!rows.length) {
+        readingRoot.innerHTML = "";
         root.innerHTML = '<div class="metric-card"><div class="metric-label">Selection</div><div class="metric-value">No players</div></div>';
         return;
       }
@@ -337,12 +340,11 @@
         return (!Number.isNaN(g) && g >= 12) || (!Number.isNaN(m) && m >= 250);
       }).length;
 
-      const reading = `
-        <div class="summary-reading">
-          <div class="summary-reading-card"><div class="summary-reading-label">Players shown</div><div class="summary-reading-value">${rows.length} current profiles</div></div>
-          <div class="summary-reading-card"><div class="summary-reading-label">Positive swing players</div><div class="summary-reading-value">${positive} with positive On-Off Net/40</div></div>
-          <div class="summary-reading-card"><div class="summary-reading-label">Heavy-minute sample</div><div class="summary-reading-value">${heavy} players at 12+ games or 250+ min on</div></div>
-        </div>`;
+      readingRoot.innerHTML = `
+        <div class="summary-reading-card"><div class="summary-reading-label">Players shown</div><div class="summary-reading-value">${rows.length} current profiles</div></div>
+        <div class="summary-reading-card"><div class="summary-reading-label">Positive swing players</div><div class="summary-reading-value">${positive} with positive On-Off Net/40</div></div>
+        <div class="summary-reading-card"><div class="summary-reading-label">Heavy-minute sample</div><div class="summary-reading-value">${heavy} players at 12+ games or 250+ min on</div></div>
+      `;
 
       const cards = [
         ["Players", String(rows.length)],
@@ -354,7 +356,7 @@
         ["Worst On-Off Net/40", minVal("on_off_net_diff_per40") == null ? "" : minVal("on_off_net_diff_per40").toFixed(1)],
       ];
 
-      root.innerHTML = reading + cards.map(c => `
+      root.innerHTML = cards.map(c => `
         <div class="metric-card">
           <div class="metric-label">${c[0]}</div>
           <div class="metric-value">${c[1]}</div>
