@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Player League Leaders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg:#0f172a; --panel:#111827; --panel-2:#1f2937; --text:#e5e7eb; --muted:#94a3b8; --line:#334155; --accent:#38bdf8;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:1800px; margin:0 auto; padding:18px; }
+    h1 { margin:0 0 6px 0; font-size:24px; }
+    .subtitle { color:var(--muted); margin-bottom:14px; font-size:13px; }
+    .toolbar { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:10px; align-items:end; margin-bottom:14px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .control { display:flex; flex-direction:column; gap:4px; min-width:0; }
+    .control label { font-size:12px; color:var(--muted); }
+    .control select, .control input { background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; }
+    .qualification { color:var(--muted); font-size:12px; align-self:center; }
+    .section-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin-bottom:14px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+    .card-head { padding:14px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .card-title { font-size:18px; font-weight:700; }
+    .card-sub { font-size:12px; color:var(--muted); }
+    .card-body { padding:14px 16px; }
+    .table-wrap { overflow-x:auto; overflow-y:hidden; }
+    table { width:100%; border-collapse:collapse; min-width:0; table-layout:fixed; }
+    th, td { padding:8px 8px; border-bottom:1px solid var(--line); font-size:13px; white-space:nowrap; text-align:right; }
+    th:first-child, td:first-child { width:44px; text-align:left; }
+    th:nth-child(2), td:nth-child(2) { width:auto; text-align:left; }
+    th:nth-child(3), td:nth-child(3) { width:56px; }
+    th:nth-child(4), td:nth-child(4) { width:68px; }
+    th:nth-child(5), td:nth-child(5) { width:78px; }
+    thead th { background:var(--panel-2); position:sticky; top:0; z-index:1; }
+    .player-link { color:inherit; text-decoration:none; }
+    .player-link:hover { text-decoration:underline; }
+    .player-cell { display:flex; align-items:center; gap:8px; min-width:0; }
+    .player-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; background:#0b1220; border:1px solid var(--line); flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; }
+    .player-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .player-avatar-empty { color:var(--muted); font-size:12px; font-weight:700; }
+    .player-main { font-weight:700; color:var(--text); line-height:1.1; overflow:hidden; text-overflow:ellipsis; }
+    .player-sub { font-size:12px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; }
+    .rank-pill { display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:24px; border-radius:999px; background:#0b1220; border:1px solid var(--line); font-weight:700; }
+    .tag-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+    .tag { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; background:#0b1220; border:1px solid var(--line); font-size:11px; color:var(--muted); }
+    .discover-grid { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; }
+    .discover-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .discover-card a { color:inherit; text-decoration:none; }
+    .discover-card a:hover .player-main { color:var(--accent); }
+    .empty { color:var(--muted); font-size:13px; }
+    @media (max-width: 1300px) { .section-grid,.discover-grid,.toolbar { grid-template-columns:1fr 1fr; } }
+    @media (max-width: 900px) { .section-grid,.discover-grid,.toolbar { grid-template-columns:1fr; } }
+  </style>
+<style>
+.pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}
+.pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+.pba-site-brand{display:flex;align-items:center;gap:14px;min-width:0;}
+.pba-site-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;flex:0 0 auto;text-decoration:none;}
+.pba-site-brand-copy{min-width:0;}
+.pba-site-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}
+.pba-site-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}
+.pba-site-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pba-site-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}
+.pba-site-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}
+.pba-site-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}
+.pba-site-nav-link-active:hover{background:#111827;border-color:#111827;}
+.pba-site-status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}
+.pba-site-footer{margin-top:36px;background:#0f172a;color:#e2e8f0;border-top:1px solid rgba(255,255,255,.06);}
+.pba-site-footer-inner{max-width:1380px;margin:0 auto;padding:28px 20px 36px;}
+.pba-site-footer-grid{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(4,minmax(0,1fr));gap:22px;}
+.pba-site-footer-brand{min-width:0;}
+.pba-site-footer-brand h2{margin:0 0 8px 0;font-size:22px;color:#fff;}
+.pba-site-footer-brand p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;max-width:520px;}
+.pba-site-footer-col-title{font-size:12px;font-weight:800;color:#93c5fd;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.pba-site-footer-links{display:flex;flex-direction:column;gap:8px;}
+.pba-site-footer-links a{color:#e2e8f0;text-decoration:none;font-size:14px;line-height:1.45;}
+.pba-site-footer-links a:hover{color:#93c5fd;}
+.pba-site-footer-meta{margin-top:22px;padding-top:16px;border-top:1px solid rgba(148,163,184,.18);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#94a3b8;font-size:12px;line-height:1.5;}
+@media (max-width:1080px){.pba-site-footer-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:760px){.pba-site-chrome-inner{padding:12px 16px;}.pba-site-footer-inner{padding:24px 16px 30px;}.pba-site-footer-grid{grid-template-columns:1fr;}.pba-site-nav{gap:8px;}}
+</style></head>
+<body>
+<header class="pba-site-chrome-header" data-pba-site-chrome="1">
+  <div class="pba-site-chrome-inner">
+    <div class="pba-site-brand">
+      <a class="pba-site-brand-mark" href="../index.html" aria-label="Portuguese Basketball Analytics (PBA) home">PBA</a>
+      <div class="pba-site-brand-copy">
+        <div class="pba-site-brand-name">Portuguese Basketball Analytics (PBA)</div>
+        <div class="pba-site-brand-sub">Professional basketball intelligence · Portugal</div>
+      </div>
+    </div>
+    <nav class="pba-site-nav" aria-label="Primary navigation">
+      <a class="pba-site-nav-link pba-site-nav-link-active" href="../index.html">Home</a><a class="pba-site-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-site-nav-link pba-site-nav-link-active" href="../general/index.html">General Stats</a><a class="pba-site-nav-link" href="../scouting/index.html">Scouting</a>
+      <a class="pba-site-nav-link" href="../about.html">About</a><a class="pba-site-nav-link" href="../access.html">Access</a><a class="pba-site-nav-link" href="../contact.html">Contact</a><a class="pba-site-nav-link" href="../login.html">Login</a>
+    </nav>
+    <div class="pba-site-status">Open access · validation phase</div>
+  </div>
+</header>
+
+  <div class="wrap">
+    <h1>Player League Leaders</h1>
+    <div class="subtitle">Explore leaders by profile, then jump straight into the Player Hubs worth opening next.</div>
+
+    <div class="toolbar">
+      <div class="control">
+        <label for="group-filter">Section</label>
+        <select id="group-filter"></select>
+      </div>
+      <div class="control">
+        <label for="regular-filter">Regular Stats</label>
+        <select id="regular-filter"></select>
+      </div>
+      <div class="control">
+        <label for="advanced-filter">Advanced Stats</label>
+        <select id="advanced-filter"></select>
+      </div>
+      <div class="control">
+        <label for="impact-filter">Per40 / On-Off</label>
+        <select id="impact-filter"></select>
+      </div>
+      <div class="control">
+        <label for="team-filter">Team</label>
+        <select id="team-filter"></select>
+      </div>
+      <div class="control">
+        <label for="position-filter">Position</label>
+        <select id="position-filter"></select>
+      </div>
+      <div class="control">
+        <label for="minutes-filter">Min MPG</label>
+        <input id="minutes-filter" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="qualification" id="qualification-text"></div>
+    </div>
+
+    <div class="section-grid" id="leaders-grid"></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Players You Should Open Next</div>
+          <div class="card-sub">Discovery layer built from the current leader filters.</div>
+        </div>
+      </div>
+      <div class="card-body" id="discover-panel"></div>
+    </div>
+  </div>
+
+  <script>
+    const DATA_URL = "data/player_league_leaders_data.json";
+    let DATASET = null;
+
+    function escapeHtml(text) { return String(text ?? "").replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+    function fmtNumber(value) { return (value === null || value === undefined || Number.isNaN(value)) ? '' : Number(value).toFixed(1); }
+
+    function playerCellHtml(row) {
+      const name = escapeHtml(row.player_name || '');
+      const sub = [row.team_key || '', row.playing_position || ''].filter(Boolean).join(' · ');
+      const avatar = row.photo_relpath
+        ? `<span class="player-avatar"><img src="../${escapeHtml(row.photo_relpath)}" alt="${name}"></span>`
+        : `<span class="player-avatar player-avatar-empty">?</span>`;
+      const inner = `<div><div class="player-main">${name}</div><div class="player-sub">${escapeHtml(sub)}</div></div>`;
+      const content = `<div class="player-cell">${avatar}${inner}</div>`;
+      return row.player_hub_href ? `<a class="player-link" href="${escapeHtml(row.player_hub_href)}">${content}</a>` : content;
+    }
+
+    function buildCategoryCard(cat) {
+      const rows = (cat.filtered_rows || []).map(row => `
+        <tr>
+          <td><span class="rank-pill">${row.rank}</span></td>
+          <td>${playerCellHtml(row)}</td>
+          <td>${row.games ?? ''}</td>
+          <td>${fmtNumber(row.mpg)}</td>
+          <td>${escapeHtml(row.value_text || '')}</td>
+        </tr>
+      `).join('');
+      return `
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">${escapeHtml(cat.title)}</div>
+              <div class="card-sub">${escapeHtml(cat.qualification_text || '')}</div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Player</th><th>G</th><th>MPG</th><th>${escapeHtml(cat.display_label || "Value")}</th></tr>
+              </thead>
+              <tbody>${rows || `<tr><td colspan="5" class="empty">No players match the current filters.</td></tr>`}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function passesFilters(row, state) {
+      if (state.team && row.team_key !== state.team) return false;
+      if (state.position && row.playing_position !== state.position) return false;
+      if (Number(row.mpg || 0) < Number(state.minMinutes || 0)) return false;
+      return true;
+    }
+
+    function getState() {
+      return {
+        group: document.getElementById('group-filter').value || '',
+        regular: document.getElementById('regular-filter').value || '',
+        advanced: document.getElementById('advanced-filter').value || '',
+        impact: document.getElementById('impact-filter').value || '',
+        team: document.getElementById('team-filter').value || '',
+        position: document.getElementById('position-filter').value || '',
+        minMinutes: Number(document.getElementById('minutes-filter').value || 0),
+      };
+    }
+
+    function currentGroup(state) {
+      const groups = DATASET?.groups || [];
+      return groups.find(g => g.key === state.group) || groups[0] || null;
+    }
+
+    function renderDiscover(group, state) {
+      const root = document.getElementById('discover-panel');
+      if (!root || !group) return;
+      const filtered = (group.players_next || []).filter(row => passesFilters(row, state)).slice(0, 4);
+      if (!filtered.length) {
+        root.innerHTML = '<div class="empty">No discovery suggestions match the current filters.</div>';
+        return;
+      }
+      root.innerHTML = `<div class="discover-grid">${filtered.map(row => `
+        <div class="discover-card">
+          <a href="${escapeHtml(row.player_hub_href || '#')}">
+            ${playerCellHtml(row)}
+            <div class="tag-row">${(row.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
+          </a>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function render() {
+      const state = getState();
+      const group = currentGroup(state);
+      if (!group) return;
+
+      const categorySelectKey = state.group === 'advanced' ? state.advanced : (state.group === 'impact' ? state.impact : state.regular);
+      const categories = (group.categories || []).map(cat => {
+        const filtered_rows = (cat.rows || [])
+          .filter(row => passesFilters(row, state))
+          .slice(0, 10)
+          .map((row, idx) => ({ ...row, rank: idx + 1 }));
+        return { ...cat, filtered_rows };
+      });
+
+      const shown = categorySelectKey ? categories.filter(c => c.key === categorySelectKey) : categories;
+      document.getElementById('leaders-grid').innerHTML = shown.map(buildCategoryCard).join('');
+      const first = shown[0] || categories[0];
+      document.getElementById('qualification-text').textContent = first?.qualification_text || '';
+      renderDiscover(group, state);
+    }
+
+    function populateSelect(selectId, options, includeAllLabel) {
+      const el = document.getElementById(selectId);
+      el.innerHTML = `<option value="">${escapeHtml(includeAllLabel)}</option>` + options.map(opt => `<option value="${escapeHtml(opt.value)}">${escapeHtml(opt.label)}</option>`).join('');
+    }
+
+    function syncCategoryVisibility(groupKey) {
+      document.getElementById('regular-filter').parentElement.style.display = groupKey === 'regular' ? 'flex' : 'none';
+      document.getElementById('advanced-filter').parentElement.style.display = groupKey === 'advanced' ? 'flex' : 'none';
+      document.getElementById('impact-filter').parentElement.style.display = groupKey === 'impact' ? 'flex' : 'none';
+    }
+
+    async function init() {
+      const response = await fetch(DATA_URL);
+      if (!response.ok) throw new Error(`Failed to load ${DATA_URL}`);
+      DATASET = await response.json();
+
+      const groups = DATASET.groups || [];
+      populateSelect('group-filter', groups.map(g => ({ value: g.key, label: g.title })), 'Choose section');
+      populateSelect('team-filter', (DATASET.team_options || []).map(t => ({ value: t, label: t })), 'All teams');
+      populateSelect('position-filter', (DATASET.position_options || []).map(p => ({ value: p, label: p })), 'All positions');
+
+      const regular = groups.find(g => g.key === 'regular')?.categories || [];
+      const advanced = groups.find(g => g.key === 'advanced')?.categories || [];
+      const impact = groups.find(g => g.key === 'impact')?.categories || [];
+      populateSelect('regular-filter', regular.map(c => ({ value: c.key, label: c.title })), 'All regular stats');
+      populateSelect('advanced-filter', advanced.map(c => ({ value: c.key, label: c.title })), 'All advanced stats');
+      populateSelect('impact-filter', impact.map(c => ({ value: c.key, label: c.title })), 'All per40 / on-off');
+
+      document.getElementById('group-filter').value = 'regular';
+      syncCategoryVisibility('regular');
+
+      ['group-filter','regular-filter','advanced-filter','impact-filter','team-filter','position-filter','minutes-filter'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+          if (id === 'group-filter') syncCategoryVisibility(document.getElementById('group-filter').value || 'regular');
+          render();
+        });
+      });
+
+      render();
+    }
+
+    init().catch(err => {
+      document.getElementById('leaders-grid').innerHTML = `<div class="card"><div class="card-head"><div class="card-title">Load error</div></div><div class="card-body" style="color:var(--muted);">${escapeHtml(err.message || 'Unknown error')}</div></div>`;
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
