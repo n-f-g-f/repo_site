@@ -113,7 +113,7 @@
       <a class="pba-site-nav-link pba-site-nav-link-active" href="../index.html">Home</a><a class="pba-site-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-site-nav-link" href="../general/index.html">General Stats</a><a class="pba-site-nav-link pba-site-nav-link-active" href="../scouting/index.html">Scouting</a>
       <a class="pba-site-nav-link" href="../about.html">About</a><a class="pba-site-nav-link" href="../access.html">Access</a><a class="pba-site-nav-link" href="../contact.html">Contact</a><a class="pba-site-nav-link" href="../login.html">Login</a>
     </nav>
-    <div class="pba-site-status">Open access · public launch prep</div>
+    <div class="pba-site-status">Open access · validation phase</div>
   </div>
 </header>
 
@@ -184,22 +184,5 @@
     function refresh() { const team=currentTeam(); if(!team) return; const games=teamGames(team.team_key); const periods=teamPeriods(team.team_key); const status=document.getElementById('page-status'); if(status) status.textContent=`${games.length} games · ${periods.length} period rows`; buildHero(team,games,periods); renderBlueprint(games); renderQuarterChart(periods); renderRecentScriptChart(games); document.getElementById('recent-games-table').innerHTML=buildRecentGamesTable(games,periods); }
     const select=document.getElementById('team-filter'); const params=new URLSearchParams(window.location.search); const requestedTeam=(params.get('team')||'').trim().toUpperCase(); const sortedTeams=[...TEAMS].sort((a,b)=>String(a.team_key).localeCompare(String(b.team_key))); sortedTeams.forEach((team,idx)=>{ const opt=document.createElement('option'); opt.value=team.team_key; opt.textContent=`${team.team_key} · ${team.team_name}`; if((requestedTeam&&String(team.team_key).toUpperCase()===requestedTeam)||(!requestedTeam&&idx===0)) opt.selected=true; select.appendChild(opt); }); if(requestedTeam && sortedTeams.some(t=>String(t.team_key).toUpperCase()===requestedTeam)) select.value=requestedTeam; select.addEventListener('change', ()=>{ const next=(select.value||'').trim(); const nextUrl=new URL(window.location.href); if(next) nextUrl.searchParams.set('team',next); else nextUrl.searchParams.delete('team'); window.history.replaceState({},'',nextUrl.toString()); refresh(); }); refresh();
   </script>
-
-<footer class="pba-site-footer" data-pba-site-chrome="1">
-  <div class="pba-site-footer-inner">
-    <div class="pba-site-footer-grid">
-      <div class="pba-site-footer-brand">
-        <h2>Portuguese Basketball Analytics (PBA)</h2>
-        <p>Premium basketball analytics platform focused on Portuguese basketball. The site is currently open during the validation phase, while the public product layer, pricing and member access are being prepared.</p>
-      </div>
-      <div><div class="pba-site-footer-col-title">Product</div><div class="pba-site-footer-links"><a href="../about.html">About</a><a href="../access.html">Access &amp; Plans</a><a href="../login.html">Login</a></div></div><div><div class="pba-site-footer-col-title">Platform</div><div class="pba-site-footer-links"><a href="../analytics/index.html">Analytics</a><a href="../general/index.html">General Stats</a><a href="../scouting/index.html">Scouting</a></div></div><div><div class="pba-site-footer-col-title">Legal</div><div class="pba-site-footer-links"><a href="../privacy.html">Privacy Policy</a><a href="../terms.html">Terms of Service</a><a href="../cookies.html">Cookies Policy</a></div></div><div><div class="pba-site-footer-col-title">Contact</div><div class="pba-site-footer-links"><a href="../contact.html">Contact</a><a href="mailto:nuno_fg_freitas@hotmail.com">nuno_fg_freitas@hotmail.com</a></div></div>
-    </div>
-    <div class="pba-site-footer-meta">
-      <div>Responsible entity: Nuno Freitas · Portugal</div>
-      <div>Contact: <a href="mailto:nuno_fg_freitas@hotmail.com" style="color:#93c5fd;text-decoration:none;">nuno_fg_freitas@hotmail.com</a></div>
-      <div>Open access during product validation. Paid access is planned before the start of the 2026/27 season.</div>
-    </div>
-  </div>
-</footer>
 </body>
 </html>
