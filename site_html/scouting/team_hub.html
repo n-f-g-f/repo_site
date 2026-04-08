@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Team Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #38bdf8;
+      --good: #4ade80;
+      --bad: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1760px; margin: 0 auto; padding: 24px; }
+    h1 { margin: 0 0 8px 0; font-size: 28px; }
+    .subtitle { color: var(--muted); margin-bottom: 18px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-bottom:18px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:12px; }
+    .control { display:flex; flex-direction:column; gap:4px; min-width:220px; }
+    .control label { font-size:12px; color:var(--muted); }
+    .control select { background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; }
+    .status { color:var(--muted); font-size:12px; margin-left:auto; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:18px; }
+    .section-head { padding:14px 16px; border-bottom:1px solid var(--line); font-size:18px; font-weight:700; }
+    .section-body { padding:16px; }
+    .hero { display:grid; grid-template-columns: 320px 1fr; gap:18px; }
+    .team-hero { display:flex; gap:14px; align-items:center; }
+    .team-logo { width:72px; height:72px; border-radius:50%; object-fit:contain; background:white; flex:0 0 auto; }
+    .team-name { font-size:28px; font-weight:700; }
+    .team-meta { color:var(--muted); font-size:13px; margin-top:6px; }
+    .summary-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; }
+    .metric-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .metric-label { color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .metric-value { font-size:22px; font-weight:700; }
+    .metric-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+    .two-col { display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; }
+    .three-col { display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:18px; }
+    .chart-wrap { position:relative; width:100%; overflow:auto; }
+    #trend-chart { width:100%; min-width:980px; height:auto; display:block; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:12px; }
+    .tooltip { position:absolute; pointer-events:none; opacity:0; transform:translate(-50%, calc(-100% - 12px)); background:rgba(15,23,42,0.96); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.35; white-space:nowrap; z-index:20; }
+    .legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; color:var(--muted); font-size:12px; }
+    .legend-item { display:flex; align-items:center; gap:6px; }
+    .legend-swatch { width:14px; height:3px; border-radius:999px; }
+    table { width:100%; border-collapse:collapse; min-width:760px; }
+    th, td { padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px; text-align:right; white-space:nowrap; }
+    th:first-child, td:first-child { text-align:left; }
+    thead th { background:var(--panel-2); position:sticky; top:0; z-index:1; }
+    .table-wrap { overflow:auto; }
+    .good { color:var(--good); font-weight:700; }
+    .bad { color:var(--bad); font-weight:700; }
+    .link-groups { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:16px; }
+    .link-group { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .link-group h4 { margin:0 0 10px 0; font-size:14px; }
+    .link-list { display:flex; flex-direction:column; gap:8px; }
+    .link-list a { color:var(--accent); text-decoration:none; }
+    .link-list a:hover { text-decoration:underline; }
+    .empty { color:var(--muted); font-size:13px; }
+    .opp-cell { display:flex; flex-direction:column; gap:2px; }
+    .opp-main { font-weight:700; }
+    .opp-sub { font-size:12px; color:var(--muted); }
+    .axis-label { fill:var(--muted); font-size:14px; font-weight:700; }
+    .axis-tick { fill:var(--muted); font-size:11px; }
+    .grid-line { stroke:rgba(148,163,184,0.22); stroke-width:1; }
+    .plot-frame { stroke:var(--line); fill:none; stroke-width:1.2; }
+    .series-a { stroke:#38bdf8; fill:none; stroke-width:2.5; }
+    .series-b { stroke:#f59e0b; fill:none; stroke-width:2.5; }
+    .point-a { fill:#38bdf8; }
+    .point-b { fill:#f59e0b; }
+    .trend-player-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; }
+    .trend-player-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .trend-player-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:10px; }
+    .trend-player-name a { color:#38bdf8; text-decoration:none; font-weight:700; }
+    .trend-player-meta { color:var(--muted); font-size:12px; margin-top:4px; }
+    .trend-label-chip { display:inline-flex; align-items:center; padding:5px 9px; border-radius:999px; font-size:11px; font-weight:700; }
+    .trend-label-chip.good { background:rgba(74,222,128,0.18); color:#bbf7d0; }
+    .trend-label-chip.bad { background:rgba(248,113,113,0.18); color:#fecaca; }
+    .trend-label-chip.neutral { background:rgba(148,163,184,0.18); color:#e5e7eb; }
+    .trend-label-chip.warn { background:rgba(245,158,11,0.18); color:#fde68a; }
+    .trend-score-bar { margin-top:10px; height:8px; background:#1f2937; border-radius:999px; overflow:hidden; }
+    .trend-score-fill { display:block; height:100%; border-radius:999px; }
+    .trend-score-fill.good { background:#4ade80; }
+    .trend-score-fill.bad { background:#f87171; }
+    .trend-score-fill.neutral { background:#94a3b8; }
+    .trend-score-fill.warn { background:#f59e0b; }
+    .trend-mini-table { width:100%; border-collapse:collapse; margin-top:10px; min-width:0; }
+    .trend-mini-table th, .trend-mini-table td { padding:6px 0; border-bottom:1px solid rgba(148,163,184,0.12); font-size:12px; text-align:right; white-space:nowrap; }
+    .trend-mini-table th:first-child, .trend-mini-table td:first-child { text-align:left; }
+    .role-cluster-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+    .role-cluster-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .role-cluster-title { font-size:14px; font-weight:700; margin:0 0 8px 0; }
+    .role-cluster-copy { color:var(--muted); font-size:12px; line-height:1.45; margin-bottom:10px; }
+    .role-cluster-list { display:flex; flex-direction:column; gap:8px; }
+    .role-cluster-item { display:flex; justify-content:space-between; gap:12px; align-items:center; font-size:13px; }
+    .role-cluster-item a { color:var(--accent); text-decoration:none; font-weight:700; }
+    .role-cluster-item a:hover { text-decoration:underline; }
+    .role-chip { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+    .role-chip.guard { background:rgba(56,189,248,0.18); color:#bae6fd; }
+    .role-chip.wing { background:rgba(168,85,247,0.18); color:#e9d5ff; }
+    .role-chip.big { background:rgba(74,222,128,0.18); color:#bbf7d0; }
+    .role-chip.hybrid { background:rgba(245,158,11,0.18); color:#fde68a; }
+    @media (max-width: 1300px) {
+      .hero, .two-col, .three-col { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .link-groups { grid-template-columns:1fr; }
+    }
+    @media (max-width: 720px) {
+      .summary-grid { grid-template-columns:1fr; }
+    }
+  </style>
+<style>
+.pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}
+.pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+.pba-site-brand{display:flex;align-items:center;gap:14px;min-width:0;}
+.pba-site-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;flex:0 0 auto;text-decoration:none;}
+.pba-site-brand-copy{min-width:0;}
+.pba-site-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}
+.pba-site-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}
+.pba-site-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pba-site-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}
+.pba-site-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}
+.pba-site-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}
+.pba-site-nav-link-active:hover{background:#111827;border-color:#111827;}
+.pba-site-status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}
+.pba-site-footer{margin-top:36px;background:#0f172a;color:#e2e8f0;border-top:1px solid rgba(255,255,255,.06);}
+.pba-site-footer-inner{max-width:1380px;margin:0 auto;padding:28px 20px 36px;}
+.pba-site-footer-grid{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(4,minmax(0,1fr));gap:22px;}
+.pba-site-footer-brand{min-width:0;}
+.pba-site-footer-brand h2{margin:0 0 8px 0;font-size:22px;color:#fff;}
+.pba-site-footer-brand p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;max-width:520px;}
+.pba-site-footer-col-title{font-size:12px;font-weight:800;color:#93c5fd;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.pba-site-footer-links{display:flex;flex-direction:column;gap:8px;}
+.pba-site-footer-links a{color:#e2e8f0;text-decoration:none;font-size:14px;line-height:1.45;}
+.pba-site-footer-links a:hover{color:#93c5fd;}
+.pba-site-footer-meta{margin-top:22px;padding-top:16px;border-top:1px solid rgba(148,163,184,.18);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#94a3b8;font-size:12px;line-height:1.5;}
+@media (max-width:1080px){.pba-site-footer-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:760px){.pba-site-chrome-inner{padding:12px 16px;}.pba-site-footer-inner{padding:24px 16px 30px;}.pba-site-footer-grid{grid-template-columns:1fr;}.pba-site-nav{gap:8px;}}
+</style></head>
+<body>
+<header class="pba-site-chrome-header" data-pba-site-chrome="1">
+  <div class="pba-site-chrome-inner">
+    <div class="pba-site-brand">
+      <a class="pba-site-brand-mark" href="../index.html" aria-label="Portuguese Basketball Analytics (PBA) home">PBA</a>
+      <div class="pba-site-brand-copy">
+        <div class="pba-site-brand-name">Portuguese Basketball Analytics (PBA)</div>
+        <div class="pba-site-brand-sub">Professional basketball intelligence · Portugal</div>
+      </div>
+    </div>
+    <nav class="pba-site-nav" aria-label="Primary navigation">
+      <a class="pba-site-nav-link pba-site-nav-link-active" href="../index.html">Home</a><a class="pba-site-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-site-nav-link" href="../general/index.html">General Stats</a><a class="pba-site-nav-link pba-site-nav-link-active" href="../scouting/index.html">Scouting</a>
+      <a class="pba-site-nav-link" href="../about.html">About</a><a class="pba-site-nav-link" href="../access.html">Access</a><a class="pba-site-nav-link" href="../contact.html">Contact</a><a class="pba-site-nav-link" href="../login.html">Login</a>
+    </nav>
+    <div class="pba-site-status">Open access · validation phase</div>
+  </div>
+</header>
+
+  <div class="wrap">
+    <h1>Team Hub</h1>
+    <div class="subtitle">Single-team scouting and analytics hub, now preferring the canonical context layer.</div>
+
+    <div class="toolbar">
+      <div class="control">
+        <label for="team-filter">Team</label>
+        <select id="team-filter"></select>
+      </div>
+      <div class="control">
+        <label for="trend-metric">Trend</label>
+        <select id="trend-metric">
+          <option value="ratings">OffRtg / DefRtg</option>
+          <option value="score">Points For / Against</option>
+          <option value="shooting">eFG% / Opp eFG%</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="lineups-min-minutes">Lineups Min Minutes</label>
+        <input id="lineups-min-minutes" type="number" min="0" step="1" value="20">
+      </div>
+      <div class="status" id="team-status"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-body">
+        <div class="hero">
+          <div id="team-hero"></div>
+          <div class="summary-grid" id="summary-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Team Identity</div>
+        <div class="section-body" id="identity-panel"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">What to Watch</div>
+        <div class="section-body" id="watch-panel"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Priority Notes</div>
+      <div class="section-body" id="priority-notes-panel"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Trending Players</div>
+      <div class="section-body" id="trending-players-panel"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Player Role Map</div>
+        <div class="section-body">
+          <div class="chart-wrap">
+            <svg id="role-map-chart" viewBox="0 0 980 560" role="img" aria-label="Player role map"></svg>
+            <div id="role-map-tooltip" class="tooltip"></div>
+          </div>
+          <div class="legend" id="role-map-legend"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-head">Role Clusters</div>
+        <div class="section-body" id="role-clusters-panel"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Recent Form</div>
+      <div class="section-body">
+        <div class="summary-grid" id="recent-grid"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Team Trend</div>
+      <div class="section-body">
+        <div class="chart-wrap">
+          <svg id="trend-chart" viewBox="0 0 1180 560" role="img" aria-label="Team trend chart"></svg>
+          <div id="trend-tooltip" class="tooltip"></div>
+        </div>
+        <div class="legend" id="trend-legend"></div>
+      </div>
+    </div>
+
+    <div class="three-col">
+      <div class="card">
+        <div class="section-head">Recent Games</div>
+        <div class="section-body table-wrap" id="games-table"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Best Lineups</div>
+        <div class="section-body table-wrap" id="best-lineups-table"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Worst Lineups</div>
+        <div class="section-body table-wrap" id="worst-lineups-table"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Featured Players</div>
+        <div class="section-body table-wrap" id="players-table"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Reports & Packs</div>
+        <div class="section-body" id="links-panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TEAMS = [{"team_key": "GFC", "team_name": "Galitos BARREIRO", "logo_src": "", "links": [{"category": "Team Packs", "label": "team pack GFC", "href": "../xlsx/team_packs/team_pack_GFC.xlsx", "kind": "xlsx"}, {"category": "Context Packs", "label": "GFC team context pack", "href": "../xlsx/GFC_team_context_pack.xlsx", "kind": "xlsx"}, {"category": "Shot Packs", "label": "shot pack GFC", "href": "../xlsx/shot_packs/shot_pack_GFC.xlsx", "kind": "xlsx"}, {"category": "Opponent Shooting Packs", "label": "opponent shooting pack GFC", "href": "../xlsx/opponent_shooting_packs/opponent_shooting_pack_GFC.xlsx", "kind": "xlsx"}, {"category": "Opponent Game Plan Packs", "label": "opponent game plan GFC", "href": "../xlsx/opponent_game_plan_packs/opponent_game_plan_GFC.xlsx", "kind": "xlsx"}]}, {"team_key": "SLB", "team_name": "SL Benfica", "logo_src": "", "links": [{"category": "Team Packs", "label": "team pack SLB", "href": "../xlsx/team_packs/team_pack_SLB.xlsx", "kind": "xlsx"}, {"category": "Context Packs", "label": "SLB team context pack", "href": "../xlsx/SLB_team_context_pack.xlsx", "kind": "xlsx"}, {"category": "Shot Packs", "label": "shot pack SLB", "href": "../xlsx/shot_packs/shot_pack_SLB.xlsx", "kind": "xlsx"}, {"category": "Opponent Shooting Packs", "label": "opponent shooting pack SLB", "href": "../xlsx/opponent_shooting_packs/opponent_shooting_pack_SLB.xlsx", "kind": "xlsx"}, {"category": "Opponent Game Plan Packs", "label": "opponent game plan SLB", "href": "../xlsx/opponent_game_plan_packs/opponent_game_plan_SLB.xlsx", "kind": "xlsx"}]}];
+    const GAMES = [{"game_code": "2746870", "team_key": "SLB", "team_name": "SL Benfica", "opponent_name": "Galitos BARREIRO", "opp_team_key": "GFC", "score": 107.0, "opp_score": 85.0, "point_diff": 22.0, "result": "W", "home_away": "Home", "off_rating": 128.29736211031175, "def_rating": 99.85902255639097, "net_rating": 28.438339553920784, "pace": 84.26, "efg_pct_off": 0.6071428571428571, "orb_pct_off": 0.35, "tov_pct_off": 0.14388489208633093, "ftr_off": 0.5, "efg_pct_def": 0.5230769230769231, "orb_pct_def": 0.2777777777777778, "tov_pct_def": 0.2349624060150376, "ftr_def": 0.35384615384615387, "round": null, "game_date": ""}, {"game_code": "2746870", "team_key": "GFC", "team_name": "Galitos BARREIRO", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 85.0, "opp_score": 107.0, "point_diff": -22.0, "result": "L", "home_away": "Away", "off_rating": 99.85902255639097, "def_rating": 128.29736211031175, "net_rating": -28.438339553920784, "pace": 84.26, "efg_pct_off": 0.5230769230769231, "orb_pct_off": 0.2777777777777778, "tov_pct_off": 0.2349624060150376, "ftr_off": 0.35384615384615387, "efg_pct_def": 0.6071428571428571, "orb_pct_def": 0.35, "tov_pct_def": 0.14388489208633093, "ftr_def": 0.5, "round": null, "game_date": ""}];
+    const LINEUPS = [{"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | B. Lisboa | I. Almeida | Q. Eyobo | R. Stein", "minutes": 9.883333333333333, "pace": 79.0016863406408, "off_rating": 104.16666666666667, "def_rating": 156.25, "net_rating": -52.08333333333333, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | B. Lisboa | K. Leslie | Q. Eyobo | R. Stein", "minutes": 4.1, "pace": 89.3658536585366, "off_rating": 112.61261261261262, "def_rating": 148.3050847457627, "net_rating": -35.69247213315009, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "G. Lefebvre | J. Silva | K. Leslie | R. Stein | T. Do", "minutes": 3.033333333333333, "pace": 58.54945054945054, "off_rating": 122.95081967213115, "def_rating": 75.0, "net_rating": 47.950819672131146, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | D. Machado | G. Lefebvre | Q. Eyobo | R. Stein", "minutes": 2.7, "pace": 87.99999999999999, "off_rating": 40.0, "def_rating": 145.3488372093023, "net_rating": -105.3488372093023, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Lisboa | I. Almeida | Q. Eyobo | R. Stein | T. Do", "minutes": 2.45, "pace": 84.24489795918367, "off_rating": 73.52941176470588, "def_rating": 163.9344262295082, "net_rating": -90.40501446480232, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | B. Lisboa | I. Almeida | K. Leslie | Q. Eyobo", "minutes": 2.2666666666666666, "pace": 95.99999999999999, "off_rating": 83.33333333333334, "def_rating": 20.491803278688526, "net_rating": 62.84153005464482, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Lisboa | I. Almeida | K. Leslie | Q. Eyobo | T. Do", "minutes": 2.25, "pace": 75.73333333333332, "off_rating": 231.09243697478993, "def_rating": 265.9574468085106, "net_rating": -34.86500983372068, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | D. Machado | G. Lefebvre | R. Stein | T. Do", "minutes": 1.95, "pace": 75.07692307692308, "off_rating": 50.0, "def_rating": 60.24096385542169, "net_rating": -10.24096385542169, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "D. Machado | G. Lefebvre | I. Almeida | Q. Eyobo | T. Do", "minutes": 1.6, "pace": 85.99999999999999, "off_rating": 66.66666666666666, "def_rating": 103.09278350515466, "net_rating": -36.426116838488, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | B. Lisboa | D. Machado | G. Lefebvre | Q. Eyobo", "minutes": 1.5999999999999999, "pace": 87.50000000000001, "off_rating": 125.0, "def_rating": 100.0, "net_rating": 25.0, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "D. Machado | G. Lefebvre | I. Almeida | R. Stein | T. Do", "minutes": 1.4666666666666666, "pace": 109.0909090909091, "off_rating": 50.0, "def_rating": 200.0, "net_rating": -150.0, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | G. Lefebvre | J. Silva | K. Leslie | R. Stein", "minutes": 1.3666666666666667, "pace": 73.17073170731707, "off_rating": 100.0, "def_rating": 66.66666666666666, "net_rating": 33.33333333333334, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Lisboa | D. Machado | D. Runge | G. Lefebvre | T. Do", "minutes": 1.05, "pace": 73.9047619047619, "off_rating": 150.0, "def_rating": 106.38297872340425, "net_rating": 43.61702127659575, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | B. Lisboa | G. Lefebvre | Q. Eyobo | R. Stein", "minutes": 0.8166666666666667, "pace": 122.44897959183673, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Lisboa | G. Lefebvre | I. Almeida | Q. Eyobo | T. Do", "minutes": 0.8, "pace": 118.99999999999999, "off_rating": 217.39130434782612, "def_rating": 150.0, "net_rating": 67.39130434782612, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | B. Lisboa | G. Lefebvre | K. Leslie | Q. Eyobo", "minutes": 0.7833333333333333, "pace": 132.7659574468085, "off_rating": 86.20689655172414, "def_rating": 34.72222222222222, "net_rating": 51.48467432950192, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Lisboa | G. Lefebvre | Q. Eyobo | R. Stein | T. Do", "minutes": 0.75, "pace": 76.8, "off_rating": 200.0, "def_rating": 106.38297872340425, "net_rating": 93.61702127659575, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "D. Machado | D. Runge | G. Lefebvre | I. Almeida | T. Do", "minutes": 0.65, "pace": 102.15384615384613, "off_rating": 53.191489361702125, "def_rating": 208.33333333333334, "net_rating": -155.1418439716312, "games": 1}, {"team_key": "GFC", "team_name": "Galitos BARREIRO ACEDE", "lineup_players": "B. Carter | G. Lefebvre | I. Almeida | Q. Eyobo | R. Stein", "minutes": 0.4833333333333333, "pace": 59.58620689655172, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | E. Crandall IV | K. McEwen | M. Romdhane", "minutes": 4.566666666666666, "pace": 84.08759124087592, "off_rating": 184.4262295081967, "def_rating": 116.52542372881356, "net_rating": 67.90080577938315, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | E. Crandall IV | J. Silva | M. Romdhane", "minutes": 4.2, "pace": 100.95238095238095, "off_rating": 106.00706713780919, "def_rating": 70.8502024291498, "net_rating": 35.156864708659384, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | D. Gameiro | J. Silva | R. Yussuf", "minutes": 2.8166666666666664, "pace": 91.45562130177514, "off_rating": 203.48837209302326, "def_rating": 66.66666666666666, "net_rating": 136.8217054263566, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Gameiro | E. Francisco | J. Silva | R. Yussuf | T. Filipe", "minutes": 2.466666666666667, "pace": 55.783783783783775, "off_rating": 0.0, "def_rating": 103.09278350515466, "net_rating": -103.09278350515466, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | D. Relvao | E. Crandall IV | K. McEwen | M. Romdhane", "minutes": 2.4499999999999997, "pace": 96.97959183673468, "off_rating": 170.06802721088437, "def_rating": 50.0, "net_rating": 120.06802721088437, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | D. Gameiro | E. Crandall IV | J. Silva | R. Yussuf", "minutes": 2.0166666666666666, "pace": 82.51239669421489, "off_rating": 60.24096385542169, "def_rating": 40.0, "net_rating": 20.24096385542169, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Relvao | E. Crandall IV | J. Silva | K. McEwen | M. Romdhane", "minutes": 1.9333333333333331, "pace": 71.17241379310346, "off_rating": 100.0, "def_rating": 180.41237113402062, "net_rating": -80.41237113402062, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | D. Gameiro | D. Relvao | J. Silva | M. Romdhane", "minutes": 1.8833333333333333, "pace": 73.06194690265487, "off_rating": 104.16666666666667, "def_rating": 0.0, "net_rating": 104.16666666666667, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | E. Crandall IV | K. McEwen | R. Yussuf", "minutes": 1.7, "pace": 84.70588235294117, "off_rating": 150.60240963855424, "def_rating": 103.09278350515466, "net_rating": 47.50962613339958, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | E. Crandall IV | J. Silva | K. McEwen | R. Yussuf", "minutes": 1.6, "pace": 85.99999999999999, "off_rating": 103.09278350515466, "def_rating": 66.66666666666666, "net_rating": 36.426116838488, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Gameiro | E. Crandall IV | E. Francisco | M. Romdhane | R. Yussuf", "minutes": 1.3666666666666667, "pace": 92.48780487804878, "off_rating": 66.66666666666666, "def_rating": 180.72289156626508, "net_rating": -114.05622489959842, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | D. Gameiro | J. Silva | M. Romdhane | R. Yussuf", "minutes": 1.3166666666666667, "pace": 74.12658227848101, "off_rating": 300.0, "def_rating": 208.33333333333334, "net_rating": 91.66666666666666, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | D. Gameiro | D. Relvao | J. Silva", "minutes": 1.2333333333333334, "pace": 62.91891891891891, "off_rating": 106.38297872340425, "def_rating": 100.0, "net_rating": 6.38297872340425, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | D. Relvao | E. Crandall IV | K. McEwen", "minutes": 1.1833333333333333, "pace": 67.6056338028169, "off_rating": 150.0, "def_rating": 100.0, "net_rating": 50.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Gameiro | D. Relvao | E. Crandall IV | E. Francisco | K. McEwen", "minutes": 1.1166666666666667, "pace": 71.64179104477611, "off_rating": 100.0, "def_rating": 100.0, "net_rating": 0.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | D. Gameiro | E. Crandall IV | E. Francisco | M. Romdhane", "minutes": 1.05, "pace": 35.8095238095238, "off_rating": 200.0, "def_rating": 227.27272727272728, "net_rating": -27.27272727272728, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | D. Gameiro | D. Relvao | K. McEwen | M. Romdhane", "minutes": 1.0, "pace": 68.8, "off_rating": 0.0, "def_rating": 100.0, "net_rating": -100.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | E. Crandall IV | J. Silva | M. Romdhane | R. Yussuf", "minutes": 0.9333333333333332, "pace": 78.0, "off_rating": 227.27272727272728, "def_rating": 265.9574468085106, "net_rating": -38.68471953578333, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | E. Crandall IV | E. Francisco | K. McEwen | M. Romdhane", "minutes": 0.9, "pace": 160.0, "off_rating": 120.48192771084337, "def_rating": 128.8659793814433, "net_rating": -8.384051670599945, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Gameiro | E. Crandall IV | J. Silva | M. Romdhane | R. Yussuf", "minutes": 0.75, "pace": 76.8, "off_rating": 106.38297872340425, "def_rating": 200.0, "net_rating": -93.61702127659575, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | A. Dziewa | D. Gameiro | D. Relvao | K. McEwen", "minutes": 0.5833333333333333, "pace": 102.85714285714288, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Gameiro | E. Francisco | J. Silva | K. McEwen | R. Yussuf", "minutes": 0.5666666666666667, "pace": 70.58823529411765, "off_rating": 300.0, "def_rating": 200.0, "net_rating": 100.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | D. Gameiro | J. Silva | K. McEwen | M. Romdhane", "minutes": 0.5333333333333333, "pace": 112.5, "off_rating": 0.0, "def_rating": 100.0, "net_rating": -100.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | E. Crandall IV | J. Silva | K. McEwen | M. Romdhane", "minutes": 0.48333333333333334, "pace": 137.37931034482756, "off_rating": 53.191489361702125, "def_rating": 69.44444444444444, "net_rating": -16.252955082742318, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | D. Relvao | E. Crandall IV | J. Silva | M. Romdhane", "minutes": 0.4666666666666667, "pace": 42.857142857142854, "off_rating": 200.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Broussard | D. Gameiro | D. Relvao | E. Francisco | K. McEwen", "minutes": 0.3833333333333333, "pace": 156.52173913043478, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "A. Dziewa | D. Gameiro | J. Silva | K. McEwen | R. Yussuf", "minutes": 0.25, "pace": 150.39999999999998, "off_rating": 300.0, "def_rating": 227.27272727272728, "net_rating": 72.72727272727272, "games": 1}, {"team_key": "SLB", "team_name": "SL Benfica", "lineup_players": "D. Gameiro | D. Relvao | E. Francisco | J. Silva | K. McEwen", "minutes": 0.25, "pace": 80.0, "off_rating": 0.0, "def_rating": null, "net_rating": null, "games": 1}];
+    const PLAYERS = [{"team_key": "GFC", "player_id": "GFC_Q._EYOBO", "player_name": "Q. Eyobo", "position": "G", "games": 1, "mpg": 30.483333333333334, "ppg": 20.0, "rpg": 3.0, "apg": 1.0, "ts_pct": 0.7911392405063291, "efg_pct": 0.75, "usg_pct": 0.21577376176092034, "ast_pct": 0.005685048322910745, "tov_pct": 0.1918158567774936, "ortg": 90.54127938764351, "drtg": 114.16074357572444, "netrtg": -23.619464188080926, "minutes_on": 30.483333333333334, "on_court_pct": 0.7620833333333333, "net_on_per40": -23.619464188080926, "net_off_per40": -16.81260945709282, "on_off_net_diff_per40": -6.806854730988107, "recent_games": 1, "recent_ppg": 20.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 20.0, "season_apg": 1.0, "season_rpg": 3.0, "season_ts_pct": 0.7911392405063291, "season_three_rate": 0.1, "season_mpg": 30.483333333333334, "last3_games": 1, "last3_ppg": 20.0, "last3_apg": 1.0, "last3_rpg": 3.0, "last3_ts_pct": 0.7911392405063291, "last3_three_rate": 0.1, "last3_mpg": 30.483333333333334, "last5_games": 1, "last5_ppg": 20.0, "last5_apg": 1.0, "last5_rpg": 3.0, "last5_ts_pct": 0.7911392405063291, "last5_three_rate": 0.1, "last5_mpg": 30.483333333333334, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_Q._EYOBO.html"}, {"team_key": "GFC", "player_id": "GFC_B._CARTER", "player_name": "B. Carter", "position": "F", "games": 1, "mpg": 25.95, "ppg": 14.0, "rpg": 5.0, "apg": 0.0, "ts_pct": 0.4847645429362881, "efg_pct": 0.5, "usg_pct": 0.2502270599744068, "ast_pct": 0.0, "tov_pct": 0.06476683937823835, "ortg": 73.98843930635839, "drtg": 98.65125240847784, "netrtg": -24.662813102119458, "minutes_on": 25.95, "on_court_pct": 0.6487499999999999, "net_on_per40": -24.662813102119458, "net_off_per40": -17.081850533807838, "on_off_net_diff_per40": -7.5809625683116195, "recent_games": 1, "recent_ppg": 14.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 14.0, "season_apg": 0.0, "season_rpg": 5.0, "season_ts_pct": 0.4847645429362881, "season_three_rate": 0.2857142857142857, "season_mpg": 25.95, "last3_games": 1, "last3_ppg": 14.0, "last3_apg": 0.0, "last3_rpg": 5.0, "last3_ts_pct": 0.4847645429362881, "last3_three_rate": 0.2857142857142857, "last3_mpg": 25.95, "last5_games": 1, "last5_ppg": 14.0, "last5_apg": 0.0, "last5_rpg": 5.0, "last5_ts_pct": 0.4847645429362881, "last5_three_rate": 0.2857142857142857, "last5_mpg": 25.95, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_B._CARTER.html"}, {"team_key": "GFC", "player_id": "GFC_I._ALMEIDA", "player_name": "I. Almeida", "position": "E", "games": 1, "mpg": 21.866666666666667, "ppg": 12.0, "rpg": 5.0, "apg": 5.0, "ts_pct": 0.6382978723404255, "efg_pct": 0.4, "usg_pct": 0.21925353596996866, "ast_pct": 0.03869969040247678, "tov_pct": 0.17543859649122806, "ortg": 93.36384439359267, "drtg": 124.48512585812357, "netrtg": -31.121281464530895, "minutes_on": 21.85, "on_court_pct": 0.54625, "net_on_per40": -31.121281464530895, "net_off_per40": -11.019283746556468, "on_off_net_diff_per40": -20.101997717974427, "recent_games": 1, "recent_ppg": 12.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 12.0, "season_apg": 5.0, "season_rpg": 5.0, "season_ts_pct": 0.6382978723404255, "season_three_rate": 0.4, "season_mpg": 21.866666666666667, "last3_games": 1, "last3_ppg": 12.0, "last3_apg": 5.0, "last3_rpg": 5.0, "last3_ts_pct": 0.6382978723404255, "last3_three_rate": 0.4, "last3_mpg": 21.866666666666667, "last5_games": 1, "last5_ppg": 12.0, "last5_apg": 5.0, "last5_rpg": 5.0, "last5_ts_pct": 0.6382978723404255, "last5_three_rate": 0.4, "last5_mpg": 21.866666666666667, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_I._ALMEIDA.html"}, {"team_key": "GFC", "player_id": "GFC_R._STEIN", "player_name": "R. Stein", "position": "F", "games": 1, "mpg": 29.0, "ppg": 9.0, "rpg": 3.0, "apg": 2.0, "ts_pct": 0.5625, "efg_pct": 0.5625, "usg_pct": 0.1595214272594569, "ast_pct": 0.011764705882352941, "tov_pct": 0.2727272727272727, "ortg": 68.96551724137932, "drtg": 110.34482758620689, "netrtg": -41.37931034482757, "minutes_on": 29.0, "on_court_pct": 0.725, "net_on_per40": -41.37931034482757, "net_off_per40": 29.09090909090908, "on_off_net_diff_per40": -70.47021943573665, "recent_games": 1, "recent_ppg": 9.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 9.0, "season_apg": 2.0, "season_rpg": 3.0, "season_ts_pct": 0.5625, "season_three_rate": 0.375, "season_mpg": 29.0, "last3_games": 1, "last3_ppg": 9.0, "last3_apg": 2.0, "last3_rpg": 3.0, "last3_ts_pct": 0.5625, "last3_three_rate": 0.375, "last3_mpg": 29.0, "last5_games": 1, "last5_ppg": 9.0, "last5_apg": 2.0, "last5_rpg": 3.0, "last5_ts_pct": 0.5625, "last5_three_rate": 0.375, "last5_mpg": 29.0, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_R._STEIN.html"}, {"team_key": "GFC", "player_id": "GFC_K._LESLIE", "player_name": "K. Leslie", "position": "F", "games": 1, "mpg": 13.8, "ppg": 7.0, "rpg": 5.0, "apg": 0.0, "ts_pct": 0.7882882882882882, "efg_pct": 0.75, "usg_pct": 0.19625969535557425, "ast_pct": 0.0, "tov_pct": 0.3105590062111801, "ortg": 104.34782608695652, "drtg": 89.85507246376811, "netrtg": 14.492753623188406, "minutes_on": 13.8, "on_court_pct": 0.34500000000000003, "net_on_per40": 14.492753623188406, "net_off_per40": -41.221374045801525, "on_off_net_diff_per40": 55.71412766898993, "recent_games": 1, "recent_ppg": 7.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 7.0, "season_apg": 0.0, "season_rpg": 5.0, "season_ts_pct": 0.7882882882882882, "season_three_rate": 1.0, "season_mpg": 13.8, "last3_games": 1, "last3_ppg": 7.0, "last3_apg": 0.0, "last3_rpg": 5.0, "last3_ts_pct": 0.7882882882882882, "last3_three_rate": 1.0, "last3_mpg": 13.8, "last5_games": 1, "last5_ppg": 7.0, "last5_apg": 0.0, "last5_rpg": 5.0, "last5_ts_pct": 0.7882882882882882, "last5_three_rate": 1.0, "last5_mpg": 13.8, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_K._LESLIE.html"}, {"team_key": "GFC", "player_id": "GFC_B._LISBOA", "player_name": "B. Lisboa", "position": "PG", "games": 1, "mpg": 26.75, "ppg": 6.0, "rpg": 1.0, "apg": 5.0, "ts_pct": 0.436046511627907, "efg_pct": 0.3333333333333333, "usg_pct": 0.17105250884929088, "ast_pct": 0.031545741324921134, "tov_pct": 0.36764705882352944, "ortg": 101.6822429906542, "drtg": 112.14953271028037, "netrtg": -10.467289719626166, "minutes_on": 26.75, "on_court_pct": 0.66875, "net_on_per40": -10.467289719626166, "net_off_per40": -45.28301886792453, "on_off_net_diff_per40": 34.81572914829837, "recent_games": 1, "recent_ppg": 6.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 6.0, "season_apg": 5.0, "season_rpg": 1.0, "season_ts_pct": 0.436046511627907, "season_three_rate": 0.5, "season_mpg": 26.75, "last3_games": 1, "last3_ppg": 6.0, "last3_apg": 5.0, "last3_rpg": 1.0, "last3_ts_pct": 0.436046511627907, "last3_three_rate": 0.5, "last3_mpg": 26.75, "last5_games": 1, "last5_ppg": 6.0, "last5_apg": 5.0, "last5_rpg": 1.0, "last5_ts_pct": 0.436046511627907, "last5_three_rate": 0.5, "last5_mpg": 26.75, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_B._LISBOA.html"}, {"team_key": "GFC", "player_id": "GFC_T._DO", "player_name": "T. Do", "position": "C", "games": 1, "mpg": 16.0, "ppg": 6.0, "rpg": 3.0, "apg": 0.0, "ts_pct": 0.4658385093167702, "efg_pct": 0.5, "usg_pct": 0.2481283291281189, "ast_pct": 0.0, "tov_pct": 0.31779661016949146, "ortg": 97.5, "drtg": 112.5, "netrtg": -15.0, "minutes_on": 16.0, "on_court_pct": 0.4, "net_on_per40": -15.0, "net_off_per40": -26.666666666666657, "on_off_net_diff_per40": 11.666666666666657, "recent_games": 1, "recent_ppg": 6.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 6.0, "season_apg": 0.0, "season_rpg": 3.0, "season_ts_pct": 0.4658385093167702, "season_three_rate": 0.0, "season_mpg": 16.0, "last3_games": 1, "last3_ppg": 6.0, "last3_apg": 0.0, "last3_rpg": 3.0, "last3_ts_pct": 0.4658385093167702, "last3_three_rate": 0.0, "last3_mpg": 16.0, "last5_games": 1, "last5_ppg": 6.0, "last5_apg": 0.0, "last5_rpg": 3.0, "last5_ts_pct": 0.4658385093167702, "last5_three_rate": 0.0, "last5_mpg": 16.0, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_T._DO.html"}, {"team_key": "GFC", "player_id": "GFC_G._LEFEBVRE", "player_name": "G. Lefebvre", "position": "", "games": 1, "mpg": 19.05, "ppg": 4.0, "rpg": 5.0, "apg": 0.0, "ts_pct": 0.4098360655737705, "efg_pct": 0.375, "usg_pct": 0.12980956228242707, "ast_pct": 0.0, "tov_pct": 0.17006802721088435, "ortg": 73.49081364829397, "drtg": 90.28871391076115, "netrtg": -16.79790026246718, "minutes_on": 19.05, "on_court_pct": 0.47625, "net_on_per40": -16.79790026246718, "net_off_per40": -26.73031026252984, "on_off_net_diff_per40": 9.93241000006266, "recent_games": 1, "recent_ppg": 4.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 4.0, "season_apg": 0.0, "season_rpg": 5.0, "season_ts_pct": 0.4098360655737705, "season_three_rate": 1.0, "season_mpg": 19.05, "last3_games": 1, "last3_ppg": 4.0, "last3_apg": 0.0, "last3_rpg": 5.0, "last3_ts_pct": 0.4098360655737705, "last3_three_rate": 1.0, "last3_mpg": 19.05, "last5_games": 1, "last5_ppg": 4.0, "last5_apg": 0.0, "last5_rpg": 5.0, "last5_ts_pct": 0.4098360655737705, "last5_three_rate": 1.0, "last5_mpg": 19.05, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_G._LEFEBVRE.html"}, {"team_key": "GFC", "player_id": "GFC_D._MACHADO", "player_name": "D. Machado", "position": "SF", "games": 1, "mpg": 11.016666666666667, "ppg": 4.0, "rpg": 1.0, "apg": 3.0, "ts_pct": 0.3333333333333333, "efg_pct": 0.3333333333333333, "usg_pct": 0.2672219755219619, "ast_pct": 0.04680187207488299, "tov_pct": 0.14285714285714285, "ortg": 61.72465960665657, "drtg": 116.1875945537065, "netrtg": -54.46293494704993, "minutes_on": 11.016666666666667, "on_court_pct": 0.2754166666666667, "net_on_per40": -54.46293494704993, "net_off_per40": -9.66072455434157, "on_off_net_diff_per40": -44.80221039270836, "recent_games": 1, "recent_ppg": 4.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 4.0, "season_apg": 3.0, "season_rpg": 1.0, "season_ts_pct": 0.3333333333333333, "season_three_rate": 0.0, "season_mpg": 11.016666666666667, "last3_games": 1, "last3_ppg": 4.0, "last3_apg": 3.0, "last3_rpg": 1.0, "last3_ts_pct": 0.3333333333333333, "last3_three_rate": 0.0, "last3_mpg": 11.016666666666667, "last5_games": 1, "last5_ppg": 4.0, "last5_apg": 3.0, "last5_rpg": 1.0, "last5_ts_pct": 0.3333333333333333, "last5_three_rate": 0.0, "last5_mpg": 11.016666666666667, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_D._MACHADO.html"}, {"team_key": "GFC", "player_id": "GFC_J._SILVA", "player_name": "J. Silva", "position": "", "games": 1, "mpg": 4.4, "ppg": 3.0, "rpg": 0.0, "apg": 0.0, "ts_pct": 0.75, "efg_pct": 0.75, "usg_pct": 0.19116204093075412, "ast_pct": 0.0, "tov_pct": 0.0, "ortg": 72.72727272727272, "drtg": 45.45454545454545, "netrtg": 27.272727272727266, "minutes_on": 4.4, "on_court_pct": 0.11000000000000001, "net_on_per40": 27.272727272727266, "net_off_per40": -28.089887640449433, "on_off_net_diff_per40": 55.3626149131767, "recent_games": 1, "recent_ppg": 3.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 3.0, "season_apg": 0.0, "season_rpg": 0.0, "season_ts_pct": 0.75, "season_three_rate": 0.5, "season_mpg": 4.4, "last3_games": 1, "last3_ppg": 3.0, "last3_apg": 0.0, "last3_rpg": 0.0, "last3_ts_pct": 0.75, "last3_three_rate": 0.5, "last3_mpg": 4.4, "last5_games": 1, "last5_ppg": 3.0, "last5_apg": 0.0, "last5_rpg": 0.0, "last5_ts_pct": 0.75, "last5_three_rate": 0.5, "last5_mpg": 4.4, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_J._SILVA.html"}, {"team_key": "GFC", "player_id": "GFC_D._RUNGE", "player_name": "D. Runge", "position": "C", "games": 1, "mpg": 1.7, "ppg": 0.0, "rpg": 0.0, "apg": 0.0, "ts_pct": null, "efg_pct": null, "usg_pct": 0.0, "ast_pct": 0.0, "tov_pct": null, "ortg": 94.11764705882354, "drtg": 117.64705882352942, "netrtg": -23.529411764705884, "minutes_on": 1.7, "on_court_pct": 0.042499999999999996, "net_on_per40": -23.529411764705884, "net_off_per40": -21.932114882506525, "on_off_net_diff_per40": -1.597296882199359, "recent_games": 1, "recent_ppg": 0.0, "delta_ppg": 0.0, "delta_ts_pct": null, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": null, "season_ppg": 0.0, "season_apg": 0.0, "season_rpg": 0.0, "season_ts_pct": null, "season_three_rate": null, "season_mpg": 1.7, "last3_games": 1, "last3_ppg": 0.0, "last3_apg": 0.0, "last3_rpg": 0.0, "last3_ts_pct": null, "last3_three_rate": null, "last3_mpg": 1.7, "last5_games": 1, "last5_ppg": 0.0, "last5_apg": 0.0, "last5_rpg": 0.0, "last5_ts_pct": null, "last5_three_rate": null, "last5_mpg": 1.7, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_D._RUNGE.html"}, {"team_key": "GFC", "player_id": "GFC_G._CARVALHO", "player_name": "G. Carvalho", "position": "P", "games": 1, "mpg": 0.0, "ppg": 0.0, "rpg": 0.0, "apg": 0.0, "ts_pct": null, "efg_pct": null, "usg_pct": null, "ast_pct": null, "tov_pct": null, "ortg": null, "drtg": null, "netrtg": null, "minutes_on": 0.0, "on_court_pct": 0.0, "net_on_per40": null, "net_off_per40": -22.0, "on_off_net_diff_per40": null, "recent_games": 1, "recent_ppg": 0.0, "delta_ppg": 0.0, "delta_ts_pct": null, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": null, "season_ppg": 0.0, "season_apg": 0.0, "season_rpg": 0.0, "season_ts_pct": null, "season_three_rate": null, "season_mpg": 0.0, "last3_games": 1, "last3_ppg": 0.0, "last3_apg": 0.0, "last3_rpg": 0.0, "last3_ts_pct": null, "last3_three_rate": null, "last3_mpg": 0.0, "last5_games": 1, "last5_ppg": 0.0, "last5_apg": 0.0, "last5_rpg": 0.0, "last5_ts_pct": null, "last5_three_rate": null, "last5_mpg": 0.0, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_GFC_GFC_G._CARVALHO.html"}, {"team_key": "SLB", "player_id": "SLB_A._DZIEWA", "player_name": "A. Dziewa", "position": "C", "games": 1, "mpg": 23.116666666666667, "ppg": 19.0, "rpg": 4.0, "apg": 3.0, "ts_pct": 0.6542699724517906, "efg_pct": 0.6818181818181818, "usg_pct": 0.2565353554345203, "ast_pct": 0.018815855494229806, "tov_pct": 0.0, "ortg": 121.12472963229993, "drtg": 79.59625090122566, "netrtg": 41.52847873107427, "minutes_on": 23.116666666666667, "on_court_pct": 0.5779166666666666, "net_on_per40": 41.52847873107427, "net_off_per40": -4.738400789733461, "on_off_net_diff_per40": 46.266879520807734, "recent_games": 1, "recent_ppg": 19.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 19.0, "season_apg": 3.0, "season_rpg": 4.0, "season_ts_pct": 0.6542699724517906, "season_three_rate": 0.2727272727272727, "season_mpg": 23.116666666666667, "last3_games": 1, "last3_ppg": 19.0, "last3_apg": 3.0, "last3_rpg": 4.0, "last3_ts_pct": 0.6542699724517906, "last3_three_rate": 0.2727272727272727, "last3_mpg": 23.116666666666667, "last5_games": 1, "last5_ppg": 19.0, "last5_apg": 3.0, "last5_rpg": 4.0, "last5_ts_pct": 0.6542699724517906, "last5_three_rate": 0.2727272727272727, "last5_mpg": 23.116666666666667, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_A._DZIEWA.html"}, {"team_key": "SLB", "player_id": "SLB_J._SILVA", "player_name": "J. Silva", "position": "SF", "games": 1, "mpg": 23.7, "ppg": 18.0, "rpg": 3.0, "apg": 0.0, "ts_pct": 0.75, "efg_pct": 0.75, "usg_pct": 0.224027239882515, "ast_pct": 0.0, "tov_pct": 0.07692307692307693, "ortg": 102.9535864978903, "drtg": 81.0126582278481, "netrtg": 21.940928270042193, "minutes_on": 23.7, "on_court_pct": 0.5925, "net_on_per40": 21.940928270042193, "net_off_per40": 22.085889570552155, "on_off_net_diff_per40": -0.14496130050996214, "recent_games": 1, "recent_ppg": 18.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 18.0, "season_apg": 0.0, "season_rpg": 3.0, "season_ts_pct": 0.75, "season_three_rate": 1.0, "season_mpg": 23.7, "last3_games": 1, "last3_ppg": 18.0, "last3_apg": 0.0, "last3_rpg": 3.0, "last3_ts_pct": 0.75, "last3_three_rate": 1.0, "last3_mpg": 23.7, "last5_games": 1, "last5_ppg": 18.0, "last5_apg": 0.0, "last5_rpg": 3.0, "last5_ts_pct": 0.75, "last5_three_rate": 1.0, "last5_mpg": 23.7, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_J._SILVA.html"}, {"team_key": "SLB", "player_id": "SLB_M._ROMDHANE", "player_name": "M. Romdhane", "position": "PF", "games": 1, "mpg": 23.833333333333332, "ppg": 15.0, "rpg": 9.0, "apg": 3.0, "ts_pct": 0.6970260223048327, "efg_pct": 0.7222222222222222, "usg_pct": 0.18438827702072055, "ast_pct": 0.018115942028985508, "tov_pct": 0.0, "ortg": 115.80419580419581, "drtg": 99.02097902097903, "netrtg": 16.783216783216787, "minutes_on": 23.833333333333332, "on_court_pct": 0.5958333333333333, "net_on_per40": 16.783216783216787, "net_off_per40": 29.69072164948453, "on_off_net_diff_per40": -12.907504866267743, "recent_games": 1, "recent_ppg": 15.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 15.0, "season_apg": 3.0, "season_rpg": 9.0, "season_ts_pct": 0.6970260223048327, "season_three_rate": 0.3333333333333333, "season_mpg": 23.833333333333332, "last3_games": 1, "last3_ppg": 15.0, "last3_apg": 3.0, "last3_rpg": 9.0, "last3_ts_pct": 0.6970260223048327, "last3_three_rate": 0.3333333333333333, "last3_mpg": 23.833333333333332, "last5_games": 1, "last5_ppg": 15.0, "last5_apg": 3.0, "last5_rpg": 9.0, "last5_ts_pct": 0.6970260223048327, "last5_three_rate": 0.3333333333333333, "last5_mpg": 23.833333333333332, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_M._ROMDHANE.html"}, {"team_key": "SLB", "player_id": "SLB_A._BROUSSARD", "player_name": "A. Broussard", "position": "SG", "games": 1, "mpg": 24.716666666666665, "ppg": 10.0, "rpg": 6.0, "apg": 4.0, "ts_pct": 0.4699248120300752, "efg_pct": 0.375, "usg_pct": 0.20886371346166896, "ast_pct": 0.022862368541380886, "tov_pct": 0.1582278481012658, "ortg": 127.84895482130817, "drtg": 74.44369521240729, "netrtg": 53.40525960890088, "minutes_on": 24.716666666666665, "on_court_pct": 0.6179166666666667, "net_on_per40": 53.40525960890088, "net_off_per40": -28.78953107960743, "on_off_net_diff_per40": 82.1947906885083, "recent_games": 1, "recent_ppg": 10.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 10.0, "season_apg": 4.0, "season_rpg": 6.0, "season_ts_pct": 0.4699248120300752, "season_three_rate": 0.5, "season_mpg": 24.716666666666665, "last3_games": 1, "last3_ppg": 10.0, "last3_apg": 4.0, "last3_rpg": 6.0, "last3_ts_pct": 0.4699248120300752, "last3_three_rate": 0.5, "last3_mpg": 24.716666666666665, "last5_games": 1, "last5_ppg": 10.0, "last5_apg": 4.0, "last5_rpg": 6.0, "last5_ts_pct": 0.4699248120300752, "last5_three_rate": 0.5, "last5_mpg": 24.716666666666665, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_A._BROUSSARD.html"}, {"team_key": "SLB", "player_id": "SLB_K._MCEWEN", "player_name": "K. McEwen", "position": "SF", "games": 1, "mpg": 19.5, "ppg": 10.0, "rpg": 3.0, "apg": 3.0, "ts_pct": 0.8865248226950354, "efg_pct": 1.0, "usg_pct": 0.1390718685831622, "ast_pct": 0.02167630057803468, "tov_pct": 0.1506024096385542, "ortg": 114.87179487179488, "drtg": 92.3076923076923, "netrtg": 22.56410256410257, "minutes_on": 19.5, "on_court_pct": 0.4875, "net_on_per40": 22.56410256410257, "net_off_per40": 21.463414634146346, "on_off_net_diff_per40": 1.1006879299562229, "recent_games": 1, "recent_ppg": 10.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 10.0, "season_apg": 3.0, "season_rpg": 3.0, "season_ts_pct": 0.8865248226950354, "season_three_rate": 1.0, "season_mpg": 19.5, "last3_games": 1, "last3_ppg": 10.0, "last3_apg": 3.0, "last3_rpg": 3.0, "last3_ts_pct": 0.8865248226950354, "last3_three_rate": 1.0, "last3_mpg": 19.5, "last5_games": 1, "last5_ppg": 10.0, "last5_apg": 3.0, "last5_rpg": 3.0, "last5_ts_pct": 0.8865248226950354, "last5_three_rate": 1.0, "last5_mpg": 19.5, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_K._MCEWEN.html"}, {"team_key": "SLB", "player_id": "SLB_R._YUSSUF", "player_name": "R. Yussuf", "position": "C", "games": 1, "mpg": 15.783333333333333, "ppg": 10.0, "rpg": 3.0, "apg": 1.0, "ts_pct": 0.9057971014492754, "efg_pct": 1.0, "usg_pct": 0.16871538566618022, "ast_pct": 0.00895736295234683, "tov_pct": 0.15337423312883436, "ortg": 114.04435058078141, "drtg": 98.83843717001056, "netrtg": 15.205913410770847, "minutes_on": 15.783333333333333, "on_court_pct": 0.39458333333333334, "net_on_per40": 15.205913410770847, "net_off_per40": 26.4280798348245, "on_off_net_diff_per40": -11.222166424053654, "recent_games": 1, "recent_ppg": 10.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 10.0, "season_apg": 1.0, "season_rpg": 3.0, "season_ts_pct": 0.9057971014492754, "season_three_rate": 0.0, "season_mpg": 15.783333333333333, "last3_games": 1, "last3_ppg": 10.0, "last3_apg": 1.0, "last3_rpg": 3.0, "last3_ts_pct": 0.9057971014492754, "last3_three_rate": 0.0, "last3_mpg": 15.783333333333333, "last5_games": 1, "last5_ppg": 10.0, "last5_apg": 1.0, "last5_rpg": 3.0, "last5_ts_pct": 0.9057971014492754, "last5_three_rate": 0.0, "last5_mpg": 15.783333333333333, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_R._YUSSUF.html"}, {"team_key": "SLB", "player_id": "SLB_E._CRANDALL_IV", "player_name": "E. Crandall IV", "position": "B", "games": 1, "mpg": 25.6, "ppg": 9.0, "rpg": 2.0, "apg": 11.0, "ts_pct": 0.436046511627907, "efg_pct": 0.3888888888888889, "usg_pct": 0.21250545431211496, "ast_pct": 0.06066622545775425, "tov_pct": 0.22522522522522523, "ortg": 113.78665003119153, "drtg": 91.32875857766687, "netrtg": 22.457891453524653, "minutes_on": 26.716666666666665, "on_court_pct": 0.6679166666666666, "net_on_per40": 22.457891453524653, "net_off_per40": 21.079046424090336, "on_off_net_diff_per40": 1.3788450294343164, "recent_games": 1, "recent_ppg": 9.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 9.0, "season_apg": 11.0, "season_rpg": 2.0, "season_ts_pct": 0.436046511627907, "season_three_rate": 0.4444444444444444, "season_mpg": 25.6, "last3_games": 1, "last3_ppg": 9.0, "last3_apg": 11.0, "last3_rpg": 2.0, "last3_ts_pct": 0.436046511627907, "last3_three_rate": 0.4444444444444444, "last3_mpg": 25.6, "last5_games": 1, "last5_ppg": 9.0, "last5_apg": 11.0, "last5_rpg": 2.0, "last5_ts_pct": 0.436046511627907, "last5_three_rate": 0.4444444444444444, "last5_mpg": 25.6, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_E._CRANDALL_IV.html"}, {"team_key": "SLB", "player_id": "SLB_D._GAMEIRO", "player_name": "D. Gameiro", "position": "PG", "games": 1, "mpg": 19.6, "ppg": 8.0, "rpg": 2.0, "apg": 4.0, "ts_pct": 0.6666666666666666, "efg_pct": 0.6666666666666666, "usg_pct": 0.18753928676193268, "ast_pct": 0.028960324355632783, "tov_pct": 0.3333333333333333, "ortg": 83.74468085106383, "drtg": 77.61702127659575, "netrtg": 6.127659574468083, "minutes_on": 19.583333333333332, "on_court_pct": 0.4895833333333333, "net_on_per40": 6.127659574468083, "net_off_per40": 37.22448979591836, "on_off_net_diff_per40": -31.096830221450276, "recent_games": 1, "recent_ppg": 8.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 8.0, "season_apg": 4.0, "season_rpg": 2.0, "season_ts_pct": 0.6666666666666666, "season_three_rate": 0.5, "season_mpg": 19.6, "last3_games": 1, "last3_ppg": 8.0, "last3_apg": 4.0, "last3_rpg": 2.0, "last3_ts_pct": 0.6666666666666666, "last3_three_rate": 0.5, "last3_mpg": 19.6, "last5_games": 1, "last5_ppg": 8.0, "last5_apg": 4.0, "last5_rpg": 2.0, "last5_ts_pct": 0.6666666666666666, "last5_three_rate": 0.5, "last5_mpg": 19.6, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_D._GAMEIRO.html"}, {"team_key": "SLB", "player_id": "SLB_D._RELVAO", "player_name": "D. Relvao", "position": "C", "games": 1, "mpg": 12.483333333333333, "ppg": 6.0, "rpg": 3.0, "apg": 0.0, "ts_pct": 0.5, "efg_pct": 0.5, "usg_pct": 0.19630280483492024, "ast_pct": 0.0, "tov_pct": 0.0, "ortg": 80.1068090787717, "drtg": 57.67690253671562, "netrtg": 22.42990654205608, "minutes_on": 12.483333333333333, "on_court_pct": 0.3120833333333333, "net_on_per40": 22.42990654205608, "net_off_per40": 21.804966686856446, "on_off_net_diff_per40": 0.624939855199635, "recent_games": 1, "recent_ppg": 6.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 6.0, "season_apg": 0.0, "season_rpg": 3.0, "season_ts_pct": 0.5, "season_three_rate": 0.0, "season_mpg": 12.483333333333333, "last3_games": 1, "last3_ppg": 6.0, "last3_apg": 0.0, "last3_rpg": 3.0, "last3_ts_pct": 0.5, "last3_three_rate": 0.0, "last3_mpg": 12.483333333333333, "last5_games": 1, "last5_ppg": 6.0, "last5_apg": 0.0, "last5_rpg": 3.0, "last5_ts_pct": 0.5, "last5_three_rate": 0.0, "last5_mpg": 12.483333333333333, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_D._RELVAO.html"}, {"team_key": "SLB", "player_id": "SLB_E._FRANCISCO", "player_name": "E. Francisco", "position": "F", "games": 1, "mpg": 8.1, "ppg": 2.0, "rpg": 1.0, "apg": 0.0, "ts_pct": 0.25, "efg_pct": 0.25, "usg_pct": 0.2521104266484143, "ast_pct": 0.0, "tov_pct": 0.2, "ortg": 64.19753086419753, "drtg": 103.70370370370371, "netrtg": -39.50617283950618, "minutes_on": 8.1, "on_court_pct": 0.20249999999999999, "net_on_per40": -39.50617283950618, "net_off_per40": 37.61755485893417, "on_off_net_diff_per40": -77.12372769844035, "recent_games": 1, "recent_ppg": 2.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 2.0, "season_apg": 0.0, "season_rpg": 1.0, "season_ts_pct": 0.25, "season_three_rate": 0.75, "season_mpg": 8.1, "last3_games": 1, "last3_ppg": 2.0, "last3_apg": 0.0, "last3_rpg": 1.0, "last3_ts_pct": 0.25, "last3_three_rate": 0.75, "last3_mpg": 8.1, "last5_games": 1, "last5_ppg": 2.0, "last5_apg": 0.0, "last5_rpg": 1.0, "last5_ts_pct": 0.25, "last5_three_rate": 0.75, "last5_mpg": 8.1, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_E._FRANCISCO.html"}, {"team_key": "SLB", "player_id": "SLB_T._FILIPE", "player_name": "T. Filipe", "position": "F", "games": 1, "mpg": 2.466666666666667, "ppg": 0.0, "rpg": 0.0, "apg": 0.0, "ts_pct": null, "efg_pct": null, "usg_pct": 0.0, "ast_pct": 0.0, "tov_pct": null, "ortg": 0.0, "drtg": 64.86486486486486, "netrtg": -64.86486486486486, "minutes_on": 2.466666666666667, "on_court_pct": 0.06166666666666667, "net_on_per40": -64.86486486486486, "net_off_per40": 27.708703374777983, "on_off_net_diff_per40": -92.57356823964284, "recent_games": 1, "recent_ppg": 0.0, "delta_ppg": 0.0, "delta_ts_pct": null, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": null, "season_ppg": 0.0, "season_apg": 0.0, "season_rpg": 0.0, "season_ts_pct": null, "season_three_rate": null, "season_mpg": 2.466666666666667, "last3_games": 1, "last3_ppg": 0.0, "last3_apg": 0.0, "last3_rpg": 0.0, "last3_ts_pct": null, "last3_three_rate": null, "last3_mpg": 2.466666666666667, "last5_games": 1, "last5_ppg": 0.0, "last5_apg": 0.0, "last5_rpg": 0.0, "last5_ts_pct": null, "last5_three_rate": null, "last5_mpg": 2.466666666666667, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "player_hubs/player_hub_SLB_SLB_T._FILIPE.html"}];
+    const ALERTS = [];
+    const RECENT_GAMES_TO_SHOW = 8;
+    const LINEUPS_MIN_MINUTES = 20.0;
+    const TOP_PLAYERS_COUNT = 8;
+    const TOP_LINEUPS_COUNT = 5;
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function fmtNumber(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "—";
+      return Number(value).toFixed(1);
+    }
+
+    function fmtPct(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "—";
+      return (Number(value) * 100).toFixed(1) + "%";
+    }
+
+    function avg(values) {
+      const clean = values.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      if (!clean.length) return null;
+      return clean.reduce((a, b) => a + b, 0) / clean.length;
+    }
+
+    function parseDate(value) {
+      if (value === null || value === undefined) return null;
+      const raw = String(value).trim();
+      if (!raw) return null;
+      const ts = Date.parse(raw);
+      return Number.isNaN(ts) ? null : ts;
+    }
+
+    function gameSortKey(game) {
+      const dateTs = parseDate(game.game_date);
+      const roundNum = (game.round === null || game.round === undefined || Number.isNaN(Number(game.round))) ? Number.NEGATIVE_INFINITY : Number(game.round);
+      const codeNum = Number(game.game_code);
+      const gameCodeVal = Number.isNaN(codeNum) ? String(game.game_code || "") : codeNum;
+      return { dateTs, roundNum, gameCodeVal };
+    }
+
+    function sortGamesChronologically(rows, descending=false) {
+      const sorted = [...rows].sort((a,b) => {
+        const ka = gameSortKey(a);
+        const kb = gameSortKey(b);
+        if (ka.dateTs !== null && kb.dateTs !== null && ka.dateTs !== kb.dateTs) return ka.dateTs - kb.dateTs;
+        if (ka.dateTs !== null && kb.dateTs === null) return -1;
+        if (ka.dateTs === null && kb.dateTs !== null) return 1;
+        if (ka.roundNum !== kb.roundNum) return ka.roundNum - kb.roundNum;
+        if (typeof ka.gameCodeVal === "number" && typeof kb.gameCodeVal === "number") return ka.gameCodeVal - kb.gameCodeVal;
+        return String(ka.gameCodeVal).localeCompare(String(kb.gameCodeVal));
+      });
+      return descending ? sorted.reverse() : sorted;
+    }
+
+    function currentTeamKey() {
+      return document.getElementById("team-filter").value || "";
+    }
+
+    function currentTeam() {
+      const teamKey = currentTeamKey();
+      return TEAMS.find(t => t.team_key === teamKey) || TEAMS[0] || null;
+    }
+
+    function teamGames(teamKey) {
+      return GAMES.filter(g => g.team_key === teamKey);
+    }
+
+    function recentGames(teamKey, n) {
+      return sortGamesChronologically(teamGames(teamKey)).slice(-n);
+    }
+
+    function currentLineupsMinMinutes() {
+      const el = document.getElementById("lineups-min-minutes");
+      if (!el) return LINEUPS_MIN_MINUTES;
+      const value = Number(el.value);
+      return Number.isFinite(value) && value >= 0 ? value : LINEUPS_MIN_MINUTES;
+    }
+
+    function teamLineups(teamKey) {
+      const minMinutes = currentLineupsMinMinutes();
+      return LINEUPS.filter(l => l.team_key === teamKey && l.minutes !== null && l.minutes >= minMinutes);
+    }
+
+    function teamPlayers(teamKey) {
+      return PLAYERS.filter(p => p.team_key === teamKey);
+    }
+
+    function inferTeamIdentityText(team, games, players, lineups) {
+      const off = avg(games.map(g => g.off_rating));
+      const defv = avg(games.map(g => g.def_rating));
+      const pace = avg(games.map(g => g.pace));
+      const efg = avg(games.map(g => g.efg_pct_off));
+      const oppEfg = avg(games.map(g => g.efg_pct_def));
+
+      const tags = [];
+      if (pace !== null) {
+        if (pace >= 74) tags.push("plays fast");
+        else if (pace <= 70) tags.push("prefers a slower tempo");
+      }
+      if (off !== null && off >= 112) tags.push("scores efficiently");
+      if (defv !== null && defv <= 108) tags.push("defends at a strong level");
+      if (efg !== null && efg >= 0.53) tags.push("creates quality shots");
+      if (oppEfg !== null && oppEfg <= 0.50) tags.push("limits opponent shot quality");
+
+      const corePlayers = players.slice(0, 3).map(p => p.player_name).filter(Boolean);
+      const bestLineup = lineups[0]?.lineup_players || "";
+      const pieces = [];
+      if (tags.length) pieces.push(escapeHtml(team.team_name) + " " + tags.join(", ") + ".");
+      if (corePlayers.length) pieces.push("The rotation is mostly defined by " + escapeHtml(corePlayers.join(", ")) + ".");
+      if (bestLineup) pieces.push("Most effective lineup sample: " + escapeHtml(bestLineup) + ".");
+      return pieces.join(" ");
+    }
+
+    function buildWatchItems(teamKey, games, players, lineups) {
+      const items = [];
+      const recent5 = recentGames(teamKey, 5);
+      const net5 = avg(recent5.map(g => g.net_rating));
+      const seasonNet = avg(games.map(g => g.net_rating));
+      if (net5 !== null && seasonNet !== null) {
+        const diff = net5 - seasonNet;
+        if (diff >= 3) items.push("Recent form is trending up: last 5 net rating sits " + fmtNumber(diff) + " points above season level.");
+        else if (diff <= -3) items.push("Recent form is trending down: last 5 net rating sits " + fmtNumber(Math.abs(diff)) + " points below season level.");
+      }
+
+      const topScorer = [...players]
+        .filter(p => p.ppg !== null && p.ppg !== undefined && !Number.isNaN(Number(p.ppg)))
+        .sort((a,b) => Number(b.ppg) - Number(a.ppg))[0];
+      if (topScorer) items.push(escapeHtml(topScorer.player_name) + " leads the team scoring at " + fmtNumber(topScorer.ppg) + " PPG.");
+
+      const swing = [...players]
+        .filter(p => p.on_off_net_diff_per40 !== null && p.on_off_net_diff_per40 !== undefined && !Number.isNaN(Number(p.on_off_net_diff_per40)))
+        .sort((a,b) => Math.abs(Number(b.on_off_net_diff_per40)) - Math.abs(Number(a.on_off_net_diff_per40)))[0];
+      if (swing) items.push(escapeHtml(swing.player_name) + " has the biggest on/off swing (" + fmtNumber(swing.on_off_net_diff_per40) + " net/40).");
+
+      const bestLineup = lineups[0];
+      if (bestLineup && bestLineup.lineup_players) {
+        items.push("Best lineup sample: " + escapeHtml(bestLineup.lineup_players) + " (" + fmtNumber(bestLineup.net_rating) + " net rating).");
+      }
+
+      return items.slice(0,4);
+    }
+
+    function renderIdentity(team, games, players, lineups) {
+      const root = document.getElementById("identity-panel");
+      if (!root || !team) return;
+      const text = inferTeamIdentityText(team, games, players, lineups);
+      const quickLinks = `
+        <div class="quick-links">
+          <a class="quick-link" href="game_script_profile.html?team=${encodeURIComponent(team.team_key)}">Game Script</a>
+          <a class="quick-link" href="rotation_timeline.html?team=${encodeURIComponent(team.team_key)}">Rotation Timeline</a>
+          <a class="quick-link" href="visual-shot/visual_shot_dashboard_${encodeURIComponent(team.team_key)}.html">Visual Shot</a>
+        </div>
+      `;
+      root.innerHTML = `<div class="identity-copy">${text || "No automatic identity summary available."}</div>${quickLinks}`;
+    }
+
+    function renderWatch(teamKey, games, players, lineups) {
+      const root = document.getElementById("watch-panel");
+      if (!root) return;
+      const items = buildWatchItems(teamKey, games, players, lineups);
+      if (!items.length) {
+        root.innerHTML = '<div class="empty">No automatic watch items available.</div>';
+        return;
+      }
+      root.innerHTML = `<ul class="watch-list">${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
+    function buildPlayerHubHref(teamKey, playerId) {
+      if (!teamKey || !playerId) return "#";
+      return `player_hubs/player_hub_${encodeURIComponent(teamKey)}_${encodeURIComponent(playerId)}.html`;
+    }
+
+    function renderPriorityNotes(teamKey) {
+      const root = document.getElementById("priority-notes-panel");
+      if (!root) return;
+
+      const notes = ALERTS
+        .filter(a => a.team_key === teamKey)
+        .sort((a,b) => (Number(b.sort_score ?? -Infinity) - Number(a.sort_score ?? -Infinity)))
+        .slice(0, 5);
+
+      if (!notes.length) {
+        root.innerHTML = '<div class="empty">No coach alerts available for this team yet.</div>';
+        return;
+      }
+
+      root.innerHTML = `<div class="priority-notes-grid">${notes.map(note => {
+        const severity = String(note.severity || "low").toLowerCase();
+        const family = String(note.alert_family || "").replaceAll("_", " ");
+        const sample = String(note.sample_bucket || "").trim();
+        const titleHtml = (note.entity_type === "player" && note.player_id)
+          ? `<a href="${buildPlayerHubHref(note.team_key, note.player_id)}" style="color:var(--accent);text-decoration:none;">${escapeHtml(note.headline || "")}</a>`
+          : `${escapeHtml(note.headline || "")}`;
+        return `
+          <div class="priority-note">
+            <div class="priority-note-top">
+              <div class="priority-note-headline">${titleHtml}</div>
+              <span class="priority-chip ${severity}">${escapeHtml(severity)}</span>
+            </div>
+            <div class="priority-note-detail">${escapeHtml(note.detail || "")}</div>
+            <div class="priority-note-meta">
+              <span class="priority-chip family">${escapeHtml(family || "alert")}</span>
+              ${sample ? `<span class="priority-chip sample">${escapeHtml(sample)}</span>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function renderTrendingPlayers(teamKey) {
+      const root = document.getElementById("trending-players-panel");
+      if (!root) return;
+      const players = teamPlayers(teamKey)
+        .filter(p => p.trend_score !== null && p.trend_score !== undefined && !Number.isNaN(Number(p.trend_score)))
+        .sort((a,b) => Number(b.trend_score) - Number(a.trend_score))
+        .slice(0, 4);
+
+      if (!players.length) {
+        root.innerHTML = '<div class="empty">No player momentum layer available.</div>';
+        return;
+      }
+
+      function fmtPctValue(v) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? "—" : (Number(v) * 100).toFixed(1) + "%"; }
+      function toneMeta(label) {
+        const good = new Set(["Heater", "Quietly Trending Up", "Playmaking Spike", "Glass Surge", "More Aggressive From Three"]);
+        const bad = new Set(["Cold Spell", "Role Shrinking", "Volume Up, Efficiency Down"]);
+        if (good.has(label)) return { chip:"good", bar:"good" };
+        if (bad.has(label)) return { chip:"bad", bar:"bad" };
+        if (label === "Stable") return { chip:"neutral", bar:"neutral" };
+        return { chip:"warn", bar:"warn" };
+      }
+
+      root.innerHTML = `<div class="trend-player-grid">${players.map(p => {
+        const label = p.form_label || "Stable";
+        const tone = toneMeta(label);
+        const href = p.player_hub_href || "#";
+        const score = (p.trend_score === null || p.trend_score === undefined || Number.isNaN(Number(p.trend_score))) ? 50 : Math.max(0, Math.min(100, 50 + Number(p.trend_score) * 5));
+        const ppgDelta = (p.delta_ppg === null || p.delta_ppg === undefined || Number.isNaN(Number(p.delta_ppg))) ? "—" : ((Number(p.delta_ppg) >= 0 ? "+" : "") + fmtNumber(p.delta_ppg));
+        const tsDelta = (p.delta_ts_pct === null || p.delta_ts_pct === undefined || Number.isNaN(Number(p.delta_ts_pct))) ? "—" : ((Number(p.delta_ts_pct) >= 0 ? "+" : "") + (Number(p.delta_ts_pct) * 100).toFixed(1) + " pp");
+        const threeDelta = (p.delta_three_rate === null || p.delta_three_rate === undefined || Number.isNaN(Number(p.delta_three_rate))) ? "—" : ((Number(p.delta_three_rate) >= 0 ? "+" : "") + (Number(p.delta_three_rate) * 100).toFixed(1) + " pp");
+        return `<div class="trend-player-card">
+          <div class="trend-player-top">
+            <div>
+              <div class="trend-player-name"><a href="${href}">${escapeHtml(p.player_name)}</a></div>
+              <div class="trend-player-meta">${escapeHtml(p.position || "—")} · score ${fmtNumber(p.trend_score || 0)}</div>
+            </div>
+            <span class="trend-label-chip ${tone.chip}">${escapeHtml(label)}</span>
+          </div>
+          <div class="trend-score-bar"><span class="trend-score-fill ${tone.bar}" style="width:${score.toFixed(1)}%"></span></div>
+          <table class="trend-mini-table">
+            <thead><tr><th>Metric</th><th>Season</th><th>L3</th><th>L5</th></tr></thead>
+            <tbody>
+              <tr><td>PPG</td><td>${fmtNumber(p.season_ppg)}</td><td>${fmtNumber(p.last3_ppg)}</td><td>${fmtNumber(p.last5_ppg)}</td></tr>
+              <tr><td>TS%</td><td>${fmtPctValue(p.season_ts_pct)}</td><td>${fmtPctValue(p.last3_ts_pct)}</td><td>${fmtPctValue(p.last5_ts_pct)}</td></tr>
+              <tr><td>APG</td><td>${fmtNumber(p.season_apg)}</td><td>${fmtNumber(p.last3_apg)}</td><td>${fmtNumber(p.last5_apg)}</td></tr>
+              <tr><td>3PA Rate</td><td>${fmtPctValue(p.season_three_rate)}</td><td>${fmtPctValue(p.last3_three_rate)}</td><td>${fmtPctValue(p.last5_three_rate)}</td></tr>
+            </tbody>
+          </table>
+          <div class="trend-player-meta" style="margin-top:10px;">Δ PPG ${ppgDelta} · Δ TS ${tsDelta} · Δ 3PA rate ${threeDelta}</div>
+        </div>`;
+      }).join("")}</div>`;
+    }
+
+    function positionBucket(position) {
+      const pos = String(position || "").toUpperCase();
+      if (pos.includes("C") || pos.includes("5") || pos.includes("P")) return "big";
+      if (pos.includes("PF") || pos.includes("4") || pos.includes("F")) return "hybrid";
+      if (pos.includes("SF") || pos.includes("3") || pos.includes("W")) return "wing";
+      if (pos.includes("SG") || pos.includes("PG") || pos.includes("1") || pos.includes("2") || pos.includes("G")) return "guard";
+      return "hybrid";
+    }
+
+    function positionColor(bucket) {
+      const palette = {
+        guard: "#38bdf8",
+        wing: "#a855f7",
+        hybrid: "#f59e0b",
+        big: "#4ade80",
+      };
+      return palette[bucket] || "#94a3b8";
+    }
+
+    function clamp01(v) {
+      const n = Number(v);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(1, n));
+    }
+
+    function roleScoreCreator(player) {
+      const ast = player.ast_pct === null || player.ast_pct === undefined ? 0 : Number(player.ast_pct);
+      const usg = player.usg_pct === null || player.usg_pct === undefined ? 0 : Number(player.usg_pct);
+      return clamp01(ast * 2.6 + usg * 1.5);
+    }
+
+    function roleScoreImpact(player) {
+      const ts = player.ts_pct === null || player.ts_pct === undefined ? 0 : Number(player.ts_pct);
+      const swing = player.on_off_net_diff_per40 === null || player.on_off_net_diff_per40 === undefined ? 0 : Number(player.on_off_net_diff_per40);
+      return clamp01(((ts - 0.45) / 0.20) * 0.6 + ((swing + 8) / 20) * 0.4);
+    }
+
+    function playerRoleLabel(player) {
+      const ast = player.ast_pct === null || player.ast_pct === undefined ? 0 : Number(player.ast_pct);
+      const usg = player.usg_pct === null || player.usg_pct === undefined ? 0 : Number(player.usg_pct);
+      const ts = player.ts_pct === null || player.ts_pct === undefined ? 0 : Number(player.ts_pct);
+      const rpg = player.rpg === null || player.rpg === undefined ? 0 : Number(player.rpg);
+      const threeRate = player.season_three_rate === null || player.season_three_rate === undefined ? 0 : Number(player.season_three_rate);
+      const swing = player.on_off_net_diff_per40 === null || player.on_off_net_diff_per40 === undefined ? 0 : Number(player.on_off_net_diff_per40);
+      const posBucket = positionBucket(player.position);
+
+      if (ast >= 0.20 && usg >= 0.22) return "Primary Creator";
+      if (threeRate >= 0.38 && ts >= 0.52) return "Spacing Piece";
+      if ((rpg >= 5.5 && (posBucket === "big" || posBucket === "hybrid")) || (posBucket === "big" && usg < 0.22)) return "Rebound / Interior";
+      if (ts >= 0.56 && usg >= 0.18 && ast < 0.16) return "Finisher";
+      if (swing >= 4.0) return "Positive Swing";
+      return "Connector";
+    }
+
+    function buildRoleClusters(players) {
+      const clusters = [
+        { key: "Primary Creator", title: "Primary creators", copy: "Higher creation load from usage plus playmaking." },
+        { key: "Finisher", title: "Finishers", copy: "More about converting possessions than initiating them." },
+        { key: "Spacing Piece", title: "Spacing pieces", copy: "Players who stretch the floor through three-point tendency and acceptable efficiency." },
+        { key: "Rebound / Interior", title: "Rebound / interior presence", copy: "Bigger profiles and glass work around the interior." },
+        { key: "Positive Swing", title: "Positive swing", copy: "Players whose on/off profile gives the team a stronger push." },
+      ];
+
+      return clusters.map(cluster => {
+        let ranked = [...players]
+          .filter(p => playerRoleLabel(p) === cluster.key)
+          .sort((a, b) => {
+            if (cluster.key === "Primary Creator") return roleScoreCreator(b) - roleScoreCreator(a);
+            if (cluster.key === "Spacing Piece") return ((Number(b.season_three_rate || 0) + Number(b.ts_pct || 0)) - (Number(a.season_three_rate || 0) + Number(a.ts_pct || 0)));
+            if (cluster.key === "Rebound / Interior") return ((Number(b.rpg || 0) + Number(b.mpg || 0) * 0.1) - (Number(a.rpg || 0) + Number(a.mpg || 0) * 0.1));
+            if (cluster.key === "Positive Swing") return Number(b.on_off_net_diff_per40 || 0) - Number(a.on_off_net_diff_per40 || 0);
+            return roleScoreImpact(b) - roleScoreImpact(a);
+          })
+          .slice(0, 3);
+        return { ...cluster, players: ranked };
+      });
+    }
+
+    function renderRoleClusters(teamKey) {
+      const root = document.getElementById("role-clusters-panel");
+      if (!root) return;
+      const players = teamPlayers(teamKey)
+        .filter(p => p.mpg !== null && p.mpg !== undefined && Number(p.mpg) >= 8)
+        .sort((a,b) => Number(b.mpg || 0) - Number(a.mpg || 0));
+      if (!players.length) {
+        root.innerHTML = '<div class="empty">No player roles available.</div>';
+        return;
+      }
+
+      const clusters = buildRoleClusters(players);
+      root.innerHTML = `<div class="role-cluster-grid">${clusters.map(cluster => {
+        const listHtml = cluster.players.length
+          ? `<div class="role-cluster-list">${cluster.players.map(p => `
+              <div class="role-cluster-item">
+                <a href="${p.player_hub_href || '#'}">${escapeHtml(p.player_name)}</a>
+                <span class="role-chip ${positionBucket(p.position)}">${escapeHtml(p.position || "—")}</span>
+              </div>
+            `).join("")}</div>`
+          : `<div class="empty">No clear matches.</div>`;
+        return `
+          <div class="role-cluster-card">
+            <div class="role-cluster-title">${escapeHtml(cluster.title)}</div>
+            <div class="role-cluster-copy">${escapeHtml(cluster.copy)}</div>
+            ${listHtml}
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function renderRoleMap(teamKey) {
+      const svg = document.getElementById("role-map-chart");
+      const tooltip = document.getElementById("role-map-tooltip");
+      const legend = document.getElementById("role-map-legend");
+      if (!svg || !tooltip || !legend) return;
+
+      const players = teamPlayers(teamKey)
+        .filter(p => p.mpg !== null && p.mpg !== undefined && Number(p.mpg) >= 8)
+        .sort((a,b) => Number(b.mpg || 0) - Number(a.mpg || 0));
+
+      if (!players.length) {
+        svg.innerHTML = "";
+        legend.innerHTML = "";
+        return;
+      }
+
+      const width = 980, height = 560;
+      const margin = { top: 28, right: 22, bottom: 54, left: 58 };
+      const plotX = margin.left, plotY = margin.top, plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+      const sx = (x) => plotX + x * plotW;
+      const sy = (y) => plotY + plotH - y * plotH;
+      const NS = "http://www.w3.org/2000/svg";
+
+      function line(x1, y1, x2, y2, cls) {
+        const e = document.createElementNS(NS, "line");
+        e.setAttribute("x1", x1); e.setAttribute("y1", y1); e.setAttribute("x2", x2); e.setAttribute("y2", y2); e.setAttribute("class", cls);
+        return e;
+      }
+      function textNode(x, y, val, cls, anchor="middle") {
+        const e = document.createElementNS(NS, "text");
+        e.setAttribute("x", x); e.setAttribute("y", y); e.setAttribute("class", cls); e.setAttribute("text-anchor", anchor);
+        e.textContent = val;
+        return e;
+      }
+
+      svg.innerHTML = "";
+
+      [0, 0.25, 0.5, 0.75, 1].forEach(v => {
+        const gx = sx(v), gy = sy(v);
+        svg.appendChild(line(gx, plotY, gx, plotY + plotH, "grid-line"));
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+      });
+
+      svg.appendChild(line(sx(0.5), plotY, sx(0.5), plotY + plotH, "series-b"));
+      svg.appendChild(line(plotX, sy(0.5), plotX + plotW, sy(0.5), "series-b"));
+
+      const frame = document.createElementNS(NS, "rect");
+      frame.setAttribute("x", plotX);
+      frame.setAttribute("y", plotY);
+      frame.setAttribute("width", plotW);
+      frame.setAttribute("height", plotH);
+      frame.setAttribute("class", "plot-frame");
+      svg.appendChild(frame);
+
+      svg.appendChild(textNode(plotX + plotW / 2, height - 12, "Creation load (usage + playmaking)", "axis-label"));
+      const yLabel = textNode(18, plotY + plotH / 2, "Efficiency / impact", "axis-label");
+      yLabel.setAttribute("transform", `rotate(-90 18 ${plotY + plotH / 2})`);
+      svg.appendChild(yLabel);
+
+      const cornerLabels = [
+        [plotX + 8, plotY + 18, "High impact / low creation", "start"],
+        [plotX + plotW - 8, plotY + 18, "Primary creators", "end"],
+        [plotX + 8, plotY + plotH - 8, "Low-volume connectors", "start"],
+        [plotX + plotW - 8, plotY + plotH - 8, "High-usage / lower impact", "end"],
+      ];
+      cornerLabels.forEach(([x,y,val,anchor]) => svg.appendChild(textNode(x,y,val,"axis-tick",anchor)));
+
+      players.forEach(player => {
+        const x = roleScoreCreator(player);
+        const y = roleScoreImpact(player);
+        const bucket = positionBucket(player.position);
+        const radius = 7 + Math.max(0, Math.min(16, Number(player.mpg || 0) * 0.35));
+
+        const dot = document.createElementNS(NS, "circle");
+        dot.setAttribute("cx", sx(x));
+        dot.setAttribute("cy", sy(y));
+        dot.setAttribute("r", radius);
+        dot.setAttribute("fill", positionColor(bucket));
+        dot.setAttribute("fill-opacity", "0.80");
+        dot.setAttribute("stroke", "#e5e7eb");
+        dot.setAttribute("stroke-width", "1.2");
+        dot.style.cursor = "pointer";
+        dot.addEventListener("mouseenter", (evt) => {
+          const box = svg.getBoundingClientRect();
+          tooltip.style.opacity = "1";
+          tooltip.style.left = (evt.clientX - box.left) + "px";
+          tooltip.style.top = (evt.clientY - box.top) + "px";
+          tooltip.innerHTML = `<strong>${escapeHtml(player.player_name)}</strong><br>${escapeHtml(playerRoleLabel(player))} · ${escapeHtml(player.position || "—")}<br>USG ${fmtPct(player.usg_pct)} · AST ${fmtPct(player.ast_pct)}<br>TS ${fmtPct(player.ts_pct)} · On/Off ${fmtNumber(player.on_off_net_diff_per40)}`;
+        });
+        dot.addEventListener("mousemove", (evt) => {
+          const box = svg.getBoundingClientRect();
+          tooltip.style.left = (evt.clientX - box.left) + "px";
+          tooltip.style.top = (evt.clientY - box.top) + "px";
+        });
+        dot.addEventListener("mouseleave", () => { tooltip.style.opacity = "0"; });
+        dot.addEventListener("click", () => {
+          if (player.player_hub_href) window.location.href = player.player_hub_href;
+        });
+        svg.appendChild(dot);
+
+        const label = document.createElementNS(NS, "text");
+        label.setAttribute("x", sx(x));
+        label.setAttribute("y", sy(y) - radius - 6);
+        label.setAttribute("class", "axis-tick");
+        label.setAttribute("text-anchor", "middle");
+        label.textContent = player.player_name;
+        svg.appendChild(label);
+      });
+
+      const buckets = [
+        ["guard", "Guards"],
+        ["wing", "Wings"],
+        ["hybrid", "Hybrids"],
+        ["big", "Bigs"],
+      ];
+      legend.innerHTML = buckets.map(([bucket, label]) => `
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:${positionColor(bucket)}"></span>
+          <span>${escapeHtml(label)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderHero(team, games) {
+      const root = document.getElementById("team-hero");
+      if (!team || !root) return;
+      const rounds = games.map(g => g.round).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      const dates = games.map(g => g.game_date).filter(Boolean).sort();
+      const rangeText = `Rounds: ${rounds.length ? Math.min(...rounds) : "—"} to ${rounds.length ? Math.max(...rounds) : "—"} · Dates: ${dates[0] || "—"} to ${dates[dates.length - 1] || "—"}`;
+      root.innerHTML = `
+        <div class="team-hero">
+          ${team.logo_src ? `<img class="team-logo" src="${team.logo_src}" alt="${escapeHtml(team.team_key)} logo">` : ""}
+          <div>
+            <div class="team-name">${escapeHtml(team.team_name)}</div>
+            <div class="team-meta">${escapeHtml(team.team_key)} · ${games.length} games · ${escapeHtml(rangeText)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSummary(games) {
+      const root = document.getElementById("summary-grid");
+      if (!root) return;
+      const wins = games.filter(g => g.result === "W").length;
+      const losses = games.filter(g => g.result === "L").length;
+      const metrics = [
+        ["Record", `${wins}-${losses}`, "Season"],
+        ["OffRtg", fmtNumber(avg(games.map(g => g.off_rating))), "Season"],
+        ["DefRtg", fmtNumber(avg(games.map(g => g.def_rating))), "Season"],
+        ["NetRtg", fmtNumber(avg(games.map(g => g.net_rating))), "Season"],
+        ["Pace", fmtNumber(avg(games.map(g => g.pace))), "Season"],
+        ["eFG%", fmtPct(avg(games.map(g => g.efg_pct_off))), "Offense"],
+        ["Opp eFG%", fmtPct(avg(games.map(g => g.efg_pct_def))), "Defense"],
+        ["TOV%", fmtPct(avg(games.map(g => g.tov_pct_off))), "Offense"],
+        ["ORB%", fmtPct(avg(games.map(g => g.orb_pct_off))), "Offense"],
+        ["FTr", fmtPct(avg(games.map(g => g.ftr_off))), "Offense"],
+      ];
+      root.innerHTML = metrics.map(([label,value,sub]) => `
+        <div class="metric-card">
+          <div class="metric-label">${escapeHtml(label)}</div>
+          <div class="metric-value">${escapeHtml(value)}</div>
+          <div class="metric-sub">${escapeHtml(sub)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderRecentForm(teamKey) {
+      const root = document.getElementById("recent-grid");
+      if (!root) return;
+      const last3 = recentGames(teamKey, 3);
+      const last5 = recentGames(teamKey, 5);
+      const groups = [
+        ["Last 3", last3],
+        ["Last 5", last5],
+      ];
+      root.innerHTML = groups.map(([label, rows]) => {
+        const wins = rows.filter(g => g.result === "W").length;
+        const losses = rows.filter(g => g.result === "L").length;
+        return `
+          <div class="metric-card">
+            <div class="metric-label">${label}</div>
+            <div class="metric-value">${wins}-${losses}</div>
+            <div class="metric-sub">NetRtg ${fmtNumber(avg(rows.map(g => g.net_rating)))} · Pace ${fmtNumber(avg(rows.map(g => g.pace)))}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">${label} Off/Def</div>
+            <div class="metric-value">${fmtNumber(avg(rows.map(g => g.off_rating)))} / ${fmtNumber(avg(rows.map(g => g.def_rating)))}</div>
+            <div class="metric-sub">Points ${fmtNumber(avg(rows.map(g => g.score)))} / ${fmtNumber(avg(rows.map(g => g.opp_score)))}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function buildGamesTable(rows) {
+      if (!rows.length) return '<div class="empty">No recent games.</div>';
+      const body = rows.map(g => `
+        <tr>
+          <td>
+            <div class="opp-cell">
+              <div class="opp-main">${escapeHtml(g.opponent_name)}</div>
+              <div class="opp-sub">${escapeHtml(g.home_away)} · ${escapeHtml(g.result)} · R${g.round ?? "—"} · ${escapeHtml(g.game_date || "")}</div>
+            </div>
+          </td>
+          <td>${fmtNumber(g.score)}</td>
+          <td>${fmtNumber(g.opp_score)}</td>
+          <td class="${g.net_rating !== null && g.net_rating < 0 ? 'bad' : 'good'}">${fmtNumber(g.net_rating)}</td>
+          <td>${fmtNumber(g.off_rating)}</td>
+          <td>${fmtNumber(g.def_rating)}</td>
+          <td>${fmtNumber(g.pace)}</td>
+        </tr>
+      `).join("");
+      return `<table><thead><tr><th>Opponent</th><th>PF</th><th>PA</th><th>NetRtg</th><th>OffRtg</th><th>DefRtg</th><th>Pace</th></tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function buildLineupsTable(rows) {
+      if (!rows.length) return '<div class="empty">No lineups for the current filters.</div>';
+      const body = rows.map(l => `
+        <tr>
+          <td>${escapeHtml(l.lineup_players)}</td>
+          <td>${fmtNumber(l.minutes)}</td>
+          <td>${fmtNumber(l.net_rating)}</td>
+          <td>${fmtNumber(l.off_rating)}</td>
+          <td>${fmtNumber(l.def_rating)}</td>
+          <td>${fmtNumber(l.pace)}</td>
+        </tr>
+      `).join("");
+      return `<table><thead><tr><th>Lineup</th><th>Min</th><th>NetRtg</th><th>OffRtg</th><th>DefRtg</th><th>Pace</th></tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function buildPlayersTable(rows) {
+      if (!rows.length) return '<div class="empty">No players found.</div>';
+      const body = rows.map(p => {
+        const href = String(p.player_hub_href || "").trim();
+        const playerNameHtml = href
+          ? `<a href="${escapeHtml(href)}" style="color:var(--accent); text-decoration:none; font-weight:700;">${escapeHtml(p.player_name)}</a>`
+          : `<span style="font-weight:700;">${escapeHtml(p.player_name)}</span>`;
+        return `
+        <tr>
+          <td>${playerNameHtml}<div class="opp-sub">${escapeHtml(p.position || "")}</div></td>
+          <td>${fmtNumber(p.mpg)}</td>
+          <td>${fmtNumber(p.ppg)}</td>
+          <td>${fmtPct(p.ts_pct)}</td>
+          <td>${fmtNumber(p.ortg)}</td>
+          <td>${fmtNumber(p.netrtg)}</td>
+          <td>${fmtNumber(p.on_off_net_diff_per40)}</td>
+        </tr>
+      `;
+      }).join("");
+      return `<table><thead><tr><th>Player</th><th>MPG</th><th>PPG</th><th>TS%</th><th>ORtg</th><th>NetRtg</th><th>On-Off Net/40</th></tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function renderLinks(team) {
+      const root = document.getElementById("links-panel");
+      if (!root || !team) return;
+      const links = (team.links || []).filter(item => {
+        const category = String(item.category || "");
+        const kind = String(item.kind || "").toLowerCase();
+        if (kind === "xlsx" && (category === "Opponent Game Plan Packs" || category === "Opponent Shot Reports" || category === "Opponent Shooting Packs")) {
+          return false;
+        }
+        return true;
+      });
+
+      if (!links.length) {
+        root.innerHTML = '<div class="empty">No linked reports found for this team yet.</div>';
+        return;
+      }
+
+      const htmlLinks = links.filter(item => String(item.kind || "").toLowerCase() === "html");
+      const excelLinks = links.filter(item => String(item.kind || "").toLowerCase() === "xlsx");
+
+      function buildGroup(title, items, showExcelHint) {
+        if (!items.length) return "";
+        return `
+          <div class="link-group">
+            <h4>${escapeHtml(title)}</h4>
+            <div class="link-list">
+              ${items.map(item => {
+                const hint = showExcelHint ? ' <span class="link-kind">(download excel file)</span>' : '';
+                return `<a href="${escapeHtml(item.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.label)}${hint}</a>`;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      root.innerHTML = `
+        <div class="hint" style="padding:0 0 12px 0;">Excel links will download the file.</div>
+        <div class="link-groups">
+          ${buildGroup("HTML Reports", htmlLinks, false)}
+          ${buildGroup("Excel Packs", excelLinks, true)}
+        </div>
+      `;
+    }
+
+    function renderTrend(teamKey) {
+      const svg = document.getElementById("trend-chart");
+      const tooltip = document.getElementById("trend-tooltip");
+      const legend = document.getElementById("trend-legend");
+      if (!svg || !tooltip || !legend) return;
+
+      const games = sortGamesChronologically(teamGames(teamKey));
+      const metricGroup = document.getElementById("trend-metric").value;
+      let series = [];
+      let yLabel = "";
+
+      if (metricGroup === "score") {
+        series = [
+          { key: "score", label: "PointsFor", lineClass: "series-a", pointClass: "point-a", color: "#38bdf8", pct: false },
+          { key: "opp_score", label: "PointsAgainst", lineClass: "series-b", pointClass: "point-b", color: "#f59e0b", pct: false },
+        ];
+        yLabel = "Points";
+      } else if (metricGroup === "shooting") {
+        series = [
+          { key: "efg_pct_off", label: "eFG%", lineClass: "series-a", pointClass: "point-a", color: "#38bdf8", pct: true },
+          { key: "efg_pct_def", label: "Opp eFG%", lineClass: "series-b", pointClass: "point-b", color: "#f59e0b", pct: true },
+        ];
+        yLabel = "eFG%";
+      } else {
+        series = [
+          { key: "off_rating", label: "OffRtg", lineClass: "series-a", pointClass: "point-a", color: "#38bdf8", pct: false },
+          { key: "def_rating", label: "DefRtg", lineClass: "series-b", pointClass: "point-b", color: "#f59e0b", pct: false },
+        ];
+        yLabel = "Rating";
+      }
+
+      const values = [];
+      series.forEach(s => games.forEach(g => {
+        const v = g[s.key];
+        if (v !== null && v !== undefined && !Number.isNaN(v)) values.push(v);
+      }));
+      if (!values.length) {
+        svg.innerHTML = "";
+        legend.innerHTML = "";
+        return;
+      }
+
+      const width = 1180, height = 560;
+      const margin = { top: 30, right: 30, bottom: 120, left: 70 };
+      const plotX = margin.left, plotY = margin.top;
+      const plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+
+      let yMin = Math.min(...values), yMax = Math.max(...values);
+      const pad = Math.max(metricGroup === "shooting" ? 0.01 : 1.0, (yMax - yMin) * 0.1);
+      yMin -= pad; yMax += pad;
+
+      function sx(index) { return games.length <= 1 ? plotX + plotW / 2 : plotX + (index / (games.length - 1)) * plotW; }
+      function sy(v) { return plotY + plotH - ((v - yMin) / (yMax - yMin)) * plotH; }
+      function line(x1,y1,x2,y2,cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        el.setAttribute("x1", x1); el.setAttribute("y1", y1); el.setAttribute("x2", x2); el.setAttribute("y2", y2); el.setAttribute("class", cls); return el;
+      }
+      function rect(x,y,w,h,cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("width", w); el.setAttribute("height", h); el.setAttribute("class", cls); return el;
+      }
+      function text(x,y,val,cls,anchor="middle",rotate=null) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("class", cls); el.setAttribute("text-anchor", anchor);
+        if (rotate !== null) el.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
+        el.textContent = val; return el;
+      }
+
+      svg.innerHTML = "";
+      legend.innerHTML = "";
+
+      for (let i=0; i<=5; i++) {
+        const yVal = yMin + ((yMax - yMin) * i / 5);
+        const gy = sy(yVal);
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+        svg.appendChild(text(plotX - 10, gy + 4, metricGroup === "shooting" ? (yVal*100).toFixed(1) + "%" : yVal.toFixed(1), "axis-tick", "end"));
+      }
+
+      games.forEach((g, idx) => {
+        const x = sx(idx);
+        svg.appendChild(line(x, plotY, x, plotY + plotH, "grid-line"));
+        svg.appendChild(text(x, plotY + plotH + 18, g.game_date || "", "axis-tick"));
+        svg.appendChild(text(x, plotY + plotH + 40, "R" + String(g.round ?? "—"), "axis-tick"));
+      });
+
+      svg.appendChild(rect(plotX, plotY, plotW, plotH, "plot-frame"));
+      svg.appendChild(text(plotX + plotW/2, height - 12, "Games by date", "axis-label"));
+      svg.appendChild(text(18, plotY + plotH/2, yLabel, "axis-label", "middle", -90));
+
+      series.forEach(s => {
+        let d = "";
+        games.forEach((g, idx) => {
+          const v = g[s.key];
+          if (v === null || v === undefined || Number.isNaN(v)) return;
+          const x = sx(idx), y = sy(v);
+          d += (d ? " L " : "M ") + x + " " + y;
+        });
+        if (d) {
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", d);
+          path.setAttribute("class", s.lineClass);
+          svg.appendChild(path);
+        }
+        games.forEach((g, idx) => {
+          const v = g[s.key];
+          if (v === null || v === undefined || Number.isNaN(v)) return;
+          const cx = sx(idx), cy = sy(v);
+          const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          dot.setAttribute("cx", cx); dot.setAttribute("cy", cy); dot.setAttribute("r", 4.5); dot.setAttribute("class", s.pointClass); svg.appendChild(dot);
+
+          const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          hit.setAttribute("cx", cx); hit.setAttribute("cy", cy); hit.setAttribute("r", 12); hit.setAttribute("fill", "transparent"); hit.style.cursor = "pointer"; svg.appendChild(hit);
+          hit.addEventListener("mouseenter", evt => {
+            const rect = svg.getBoundingClientRect();
+            tooltip.style.opacity = "1";
+            tooltip.style.left = (evt.clientX - rect.left) + "px";
+            tooltip.style.top = (evt.clientY - rect.top) + "px";
+            tooltip.innerHTML = `<strong>${escapeHtml(g.opponent_name)}</strong><br>${escapeHtml(g.home_away)} · ${escapeHtml(g.result)} · R${g.round ?? "—"}<br>${escapeHtml(g.game_date || "")}<br>${escapeHtml(s.label)}: ${s.pct ? fmtPct(v) : fmtNumber(v)}`;
+          });
+          hit.addEventListener("mousemove", evt => {
+            const rect = svg.getBoundingClientRect();
+            tooltip.style.left = (evt.clientX - rect.left) + "px";
+            tooltip.style.top = (evt.clientY - rect.top) + "px";
+          });
+          hit.addEventListener("mouseleave", () => tooltip.style.opacity = "0");
+        });
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `<span class="legend-swatch" style="background:${s.color}"></span><span>${escapeHtml(s.label)}</span>`;
+        legend.appendChild(item);
+      });
+    }
+
+    function refresh() {
+      const team = currentTeam();
+      if (!team) return;
+      const games = teamGames(team.team_key);
+      const players = teamPlayers(team.team_key).sort((a,b) => (b.mpg ?? -Infinity) - (a.mpg ?? -Infinity)).slice(0, TOP_PLAYERS_COUNT);
+      const lineups = teamLineups(team.team_key).sort((a,b) => (b.net_rating ?? -Infinity) - (a.net_rating ?? -Infinity));
+      const bestLineups = lineups.slice(0, TOP_LINEUPS_COUNT);
+      const worstLineups = [...lineups].sort((a,b) => (a.net_rating ?? Infinity) - (b.net_rating ?? Infinity)).slice(0, TOP_LINEUPS_COUNT);
+      const gamesDesc = sortGamesChronologically(games, true).slice(0, RECENT_GAMES_TO_SHOW);
+
+      const status = document.getElementById("team-status");
+      if (status) status.textContent = `${games.length} games · ${players.length} key players · ${lineups.length} lineups (min ${currentLineupsMinMinutes()} min)`;
+
+      renderHero(team, games);
+      renderSummary(games);
+      renderIdentity(team, games, players, lineups);
+      renderWatch(team.team_key, games, players, lineups);
+      renderPriorityNotes(team.team_key);
+      renderTrendingPlayers(team.team_key);
+      renderRoleMap(team.team_key);
+      renderRoleClusters(team.team_key);
+      renderRecentForm(team.team_key);
+      renderTrend(team.team_key);
+      document.getElementById("games-table").innerHTML = buildGamesTable(gamesDesc);
+      document.getElementById("best-lineups-table").innerHTML = buildLineupsTable(bestLineups);
+      document.getElementById("worst-lineups-table").innerHTML = buildLineupsTable(worstLineups);
+      document.getElementById("players-table").innerHTML = buildPlayersTable(players);
+      renderLinks(team);
+    }
+
+    const select = document.getElementById("team-filter");
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedTeam = (urlParams.get("team") || "").trim().toUpperCase();
+    const teamKeys = new Set(TEAMS.map(t => String(t.team_key || "").trim().toUpperCase()));
+
+    TEAMS.sort((a,b) => String(a.team_key).localeCompare(String(b.team_key))).forEach((team, idx) => {
+      const opt = document.createElement("option");
+      opt.value = team.team_key;
+      opt.textContent = `${team.team_key} · ${team.team_name}`;
+      if ((requestedTeam && String(team.team_key).toUpperCase() === requestedTeam) || (!requestedTeam && idx === 0)) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+
+    if (requestedTeam && teamKeys.has(requestedTeam)) {
+      select.value = requestedTeam;
+    }
+
+    select.addEventListener("change", () => {
+      const next = (select.value || "").trim();
+      const nextUrl = new URL(window.location.href);
+      if (next) {
+        nextUrl.searchParams.set("team", next);
+      } else {
+        nextUrl.searchParams.delete("team");
+      }
+      window.history.replaceState({}, "", nextUrl.toString());
+      refresh();
+    });
+    document.getElementById("trend-metric").addEventListener("change", refresh);
+    document.getElementById("lineups-min-minutes").addEventListener("input", refresh);
+    refresh();
+  </script>
+</body>
+</html>

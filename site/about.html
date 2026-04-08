@@ -9,8 +9,10 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
 .hero-card h1{margin:0 0 12px 0;font-size:38px;line-height:1.1;}
 .hero-card p{margin:0;max-width:860px;font-size:16px;line-height:1.7;color:rgba(255,255,255,.88);}
 .content-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+.content-grid-three{grid-template-columns:repeat(3,minmax(0,1fr));}
 .stack{display:grid;grid-template-columns:1fr;gap:16px;}
 .info-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:22px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+.info-card-soft{background:#f8fafc;}
 .info-card h2{margin:0 0 10px 0;font-size:24px;line-height:1.2;}
 .info-card p{margin:0 0 10px 0;color:#475569;font-size:15px;line-height:1.7;}
 .info-card ul{margin:0;padding-left:18px;color:#475569;line-height:1.7;}
@@ -22,6 +24,7 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
 .price-card-featured{border-color:#93c5fd;box-shadow:0 10px 30px rgba(59,130,246,.10);}
 .plan-tag{display:inline-flex;border-radius:999px;padding:6px 10px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px;}
 .price-card h2{margin:0 0 8px 0;font-size:28px;}
+.plan-sub{font-size:14px;color:#475569;margin-bottom:14px;font-weight:700;}
 .price{font-size:42px;font-weight:800;line-height:1;margin-bottom:16px;}
 .price span{font-size:16px;font-weight:700;color:#64748b;}
 .price-card ul{margin:0;padding-left:18px;color:#475569;line-height:1.7;}
@@ -30,7 +33,7 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
 .login-card input{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:15px;}
 .login-card button{width:100%;border:0;border-radius:14px;padding:14px 16px;background:#0f172a;color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
 .helper-copy{margin-top:14px;color:#64748b;font-size:13px;line-height:1.6;}
-@media (max-width:980px){.content-grid,.pricing-grid{grid-template-columns:1fr;} .hero-card h1{font-size:32px;}}
+@media (max-width:980px){.content-grid,.content-grid-three,.pricing-grid{grid-template-columns:1fr;} .hero-card h1{font-size:32px;}}
 </style><style>
 .pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}
 .pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
@@ -80,13 +83,16 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
         <section class="hero-card">
             <div class="eyebrow">About</div>
             <h1>Portuguese Basketball Analytics (PBA)</h1>
-            <p>Portuguese Basketball Analytics (PBA) is being prepared as a paid basketball intelligence product focused on the Portuguese market. The current public version remains open while layouts, positioning and content standards are being finalized ahead of the 2026/27 season.</p>
+            <p>Portuguese Basketball Analytics (PBA) is being built as a paid basketball intelligence platform for the Portuguese market. The current public version remains open while the final product layer, positioning and commercial structure are being finished for the period leading into the 2026/27 season.</p>
         </section>
-        <section class="content-grid">
-            <article class="info-card"><h2>What the product is for</h2><p>Team scouting, player study, opponent preparation and league-wide analytical reference, all inside one coherent site.</p></article>
-            <article class="info-card"><h2>Who it is for</h2><p>Coaches, analysts, staff members, media professionals and serious basketball users who want structured information rather than generic dashboards.</p></article>
-            <article class="info-card"><h2>Current status</h2><p>The platform is currently in open access during product validation. The goal is to present the final public product layer before the start of the 2026/27 season.</p></article>
-            <article class="info-card"><h2>Data source</h2><p>All data is obtained from the public play-by-play data made available for games in the national competitions.</p></article>
+        <section class="content-grid content-grid-three">
+            <article class="info-card"><h2>What PBA is for</h2><p>PBA is designed to make scouting, player study, opponent preparation and league-wide analytical reference easier to access inside one coherent product instead of across scattered pages and files.</p></article>
+            <article class="info-card"><h2>Who it is for</h2><p>Coaches, analysts, staff members, media professionals and serious basketball users who want structured information, direct navigation and a more professional workflow than generic public stats pages usually provide.</p></article>
+            <article class="info-card"><h2>Current phase</h2><p>The platform is still open during validation. The goal now is simple: make the site look and feel like the paid product it is intended to become, before the next season starts.</p></article>
+        </section>
+        <section class="stack">
+            <article class="info-card"><h2>Data source</h2><p>All data currently shown on the platform is obtained from the public play-by-play data made available for games in the national competitions. PBA reorganizes, structures and presents that information in a more useful way for basketball-specific reading and decision support.</p></article>
+            <article class="info-card"><h2>Product direction</h2><p>The site is being prepared to serve as a cleaner public-facing platform, with plans, member access and a more closed product layer around the same analytical and scouting backbone that is already being validated now.</p></article>
         </section>
         </main>
 <footer class="pba-site-footer" data-pba-site-chrome="1">

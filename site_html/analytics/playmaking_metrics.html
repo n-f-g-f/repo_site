@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Playmaking Metrics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0b1728;
+      --panel: rgba(15, 23, 42, 0.92);
+      --panel-2: rgba(17, 24, 39, 0.94);
+      --card: rgba(11, 18, 32, 0.95);
+      --text: #e5eefb;
+      --muted: #94a3b8;
+      --line: rgba(148, 163, 184, 0.18);
+      --line-2: rgba(148, 163, 184, 0.28);
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --accent-3: #60a5fa;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.30);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(34,197,94,0.12), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
+    .wrap { max-width: 1500px; margin: 0 auto; padding: 28px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.25fr 0.9fr;
+      gap: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 26px;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(9,15,28,0.96));
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56,189,248,0.18), rgba(56,189,248,0));
+      pointer-events: none;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(11,18,32,0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .hero h1 { margin: 0 0 10px 0; font-size: 34px; line-height: 1.05; }
+    .subtitle { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 760px; }
+    .hero-notes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .hero-note {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(11,18,32,0.92);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .hero-side {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-content: start;
+    }
+    .spotlight {
+      min-height: 122px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(12,20,34,0.96), rgba(9,15,28,0.96));
+      padding: 16px;
+    }
+    .spotlight-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .spotlight-value { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .spotlight-detail { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.96), rgba(10,16,28,0.96));
+      box-shadow: var(--shadow);
+    }
+    .chart-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .chart-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .chart-subtitle { color: var(--muted); font-size: 13px; }
+    .leader-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 124px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(11,18,32,0.92);
+      border: 1px solid var(--line);
+      text-align: right;
+    }
+    .leader-badge span:first-child { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .leader-badge strong { font-size: 15px; }
+    .leader-badge em { font-style: normal; color: var(--accent); font-size: 13px; }
+    .chart-note {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(11,18,32,0.88);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .bars { display: grid; gap: 10px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(165px, 205px) 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .team-chip { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .team-chip img,
+    .mini-team img,
+    .team-cell img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+    .team-chip-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track {
+      position: relative;
+      height: 13px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8,13,24,0.95);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.10);
+    }
+    .bar-value { min-width: 74px; text-align: right; font-size: 13px; font-weight: 700; }
+    .mini-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(11,18,32,0.90);
+      padding: 12px;
+    }
+    .mini-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .mini-team { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .mini-team-name { font-size: 13px; font-weight: 700; }
+    .mini-value { color: var(--accent); font-weight: 700; font-size: 14px; }
+    .source-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.96), rgba(10,16,28,0.96));
+      box-shadow: var(--shadow);
+    }
+    .source-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .source-title { font-size: 20px; font-weight: 700; }
+    .source-subtitle { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow: auto; border-radius: 16px; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(17,24,39,0.98);
+      font-weight: 700;
+    }
+    tbody tr:hover { background: rgba(56, 189, 248, 0.07); }
+    .sticky-left { position: sticky; left: 0; z-index: 1; text-align: left; background: rgba(15,23,42,0.98); }
+    thead .sticky-left { z-index: 3; background: rgba(17,24,39,0.98); }
+    .team-cell { display: flex; align-items: center; gap: 10px; }
+    .team-meta { display: flex; flex-direction: column; gap: 2px; }
+    .team-name { font-weight: 700; color: var(--text); line-height: 1.1; }
+    .team-key { font-size: 12px; color: var(--muted); line-height: 1.1; }
+    .footnote { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    @media (max-width: 1200px) {
+      .hero, .dashboard-grid { grid-template-columns: 1fr; }
+      .hero-side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 820px) {
+      .wrap { padding: 16px; }
+      .hero-side, .mini-board { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; gap: 6px; }
+      .bar-value { text-align: left; }
+    }
+  </style>
+<style>
+.pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}
+.pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+.pba-site-brand{display:flex;align-items:center;gap:14px;min-width:0;}
+.pba-site-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;flex:0 0 auto;text-decoration:none;}
+.pba-site-brand-copy{min-width:0;}
+.pba-site-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}
+.pba-site-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}
+.pba-site-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.pba-site-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}
+.pba-site-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}
+.pba-site-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}
+.pba-site-nav-link-active:hover{background:#111827;border-color:#111827;}
+.pba-site-status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}
+.pba-site-footer{margin-top:36px;background:#0f172a;color:#e2e8f0;border-top:1px solid rgba(255,255,255,.06);}
+.pba-site-footer-inner{max-width:1380px;margin:0 auto;padding:28px 20px 36px;}
+.pba-site-footer-grid{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(4,minmax(0,1fr));gap:22px;}
+.pba-site-footer-brand{min-width:0;}
+.pba-site-footer-brand h2{margin:0 0 8px 0;font-size:22px;color:#fff;}
+.pba-site-footer-brand p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;max-width:520px;}
+.pba-site-footer-col-title{font-size:12px;font-weight:800;color:#93c5fd;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.pba-site-footer-links{display:flex;flex-direction:column;gap:8px;}
+.pba-site-footer-links a{color:#e2e8f0;text-decoration:none;font-size:14px;line-height:1.45;}
+.pba-site-footer-links a:hover{color:#93c5fd;}
+.pba-site-footer-meta{margin-top:22px;padding-top:16px;border-top:1px solid rgba(148,163,184,.18);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#94a3b8;font-size:12px;line-height:1.5;}
+@media (max-width:1080px){.pba-site-footer-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:760px){.pba-site-chrome-inner{padding:12px 16px;}.pba-site-footer-inner{padding:24px 16px 30px;}.pba-site-footer-grid{grid-template-columns:1fr;}.pba-site-nav{gap:8px;}}
+</style></head>
+<body>
+<header class="pba-site-chrome-header" data-pba-site-chrome="1">
+  <div class="pba-site-chrome-inner">
+    <div class="pba-site-brand">
+      <a class="pba-site-brand-mark" href="../index.html" aria-label="Portuguese Basketball Analytics (PBA) home">PBA</a>
+      <div class="pba-site-brand-copy">
+        <div class="pba-site-brand-name">Portuguese Basketball Analytics (PBA)</div>
+        <div class="pba-site-brand-sub">Professional basketball intelligence · Portugal</div>
+      </div>
+    </div>
+    <nav class="pba-site-nav" aria-label="Primary navigation">
+      <a class="pba-site-nav-link pba-site-nav-link-active" href="../index.html">Home</a><a class="pba-site-nav-link pba-site-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-site-nav-link" href="../general/index.html">General Stats</a><a class="pba-site-nav-link" href="../scouting/index.html">Scouting</a>
+      <a class="pba-site-nav-link" href="../about.html">About</a><a class="pba-site-nav-link" href="../access.html">Access</a><a class="pba-site-nav-link" href="../contact.html">Contact</a><a class="pba-site-nav-link" href="../login.html">Login</a>
+    </nav>
+    <div class="pba-site-status">Open access · validation phase</div>
+  </div>
+</header>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Analytics · Team Playmaking Profile</div>
+        <h1>Playmaking Metrics</h1>
+        <div class="subtitle">A cleaner read of how each team creates offense and disrupts plays across four direct metrics already stored in the canonical team advanced source.</div>
+        <div class="hero-notes">
+          <span class="hero-note">One page · four clear league views</span>
+          <span class="hero-note">Best-to-worst ordering in every chart</span>
+          <span class="hero-note">No metric logic hidden in the page</span>
+        </div>
+      </div>
+      <div class="hero-side" id="hero-side"></div>
+    </section>
+
+    <section class="dashboard-grid" id="dashboard-grid"></section>
+
+    <section class="source-card">
+      <div class="source-head">
+        <div>
+          <div class="source-title">Source table</div>
+          <div class="source-subtitle">Exact values read from team_totals_adv</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sticky-left">Team</th>
+              <th>G</th>
+              <th>AST/TO</th>
+              <th>Assist FG%</th>
+              <th>AST/100 Poss</th>
+              <th>Stocks/100 Poss</th>
+              <th>AST</th>
+              <th>TOV</th>
+              <th>FGM</th>
+              <th>STL</th>
+              <th>BLK</th>
+              <th>Poss</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="footnote">Assist FG% is read from the source as AST / FGM. Stocks/100 Poss is read from the source as (STL + BLK) / Poss * 100. This page is presentation only.</div>
+    </section>
+  </div>
+
+  <script>
+    const DATA = [{"team_key": "SLB", "team_name": "SL Benfica", "team_code": "SLB", "games": 1, "ast": 29.0, "tov": 12.0, "fgm": 36.0, "stl": 12.0, "blk": 3.0, "poss_est": 83.4, "ast_to_ratio": 2.4166666666666665, "assist_fg_pct": 0.8055555555555556, "ast_per_100_poss": 34.77218225419664, "stocks_per_100_poss": 17.985611510791365, "logo_src": ""}, {"team_key": "GFC", "team_name": "Galitos BARREIRO", "team_code": "GFC", "games": 1, "ast": 16.0, "tov": 20.0, "fgm": 30.0, "stl": 8.0, "blk": 2.0, "poss_est": 85.12, "ast_to_ratio": 0.8, "assist_fg_pct": 0.5333333333333333, "ast_per_100_poss": 18.796992481203006, "stocks_per_100_poss": 11.74812030075188, "logo_src": ""}];
+    const METRICS = [{"key": "ast_to_ratio", "label": "AST/TO Ratio", "kind": "number", "subtitle": "Ball security + play creation", "blurb": "Higher is better. Teams near the top create assists without leaking too many possessions."}, {"key": "assist_fg_pct", "label": "Assist FG%", "kind": "pct", "subtitle": "How much of the made offense is created", "blurb": "Higher is better. Shows how often made field goals come from assisted action."}, {"key": "ast_per_100_poss", "label": "AST/100 Poss", "kind": "number", "subtitle": "Playmaking volume adjusted for pace", "blurb": "Higher is better. Cleaner for team-to-team comparison than raw assists."}, {"key": "stocks_per_100_poss", "label": "Stocks/100 Poss", "kind": "number", "subtitle": "Steals + blocks per 100 possessions", "blurb": "Higher is better. Defensive disruption in one quick number."}];
+
+    function fmtNumber(value, digits = 2) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      return Number(value).toFixed(digits);
+    }
+
+    function fmtPct(value, digits = 1) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      return (Number(value) * 100).toFixed(digits) + "%";
+    }
+
+    function metricValue(kind, value) {
+      return kind === "pct" ? fmtPct(value) : fmtNumber(value);
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function teamChip(row, prefix = "../") {
+      const avatar = row.logo_src ? `<img src="${prefix}${row.logo_src}" alt="${escapeHtml(row.team_key)} logo">` : "";
+      return `
+        <div class="team-chip">
+          ${avatar}
+          <div class="team-chip-name">${escapeHtml(row.team_name)}</div>
+        </div>
+      `;
+    }
+
+    function miniTeam(row, kind, value) {
+      const avatar = row.logo_src ? `<img src="../${row.logo_src}" alt="${escapeHtml(row.team_key)} logo">` : "";
+      return `
+        <div class="mini-team">
+          ${avatar}
+          <div>
+            <div class="mini-team-name">${escapeHtml(row.team_name)}</div>
+            <div class="mini-value">${escapeHtml(metricValue(kind, value))}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function avg(values) {
+      const clean = values.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      if (!clean.length) return null;
+      return clean.reduce((a, b) => a + b, 0) / clean.length;
+    }
+
+    function orderedRows(key) {
+      return [...DATA]
+        .filter(r => r[key] !== null && r[key] !== undefined && !Number.isNaN(r[key]))
+        .sort((a, b) => b[key] - a[key]);
+    }
+
+    function buildHero() {
+      const root = document.getElementById("hero-side");
+      root.innerHTML = "";
+
+      METRICS.forEach(metric => {
+        const rows = orderedRows(metric.key);
+        const best = rows[0];
+        const avgValue = avg(rows.map(r => r[metric.key]));
+        if (!best) return;
+
+        root.innerHTML += `
+          <div class="spotlight">
+            <div class="spotlight-label">${escapeHtml(metric.label)} leader</div>
+            <div class="spotlight-value">${escapeHtml(metricValue(metric.kind, best[metric.key]))}</div>
+            <div class="spotlight-detail">${escapeHtml(best.team_name)} · League avg ${escapeHtml(metricValue(metric.kind, avgValue))}</div>
+          </div>
+        `;
+      });
+    }
+
+    function buildDashboard() {
+      const root = document.getElementById("dashboard-grid");
+      root.innerHTML = "";
+
+      METRICS.forEach(metric => {
+        const rows = orderedRows(metric.key);
+        if (!rows.length) return;
+
+        const best = rows[0];
+        const last = rows[rows.length - 1];
+        const maxValue = Math.max(...rows.map(r => r[metric.key]));
+        const avgValue = avg(rows.map(r => r[metric.key]));
+
+        const bars = rows.map(row => {
+          const pct = maxValue > 0 ? (row[metric.key] / maxValue) * 100 : 0;
+          return `
+            <div class="bar-row">
+              ${teamChip(row)}
+              <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(2)}%"></div></div>
+              <div class="bar-value">${escapeHtml(metricValue(metric.kind, row[metric.key]))}</div>
+            </div>
+          `;
+        }).join("");
+
+        root.innerHTML += `
+          <article class="chart-card">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">${escapeHtml(metric.label)}</div>
+                <div class="chart-subtitle">${escapeHtml(metric.subtitle)}</div>
+              </div>
+              <div class="leader-badge">
+                <span>League leader</span>
+                <strong>${escapeHtml(best.team_name)}</strong>
+                <em>${escapeHtml(metricValue(metric.kind, best[metric.key]))}</em>
+              </div>
+            </div>
+            <div class="chart-note">${escapeHtml(metric.blurb)} League average: ${escapeHtml(metricValue(metric.kind, avgValue))}.</div>
+            <div class="bars">${bars}</div>
+            <div class="mini-board">
+              <div class="mini-card">
+                <div class="mini-label">Top team</div>
+                ${miniTeam(best, metric.kind, best[metric.key])}
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Lowest team</div>
+                ${miniTeam(last, metric.kind, last[metric.key])}
+              </div>
+            </div>
+          </article>
+        `;
+      });
+    }
+
+    function buildTable() {
+      const root = document.getElementById("table-body");
+      const rows = [...DATA].sort((a, b) => (b.ast_to_ratio ?? -Infinity) - (a.ast_to_ratio ?? -Infinity));
+
+      root.innerHTML = rows.map(row => {
+        const avatar = row.logo_src ? `<img src="../${row.logo_src}" alt="${escapeHtml(row.team_key)} logo">` : "";
+        return `
+          <tr>
+            <td class="sticky-left">
+              <div class="team-cell">
+                ${avatar}
+                <div class="team-meta">
+                  <div class="team-name">${escapeHtml(row.team_name)}</div>
+                  <div class="team-key">${escapeHtml(row.team_key)}</div>
+                </div>
+              </div>
+            </td>
+            <td>${row.games ?? ""}</td>
+            <td>${escapeHtml(fmtNumber(row.ast_to_ratio))}</td>
+            <td>${escapeHtml(fmtPct(row.assist_fg_pct))}</td>
+            <td>${escapeHtml(fmtNumber(row.ast_per_100_poss))}</td>
+            <td>${escapeHtml(fmtNumber(row.stocks_per_100_poss))}</td>
+            <td>${escapeHtml(fmtNumber(row.ast))}</td>
+            <td>${escapeHtml(fmtNumber(row.tov))}</td>
+            <td>${escapeHtml(fmtNumber(row.fgm))}</td>
+            <td>${escapeHtml(fmtNumber(row.stl))}</td>
+            <td>${escapeHtml(fmtNumber(row.blk))}</td>
+            <td>${escapeHtml(fmtNumber(row.poss_est))}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    buildHero();
+    buildDashboard();
+    buildTable();
+  </script>
+</body>
+</html>

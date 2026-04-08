@@ -9,8 +9,10 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
 .hero-card h1{margin:0 0 12px 0;font-size:38px;line-height:1.1;}
 .hero-card p{margin:0;max-width:860px;font-size:16px;line-height:1.7;color:rgba(255,255,255,.88);}
 .content-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+.content-grid-three{grid-template-columns:repeat(3,minmax(0,1fr));}
 .stack{display:grid;grid-template-columns:1fr;gap:16px;}
 .info-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:22px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+.info-card-soft{background:#f8fafc;}
 .info-card h2{margin:0 0 10px 0;font-size:24px;line-height:1.2;}
 .info-card p{margin:0 0 10px 0;color:#475569;font-size:15px;line-height:1.7;}
 .info-card ul{margin:0;padding-left:18px;color:#475569;line-height:1.7;}
@@ -22,6 +24,7 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
 .price-card-featured{border-color:#93c5fd;box-shadow:0 10px 30px rgba(59,130,246,.10);}
 .plan-tag{display:inline-flex;border-radius:999px;padding:6px 10px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px;}
 .price-card h2{margin:0 0 8px 0;font-size:28px;}
+.plan-sub{font-size:14px;color:#475569;margin-bottom:14px;font-weight:700;}
 .price{font-size:42px;font-weight:800;line-height:1;margin-bottom:16px;}
 .price span{font-size:16px;font-weight:700;color:#64748b;}
 .price-card ul{margin:0;padding-left:18px;color:#475569;line-height:1.7;}
@@ -30,7 +33,7 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
 .login-card input{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:15px;}
 .login-card button{width:100%;border:0;border-radius:14px;padding:14px 16px;background:#0f172a;color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
 .helper-copy{margin-top:14px;color:#64748b;font-size:13px;line-height:1.6;}
-@media (max-width:980px){.content-grid,.pricing-grid{grid-template-columns:1fr;} .hero-card h1{font-size:32px;}}
+@media (max-width:980px){.content-grid,.content-grid-three,.pricing-grid{grid-template-columns:1fr;} .hero-card h1{font-size:32px;}}
 </style><style>
 .pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}
 .pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
@@ -77,10 +80,10 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0
   </div>
 </header>
 <main class="public-page">
-        <section class="hero-card"><div class="eyebrow">404</div><h1>Page not found</h1><p>The page you tried to open does not exist, moved, or the link is broken. Good old classic.</p></section>
+        <section class="hero-card"><div class="eyebrow">404</div><h1>Page not found</h1><p>The page you tried to open does not exist, moved, or the link is broken. Annoying, but fixable.</p></section>
         <section class="content-grid">
-            <article class="info-card"><h2>Useful links</h2><ul><li><a href="index.html">Home</a></li><li><a href="analytics/index.html">Analytics</a></li><li><a href="general/index.html">General Stats</a></li><li><a href="scouting/index.html">Scouting</a></li></ul></article>
-            <article class="info-card"><h2>Need help?</h2><p>For questions or broken links, contact <a href="mailto:nuno_fg_freitas@hotmail.com">nuno_fg_freitas@hotmail.com</a>.</p></article>
+            <article class="info-card"><h2>Where to go next</h2><ul><li><a href="index.html">Home</a></li><li><a href="access.html">Access & Plans</a></li><li><a href="scouting/index.html">Scouting</a></li><li><a href="analytics/index.html">Analytics</a></li><li><a href="contact.html">Contact</a></li></ul></article>
+            <article class="info-card"><h2>Need help?</h2><p>If you reached this page from a broken internal link, send a note to <a href="mailto:nuno_fg_freitas@hotmail.com">nuno_fg_freitas@hotmail.com</a>.</p><p>You can also go back to the homepage and re-enter the site from there without drama.</p></article>
         </section>
         </main>
 <footer class="pba-site-footer" data-pba-site-chrome="1">
