@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Team Advanced Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --neg: #fca5a5;
+      --warn: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1600px; margin: 0 auto; padding: 24px; }
+    .hero {
+      display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center;
+      background: linear-gradient(180deg, rgba(17,24,39,0.96), rgba(15,23,42,0.96));
+      border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-bottom: 18px;
+      box-shadow: 0 18px 36px rgba(0,0,0,0.22);
+    }
+    .hero h1 { margin: 0 0 8px 0; font-size: 30px; }
+    .subtitle { color: var(--muted); margin-bottom: 14px; }
+    .hero-notes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hero-note {
+      background: #0b1220; border: 1px solid var(--line); color: var(--muted);
+      border-radius: 999px; padding: 8px 10px; font-size: 12px;
+    }
+    .hero-logo-wrap {
+      width: 92px; height: 92px; border-radius: 18px; border: 1px solid var(--line);
+      background: #0b1220; display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-logo-wrap img { width: 66px; height: 66px; object-fit: contain; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 18px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px;
+    }
+    .control { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+    .control label { font-size: 12px; color: var(--muted); }
+    .control select {
+      background: #0b1220; color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+      padding: 8px 10px; font-size: 13px; width: 100%;
+    }
+    .summary-status { color: var(--muted); font-size: 12px; margin-left: auto; }
+    .card, .chart-card, .summary-card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+    }
+    .chart-card { margin-bottom: 18px; padding: 16px; }
+    .chart-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chart-badge {
+      background: #0b1220; border: 1px solid var(--line); border-radius: 999px;
+      padding: 7px 10px; font-size: 12px; color: var(--muted);
+    }
+    .summary-card { margin-bottom: 18px; padding: 16px; }
+    .summary-topline {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px;
+    }
+    .summary-insight {
+      background: #0b1220; border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+    }
+    .summary-insight-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .summary-insight-value { font-size: 14px; line-height: 1.45; }
+    .summary-empty { color: var(--muted); font-size: 14px; }
+    .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .summary-logo {
+      width: 38px; height: 38px; object-fit: contain; background: white; border-radius: 50%; flex: 0 0 auto;
+    }
+    .summary-team-name { font-size: 20px; font-weight: 700; }
+    .summary-team-meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .metric-card {
+      background: #0b1220; border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+    }
+    .metric-label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .metric-value { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .metric-rank, .metric-extra { font-size: 12px; color: var(--muted); }
+    .chart-header { margin-bottom: 10px; }
+    .chart-title { font-size: 18px; font-weight: 700; }
+    .chart-subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .chart-wrap { position: relative; width: 100%; overflow: auto; }
+    #ratings-scatter {
+      width: 100%; min-width: 980px; height: auto; display: block;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius: 12px;
+    }
+    .scatter-tooltip {
+      position: absolute; pointer-events: none; opacity: 0; transform: translate(-50%, calc(-100% - 12px));
+      background: rgba(15, 23, 42, 0.96); color: var(--text); border: 1px solid var(--line);
+      border-radius: 10px; padding: 8px 10px; font-size: 12px; line-height: 1.35; white-space: nowrap;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25); z-index: 20;
+    }
+    .table-wrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+    th, td {
+      padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-size: 14px;
+    }
+    thead th {
+      position: sticky; top: 0; background: var(--panel-2); z-index: 2; font-weight: 700;
+    }
+    thead th.sortable { cursor: pointer; user-select: none; }
+    thead th.sortable:hover { color: var(--accent); }
+    thead th.sortable::after { content: " ↕"; color: var(--muted); font-weight: 400; }
+    thead th.sorted-asc::after { content: " ↑"; color: var(--accent); }
+    thead th.sorted-desc::after { content: " ↓"; color: var(--accent); }
+    tbody tr:hover { background: rgba(56, 189, 248, 0.08); }
+    .sticky-left {
+      position: sticky; left: 0; z-index: 1; text-align: left; background: var(--panel);
+    }
+    thead .sticky-left { z-index: 3; background: var(--panel-2); }
+    .team-col { min-width: 220px; }
+    .team-cell { display: flex; align-items: center; gap: 10px; }
+    .team-avatar {
+      width: 28px; height: 28px; object-fit: contain; border-radius: 50%; background: white; flex: 0 0 auto;
+    }
+    .team-meta { display: flex; flex-direction: column; gap: 2px; }
+    .team-name { font-weight: 700; color: var(--text); line-height: 1.1; }
+    .team-key { font-size: 12px; color: var(--muted); line-height: 1.1; }
+    .neg { color: var(--neg); font-weight: 700; }
+    .notes { margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .axis-label { fill: var(--muted); font-size: 14px; font-weight: 700; }
+    .axis-tick { fill: var(--muted); font-size: 11px; }
+    .grid-line { stroke: rgba(148,163,184,0.22); stroke-width: 1; }
+    .avg-line { stroke: rgba(56,189,248,0.65); stroke-width: 1.5; stroke-dasharray: 6 6; }
+    .quadrant-good { fill: rgba(34,197,94,0.08); }
+    .quadrant-bad { fill: rgba(239,68,68,0.08); }
+    .plot-frame { stroke: var(--line); fill: none; stroke-width: 1.2; }
+    .quad-label { fill: var(--muted); font-size: 12px; font-weight: 700; }
+    @media (max-width: 1200px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .summary-topline { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-logo-wrap { width: 78px; height: 78px; }
+      .hero-logo-wrap img { width: 56px; height: 56px; }
+    }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div></header>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Team Advanced Profile</h1>
+        <div class="subtitle">Split explorer for league team ratings, pace and four-factor style indicators from the canonical game context layer</div>
+        <div class="hero-notes">
+          <span class="hero-note">Ratings view by team and split</span>
+          <span class="hero-note">OffRtg vs DefRtg scatter</span>
+          <span class="hero-note">Four factors and pace in one table</span>
+        </div>
+      </div>
+      <div class="hero-logo-wrap">
+        <img src="../assets/logos/LPB.png" alt="League logo" onerror="this.style.display='none'">
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="control">
+        <label for="team-filter">Team</label>
+        <select id="team-filter"><option value="">All teams</option><option value="GFC">GFC</option><option value="SLB">SLB</option></select>
+      </div>
+      <div class="control">
+        <label for="split-filter">Split</label>
+        <select id="split-filter"><option value="season">Season</option><option value="home">Home</option><option value="away">Away</option><option value="wins">Wins</option><option value="losses">Losses</option><option value="last3">Last 3</option><option value="last5">Last 5</option></select>
+      </div>
+      <div class="summary-status" id="rows-summary"></div>
+    </div>
+
+    <div class="summary-card">
+      <div id="team-summary"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Offensive Rating vs Defensive Rating</div>
+        <div class="chart-subtitle">X = OffRtg (higher is better) · Y = DefRtg inverted visually, so the best defenses sit higher</div>
+        <div class="chart-badges">
+          <span class="chart-badge">Top-right = strong offense + strong defense</span>
+          <span class="chart-badge">Bottom-left = weak offense + weak defense</span>
+          <span class="chart-badge">Dashed lines = split averages</span>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <svg id="ratings-scatter" viewBox="0 0 980 620" role="img" aria-label="Offensive and Defensive Rating scatter plot"></svg>
+        <div id="scatter-tooltip" class="scatter-tooltip"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table class="league-table" id="league-table">
+          <thead>
+            <tr id="table-head"></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="notes">
+      Splits available: Season, Home, Away, Wins, Losses, Last 3, Last 5. Use the summary card for one-team reading and the scatter/table for league positioning.
+    </div>
+  </div>
+
+  <script>
+    const RAW_GAMES = [{"game_code": "2746870", "team_no": 1, "team_name": "SL Benfica", "team_code": "SLB", "team_key": "SLB", "opponent_name": "Galitos BARREIRO", "opp_team_code": "GFC", "opp_team_key": "GFC", "games": 1, "score": 107.0, "opp_score": 85.0, "point_diff": 22.0, "result": "W", "home_away": "Home", "round": null, "game_date": "", "off_rating": 128.29736211031175, "def_rating": 99.85902255639097, "net_rating": 28.438339553920784, "pace": 84.26, "efg_pct_off": 0.6071428571428571, "orb_pct_off": 0.35, "tov_pct_off": 0.14388489208633093, "ftr_off": 0.5, "efg_pct_def": 0.5230769230769231, "orb_pct_def": 0.2777777777777778, "tov_pct_def": 0.2349624060150376, "ftr_def": 0.35384615384615387, "logo_src": ""}, {"game_code": "2746870", "team_no": 2, "team_name": "Galitos BARREIRO", "team_code": "GFC", "team_key": "GFC", "opponent_name": "SL Benfica", "opp_team_code": "SLB", "opp_team_key": "SLB", "games": 1, "score": 85.0, "opp_score": 107.0, "point_diff": -22.0, "result": "L", "home_away": "Away", "round": null, "game_date": "", "off_rating": 99.85902255639097, "def_rating": 128.29736211031175, "net_rating": -28.438339553920784, "pace": 84.26, "efg_pct_off": 0.5230769230769231, "orb_pct_off": 0.2777777777777778, "tov_pct_off": 0.2349624060150376, "ftr_off": 0.35384615384615387, "efg_pct_def": 0.6071428571428571, "orb_pct_def": 0.35, "tov_pct_def": 0.14388489208633093, "ftr_def": 0.5, "logo_src": ""}];
+    const DISPLAY_COLUMNS = [{"key": "off_rating", "label": "OffRtg", "kind": "number"}, {"key": "def_rating", "label": "DefRtg", "kind": "number"}, {"key": "net_rating", "label": "NetRtg", "kind": "number"}, {"key": "pace", "label": "Pace", "kind": "number"}, {"key": "efg_pct_off", "label": "eFG% Off", "kind": "pct"}, {"key": "orb_pct_off", "label": "ORB% Off", "kind": "pct"}, {"key": "tov_pct_off", "label": "TOV% Off", "kind": "pct"}, {"key": "ftr_off", "label": "FTr Off", "kind": "pct"}, {"key": "efg_pct_def", "label": "eFG% Def", "kind": "pct"}, {"key": "orb_pct_def", "label": "ORB% Def", "kind": "pct"}, {"key": "tov_pct_def", "label": "TOV% Def", "kind": "pct"}, {"key": "ftr_def", "label": "FTr Def", "kind": "pct"}];
+    const SUMMARY_METRICS = [{"key": "off_rating", "label": "OffRtg", "kind": "number", "order": "desc"}, {"key": "def_rating", "label": "DefRtg", "kind": "number", "order": "asc"}, {"key": "net_rating", "label": "NetRtg", "kind": "number", "order": "desc"}, {"key": "pace", "label": "Pace", "kind": "number", "order": "desc"}, {"key": "efg_pct_off", "label": "eFG% Off", "kind": "pct", "order": "desc"}, {"key": "orb_pct_off", "label": "ORB% Off", "kind": "pct", "order": "desc"}, {"key": "tov_pct_off", "label": "TOV% Off", "kind": "pct", "order": "asc"}, {"key": "ftr_off", "label": "FTr Off", "kind": "pct", "order": "desc"}, {"key": "efg_pct_def", "label": "eFG% Def", "kind": "pct", "order": "asc"}, {"key": "orb_pct_def", "label": "ORB% Def", "kind": "pct", "order": "asc"}, {"key": "tov_pct_def", "label": "TOV% Def", "kind": "pct", "order": "desc"}, {"key": "ftr_def", "label": "FTr Def", "kind": "pct", "order": "asc"}];
+
+    function fmtNumber(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      return value.toFixed(1);
+    }
+
+    function fmtPct(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      return (value * 100).toFixed(1) + "%";
+    }
+
+    function avg(values) {
+      const clean = values.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      if (!clean.length) return null;
+      return clean.reduce((a, b) => a + b, 0) / clean.length;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function metricRankPhrase(rank, total, ascending) {
+      if (!rank || !total) return "Rank unavailable";
+      if (rank === 1) return "Best in league";
+      if (rank <= 3) return `Top ${rank}`;
+      if (rank === total) return "Bottom of league";
+      if (rank >= Math.max(1, total - 2)) return `Bottom ${total - rank + 1}`;
+      return `Rank ${rank}/${total}`;
+    }
+
+    function buildMetricInsight(team, rankInfo, totalTeams) {
+      const candidates = SUMMARY_METRICS
+        .map(meta => {
+          const value = team[meta.key];
+          const rank = rankInfo[meta.key];
+          if (value === null || value === undefined || Number.isNaN(value) || !rank) return null;
+          return {
+            key: meta.key,
+            label: meta.label,
+            kind: meta.kind,
+            order: meta.order,
+            value,
+            rank,
+            distance: Math.abs(((totalTeams + 1) / 2) - rank),
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.distance - a.distance);
+
+      if (!candidates.length) return ["No clear edge", "No clear concern"];
+
+      let strength = null;
+      let concern = null;
+      const topCut = Math.max(1, Math.floor(totalTeams / 3));
+      const lowCut = Math.min(totalTeams, totalTeams - topCut + 1);
+
+      for (const c of candidates) {
+        const shown = c.kind === "pct" ? fmtPct(c.value) : fmtNumber(c.value);
+        if (!strength && c.rank <= topCut) {
+          strength = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+        }
+        if (!concern && c.rank >= lowCut) {
+          concern = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+        }
+        if (strength && concern) break;
+      }
+
+      if (!strength) {
+        const c = candidates[0];
+        const shown = c.kind === "pct" ? fmtPct(c.value) : fmtNumber(c.value);
+        strength = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+      }
+      if (!concern) {
+        const c = candidates[candidates.length - 1];
+        const shown = c.kind === "pct" ? fmtPct(c.value) : fmtNumber(c.value);
+        concern = `${c.label}: ${shown} · ${metricRankPhrase(c.rank, totalTeams, c.order === "asc")}`;
+      }
+      return [strength, concern];
+    }
+
+    function buildTeamCell(teamKey, teamName, logoSrc) {
+      const avatar = logoSrc ? `<img class="team-avatar" src="../${logoSrc}" alt="${escapeHtml(teamKey)} logo">` : "";
+      return `
+        <div class="team-cell">
+          ${avatar}
+          <div class="team-meta">
+            <div class="team-name">${escapeHtml(teamName)}</div>
+            <div class="team-key">${escapeHtml(teamKey)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function splitGames(games, splitValue) {
+      function parseDate(value) {
+        if (value === null || value === undefined) return null;
+        const raw = String(value).trim();
+        if (!raw) return null;
+        const ts = Date.parse(raw);
+        return Number.isNaN(ts) ? null : ts;
+      }
+
+      function gameSortKey(game) {
+        const dateTs = parseDate(game.game_date);
+        const roundNum = (game.round === null || game.round === undefined || Number.isNaN(Number(game.round)))
+          ? Number.NEGATIVE_INFINITY
+          : Number(game.round);
+        const codeNum = Number(game.game_code);
+        const gameCodeVal = Number.isNaN(codeNum) ? String(game.game_code || "") : codeNum;
+        return { dateTs, roundNum, gameCodeVal };
+      }
+
+      const sorted = [...games].sort((a, b) => {
+        const ka = gameSortKey(a);
+        const kb = gameSortKey(b);
+
+        if (ka.dateTs !== null && kb.dateTs !== null && ka.dateTs !== kb.dateTs) {
+          return ka.dateTs - kb.dateTs;
+        }
+        if (ka.dateTs !== null && kb.dateTs === null) return -1;
+        if (ka.dateTs === null && kb.dateTs !== null) return 1;
+
+        if (ka.roundNum !== kb.roundNum) return ka.roundNum - kb.roundNum;
+
+        if (typeof ka.gameCodeVal === "number" && typeof kb.gameCodeVal === "number") {
+          return ka.gameCodeVal - kb.gameCodeVal;
+        }
+        return String(ka.gameCodeVal).localeCompare(String(kb.gameCodeVal));
+      });
+
+      if (splitValue === "home") return sorted.filter(g => g.home_away === "Home");
+      if (splitValue === "away") return sorted.filter(g => g.home_away === "Away");
+      if (splitValue === "wins") return sorted.filter(g => g.result === "W");
+      if (splitValue === "losses") return sorted.filter(g => g.result === "L");
+      if (splitValue === "last3") return sorted.slice(-3);
+      if (splitValue === "last5") return sorted.slice(-5);
+      return sorted;
+    }
+
+    function aggregateTeamRows(splitValue) {
+      const groups = new Map();
+
+      RAW_GAMES.forEach(row => {
+        const teamKey = row.team_key || "";
+        if (!groups.has(teamKey)) groups.set(teamKey, []);
+        groups.get(teamKey).push(row);
+      });
+
+      const out = [];
+      groups.forEach((games, teamKey) => {
+        const sel = splitGames(games, splitValue);
+        if (!sel.length) return;
+
+        const teamName = sel[0].team_name || games[0].team_name || teamKey;
+        const logoSrc = sel[0].logo_src || games[0].logo_src || "";
+
+        const agg = {
+          team_key: teamKey,
+          team_name: teamName,
+          logo_src: logoSrc,
+          games: sel.length,
+          off_rating: avg(sel.map(x => x.off_rating)),
+          def_rating: avg(sel.map(x => x.def_rating)),
+          net_rating: avg(sel.map(x => x.net_rating)),
+          pace: avg(sel.map(x => x.pace)),
+          efg_pct_off: avg(sel.map(x => x.efg_pct_off)),
+          orb_pct_off: avg(sel.map(x => x.orb_pct_off)),
+          tov_pct_off: avg(sel.map(x => x.tov_pct_off)),
+          ftr_off: avg(sel.map(x => x.ftr_off)),
+          efg_pct_def: avg(sel.map(x => x.efg_pct_def)),
+          orb_pct_def: avg(sel.map(x => x.orb_pct_def)),
+          tov_pct_def: avg(sel.map(x => x.tov_pct_def)),
+          ftr_def: avg(sel.map(x => x.ftr_def)),
+        };
+        out.push(agg);
+      });
+
+      out.sort((a, b) => {
+        const bn = b.net_rating ?? -9999;
+        const an = a.net_rating ?? -9999;
+        if (bn !== an) return bn - an;
+        return String(a.team_name).localeCompare(String(b.team_name));
+      });
+
+      return out;
+    }
+
+    function computeRanks(rows) {
+      const ranks = {};
+      SUMMARY_METRICS.forEach(meta => {
+        const key = meta.key;
+        const ascending = meta.order === "asc";
+        const sortable = rows
+          .filter(r => r[key] !== null && r[key] !== undefined && !Number.isNaN(r[key]))
+          .sort((a, b) => ascending ? a[key] - b[key] : b[key] - a[key]);
+
+        sortable.forEach((row, idx) => {
+          if (!ranks[row.team_key]) ranks[row.team_key] = {};
+          ranks[row.team_key][key] = idx + 1;
+        });
+      });
+      return ranks;
+    }
+
+    function renderTable(rows, teamValue) {
+      const thead = document.getElementById("table-head");
+      const tbody = document.getElementById("table-body");
+      if (!thead || !tbody) return;
+
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      const headerCells = ['<th class="sticky-left sortable" data-type="text">Team</th>', '<th class="sortable" data-type="number">G</th>']
+        .concat(DISPLAY_COLUMNS.map(c => `<th class="sortable" data-type="number">${c.label}</th>`));
+      thead.innerHTML = headerCells.join("");
+
+      const filtered = teamValue ? rows.filter(r => r.team_key === teamValue) : rows;
+
+      filtered.forEach(row => {
+        const tr = document.createElement("tr");
+        const cells = [];
+
+        cells.push(
+          `<td class="sticky-left team-col" data-col="team_key" data-sort="${escapeHtml(row.team_name)}" data-filter="${escapeHtml(String(row.team_key).toLowerCase())}">` +
+          buildTeamCell(row.team_key, row.team_name, row.logo_src) +
+          `</td>`
+        );
+        cells.push(`<td data-col="games" data-sort="${row.games}">${row.games}</td>`);
+
+        DISPLAY_COLUMNS.forEach(c => {
+          const v = row[c.key];
+          const txt = c.kind === "pct" ? fmtPct(v) : fmtNumber(v);
+          const sortVal = (v === null || v === undefined || Number.isNaN(v)) ? "" : Number(v).toFixed(10);
+          const cls = c.key === "net_rating" && v !== null && v < 0 ? "neg" : "";
+          cells.push(`<td class="${cls}" data-col="${c.key}" data-sort="${sortVal}">${escapeHtml(txt)}</td>`);
+        });
+
+        tr.innerHTML = cells.join("");
+        tbody.appendChild(tr);
+      });
+
+      const headers = Array.from(document.querySelectorAll("#league-table thead th.sortable"));
+      let currentIndex = 4;
+      let currentDirection = "desc";
+
+      function clearHeaderState() {
+        headers.forEach(th => {
+          th.classList.remove("sorted-asc");
+          th.classList.remove("sorted-desc");
+        });
+      }
+
+      function sortTable(index, direction) {
+        const rowsDom = Array.from(tbody.querySelectorAll("tr"));
+        const header = headers[index];
+        const isNumber = header.dataset.type === "number";
+
+        rowsDom.sort((a, b) => {
+          const aCell = a.children[index];
+          const bCell = b.children[index];
+          const aVal = aCell.dataset.sort ?? aCell.textContent.trim();
+          const bVal = bCell.dataset.sort ?? bCell.textContent.trim();
+
+          let cmp = 0;
+          if (isNumber) {
+            const aNum = aVal === "" ? Number.NEGATIVE_INFINITY : parseFloat(aVal);
+            const bNum = bVal === "" ? Number.NEGATIVE_INFINITY : parseFloat(bVal);
+            cmp = aNum - bNum;
+          } else {
+            cmp = String(aVal).localeCompare(String(bVal), undefined, { sensitivity: "base" });
+          }
+          return direction === "asc" ? cmp : -cmp;
+        });
+
+        rowsDom.forEach(r => tbody.appendChild(r));
+        clearHeaderState();
+        header.classList.add(direction === "asc" ? "sorted-asc" : "sorted-desc");
+        currentIndex = index;
+        currentDirection = direction;
+      }
+
+      headers.forEach((th, index) => {
+        th.addEventListener("click", () => {
+          const nextDirection = currentIndex === index && currentDirection === "desc" ? "asc" : "desc";
+          sortTable(index, nextDirection);
+        });
+      });
+
+      sortTable(currentIndex, currentDirection);
+    }
+
+    function renderSummary(rows, teamValue, splitValue) {
+      const root = document.getElementById("team-summary");
+      if (!root) return;
+
+      const ranks = computeRanks(rows);
+
+      if (!teamValue) {
+        root.innerHTML = '<div class="summary-empty">Select one team to view its split profile, league ranks and quick read.</div>';
+        return;
+      }
+
+      const team = rows.find(r => r.team_key === teamValue);
+      if (!team) {
+        root.innerHTML = '<div class="summary-empty">No data for the selected team and split.</div>';
+        return;
+      }
+
+      const rankInfo = ranks[team.team_key] || {};
+      const totalTeams = rows.length;
+      const insightPair = buildMetricInsight(team, rankInfo, totalTeams);
+      const logo = team.logo_src ? `<img class="summary-logo" src="../${team.logo_src}" alt="${escapeHtml(team.team_key)} logo">` : "";
+      const splitLabel = (document.getElementById("split-filter")?.selectedOptions?.[0]?.textContent || splitValue || "Season");
+
+      const summaryTopline = `
+        <div class="summary-topline">
+          <div class="summary-insight">
+            <div class="summary-insight-label">Quick read</div>
+            <div class="summary-insight-value">${escapeHtml(team.team_name)} · ${escapeHtml(splitLabel)} · ${team.games} games</div>
+          </div>
+          <div class="summary-insight">
+            <div class="summary-insight-label">Top strength</div>
+            <div class="summary-insight-value">${escapeHtml(insightPair[0])}</div>
+          </div>
+          <div class="summary-insight">
+            <div class="summary-insight-label">Main concern</div>
+            <div class="summary-insight-value">${escapeHtml(insightPair[1])}</div>
+          </div>
+        </div>
+      `;
+
+      const metricCards = SUMMARY_METRICS.map(meta => {
+        const value = meta.kind === "pct" ? fmtPct(team[meta.key]) : fmtNumber(team[meta.key]);
+        const rank = rankInfo[meta.key];
+        const rankText = rank ? metricRankPhrase(rank, totalTeams, meta.order === "asc") : "Rank unavailable";
+        return `
+          <div class="metric-card">
+            <div class="metric-label">${meta.label}</div>
+            <div class="metric-value">${value}</div>
+            <div class="metric-rank">${rankText}</div>
+          </div>
+        `;
+      }).join("");
+
+      root.innerHTML = `
+        <div class="summary-header">
+          ${logo}
+          <div>
+            <div class="summary-team-name">${escapeHtml(team.team_name)}</div>
+            <div class="summary-team-meta">${escapeHtml(team.team_key)} · Split: ${escapeHtml(splitLabel)} · Games: ${team.games}</div>
+          </div>
+        </div>
+        ${summaryTopline}
+        <div class="summary-grid">${metricCards}</div>
+      `;
+    }
+
+    function renderScatter(rows, teamValue) {
+      const svg = document.getElementById("ratings-scatter");
+      const tooltip = document.getElementById("scatter-tooltip");
+      if (!svg || !tooltip || !rows.length) {
+        if (svg) svg.innerHTML = "";
+        return;
+      }
+
+      const width = 980;
+      const height = 620;
+      const margin = { top: 40, right: 40, bottom: 70, left: 80 };
+      const plotX = margin.left;
+      const plotY = margin.top;
+      const plotW = width - margin.left - margin.right;
+      const plotH = height - margin.top - margin.bottom;
+
+      const allPoints = rows.filter(p => p.off_rating !== null && p.def_rating !== null);
+      if (!allPoints.length) {
+        svg.innerHTML = "";
+        return;
+      }
+
+      const offValues = allPoints.map(p => p.off_rating);
+      const defValues = allPoints.map(p => p.def_rating);
+      const minOff = Math.min(...offValues);
+      const maxOff = Math.max(...offValues);
+      const minDef = Math.min(...defValues);
+      const maxDef = Math.max(...defValues);
+      const padOff = Math.max(1.5, (maxOff - minOff) * 0.08);
+      const padDef = Math.max(1.5, (maxDef - minDef) * 0.08);
+      const xMin = minOff - padOff;
+      const xMax = maxOff + padOff;
+      const yMin = minDef - padDef;
+      const yMax = maxDef + padDef;
+
+      const avgOff = avg(allPoints.map(p => p.off_rating));
+      const avgDef = avg(allPoints.map(p => p.def_rating));
+
+      function sx(v) { return plotX + ((v - xMin) / (xMax - xMin)) * plotW; }
+      function sy(v) { return plotY + ((v - yMin) / (yMax - yMin)) * plotH; }
+      function line(x1, y1, x2, y2, cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        el.setAttribute("x1", x1); el.setAttribute("y1", y1); el.setAttribute("x2", x2); el.setAttribute("y2", y2); el.setAttribute("class", cls); return el;
+      }
+      function rect(x, y, w, h, cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("width", w); el.setAttribute("height", h); el.setAttribute("class", cls); return el;
+      }
+      function text(x, y, value, cls, anchor = "middle", rotate = null) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("class", cls); el.setAttribute("text-anchor", anchor);
+        if (rotate !== null) el.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
+        el.textContent = value; return el;
+      }
+
+      svg.innerHTML = "";
+
+      const avgX = sx(avgOff);
+      const avgY = sy(avgDef);
+
+      svg.appendChild(rect(plotX, plotY, avgX - plotX, avgY - plotY, "quadrant-bad"));
+      svg.appendChild(rect(avgX, plotY, plotX + plotW - avgX, avgY - plotY, "quadrant-bad"));
+      svg.appendChild(rect(plotX, avgY, avgX - plotX, plotY + plotH - avgY, "quadrant-bad"));
+      svg.appendChild(rect(avgX, avgY, plotX + plotW - avgX, plotY + plotH - avgY, "quadrant-good"));
+
+      const ticks = 5;
+      for (let i = 0; i <= ticks; i++) {
+        const xVal = xMin + ((xMax - xMin) * i / ticks);
+        const yVal = yMin + ((yMax - yMin) * i / ticks);
+        const gx = sx(xVal);
+        const gy = sy(yVal);
+
+        svg.appendChild(line(gx, plotY, gx, plotY + plotH, "grid-line"));
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+
+        svg.appendChild(text(gx, plotY + plotH + 24, xVal.toFixed(1), "axis-tick"));
+        svg.appendChild(text(plotX - 12, gy + 4, yVal.toFixed(1), "axis-tick", "end"));
+      }
+
+      svg.appendChild(rect(plotX, plotY, plotW, plotH, "plot-frame"));
+      svg.appendChild(line(avgX, plotY, avgX, plotY + plotH, "avg-line"));
+      svg.appendChild(line(plotX, avgY, plotX + plotW, avgY, "avg-line"));
+
+      svg.appendChild(text(plotX + plotW / 2, height - 20, "Offensive Rating", "axis-label"));
+      svg.appendChild(text(22, plotY + plotH / 2, "Defensive Rating", "axis-label", "middle", -90));
+
+      svg.appendChild(text(plotX + 12, plotY + 18, "Low Off · Best Def", "quad-label", "start"));
+      svg.appendChild(text(plotX + plotW - 12, plotY + 18, "High Off · Best Def", "quad-label", "end"));
+      svg.appendChild(text(plotX + 12, plotY + plotH - 12, "Low Off · Weak Def", "quad-label", "start"));
+      svg.appendChild(text(plotX + plotW - 12, plotY + plotH - 12, "High Off · Weak Def", "quad-label", "end"));
+
+      allPoints.forEach((p) => {
+        const x = sx(p.off_rating);
+        const y = sy(p.def_rating);
+
+        const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        hit.setAttribute("cx", x);
+        hit.setAttribute("cy", y);
+        hit.setAttribute("r", 18);
+        hit.setAttribute("fill", "transparent");
+        hit.style.cursor = "pointer";
+        svg.appendChild(hit);
+
+        const size = p.team_key === teamValue ? 34 : 28;
+        if (p.logo_src) {
+          const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+          img.setAttributeNS("http://www.w3.org/1999/xlink", "href", "../" + p.logo_src);
+          img.setAttribute("x", x - size / 2);
+          img.setAttribute("y", y - size / 2);
+          img.setAttribute("width", size);
+          img.setAttribute("height", size);
+          img.style.pointerEvents = "none";
+          svg.appendChild(img);
+        } else {
+          const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          c.setAttribute("cx", x);
+          c.setAttribute("cy", y);
+          c.setAttribute("r", p.team_key === teamValue ? 12 : 10);
+          c.setAttribute("fill", "#38bdf8");
+          c.setAttribute("stroke", "#e5e7eb");
+          c.setAttribute("stroke-width", "1.5");
+          svg.appendChild(c);
+        }
+
+        function showTooltip(evt) {
+          const rect = svg.getBoundingClientRect();
+          tooltip.style.opacity = "1";
+          tooltip.style.left = (evt.clientX - rect.left) + "px";
+          tooltip.style.top = (evt.clientY - rect.top) + "px";
+          tooltip.innerHTML =
+            "<strong>" + escapeHtml(p.team_name) + "</strong><br>" +
+            escapeHtml(p.team_key) + "<br>" +
+            "OffRtg: " + p.off_rating.toFixed(1) + "<br>" +
+            "DefRtg: " + p.def_rating.toFixed(1) + "<br>" +
+            "NetRtg: " + p.net_rating.toFixed(1);
+        }
+        function moveTooltip(evt) {
+          const rect = svg.getBoundingClientRect();
+          tooltip.style.left = (evt.clientX - rect.left) + "px";
+          tooltip.style.top = (evt.clientY - rect.top) + "px";
+        }
+        function hideTooltip() { tooltip.style.opacity = "0"; }
+
+        hit.addEventListener("mouseenter", showTooltip);
+        hit.addEventListener("mousemove", moveTooltip);
+        hit.addEventListener("mouseleave", hideTooltip);
+      });
+    }
+
+    function refreshDashboard() {
+      const teamValue = (document.getElementById("team-filter")?.value || "").trim();
+      const splitValue = (document.getElementById("split-filter")?.value || "season").trim();
+      const rows = aggregateTeamRows(splitValue);
+      const shownRows = teamValue ? rows.filter(r => r.team_key === teamValue) : rows;
+
+      const summary = document.getElementById("rows-summary");
+      if (summary) summary.textContent = `${shownRows.length} / ${rows.length} teams`;
+
+      renderSummary(rows, teamValue, splitValue);
+      renderScatter(rows, teamValue);
+      renderTable(rows, teamValue);
+    }
+
+    document.getElementById("team-filter")?.addEventListener("input", refreshDashboard);
+    document.getElementById("team-filter")?.addEventListener("change", refreshDashboard);
+    document.getElementById("split-filter")?.addEventListener("input", refreshDashboard);
+    document.getElementById("split-filter")?.addEventListener("change", refreshDashboard);
+
+    refreshDashboard();
+  </script>
+</body>
+</html>

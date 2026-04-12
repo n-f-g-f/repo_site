@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rotation Pressure Chart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg:#08111f; --panel:#0f172a; --panel-2:#111c31; --panel-3:#16233c; --text:#e5e7eb;
+      --muted:#94a3b8; --line:#2c3f5f; --good:#4ade80; --bad:#f87171; --accent:#38bdf8; --amber:#f59e0b;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; font-family:Arial,Helvetica,sans-serif;
+      background:radial-gradient(circle at top, #12203b 0%, #08111f 40%, #050b14 100%);
+      color:var(--text);
+    }
+    .wrap { max-width:1760px; margin:0 auto; padding:24px; }
+    h1 { margin:0 0 8px 0; font-size:30px; }
+    .subtitle { color:var(--muted); margin-bottom:18px; font-size:14px; line-height:1.5; }
+    .toolbar {
+      display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)) minmax(180px, 240px); gap:12px; align-items:end;
+      margin-bottom:18px; background:rgba(15,23,42,.94); border:1px solid var(--line); border-radius:18px; padding:14px;
+      backdrop-filter: blur(10px);
+    }
+    .control { display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .control label {
+      font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:700;
+    }
+    .control select, .control input {
+      width:100%; background:#07101f; color:var(--text); border:1px solid var(--line); border-radius:10px;
+      padding:10px 12px; font-size:13px; min-height:44px;
+    }
+    .status-box {
+      display:flex; flex-direction:column; justify-content:center; gap:6px;
+      padding:10px 12px; background:#07101f; border:1px solid var(--line); border-radius:10px; min-height:74px;
+    }
+    .status-main { font-size:20px; font-weight:800; }
+    .status-sub { font-size:12px; color:var(--muted); }
+    .hero, .card, .table-card {
+      background:rgba(15,23,42,.95); border:1px solid var(--line); border-radius:18px; overflow:hidden; margin-bottom:18px;
+      backdrop-filter: blur(10px);
+    }
+    .hero-body, .section-body { padding:16px; }
+    .team-head { display:flex; gap:14px; align-items:center; margin-bottom:14px; }
+    .team-logo { width:56px; height:56px; border-radius:50%; background:#fff; object-fit:contain; }
+    .team-name { font-size:28px; font-weight:800; }
+    .team-meta { color:var(--muted); font-size:13px; margin-top:4px; }
+    .summary-grid { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:12px; }
+    .metric-card { background:#07101f; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .metric-label { color:var(--muted); font-size:12px; margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; font-weight:700; }
+    .metric-value { font-size:20px; font-weight:800; line-height:1.2; }
+    .metric-extra { color:var(--muted); font-size:12px; margin-top:4px; }
+    .main-grid { display:grid; grid-template-columns:minmax(0, 1.9fr) minmax(340px, .95fr); gap:18px; margin-bottom:18px; }
+    .chart-card { padding:16px; }
+    .chart-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:10px; }
+    .chart-title { font-size:20px; font-weight:800; margin:0 0 4px 0; }
+    .chart-subtitle { color:var(--muted); font-size:13px; line-height:1.45; }
+    .legend { display:flex; flex-wrap:wrap; gap:16px; margin-top:10px; color:var(--muted); font-size:12px; }
+    .legend-item { display:flex; align-items:center; gap:7px; }
+    .legend-swatch { width:14px; height:4px; border-radius:999px; display:inline-block; }
+    .chart-wrap { position:relative; width:100%; overflow:auto; }
+    #pressure-chart {
+      width:100%; min-width:980px; height:auto; display:block; border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    }
+    .tooltip {
+      position:absolute; pointer-events:none; opacity:0; transform:translate(-50%, calc(-100% - 12px));
+      background:rgba(6,11,20,.98); color:var(--text); border:1px solid var(--line); border-radius:12px;
+      padding:10px 12px; font-size:12px; line-height:1.45; white-space:nowrap; box-shadow:0 14px 28px rgba(0,0,0,.35); z-index:20;
+    }
+    .grid-line { stroke:rgba(148,163,184,.14); stroke-width:1; }
+    .plot-frame { stroke:var(--line); fill:none; stroke-width:1.2; }
+    .zero-line { stroke:rgba(148,163,184,.32); stroke-width:1.2; }
+    .axis-label { fill:var(--muted); font-size:13px; font-weight:700; }
+    .axis-tick { fill:var(--muted); font-size:11px; }
+    .line-margin { stroke:#e5e7eb; fill:none; stroke-width:2.5; }
+    .dot-margin { fill:#e5e7eb; }
+    .pressure-band-good { fill:rgba(74,222,128,.16); }
+    .pressure-band-bad { fill:rgba(248,113,113,.16); }
+    .selected-band { fill:rgba(56,189,248,.20); stroke:rgba(56,189,248,.72); stroke-width:2; }
+    .selected-marker { fill:var(--accent); stroke:#fff; stroke-width:1.2; }
+    .side-panel { display:flex; flex-direction:column; gap:14px; }
+    .panel-card { padding:16px; }
+    .panel-title { font-size:18px; font-weight:800; margin:0 0 6px 0; }
+    .panel-subtitle { color:var(--muted); font-size:13px; line-height:1.45; }
+    .selected-empty { color:var(--muted); font-size:14px; line-height:1.5; }
+    .selected-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:12px; }
+    .selected-name { font-size:18px; font-weight:800; line-height:1.35; }
+    .selected-team { color:var(--muted); font-size:13px; margin-top:4px; }
+    .chip-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .chip { display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; background:#07101f; border:1px solid var(--line); font-size:12px; font-weight:700; }
+    .chip.good { border-color:rgba(74,222,128,.5); color:#bbf7d0; }
+    .chip.bad { border-color:rgba(248,113,113,.5); color:#fecaca; }
+    .chip.warn { border-color:rgba(245,158,11,.5); color:#fde68a; }
+    .selected-summary { background:#07101f; border:1px solid var(--line); border-radius:14px; padding:12px 14px; color:var(--text); font-size:13px; line-height:1.55; }
+    .mini-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+    .mini-card { background:#07101f; border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+    .mini-label { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; font-weight:700; margin-bottom:4px; }
+    .mini-value { font-size:20px; font-weight:800; line-height:1.15; }
+    .player-list { display:grid; grid-template-columns:1fr; gap:8px; }
+    .player-pill { background:#07101f; border:1px solid var(--line); border-radius:12px; padding:9px 12px; font-size:13px; }
+    .pressure-list { display:flex; flex-direction:column; gap:10px; }
+    .pressure-item { background:#07101f; border:1px solid var(--line); border-radius:14px; padding:12px; cursor:pointer; }
+    .pressure-item:hover { border-color:var(--accent); }
+    .pressure-item.active { border-color:var(--accent); background:rgba(56,189,248,.10); }
+    .pressure-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:8px; }
+    .pressure-name { font-size:14px; font-weight:800; line-height:1.35; }
+    .pressure-meta { font-size:12px; color:var(--muted); margin-top:4px; }
+    .pressure-net.pos { color:var(--good); }
+    .pressure-net.neg { color:var(--bad); }
+    .rotation-card .section-head, .table-card .section-head, .chart-card .section-head { padding:14px 16px; border-bottom:1px solid var(--line); font-size:18px; font-weight:800; }
+    .section-sub { color:var(--muted); font-size:12px; font-weight:400; margin-top:4px; }
+    .timeline-header { position:relative; margin-left:250px; margin-right:64px; height:20px; margin-bottom:10px; }
+    .timeline-header .tick { position:absolute; top:0; transform:translateX(-50%); font-size:11px; color:var(--muted); }
+    .player-rows { display:flex; flex-direction:column; gap:10px; }
+    .player-row { display:grid; grid-template-columns:220px 1fr 56px; align-items:center; gap:14px; }
+    .player-name { font-size:14px; font-weight:700; }
+    .starter-badge { display:inline-block; margin-left:6px; padding:2px 7px; border-radius:999px; background:var(--text); color:var(--bg); font-size:10px; font-weight:700; }
+    .timeline-track { position:relative; height:28px; border-radius:10px; background:#07101f; border:1px solid var(--line); overflow:hidden; }
+    .quarter-line { position:absolute; top:0; bottom:0; border-left:1px dashed rgba(148,163,184,.3); }
+    .pressure-highlight-good, .pressure-highlight-bad, .pressure-highlight-selected { position:absolute; top:0; bottom:0; }
+    .pressure-highlight-good { background:rgba(74,222,128,.12); }
+    .pressure-highlight-bad { background:rgba(248,113,113,.12); }
+    .pressure-highlight-selected { background:rgba(56,189,248,.18); border-left:2px solid rgba(56,189,248,.75); border-right:2px solid rgba(56,189,248,.75); }
+    .bar { position:absolute; top:3px; bottom:3px; border-radius:7px; background:var(--text); }
+    .bar.selected-stretch { box-shadow:0 0 0 2px rgba(56,189,248,.75) inset; }
+    .mins-cell { text-align:right; font-size:13px; font-weight:700; color:var(--muted); }
+    .table-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 16px 0 16px; }
+    .table-title { font-size:18px; font-weight:800; }
+    .table-subtitle { color:var(--muted); font-size:13px; }
+    .table-wrap { overflow:auto; padding:14px 16px 16px 16px; }
+    table { width:100%; border-collapse:collapse; min-width:980px; }
+    th, td { padding:12px 14px; border-bottom:1px solid rgba(148,163,184,.14); text-align:right; white-space:nowrap; font-size:13px; }
+    thead th { position:sticky; top:0; background:var(--panel-3); z-index:2; font-weight:800; }
+    tbody tr { cursor:pointer; }
+    tbody tr:hover { background:rgba(56,189,248,.08); }
+    tbody tr.selected-row { background:rgba(56,189,248,.16); }
+    .sticky-left { text-align:left; position:sticky; left:0; background:rgba(15,23,42,.98); z-index:1; }
+    thead .sticky-left { z-index:3; background:var(--panel-3); }
+    .neg { color:var(--bad); font-weight:700; }
+    .pos { color:var(--good); font-weight:700; }
+    .empty { color:var(--muted); font-style:italic; }
+    @media (max-width:1280px) { .toolbar { grid-template-columns:repeat(3, minmax(0,1fr)); } .summary-grid { grid-template-columns:repeat(3, minmax(0,1fr)); } .main-grid { grid-template-columns:1fr; } }
+    @media (max-width:720px) { .toolbar, .summary-grid { grid-template-columns:1fr; } .player-row { grid-template-columns:1fr; gap:8px; } .timeline-header { display:none; } }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div></header>
+  <div class="wrap">
+    <h1>Rotation Pressure Chart</h1>
+    <div class="subtitle">Explore the stretches that changed the game, the lineups behind them, and the players on court during each swing.</div>
+    <div class="toolbar">
+      <div class="control"><label for="team-filter">Team</label><select id="team-filter"></select></div>
+      <div class="control"><label for="game-filter">Game</label><select id="game-filter"></select></div>
+      <div class="control"><label for="focus-filter">Focus</label><select id="focus-filter"><option value="all">All stretches</option><option value="pressure">High-pressure only</option><option value="positive">Positive swings</option><option value="negative">Negative swings</option></select></div>
+      <div class="control"><label for="player-search">Lineup contains</label><input id="player-search" type="text" placeholder="Search player in lineup"></div>
+      <div class="control"><label for="stint-limit">Rows shown</label><select id="stint-limit"><option value="12">12</option><option value="18">18</option><option value="24" selected>24</option><option value="40">40</option></select></div>
+      <div class="status-box"><div class="status-main" id="page-status-main">0</div><div class="status-sub" id="page-status-sub">No data</div></div>
+    </div>
+    <div class="hero"><div class="hero-body"><div id="hero-panel"></div><div class="summary-grid" id="hero-grid"></div></div></div>
+    <div class="main-grid">
+      <div class="card chart-card">
+        <div class="chart-head"><div><div class="chart-title">Game pressure map</div><div class="chart-subtitle">The margin line stays in view, but the reading focus is now on pressure stretches and turning points.</div></div></div>
+        <div class="chart-wrap"><svg id="pressure-chart" viewBox="0 0 980 340"></svg><div id="pressure-tooltip" class="tooltip"></div></div>
+        <div class="legend"><div class="legend-item"><span class="legend-swatch" style="background:#e5e7eb"></span><span>Score margin</span></div><div class="legend-item"><span class="legend-swatch" style="background:rgba(74,222,128,.75)"></span><span>Positive pressure stretch</span></div><div class="legend-item"><span class="legend-swatch" style="background:rgba(248,113,113,.75)"></span><span>Negative pressure stretch</span></div><div class="legend-item"><span class="legend-swatch" style="background:rgba(56,189,248,.85)"></span><span>Selected stretch</span></div></div>
+      </div>
+      <div class="side-panel">
+        <div class="card panel-card"><div class="panel-title">Selected stretch</div><div class="panel-subtitle">Click the chart, a pressure card or a stint row to inspect the stretch.</div><div id="selected-stretch-panel" class="selected-empty">No stretch selected yet.</div></div>
+        <div class="card panel-card"><div class="panel-title">Pressure stretches</div><div class="panel-subtitle">Strong swings only, so the page surfaces what actually changed the game.</div><div id="pressure-list" class="pressure-list"></div></div>
+      </div>
+    </div>
+    <div class="card rotation-card"><div class="section-head">Rotation by player<div class="section-sub">Rows stay readable, but the selected pressure stretch is highlighted across the timeline.</div></div><div class="section-body"><div class="timeline-header" id="timeline-header"></div><div class="player-rows" id="player-rows"></div></div></div>
+    <div class="table-card"><div class="table-head"><div><div class="table-title">Stint table</div><div class="table-subtitle">Chronological support view for the current game and focus filters.</div></div></div><div class="table-wrap" id="stint-table"></div></div>
+  </div>
+  <script>
+    const DATA = [{"k":"GFC","n":"Galitos BARREIRO ACEDE","l":"","g":[{"c":"2746870","o":"","h":"","d":"","r":null,"ff":85,"fa":107,"pl":["B. Carter","B. Lisboa","I. Almeida","Q. Eyobo","R. Stein","T. Do","G. Lefebvre","D. Machado","K. Leslie","D. Runge","J. Silva"],"lu":[{"n":"B. Carter | B. Lisboa | I. Almeida | Q. Eyobo | R. Stein","p":[0,1,2,3,4]},{"n":"B. Lisboa | I. Almeida | Q. Eyobo | R. Stein | T. Do","p":[1,2,3,4,5]},{"n":"B. Lisboa | G. Lefebvre | I. Almeida | Q. Eyobo | T. Do","p":[1,6,2,3,5]},{"n":"B. Lisboa | G. Lefebvre | Q. Eyobo | R. Stein | T. Do","p":[1,6,3,4,5]},{"n":"B. Carter | D. Machado | G. Lefebvre | R. Stein | T. Do","p":[0,7,6,4,5]},{"n":"D. Machado | G. Lefebvre | I. Almeida | R. Stein | T. Do","p":[7,6,2,4,5]},{"n":"B. Carter | B. Lisboa | K. Leslie | Q. Eyobo | R. Stein","p":[0,1,8,3,4]},{"n":"B. Carter | B. Lisboa | G. Lefebvre | K. Leslie | Q. Eyobo","p":[0,1,6,8,3]},{"n":"B. Carter | B. Lisboa | I. Almeida | K. Leslie | Q. Eyobo","p":[0,1,2,8,3]},{"n":"B. Lisboa | I. Almeida | K. Leslie | Q. Eyobo | T. Do","p":[1,2,8,3,5]},{"n":"D. Machado | G. Lefebvre | I. Almeida | Q. Eyobo | T. Do","p":[7,6,2,3,5]},{"n":"D. Machado | D. Runge | G. Lefebvre | I. Almeida | T. Do","p":[7,9,6,2,5]},{"n":"B. Lisboa | D. Machado | D. Runge | G. Lefebvre | T. Do","p":[1,7,9,6,5]},{"n":"B. Carter | B. Lisboa | D. Machado | G. Lefebvre | Q. Eyobo","p":[0,1,7,6,3]},{"n":"B. Carter | D. Machado | G. Lefebvre | Q. Eyobo | R. Stein","p":[0,7,6,3,4]},{"n":"B. Carter | G. Lefebvre | I. Almeida | Q. Eyobo | R. Stein","p":[0,6,2,3,4]},{"n":"B. Carter | B. Lisboa | G. Lefebvre | Q. Eyobo | R. Stein","p":[0,1,6,3,4]},{"n":"B. Carter | G. Lefebvre | J. Silva | K. Leslie | R. Stein","p":[0,6,10,8,4]},{"n":"G. Lefebvre | J. Silva | K. Leslie | R. Stein | T. Do","p":[6,10,8,4,5]}],"rw":[[0,1,0,0,0,0,0],[1,4,0,0,0,0,2],[4,24,0,0,2,2,2],[24,29,0,2,2,2,2],[29,36,0,2,2,2,4],[36,57,0,2,4,4,4],[57,63,0,4,4,4,5],[63,73,0,4,5,4,5],[73,78,0,4,5,4,5],[78,83,0,4,5,4,5],[83,85,0,4,5,4,7],[85,103,0,4,7,4,7],[103,109,0,4,7,4,7],[109,112,0,4,7,4,7],[112,121,0,4,7,4,7],[121,124,0,4,7,4,7],[124,127,0,4,7,4,10],[127,148,0,4,10,7,10],[148,160,0,7,10,7,12],[160,172,0,7,12,7,12],[172,175,0,7,12,7,12],[175,184,0,7,12,7,14],[184,202,0,7,14,7,14],[202,204,0,7,14,9,14],[204,212,0,9,14,9,16],[212,224,0,9,16,9,16],[224,227,0,9,16,9,16],[227,243,0,9,16,9,18],[243,247,0,9,18,9,18],[247,255,0,9,18,11,18],[255,266,0,11,18,11,18],[266,273,0,11,18,11,18],[273,274,0,11,18,11,18],[274,282,0,11,18,13,18],[282,288,0,13,18,13,19],[288,292,0,13,19,13,19],[292,304,0,13,19,13,21],[304,311,0,13,21,15,21],[311,316,0,15,21,15,22],[316,322,0,15,22,15,22],[322,324,0,15,22,15,22],[324,328,0,15,22,16,22],[328,348,0,16,22,16,22],[348,350,0,16,22,16,22],[350,351,0,16,22,16,24],[351,359,0,16,24,17,24],[359,360,0,17,24,18,24],[360,384,0,18,24,18,24],[384,391,0,18,24,18,24],[391,397,1,18,24,18,24],[397,404,1,18,24,18,26],[404,418,1,18,26,18,26],[418,421,1,18,26,18,26],[421,434,1,18,26,18,26],[434,439,1,18,26,18,26],[439,440,1,18,26,20,26],[440,445,2,20,26,22,26],[445,451,2,22,26,22,26],[451,467,2,22,26,22,26],[467,470,2,22,26,22,26],[470,473,2,22,26,24,26],[473,484,3,24,26,24,26],[484,502,3,24,26,26,26],[502,518,3,26,26,26,28],[518,527,4,26,28,26,28],[527,540,4,26,28,26,30],[540,543,4,26,30,26,30],[543,546,4,26,30,26,30],[546,564,4,26,30,26,30],[564,568,4,26,30,26,30],[568,585,4,26,30,26,30],[585,591,4,26,30,26,30],[591,595,4,26,30,26,30],[595,600,4,26,30,26,30],[600,608,4,26,30,28,30],[608,615,4,28,30,28,30],[615,617,4,28,30,28,30],[617,634,4,28,30,28,30],[634,635,4,28,30,28,30],[635,639,5,28,30,28,30],[639,653,5,28,30,28,32],[653,662,5,28,32,28,32],[662,664,5,28,32,28,32],[664,671,5,28,32,28,32],[671,679,5,28,32,30,32],[679,698,5,30,32,30,35],[698,707,5,30,35,30,35],[707,719,5,30,35,30,38],[719,723,5,30,38,30,38],[723,735,1,30,38,32,38],[735,755,1,32,38,32,41],[755,763,1,32,41,32,41],[763,767,1,32,41,32,42],[767,784,1,32,42,32,42],[784,789,1,32,42,32,44],[789,808,1,32,44,32,44],[808,814,1,32,44,32,44],[814,818,1,32,44,32,44],[818,821,1,32,44,32,44],[821,829,0,32,44,32,46],[829,839,0,32,46,32,46],[839,851,0,32,46,32,46],[851,857,0,32,46,34,46],[857,867,0,34,46,34,46],[867,870,0,34,46,34,46],[870,882,0,34,46,34,46],[882,891,0,34,46,34,46],[891,894,0,34,46,34,46],[894,898,0,34,46,34,46],[898,920,0,34,46,34,46],[920,923,0,34,46,34,46],[923,928,0,34,46,34,48],[928,939,0,34,48,34,48],[939,942,0,34,48,34,48],[942,950,0,34,48,34,48],[950,952,0,34,48,34,48],[952,953,0,34,48,34,48],[953,956,0,34,48,34,48],[956,957,0,34,48,34,48],[957,960,0,34,48,34,48],[960,976,0,34,48,34,48],[976,978,0,34,48,34,48],[978,983,0,34,48,34,48],[983,986,0,34,48,34,48],[986,995,0,34,48,34,49],[995,1011,0,34,49,34,49],[1011,1014,0,34,49,34,49],[1014,1017,0,34,49,34,51],[1017,1023,0,34,51,34,51],[1023,1044,6,34,51,34,51],[1044,1046,6,34,51,34,51],[1046,1057,6,34,51,34,54],[1057,1077,6,34,54,34,54],[1077,1080,6,34,54,34,54],[1080,1083,6,34,54,37,54],[1083,1109,6,37,54,37,54],[1109,1111,6,37,54,37,54],[1111,1117,6,37,54,40,54],[1117,1121,6,40,54,40,54],[1121,1130,7,40,54,40,54],[1130,1133,7,40,54,40,54],[1133,1139,7,40,54,41,54],[1139,1154,7,41,54,41,55],[1154,1163,7,41,55,41,55],[1163,1168,7,41,55,42,55],[1168,1186,8,42,55,44,55],[1186,1194,8,44,55,44,55],[1194,1200,8,44,55,44,55],[1200,1213,6,44,55,44,55],[1213,1215,6,44,55,44,55],[1215,1222,6,44,55,44,55],[1222,1227,6,44,55,44,57],[1227,1245,6,44,57,44,57],[1245,1248,6,44,57,44,57],[1248,1250,6,44,57,44,57],[1250,1254,6,44,57,44,57],[1254,1260,6,44,57,44,57],[1260,1271,6,44,57,46,57],[1271,1273,6,46,57,46,57],[1273,1276,6,46,57,46,57],[1276,1280,6,46,57,46,57],[1280,1283,6,46,57,46,57],[1283,1284,6,46,57,46,59],[1284,1296,6,46,59,48,59],[1296,1311,6,48,59,48,61],[1311,1315,6,48,61,48,62],[1315,1318,6,48,62,48,62],[1318,1325,6,48,62,48,64],[1325,1332,6,48,64,48,64],[1332,1335,6,48,64,48,64],[1335,1338,6,48,64,48,64],[1338,1343,6,48,64,48,66],[1343,1348,6,48,66,48,66],[1348,1359,8,48,66,48,66],[1359,1362,8,48,66,48,66],[1362,1376,8,48,66,48,66],[1376,1378,8,48,66,48,66],[1378,1383,8,48,66,51,66],[1383,1394,8,51,66,51,66],[1394,1398,8,51,66,51,66],[1398,1410,8,51,66,51,66],[1410,1412,8,51,66,51,66],[1412,1426,8,51,66,51,66],[1426,1434,8,51,66,51,66],[1434,1437,8,51,66,51,66],[1437,1444,8,51,66,51,66],[1444,1447,8,51,66,51,66],[1447,1452,8,51,66,51,67],[1452,1456,9,51,67,53,67],[1456,1475,9,53,67,53,69],[1475,1483,9,53,69,56,69],[1483,1498,9,56,69,56,71],[1498,1508,9,56,71,56,71],[1508,1512,9,56,71,56,71],[1512,1518,9,56,71,58,71],[1518,1529,9,58,71,58,74],[1529,1539,9,58,74,60,74],[1539,1561,9,60,74,60,77],[1561,1587,9,60,77,62,77],[1587,1595,2,62,77,62,80],[1595,1602,2,62,80,64,80],[1602,1615,10,64,80,64,83],[1615,1632,10,64,83,66,83],[1632,1649,10,66,83,66,83],[1649,1662,10,66,83,66,83],[1662,1665,10,66,83,66,83],[1665,1672,10,66,83,66,83],[1672,1679,10,66,83,66,83],[1679,1694,10,66,83,66,83],[1694,1698,10,66,83,66,84],[1698,1708,11,66,84,66,84],[1708,1720,11,66,84,66,86],[1720,1737,11,66,86,67,87],[1737,1750,12,67,87,67,89],[1750,1763,12,67,89,67,89],[1763,1783,12,67,89,67,89],[1783,1787,12,67,89,70,89],[1787,1800,12,70,89,70,89],[1800,1810,13,70,89,72,89],[1810,1824,13,72,89,72,92],[1824,1839,13,72,92,72,92],[1839,1847,13,72,92,72,92],[1847,1850,13,72,92,72,92],[1850,1862,13,72,92,72,92],[1862,1866,13,72,92,72,92],[1866,1871,13,72,92,72,92],[1871,1876,13,72,92,75,92],[1876,1887,13,75,92,75,92],[1887,1891,13,75,92,75,92],[1891,1892,13,75,92,75,92],[1892,1896,13,75,92,75,92],[1896,1902,14,75,92,75,94],[1902,1918,14,75,94,75,94],[1918,1922,14,75,94,75,94],[1922,1931,14,75,94,75,97],[1931,1951,14,75,97,75,97],[1951,1953,14,75,97,75,97],[1953,1957,14,75,97,75,97],[1957,1962,14,75,97,75,97],[1962,1968,14,75,97,75,97],[1968,1971,14,75,97,75,97],[1971,1988,14,75,97,75,100],[1988,2007,14,75,100,75,100],[2007,2012,14,75,100,75,100],[2012,2018,14,75,100,75,102],[2018,2036,14,75,102,77,102],[2036,2049,14,77,102,77,102],[2049,2051,15,77,102,77,102],[2051,2055,15,77,102,77,102],[2055,2060,15,77,102,77,102],[2060,2062,15,77,102,77,102],[2062,2078,15,77,102,77,102],[2078,2087,14,77,102,77,102],[2087,2094,16,77,102,77,102],[2094,2113,16,77,102,77,102],[2113,2120,16,77,102,77,102],[2120,2124,16,77,102,77,102],[2124,2127,16,77,102,77,102],[2127,2136,16,77,102,77,102],[2136,2143,17,77,102,77,102],[2143,2146,17,77,102,77,102],[2146,2151,17,77,102,77,102],[2151,2162,17,77,102,77,102],[2162,2167,17,77,102,77,102],[2167,2175,17,77,102,77,102],[2175,2179,17,77,102,77,102],[2179,2182,17,77,102,77,102],[2182,2192,17,77,102,79,102],[2192,2210,17,79,102,79,104],[2210,2218,17,79,104,79,104],[2218,2228,18,79,104,81,104],[2228,2240,18,81,104,81,107],[2240,2252,18,81,107,81,107],[2252,2264,18,81,107,84,107],[2264,2286,18,84,107,84,107],[2286,2295,18,84,107,84,107],[2295,2299,18,84,107,84,107],[2299,2311,18,84,107,84,107],[2311,2315,18,84,107,84,107],[2315,2316,18,84,107,85,107],[2316,2332,18,85,107,85,107],[2332,2345,18,85,107,85,107],[2345,2348,18,85,107,85,107],[2348,2357,18,85,107,85,107],[2357,2360,18,85,107,85,107],[2360,2372,18,85,107,85,107],[2372,2376,18,85,107,85,107],[2376,2377,18,85,107,85,107],[2377,2400,18,85,107,85,107]]}]},{"k":"SLB","n":"SL Benfica","l":"","g":[{"c":"2746870","o":"","h":"","d":"","r":null,"ff":107,"fa":85,"pl":["A. Broussard","A. Dziewa","E. Crandall IV","K. McEwen","M. Romdhane","E. Francisco","D. Gameiro","R. Yussuf","J. Silva","D. Relvao","T. Filipe"],"lu":[{"n":"A. Broussard | A. Dziewa | E. Crandall IV | K. McEwen | M. Romdhane","p":[0,1,2,3,4]},{"n":"A. Dziewa | E. Crandall IV | E. Francisco | K. McEwen | M. Romdhane","p":[1,2,5,3,4]},{"n":"A. Dziewa | D. Gameiro | E. Crandall IV | E. Francisco | M. Romdhane","p":[1,6,2,5,4]},{"n":"D. Gameiro | E. Crandall IV | E. Francisco | M. Romdhane | R. Yussuf","p":[6,2,5,4,7]},{"n":"D. Gameiro | E. Crandall IV | J. Silva | M. Romdhane | R. Yussuf","p":[6,2,8,4,7]},{"n":"A. Dziewa | D. Gameiro | E. Crandall IV | J. Silva | R. Yussuf","p":[1,6,2,8,7]},{"n":"A. Broussard | A. Dziewa | D. Gameiro | J. Silva | R. Yussuf","p":[0,1,6,8,7]},{"n":"A. Broussard | A. Dziewa | D. Gameiro | D. Relvao | J. Silva","p":[0,1,6,9,8]},{"n":"A. Broussard | D. Gameiro | D. Relvao | J. Silva | M. Romdhane","p":[0,6,9,8,4]},{"n":"A. Broussard | D. Relvao | E. Crandall IV | J. Silva | M. Romdhane","p":[0,9,2,8,4]},{"n":"D. Relvao | E. Crandall IV | J. Silva | K. McEwen | M. Romdhane","p":[9,2,8,3,4]},{"n":"A. Dziewa | E. Crandall IV | J. Silva | K. McEwen | M. Romdhane","p":[1,2,8,3,4]},{"n":"A. Dziewa | D. Gameiro | J. Silva | K. McEwen | M. Romdhane","p":[1,6,8,3,4]},{"n":"A. Broussard | A. Dziewa | E. Crandall IV | J. Silva | M. Romdhane","p":[0,1,2,8,4]},{"n":"A. Broussard | E. Crandall IV | J. Silva | M. Romdhane | R. Yussuf","p":[0,2,8,4,7]},{"n":"A. Broussard | D. Gameiro | J. Silva | M. Romdhane | R. Yussuf","p":[0,6,8,4,7]},{"n":"A. Dziewa | D. Gameiro | J. Silva | K. McEwen | R. Yussuf","p":[1,6,8,3,7]},{"n":"A. Dziewa | E. Crandall IV | J. Silva | K. McEwen | R. Yussuf","p":[1,2,8,3,7]},{"n":"A. Broussard | A. Dziewa | E. Crandall IV | K. McEwen | R. Yussuf","p":[0,1,2,3,7]},{"n":"A. Broussard | A. Dziewa | D. Relvao | E. Crandall IV | K. McEwen","p":[0,1,9,2,3]},{"n":"A. Broussard | D. Relvao | E. Crandall IV | K. McEwen | M. Romdhane","p":[0,9,2,3,4]},{"n":"A. Broussard | D. Gameiro | D. Relvao | K. McEwen | M. Romdhane","p":[0,6,9,3,4]},{"n":"A. Broussard | A. Dziewa | D. Gameiro | D. Relvao | K. McEwen","p":[0,1,6,9,3]},{"n":"A. Broussard | D. Gameiro | D. Relvao | E. Francisco | K. McEwen","p":[0,6,9,5,3]},{"n":"D. Gameiro | D. Relvao | E. Francisco | J. Silva | K. McEwen","p":[6,9,5,8,3]},{"n":"D. Gameiro | D. Relvao | E. Crandall IV | E. Francisco | K. McEwen","p":[6,9,2,5,3]},{"n":"D. Gameiro | E. Francisco | J. Silva | K. McEwen | R. Yussuf","p":[6,5,8,3,7]},{"n":"D. Gameiro | E. Francisco | J. Silva | R. Yussuf | T. Filipe","p":[6,5,8,7,10]}],"rw":[[0,1,0,0,0,0,0],[1,4,0,0,0,2,0],[4,24,0,2,0,2,2],[24,29,0,2,2,2,2],[29,36,0,2,2,4,2],[36,57,0,4,2,4,4],[57,63,0,4,4,5,4],[63,73,0,5,4,5,4],[73,78,0,5,4,5,4],[78,83,0,5,4,5,4],[83,85,0,5,4,7,4],[85,103,0,7,4,7,4],[103,109,0,7,4,7,4],[109,112,0,7,4,7,4],[112,121,0,7,4,7,4],[121,124,0,7,4,7,4],[124,127,0,7,4,10,4],[127,148,0,10,4,10,7],[148,160,0,10,7,12,7],[160,172,0,12,7,12,7],[172,175,0,12,7,12,7],[175,184,0,12,7,14,7],[184,202,0,14,7,14,7],[202,204,0,14,7,14,9],[204,212,0,14,9,16,9],[212,224,0,16,9,16,9],[224,227,0,16,9,16,9],[227,243,0,16,9,18,9],[243,247,0,18,9,18,9],[247,255,0,18,9,18,11],[255,266,0,18,11,18,11],[266,273,0,18,11,18,11],[273,274,0,18,11,18,11],[274,282,1,18,11,18,13],[282,288,1,18,13,19,13],[288,292,1,19,13,19,13],[292,304,1,19,13,21,13],[304,311,1,21,13,21,15],[311,316,1,21,15,22,15],[316,322,1,22,15,22,15],[322,324,1,22,15,22,15],[324,328,1,22,15,22,16],[328,348,2,22,16,22,16],[348,350,2,22,16,22,16],[350,351,2,22,16,24,16],[351,359,2,24,16,24,17],[359,360,2,24,17,24,18],[360,384,2,24,18,24,18],[384,391,2,24,18,24,18],[391,397,3,24,18,24,18],[397,404,3,24,18,26,18],[404,418,3,26,18,26,18],[418,421,3,26,18,26,18],[421,434,3,26,18,26,18],[434,439,3,26,18,26,18],[439,440,3,26,18,26,20],[440,445,3,26,20,26,22],[445,451,3,26,22,26,22],[451,467,3,26,22,26,22],[467,470,3,26,22,26,22],[470,473,3,26,22,26,24],[473,484,4,26,24,26,24],[484,502,4,26,24,26,26],[502,518,4,26,26,28,26],[518,527,5,28,26,28,26],[527,540,5,28,26,30,26],[540,543,5,30,26,30,26],[543,546,5,30,26,30,26],[546,564,5,30,26,30,26],[564,568,5,30,26,30,26],[568,585,5,30,26,30,26],[585,591,5,30,26,30,26],[591,595,5,30,26,30,26],[595,600,5,30,26,30,26],[600,608,5,30,26,30,28],[608,615,5,30,28,30,28],[615,617,5,30,28,30,28],[617,634,5,30,28,30,28],[634,635,5,30,28,30,28],[635,639,5,30,28,30,28],[639,653,6,30,28,32,28],[653,662,6,32,28,32,28],[662,664,6,32,28,32,28],[664,671,6,32,28,32,28],[671,679,6,32,28,32,30],[679,698,6,32,30,35,30],[698,707,6,35,30,35,30],[707,719,6,35,30,38,30],[719,723,6,38,30,38,30],[723,735,6,38,30,38,32],[735,755,6,38,32,41,32],[755,763,6,41,32,41,32],[763,767,6,41,32,42,32],[767,784,6,42,32,42,32],[784,789,6,42,32,44,32],[789,808,6,44,32,44,32],[808,814,7,44,32,44,32],[814,818,7,44,32,44,32],[818,821,7,44,32,44,32],[821,829,7,44,32,46,32],[829,839,7,46,32,46,32],[839,851,7,46,32,46,32],[851,857,7,46,32,46,34],[857,867,7,46,34,46,34],[867,870,7,46,34,46,34],[870,882,7,46,34,46,34],[882,891,8,46,34,46,34],[891,894,8,46,34,46,34],[894,898,8,46,34,46,34],[898,920,8,46,34,46,34],[920,923,8,46,34,46,34],[923,928,8,46,34,48,34],[928,939,8,48,34,48,34],[939,942,8,48,34,48,34],[942,950,8,48,34,48,34],[950,952,8,48,34,48,34],[952,953,8,48,34,48,34],[953,956,8,48,34,48,34],[956,957,8,48,34,48,34],[957,960,8,48,34,48,34],[960,976,8,48,34,48,34],[976,978,8,48,34,48,34],[978,983,8,48,34,48,34],[983,986,8,48,34,48,34],[986,995,8,48,34,49,34],[995,1011,9,49,34,49,34],[1011,1014,9,49,34,49,34],[1014,1017,9,49,34,51,34],[1017,1023,9,51,34,51,34],[1023,1044,10,51,34,51,34],[1044,1046,10,51,34,51,34],[1046,1057,10,51,34,54,34],[1057,1077,10,54,34,54,34],[1077,1080,10,54,34,54,34],[1080,1083,10,54,34,54,37],[1083,1109,10,54,37,54,37],[1109,1111,10,54,37,54,37],[1111,1117,10,54,37,54,40],[1117,1121,10,54,40,54,40],[1121,1130,10,54,40,54,40],[1130,1133,10,54,40,54,40],[1133,1139,10,54,40,54,41],[1139,1154,11,54,41,55,41],[1154,1163,11,55,41,55,41],[1163,1168,11,55,41,55,42],[1168,1186,12,55,42,55,44],[1186,1194,12,55,44,55,44],[1194,1200,12,55,44,55,44],[1200,1213,13,55,44,55,44],[1213,1215,13,55,44,55,44],[1215,1222,13,55,44,55,44],[1222,1227,13,55,44,57,44],[1227,1245,13,57,44,57,44],[1245,1248,13,57,44,57,44],[1248,1250,13,57,44,57,44],[1250,1254,13,57,44,57,44],[1254,1260,13,57,44,57,44],[1260,1271,13,57,44,57,46],[1271,1273,13,57,46,57,46],[1273,1276,13,57,46,57,46],[1276,1280,13,57,46,57,46],[1280,1283,13,57,46,57,46],[1283,1284,13,57,46,59,46],[1284,1296,13,59,46,59,48],[1296,1311,13,59,48,61,48],[1311,1315,13,61,48,62,48],[1315,1318,13,62,48,62,48],[1318,1325,13,62,48,64,48],[1325,1332,13,64,48,64,48],[1332,1335,13,64,48,64,48],[1335,1338,13,64,48,64,48],[1338,1343,13,64,48,66,48],[1343,1348,13,66,48,66,48],[1348,1359,13,66,48,66,48],[1359,1362,13,66,48,66,48],[1362,1376,13,66,48,66,48],[1376,1378,13,66,48,66,48],[1378,1383,13,66,48,66,51],[1383,1394,13,66,51,66,51],[1394,1398,13,66,51,66,51],[1398,1410,13,66,51,66,51],[1410,1412,13,66,51,66,51],[1412,1426,13,66,51,66,51],[1426,1434,13,66,51,66,51],[1434,1437,13,66,51,66,51],[1437,1444,13,66,51,66,51],[1444,1447,13,66,51,66,51],[1447,1452,13,66,51,67,51],[1452,1456,14,67,51,67,53],[1456,1475,14,67,53,69,53],[1475,1483,14,69,53,69,56],[1483,1498,14,69,56,71,56],[1498,1508,14,71,56,71,56],[1508,1512,15,71,56,71,56],[1512,1518,15,71,56,71,58],[1518,1529,15,71,58,74,58],[1529,1539,15,74,58,74,60],[1539,1561,15,74,60,77,60],[1561,1587,15,77,60,77,62],[1587,1595,16,77,62,80,62],[1595,1602,16,80,62,80,64],[1602,1615,17,80,64,83,64],[1615,1632,17,83,64,83,66],[1632,1649,17,83,66,83,66],[1649,1662,17,83,66,83,66],[1662,1665,17,83,66,83,66],[1665,1672,17,83,66,83,66],[1672,1679,17,83,66,83,66],[1679,1694,17,83,66,83,66],[1694,1698,17,83,66,84,66],[1698,1708,18,84,66,84,66],[1708,1720,18,84,66,86,66],[1720,1737,18,86,66,87,67],[1737,1750,18,87,67,89,67],[1750,1763,18,89,67,89,67],[1763,1783,18,89,67,89,67],[1783,1787,18,89,67,89,70],[1787,1800,18,89,70,89,70],[1800,1810,19,89,70,89,72],[1810,1824,19,89,72,92,72],[1824,1839,19,92,72,92,72],[1839,1847,19,92,72,92,72],[1847,1850,19,92,72,92,72],[1850,1862,19,92,72,92,72],[1862,1866,19,92,72,92,72],[1866,1871,19,92,72,92,72],[1871,1876,20,92,72,92,75],[1876,1887,20,92,75,92,75],[1887,1891,20,92,75,92,75],[1891,1892,20,92,75,92,75],[1892,1896,20,92,75,92,75],[1896,1902,20,92,75,94,75],[1902,1918,20,94,75,94,75],[1918,1922,20,94,75,94,75],[1922,1931,20,94,75,97,75],[1931,1951,20,97,75,97,75],[1951,1953,20,97,75,97,75],[1953,1957,20,97,75,97,75],[1957,1962,20,97,75,97,75],[1962,1968,20,97,75,97,75],[1968,1971,20,97,75,97,75],[1971,1988,20,97,75,100,75],[1988,2007,20,100,75,100,75],[2007,2012,20,100,75,100,75],[2012,2018,20,100,75,102,75],[2018,2036,21,102,75,102,77],[2036,2049,21,102,77,102,77],[2049,2051,21,102,77,102,77],[2051,2055,21,102,77,102,77],[2055,2060,21,102,77,102,77],[2060,2062,21,102,77,102,77],[2062,2078,21,102,77,102,77],[2078,2087,22,102,77,102,77],[2087,2094,22,102,77,102,77],[2094,2113,22,102,77,102,77],[2113,2120,23,102,77,102,77],[2120,2124,23,102,77,102,77],[2124,2127,23,102,77,102,77],[2127,2136,23,102,77,102,77],[2136,2143,24,102,77,102,77],[2143,2146,24,102,77,102,77],[2146,2151,24,102,77,102,77],[2151,2162,25,102,77,102,77],[2162,2167,25,102,77,102,77],[2167,2175,25,102,77,102,77],[2175,2179,25,102,77,102,77],[2179,2182,25,102,77,102,77],[2182,2192,25,102,77,102,79],[2192,2210,25,102,79,104,79],[2210,2218,25,104,79,104,79],[2218,2228,26,104,79,104,81],[2228,2240,26,104,81,107,81],[2240,2252,26,107,81,107,81],[2252,2264,27,107,81,107,84],[2264,2286,27,107,84,107,84],[2286,2295,27,107,84,107,84],[2295,2299,27,107,84,107,84],[2299,2311,27,107,84,107,84],[2311,2315,27,107,84,107,84],[2315,2316,27,107,84,107,85],[2316,2332,27,107,85,107,85],[2332,2345,27,107,85,107,85],[2345,2348,27,107,85,107,85],[2348,2357,27,107,85,107,85],[2357,2360,27,107,85,107,85],[2360,2372,27,107,85,107,85],[2372,2376,27,107,85,107,85],[2376,2377,27,107,85,107,85],[2377,2400,27,107,85,107,85]]}]}];
+    const MAX_PLAYERS = 10;
+    const DEFAULT_STINT_ROWS = 24;
+    const MIN_HIGHLIGHT_SECONDS = 45;
+    const MIN_BAR_SECONDS = 4;
+    const PRESSURE_THRESHOLD = 4;
+    let SELECTED_STRETCH_KEY = null;
+    function escapeHtml(s) { return String(s ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;'); }
+    function fmtNumber(v, digits=1) { if (v === null || v === undefined || Number.isNaN(Number(v))) return '—'; return Number(v).toFixed(digits); }
+    function fmtSigned(v, digits=0) { if (v === null || v === undefined || Number.isNaN(Number(v))) return '—'; const n = Number(v).toFixed(digits); return (Number(v) > 0 ? '+' : '') + n; }
+    function fmtMmSs(seconds) { if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return '—'; const s = Math.max(0, Math.round(Number(seconds))); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+    function quarterMarks(totalSeconds) { const marks=[0,600,1200,1800,2400]; if (totalSeconds > 2400) { let c=2700; while (c <= totalSeconds) { marks.push(c); c+=300; } } return marks; }
+    function currentTeam() { return DATA.find(t => t.k === document.getElementById('team-filter').value) || DATA[0] || null; }
+    function currentGame() { const team = currentTeam(); if (!team) return null; return team.g.find(g => g.c === document.getElementById('game-filter').value) || team.g[0] || null; }
+    function gameLabel(g) { const round = g.r !== null && g.r !== undefined ? `R${g.r}` : 'R?'; const ha = (g.h || '').toUpperCase() === 'HOME' ? 'vs' : '@'; const date = g.d || '—'; return `${round} · ${ha} ${g.o || 'OPP'} · ${date}`; }
+    function stretchKey(stretch) { return `${stretch.start_second}-${stretch.end_second}-${stretch.lineupIndex}`; }
+    function mergePlayerStints(game) {
+      const players = new Map();
+      game.rw.forEach(r => {
+        const lineup = game.lu[r[2]];
+        (lineup?.p || []).forEach(pid => {
+          const name = game.pl[pid];
+          if (!players.has(name)) players.set(name, { name, totalSeconds:0, stints:[] });
+          const p = players.get(name);
+          const start = r[0], end = r[1], seconds = Math.max(0, end-start);
+          p.totalSeconds += seconds;
+          const last = p.stints[p.stints.length - 1];
+          if (last && last.end === start) last.end = end; else p.stints.push({start, end});
+        });
+      });
+      const starters = new Set((game.lu[game.rw[0]?.[2]]?.p || []).map(pid => game.pl[pid]));
+      return [...players.values()].map(p => ({...p, starter: starters.has(p.name)})).sort((a,b) => b.totalSeconds - a.totalSeconds || a.name.localeCompare(b.name));
+    }
+    function mergeLineupStints(game) {
+      const stints = [];
+      game.rw.forEach(r => {
+        const lineup = game.lu[r[2]];
+        const lineupName = lineup?.n || '—';
+        const players = (lineup?.p || []).map(pid => game.pl[pid]);
+        const start=r[0], end=r[1], sf0=r[3], sa0=r[4], sf1=r[5], sa1=r[6];
+        const last = stints[stints.length - 1];
+        if (last && last.lineupIndex === r[2] && last.end_second === start) {
+          last.end_second = end; last.end_score_for = sf1; last.end_score_against = sa1; last.seconds += Math.max(0, end-start); last.net = (last.end_score_for-last.start_score_for) - (last.end_score_against-last.start_score_against); last.margin_start = last.start_score_for - last.start_score_against; last.margin_end = last.end_score_for - last.end_score_against; last.players = players;
+        } else {
+          stints.push({ lineupIndex:r[2], lineup_players:lineupName, players, start_second:start, end_second:end, start_score_for:sf0, start_score_against:sa0, end_score_for:sf1, end_score_against:sa1, seconds:Math.max(0, end-start), net:(sf1-sf0)-(sa1-sa0), margin_start:sf0-sa0, margin_end:sf1-sa1 });
+        }
+      });
+      stints.forEach((s, idx) => { s.index = idx; s.pressure = Math.abs(s.net) >= PRESSURE_THRESHOLD || s.seconds >= 120; s.direction = s.net > 0 ? 'positive' : (s.net < 0 ? 'negative' : 'neutral'); s.key = stretchKey(s); if (Math.abs(s.net) >= 6 && s.seconds >= MIN_HIGHLIGHT_SECONDS) s.tag = s.net > 0 ? 'Swing win' : 'Collapse'; else if (Math.abs(s.net) >= PRESSURE_THRESHOLD) s.tag = s.net > 0 ? 'Positive run' : 'Negative run'; else if (s.seconds >= 120) s.tag = 'Long stretch'; else s.tag = 'Standard stint'; });
+      return stints;
+    }
+    function getFilteredStints(game) {
+      if (!game) return [];
+      const focus = document.getElementById('focus-filter').value;
+      const playerSearch = (document.getElementById('player-search').value || '').trim().toLowerCase();
+      let stints = mergeLineupStints(game);
+      if (focus === 'pressure') stints = stints.filter(s => s.pressure);
+      else if (focus === 'positive') stints = stints.filter(s => s.net > 0);
+      else if (focus === 'negative') stints = stints.filter(s => s.net < 0);
+      if (playerSearch) stints = stints.filter(s => (s.players || []).some(p => String(p).toLowerCase().includes(playerSearch)));
+      return stints;
+    }
+    function selectedStretchFromGame(game) {
+      const stints = getFilteredStints(game);
+      if (!stints.length) return null;
+      let selected = stints.find(s => s.key === SELECTED_STRETCH_KEY) || null;
+      if (!selected) {
+        const pressure = stints.filter(s => s.pressure);
+        selected = (pressure.length ? pressure : stints).slice().sort((a,b) => Math.abs(b.net) - Math.abs(a.net) || b.seconds - a.seconds)[0];
+        SELECTED_STRETCH_KEY = selected ? selected.key : null;
+      }
+      return selected || null;
+    }
+    function setSelectedStretch(stretch) { SELECTED_STRETCH_KEY = stretch ? stretch.key : null; refresh(); }
+    function renderHero(team, game) {
+      const hero = document.getElementById('hero-panel'); const grid = document.getElementById('hero-grid'); if (!hero || !grid || !team || !game) return;
+      const stints = mergeLineupStints(game); const pressure = stints.filter(s => s.pressure); const best = [...(pressure.length ? pressure : stints)].sort((a,b) => b.net-a.net || b.seconds-a.seconds)[0] || null; const worst = [...(pressure.length ? pressure : stints)].sort((a,b) => a.net-b.net || b.seconds-a.seconds)[0] || null; const closing = stints[stints.length - 1] || null; const selected = selectedStretchFromGame(game);
+      hero.innerHTML = `<div class="team-head">${team.l ? `<img class="team-logo" src="../${team.l}" alt="${escapeHtml(team.k)} logo">` : ''}<div><div class="team-name">${escapeHtml(team.n)}</div><div class="team-meta">${escapeHtml(gameLabel(game))}</div></div></div>`;
+      const cards = [ ['Result', `${fmtNumber(game.ff,0)} - ${fmtNumber(game.fa,0)}`, 'Final score'], ['Best pressure', best ? `${fmtSigned(best.net,0)} in ${fmtMmSs(best.seconds)}` : '—', best ? `${fmtMmSs(best.start_second)}–${fmtMmSs(best.end_second)}` : 'No qualifying stretch'], ['Worst pressure', worst ? `${fmtSigned(worst.net,0)} in ${fmtMmSs(worst.seconds)}` : '—', worst ? `${fmtMmSs(worst.start_second)}–${fmtMmSs(worst.end_second)}` : 'No qualifying stretch'], ['Closing unit', closing ? closing.lineup_players : '—', closing ? `${fmtMmSs(closing.start_second)}–${fmtMmSs(closing.end_second)}` : '—'], ['Selected', selected ? `${fmtSigned(selected.net,0)} in ${fmtMmSs(selected.seconds)}` : '—', selected ? `${fmtMmSs(selected.start_second)}–${fmtMmSs(selected.end_second)}` : 'Click a stretch'] ];
+      grid.innerHTML = cards.map(([label, value, extra]) => `<div class="metric-card"><div class="metric-label">${escapeHtml(label)}</div><div class="metric-value">${escapeHtml(String(value))}</div>${extra ? `<div class="metric-extra">${escapeHtml(extra)}</div>` : ''}</div>`).join('');
+    }
+    function renderPressureChart(game) {
+      const svg = document.getElementById('pressure-chart'); const tooltip = document.getElementById('pressure-tooltip'); if (!svg || !game || !game.rw.length) return;
+      const stints = mergeLineupStints(game); const selected = selectedStretchFromGame(game); const totalSeconds = Math.max(...game.rw.map(r => r[1] || 0), 2400); const checkpoints = [{x:0, y:0, label:'Start 0-0'}]; game.rw.forEach(r => checkpoints.push({ x:r[1] || 0, y:(r[5] || 0) - (r[6] || 0), label:`${fmtMmSs(r[1])} · ${fmtNumber(r[5],0)}-${fmtNumber(r[6],0)} · ${fmtSigned((r[5] || 0) - (r[6] || 0), 0)}` }));
+      const values = checkpoints.map(p => p.y); let yMin = Math.min(...values, -2), yMax = Math.max(...values, 2); const pad = Math.max(2, (yMax-yMin) * 0.16); yMin -= pad; yMax += pad;
+      const width=980, height=340, margin={top:18,right:22,bottom:38,left:48}; const plotX=margin.left, plotY=margin.top, plotW=width-margin.left-margin.right, plotH=height-margin.top-margin.bottom; const sx=(x) => plotX + (x / totalSeconds) * plotW; const sy=(y) => plotY + plotH - ((y - yMin) / (yMax - yMin || 1)) * plotH; const NS='http://www.w3.org/2000/svg';
+      function line(x1,y1,x2,y2,cls){ const e=document.createElementNS(NS,'line'); e.setAttribute('x1',x1); e.setAttribute('y1',y1); e.setAttribute('x2',x2); e.setAttribute('y2',y2); e.setAttribute('class',cls); return e; }
+      function rect(x,y,w,h,cls){ const e=document.createElementNS(NS,'rect'); e.setAttribute('x',x); e.setAttribute('y',y); e.setAttribute('width',w); e.setAttribute('height',h); e.setAttribute('class',cls); return e; }
+      function text(x,y,val,cls,anchor='middle'){ const e=document.createElementNS(NS,'text'); e.setAttribute('x',x); e.setAttribute('y',y); e.setAttribute('class',cls); e.setAttribute('text-anchor',anchor); e.textContent=val; return e; }
+      svg.innerHTML=''; const marks = quarterMarks(totalSeconds); marks.forEach((q, idx) => { const x=sx(q); svg.appendChild(line(x, plotY, x, plotY+plotH, 'grid-line')); svg.appendChild(text(x, plotY+plotH+18, idx < 4 ? `Q${idx+1}` : `${Math.round(q/60)}'`, 'axis-tick')); });
+      const zeroY = sy(0); svg.appendChild(line(plotX, zeroY, plotX+plotW, zeroY, 'zero-line')); for (let i=0; i<=4; i++) { const yVal = yMin + ((yMax-yMin) * i/4); const gy = sy(yVal); svg.appendChild(line(plotX, gy, plotX+plotW, gy, 'grid-line')); svg.appendChild(text(plotX-8, gy+4, fmtSigned(yVal,0), 'axis-tick', 'end')); }
+      svg.appendChild(rect(plotX, plotY, plotW, plotH, 'plot-frame')); svg.appendChild(text(plotX + plotW / 2, height - 8, 'Game time', 'axis-label'));
+      stints.filter(s => s.pressure).forEach(stretch => { const x=sx(stretch.start_second); const w=Math.max(2, sx(stretch.end_second)-sx(stretch.start_second)); const cls = stretch.key === (selected?.key || '') ? 'selected-band' : (stretch.net > 0 ? 'pressure-band-good' : 'pressure-band-bad'); const band = rect(x, plotY, w, plotH, cls); band.style.cursor='pointer'; band.addEventListener('mouseenter', evt => showTooltip(evt, stretchTooltip(stretch))); band.addEventListener('mousemove', evt => moveTooltip(evt)); band.addEventListener('mouseleave', hideTooltip); band.addEventListener('click', () => setSelectedStretch(stretch)); svg.appendChild(band); });
+      let d=''; checkpoints.forEach((p,i) => { d += `${i===0 ? 'M' : 'L'} ${sx(p.x)} ${sy(p.y)} `; }); const path = document.createElementNS(NS,'path'); path.setAttribute('d', d.trim()); path.setAttribute('class','line-margin'); svg.appendChild(path);
+      checkpoints.forEach(p => { const dot=document.createElementNS(NS,'circle'); dot.setAttribute('cx', sx(p.x)); dot.setAttribute('cy', sy(p.y)); dot.setAttribute('r', 3.6); dot.setAttribute('class','dot-margin'); svg.appendChild(dot); const hit=document.createElementNS(NS,'circle'); hit.setAttribute('cx', sx(p.x)); hit.setAttribute('cy', sy(p.y)); hit.setAttribute('r', 10); hit.setAttribute('fill', 'transparent'); hit.style.cursor='pointer'; hit.addEventListener('mouseenter', evt => showTooltip(evt, p.label)); hit.addEventListener('mousemove', evt => moveTooltip(evt)); hit.addEventListener('mouseleave', hideTooltip); svg.appendChild(hit); });
+      if (selected) { const midX = sx((selected.start_second + selected.end_second) / 2); const midY = sy(selected.margin_end); const mark=document.createElementNS(NS,'circle'); mark.setAttribute('cx', midX); mark.setAttribute('cy', midY); mark.setAttribute('r', 6.5); mark.setAttribute('class', 'selected-marker'); svg.appendChild(mark); }
+      function stretchTooltip(stretch){ return `<strong>${escapeHtml(stretch.lineup_players)}</strong><br>${fmtMmSs(stretch.start_second)}–${fmtMmSs(stretch.end_second)} · ${fmtMmSs(stretch.seconds)}<br>Partial: ${fmtSigned(stretch.net,0)} · Margin ${fmtSigned(stretch.margin_start,0)} → ${fmtSigned(stretch.margin_end,0)}`; }
+      function showTooltip(evt, html){ const box=svg.getBoundingClientRect(); tooltip.style.opacity='1'; tooltip.innerHTML=html; tooltip.style.left=(evt.clientX-box.left)+'px'; tooltip.style.top=(evt.clientY-box.top)+'px'; }
+      function moveTooltip(evt){ const box=svg.getBoundingClientRect(); tooltip.style.left=(evt.clientX-box.left)+'px'; tooltip.style.top=(evt.clientY-box.top)+'px'; }
+      function hideTooltip(){ tooltip.style.opacity='0'; }
+    }
+    function renderSelectedStretch(game) {
+      const root = document.getElementById('selected-stretch-panel'); if (!root || !game) return; const selected = selectedStretchFromGame(game); if (!selected) { root.className='selected-empty'; root.textContent='No stretch matches the current filters.'; return; }
+      const toneClass = selected.net > 0 ? 'good' : (selected.net < 0 ? 'bad' : 'warn'); const summary = selected.net >= PRESSURE_THRESHOLD ? 'This was one of the positive swings that moved the game in your favour.' : selected.net <= -PRESSURE_THRESHOLD ? 'This was one of the negative swings that put the game under pressure.' : 'This stretch is selected for context, even if it was not one of the strongest swings.';
+      root.className=''; root.innerHTML = `<div class="selected-head"><div><div class="selected-name">${escapeHtml(selected.lineup_players)}</div><div class="selected-team">${fmtMmSs(selected.start_second)}–${fmtMmSs(selected.end_second)} · ${fmtMmSs(selected.seconds)}</div></div></div><div class="chip-row"><span class="chip ${toneClass}">${escapeHtml(selected.tag)}</span><span class="chip ${selected.net > 0 ? 'good' : selected.net < 0 ? 'bad' : 'warn'}">Partial ${fmtSigned(selected.net,0)}</span><span class="chip warn">Margin ${fmtSigned(selected.margin_start,0)} → ${fmtSigned(selected.margin_end,0)}</span></div><div class="selected-summary">${escapeHtml(summary)}</div><div class="mini-grid"><div class="mini-card"><div class="mini-label">Start</div><div class="mini-value">${fmtMmSs(selected.start_second)}</div></div><div class="mini-card"><div class="mini-label">End</div><div class="mini-value">${fmtMmSs(selected.end_second)}</div></div><div class="mini-card"><div class="mini-label">Duration</div><div class="mini-value">${fmtMmSs(selected.seconds)}</div></div><div class="mini-card"><div class="mini-label">Partial</div><div class="mini-value">${fmtSigned(selected.net,0)}</div></div></div><div class="panel-title" style="margin-top:14px; font-size:16px;">Players on court</div><div class="player-list">${(selected.players || []).map(p => `<div class="player-pill">${escapeHtml(p)}</div>`).join('')}</div>`;
+    }
+    function renderPressureList(game) {
+      const root = document.getElementById('pressure-list'); if (!root || !game) return; const selected = selectedStretchFromGame(game); const stints = getFilteredStints(game).filter(s => s.pressure || s.key === (selected?.key || '')).sort((a,b) => Math.abs(b.net) - Math.abs(a.net) || b.seconds - a.seconds).slice(0, 8);
+      if (!stints.length) { root.innerHTML='<div class="selected-empty">No pressure stretches for the current filters.</div>'; return; }
+      root.innerHTML = stints.map(s => `<div class="pressure-item ${s.key === (selected?.key || '') ? 'active' : ''}" data-key="${escapeHtml(s.key)}"><div class="pressure-top"><div><div class="pressure-name">${escapeHtml(s.lineup_players)}</div><div class="pressure-meta">${fmtMmSs(s.start_second)}–${fmtMmSs(s.end_second)} · ${fmtMmSs(s.seconds)}</div></div><div class="pressure-net ${s.net > 0 ? 'pos' : s.net < 0 ? 'neg' : ''}">${fmtSigned(s.net,0)}</div></div><div class="pressure-meta">${escapeHtml(s.tag)}</div></div>`).join('');
+      root.querySelectorAll('.pressure-item').forEach(el => { el.addEventListener('click', () => { const key = el.dataset.key; const stretch = stints.find(s => s.key === key); if (stretch) setSelectedStretch(stretch); }); });
+    }
+    function renderPlayerTimeline(game) {
+      const header = document.getElementById('timeline-header'); const root = document.getElementById('player-rows'); if (!header || !root || !game || !game.rw.length) return;
+      const selected = selectedStretchFromGame(game); const totalSeconds = Math.max(...game.rw.map(r => r[1] || 0), 2400); const marks = quarterMarks(totalSeconds); const players = mergePlayerStints(game).slice(0, MAX_PLAYERS); const pressureStints = mergeLineupStints(game).filter(s => s.pressure);
+      header.innerHTML = marks.map((q, idx) => `<div class="tick" style="left:${(q/totalSeconds)*100}%">${idx < 4 ? `Q${idx+1}` : `${Math.round(q/60)}'`}</div>`).join('');
+      root.innerHTML = players.map(player => { const highlights = pressureStints.map(s => { const cls = s.key === (selected?.key || '') ? 'pressure-highlight-selected' : (s.net > 0 ? 'pressure-highlight-good' : 'pressure-highlight-bad'); return `<div class="${cls}" style="left:${(s.start_second/totalSeconds)*100}%; width:${((s.end_second-s.start_second)/totalSeconds)*100}%"></div>`; }).join(''); const bars = player.stints.filter(s => (s.end - s.start) >= MIN_BAR_SECONDS).map(stint => { const overlapsSelected = selected && !(stint.end <= selected.start_second || stint.start >= selected.end_second); return `<div class="bar ${overlapsSelected ? 'selected-stretch' : ''}" title="${escapeHtml(player.name)} · ${fmtMmSs(stint.start)}–${fmtMmSs(stint.end)}" style="left:${(stint.start/totalSeconds)*100}%; width:${((stint.end-stint.start)/totalSeconds)*100}%"></div>`; }).join(''); return `<div class="player-row"><div><div class="player-name">${escapeHtml(player.name)}${player.starter ? '<span class="starter-badge">Starter</span>' : ''}</div></div><div class="timeline-track">${highlights}${marks.map(q => `<div class="quarter-line" style="left:${(q/totalSeconds)*100}%"></div>`).join('')}${bars}</div><div class="mins-cell">${fmtMmSs(player.totalSeconds)}</div></div>`; }).join('');
+    }
+    function renderStintTable(game) {
+      const root = document.getElementById('stint-table'); if (!root || !game) return; const selected = selectedStretchFromGame(game); const limit = Number(document.getElementById('stint-limit').value || DEFAULT_STINT_ROWS); const stints = getFilteredStints(game).sort((a,b) => a.start_second-b.start_second).slice(0, limit);
+      if (!stints.length) { root.innerHTML='<div class="empty">No stints found for the current filters.</div>'; return; }
+      const body = stints.map(s => `<tr class="${s.key === (selected?.key || '') ? 'selected-row' : ''}" data-key="${escapeHtml(s.key)}"><td class="sticky-left">${fmtMmSs(s.start_second)}</td><td>${fmtMmSs(s.end_second)}</td><td>${fmtMmSs(s.seconds)}</td><td class="sticky-left">${escapeHtml(s.lineup_players)}</td><td class="${s.net > 0 ? 'pos' : s.net < 0 ? 'neg' : ''}">${fmtSigned(s.net,0)}</td><td>${fmtSigned(s.margin_start,0)}</td><td>${fmtSigned(s.margin_end,0)}</td><td>${escapeHtml(s.tag)}</td></tr>`).join('');
+      root.innerHTML = `<table><thead><tr><th class="sticky-left">Start</th><th>End</th><th>Dur</th><th class="sticky-left">Lineup</th><th>Partial</th><th>Margin Start</th><th>Margin End</th><th>Tag</th></tr></thead><tbody>${body}</tbody></table>`;
+      root.querySelectorAll('tbody tr').forEach(el => { el.addEventListener('click', () => { const key = el.dataset.key; const stretch = stints.find(s => s.key === key); if (stretch) setSelectedStretch(stretch); }); });
+    }
+    function sortGamesForDropdown(games) { return [...games].sort((a,b) => { const ra = Number(a.r), rb = Number(b.r); if (!Number.isNaN(ra) && !Number.isNaN(rb) && ra !== rb) return rb - ra; const da = Date.parse(String(a.d || '')), db = Date.parse(String(b.d || '')); if (!Number.isNaN(da) && !Number.isNaN(db) && da !== db) return db - da; return String(b.c || '').localeCompare(String(a.c || '')); }); }
+    function refreshGameOptions() { const select = document.getElementById('game-filter'); const team = currentTeam(); const current = select.value; if (!team) { select.innerHTML=''; return; } const orderedGames = sortGamesForDropdown(team.g); select.innerHTML = orderedGames.map(g => `<option value="${escapeHtml(g.c)}">${escapeHtml(gameLabel(g))}</option>`).join(''); if (orderedGames.some(g => g.c === current)) select.value = current; else if (orderedGames.length) select.value = orderedGames[0].c; }
+    function refreshStatus(game) { const main = document.getElementById('page-status-main'); const sub = document.getElementById('page-status-sub'); if (!main || !sub || !game) return; const stints = getFilteredStints(game); const pressure = stints.filter(s => s.pressure); main.textContent = String(pressure.length); sub.textContent = `${stints.length} stretches in view · ${mergePlayerStints(game).length} players tracked`; }
+    function refresh() { const team = currentTeam(); const game = currentGame(); if (!team || !game) return; refreshStatus(game); renderHero(team, game); renderPressureChart(game); renderSelectedStretch(game); renderPressureList(game); renderPlayerTimeline(game); renderStintTable(game); }
+    const teamSelect = document.getElementById('team-filter'); const urlParams = new URLSearchParams(window.location.search); const requestedTeam = (urlParams.get('team') || '').trim().toUpperCase(); const requestedGame = (urlParams.get('game') || '').trim();
+    DATA.sort((a,b) => String(a.k).localeCompare(String(b.k))).forEach((team, idx) => { const opt = document.createElement('option'); opt.value = team.k; opt.textContent = `${team.k} · ${team.n}`; if ((requestedTeam && team.k.toUpperCase() === requestedTeam) || (!requestedTeam && idx === 0)) opt.selected = true; teamSelect.appendChild(opt); });
+    if (requestedTeam) teamSelect.value = requestedTeam; refreshGameOptions(); const gameSelect = document.getElementById('game-filter'); const team = currentTeam(); if (requestedGame && team && team.g.some(g => g.c === requestedGame)) gameSelect.value = requestedGame;
+    function syncUrl() { const next = new URL(window.location.href); const teamKey = teamSelect.value; const game = gameSelect.value; if (teamKey) next.searchParams.set('team', teamKey); else next.searchParams.delete('team'); if (game) next.searchParams.set('game', game); else next.searchParams.delete('game'); window.history.replaceState({}, '', next.toString()); }
+    teamSelect.addEventListener('change', () => { SELECTED_STRETCH_KEY = null; refreshGameOptions(); syncUrl(); refresh(); });
+    gameSelect.addEventListener('change', () => { SELECTED_STRETCH_KEY = null; syncUrl(); refresh(); });
+    document.getElementById('focus-filter').addEventListener('change', () => { SELECTED_STRETCH_KEY = null; refresh(); });
+    document.getElementById('player-search').addEventListener('input', () => { SELECTED_STRETCH_KEY = null; refresh(); });
+    document.getElementById('stint-limit').addEventListener('change', refresh);
+    refresh();
+  </script>
+</body>
+</html>

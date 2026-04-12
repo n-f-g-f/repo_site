@@ -1,0 +1,319 @@
+
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opponent Shot Report - Queluz O NOSSO PREGO</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+:root {
+ --bg:#08111f; --panel:#0f172a; --panel-2:#111c31; --panel-3:#16233c; --text:#e5e7eb;
+ --muted:#94a3b8; --line:#2c3f5f; --accent:#38bdf8;
+}
+body {
+ margin:0;
+ font-family:Arial, Helvetica, sans-serif;
+ background:radial-gradient(circle at top, #12203b 0%, #08111f 42%, #050b14 100%);
+ color:var(--text);
+}
+.container {
+ max-width:1500px;
+ margin:0 auto;
+ padding:24px;
+}
+.hero-shell {
+ margin-bottom:24px;
+}
+.hero-shell > * {
+ background:rgba(15,23,42,.95);
+ border:1px solid var(--line);
+ border-radius:18px;
+ box-shadow:0 18px 40px rgba(0,0,0,.22);
+}
+.block {
+ background:rgba(15,23,42,.95);
+ border:1px solid var(--line);
+ border-radius:18px;
+ padding:18px;
+ margin-bottom:20px;
+ box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+.block h2 {
+ margin:0 0 14px 0;
+ font-size:20px;
+}
+.table-wrap {
+ overflow-x:auto;
+}
+.summary-table {
+ width:100%;
+ border-collapse:collapse;
+ font-size:13px;
+ min-width:720px;
+}
+.summary-table th {
+ text-align:left;
+ padding:10px 8px;
+ border-bottom:1px solid var(--line);
+ background:var(--panel-3);
+ color:var(--text);
+ font-size:12px;
+ text-transform:uppercase;
+ letter-spacing:0.03em;
+}
+.summary-table td {
+ padding:10px 8px;
+ border-bottom:1px solid rgba(148,163,184,.14);
+ vertical-align:top;
+ color:var(--text);
+}
+tbody tr:hover {
+ background:rgba(56,189,248,.08);
+}
+.empty {
+ color:var(--muted);
+ font-style:italic;
+}
+.threat-player-cell {
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+.threat-avatar {
+ width:36px;
+ height:36px;
+ border-radius:999px;
+ overflow:hidden;
+ background:#07101f;
+ border:1px solid var(--line);
+ flex:0 0 36px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.threat-avatar img {
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ display:block;
+}
+.threat-avatar-empty {
+ color:var(--muted);
+ font-size:12px;
+ font-weight:700;
+}
+.player-spotlight-layout {
+ display:grid;
+ grid-template-columns:160px 1fr;
+ gap:18px;
+ align-items:center;
+}
+.player-spotlight-photo {
+ width:160px;
+ height:160px;
+ border-radius:16px;
+ overflow:hidden;
+ background:#07101f;
+ border:1px solid var(--line);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.player-spotlight-photo img {
+ width:100%; height:100%; object-fit:cover;
+}
+.player-spotlight-photo-empty {
+ color:var(--muted);
+ font-size:14px;
+ font-weight:700;
+}
+.player-spotlight-kicker {
+ font-size:11px;
+ font-weight:700;
+ text-transform:uppercase;
+ letter-spacing:0.05em;
+ color:var(--muted);
+ margin-bottom:8px;
+}
+.player-spotlight-copy h2 {
+ margin:0 0 6px 0;
+ font-size:26px;
+ color:var(--text);
+}
+.player-spotlight-sub {
+ font-size:14px;
+ color:var(--muted);
+ margin-bottom:10px;
+}
+.player-spotlight-metrics {
+ display:grid;
+ grid-template-columns:repeat(auto-fit, minmax(120px,1fr));
+ gap:10px;
+}
+.player-spotlight-metric {
+ background:#07101f;
+ border:1px solid var(--line);
+ border-radius:12px;
+ padding:10px 12px;
+}
+.player-spotlight-metric-label {
+ font-size:11px;
+ font-weight:700;
+ text-transform:uppercase;
+ color:var(--muted);
+ margin-bottom:6px;
+}
+.player-spotlight-metric-value {
+ font-size:20px;
+ font-weight:700;
+ color:var(--text);
+}
+.card-grid {
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:14px;
+}
+.card {
+ background:#07101f;
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:14px;
+}
+.card-title {
+ font-size:12px;
+ color:var(--muted);
+ margin-bottom:8px;
+ text-transform:uppercase;
+ letter-spacing:.04em;
+}
+.card-value {
+ font-size:20px;
+ font-weight:800;
+ line-height:1.35;
+}
+.card-sub {
+ margin-top:6px;
+ font-size:12px;
+ color:var(--muted);
+}
+.grid-two {
+ display:grid;
+ grid-template-columns:repeat(2, minmax(0, 1fr));
+ gap:20px;
+ align-items:start;
+}
+@media (max-width: 980px) {
+ .grid-two { grid-template-columns:1fr; }
+ .player-spotlight-layout { grid-template-columns:1fr; }
+}
+</style>
+
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div></header>
+<div class="container">
+
+<div class="hero-shell">
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Queluz O NOSSO PREGO</h1><div class="sub">Opponent shot report · CAQ</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/CAQ.png" alt="Queluz O NOSSO PREGO logo"></div></div></div></div>
+</div>
+
+
+    <section class="player-spotlight block">
+        <div class="player-spotlight-layout">
+            <div class="player-spotlight-photo"><img src="../../assets/player_photos/CAQ/CAQ_J._SIMMONS.png" alt="J. Simmons"></div>
+            <div class="player-spotlight-copy">
+                <div class="player-spotlight-kicker">Spotlight</div>
+                <h2>J. Simmons</h2>
+                <div class="player-spotlight-sub">Primary offensive threat</div>
+                <div class="player-spotlight-metrics">
+                <div class="player-spotlight-metric">
+                    <div class="player-spotlight-metric-label">Attempts</div>
+                    <div class="player-spotlight-metric-value">245</div>
+                </div>
+                
+                <div class="player-spotlight-metric">
+                    <div class="player-spotlight-metric-label">3PT%</div>
+                    <div class="player-spotlight-metric-value">37.0%</div>
+                </div>
+                
+                <div class="player-spotlight-metric">
+                    <div class="player-spotlight-metric-label">Pts/Shot</div>
+                    <div class="player-spotlight-metric-value">1.2</div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+        <div class="card">
+            <div class="card-title">Primary threat</div>
+            <div class="card-value">J. Simmons</div>
+            <div class="card-sub">245 attempts</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Top closeout</div>
+            <div class="card-value">J. Simmons</div>
+            <div class="card-sub">37.0%</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Main team zone</div>
+            <div class="card-value">Above the Break 3</div>
+            <div class="card-sub">31.4%</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Top preferred area</div>
+            <div class="card-value">J. Simmons · Above the Break 3</div>
+            
+        </div>
+        </div>
+    </section>
+    
+
+<section class="block"><h2>Primary Shot Threats</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Player</th><th>Attempts</th><th>Pts/Shot</th><th>3PA</th><th>3PT%</th><th>Main Zone</th></tr></thead><tbody><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/2ab324970bc480c4687f2ac4bee3c1107acca04f.png" alt="J. Simmons"></div><span class="player-name">J. Simmons</span></div></td><td>245</td><td>1.2</td><td>146</td><td>37.0%</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/14bcb6c05dc4739f62cf434332ba6e2946be2bb4.png" alt="W. Robinson"></div><span class="player-name">W. Robinson</span></div></td><td>194</td><td>1.0</td><td>67</td><td>37.3%</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/e16814928705060d96ed9cfa2945768566e333aa.png" alt="M. Bradley"></div><span class="player-name">M. Bradley</span></div></td><td>169</td><td>0.9</td><td>32</td><td>25.0%</td><td>Paint Non-RA</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ead675db46ba008005b223279dbadd77ef479de6.png" alt="J. Dixon"></div><span class="player-name">J. Dixon</span></div></td><td>143</td><td>1.2</td><td>78</td><td>42.3%</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ebd1ea03f8c919928a4b1a2eb8c70c8c838470dc.png" alt="A. Hallman"></div><span class="player-name">A. Hallman</span></div></td><td>115</td><td>0.9</td><td>41</td><td>22.0%</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/4f79e234bd404d9715942f433e86cc34acf58872.png" alt="D. Wade"></div><span class="player-name">D. Wade</span></div></td><td>106</td><td>1.0</td><td>64</td><td>37.5%</td><td>Above the Break 3</td></tr></tbody></table></div></section>
+
+<div class="grid-two">
+    <section class="block"><h2>3PT Closeouts</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Player</th><th>3PA</th><th>3PM</th><th>3PT%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Main Zone</th></tr></thead><tbody><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/2ab324970bc480c4687f2ac4bee3c1107acca04f.png" alt="J. Simmons"></div><span class="player-name">J. Simmons</span></div></td><td>146</td><td>54</td><td>37.0%</td><td>59.6%</td><td>1.2</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ead675db46ba008005b223279dbadd77ef479de6.png" alt="J. Dixon"></div><span class="player-name">J. Dixon</span></div></td><td>78</td><td>33</td><td>42.3%</td><td>54.5%</td><td>1.2</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/14bcb6c05dc4739f62cf434332ba6e2946be2bb4.png" alt="W. Robinson"></div><span class="player-name">W. Robinson</span></div></td><td>67</td><td>25</td><td>37.3%</td><td>34.5%</td><td>1.0</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/4f79e234bd404d9715942f433e86cc34acf58872.png" alt="D. Wade"></div><span class="player-name">D. Wade</span></div></td><td>64</td><td>24</td><td>37.5%</td><td>60.4%</td><td>1.0</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ebd1ea03f8c919928a4b1a2eb8c70c8c838470dc.png" alt="A. Hallman"></div><span class="player-name">A. Hallman</span></div></td><td>41</td><td>9</td><td>22.0%</td><td>35.7%</td><td>0.9</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/1422086794ceb1963556e4609dff74b7036e29c0.png" alt="D. Horta"></div><span class="player-name">D. Horta</span></div></td><td>37</td><td>15</td><td>40.5%</td><td>57.8%</td><td>1.1</td><td>Above the Break 3</td></tr></tbody></table></div></section>
+    <section class="block"><h2>Volume but Lower Efficiency</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Player</th><th>3PA</th><th>3PT%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Main Zone</th></tr></thead><tbody><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/2ab324970bc480c4687f2ac4bee3c1107acca04f.png" alt="J. Simmons"></div><span class="player-name">J. Simmons</span></div></td><td>146</td><td>37.0%</td><td>59.6%</td><td>1.2</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ead675db46ba008005b223279dbadd77ef479de6.png" alt="J. Dixon"></div><span class="player-name">J. Dixon</span></div></td><td>78</td><td>42.3%</td><td>54.5%</td><td>1.2</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/14bcb6c05dc4739f62cf434332ba6e2946be2bb4.png" alt="W. Robinson"></div><span class="player-name">W. Robinson</span></div></td><td>67</td><td>37.3%</td><td>34.5%</td><td>1.0</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/4f79e234bd404d9715942f433e86cc34acf58872.png" alt="D. Wade"></div><span class="player-name">D. Wade</span></div></td><td>64</td><td>37.5%</td><td>60.4%</td><td>1.0</td><td>Above the Break 3</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ebd1ea03f8c919928a4b1a2eb8c70c8c838470dc.png" alt="A. Hallman"></div><span class="player-name">A. Hallman</span></div></td><td>41</td><td>22.0%</td><td>35.7%</td><td>0.9</td><td>Restricted Area</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/1422086794ceb1963556e4609dff74b7036e29c0.png" alt="D. Horta"></div><span class="player-name">D. Horta</span></div></td><td>37</td><td>40.5%</td><td>57.8%</td><td>1.1</td><td>Above the Break 3</td></tr></tbody></table></div></section>
+</div>
+
+<div class="grid-two">
+    <section class="block"><h2>Team Shot Map Summary</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Zone</th><th>Attempts</th><th>Made</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead><tbody><tr><td>Above the Break 3</td><td>387</td><td>130</td><td>33.6%</td><td>1.0</td><td>31.4%</td></tr><tr><td>Restricted Area</td><td>276</td><td>188</td><td>68.1%</td><td>1.4</td><td>22.4%</td></tr><tr><td>Paint Non-RA</td><td>250</td><td>110</td><td>44.0%</td><td>0.9</td><td>20.3%</td></tr><tr><td>Mid-Range</td><td>197</td><td>62</td><td>31.5%</td><td>0.6</td><td>16.0%</td></tr><tr><td>Corner 3 Left</td><td>69</td><td>20</td><td>29.0%</td><td>0.9</td><td>5.6%</td></tr><tr><td>Corner 3 Right</td><td>55</td><td>30</td><td>54.5%</td><td>1.6</td><td>4.5%</td></tr></tbody></table></div></section>
+    <section class="block"><h2>Preferred Areas by Player</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Player</th><th>1st Zone</th><th>1st Att</th><th>1st FG%</th><th>2nd Zone</th><th>2nd Att</th><th>2nd FG%</th><th>3rd Zone</th><th>3rd Att</th><th>3rd FG%</th><th>Attempts</th><th>FG%</th><th>3PA</th><th>3PT%</th><th>Pts/Shot</th></tr></thead><tbody><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/2ab324970bc480c4687f2ac4bee3c1107acca04f.png" alt="J. Simmons"></div><span class="player-name">J. Simmons</span></div></td><td>Above the Break 3</td><td>114</td><td>32.5%</td><td>Restricted Area</td><td>39</td><td>76.9%</td><td>Mid-Range</td><td>36</td><td>38.9%</td><td>245</td><td>46.5%</td><td>146</td><td>37.0%</td><td>1.2</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/14bcb6c05dc4739f62cf434332ba6e2946be2bb4.png" alt="W. Robinson"></div><span class="player-name">W. Robinson</span></div></td><td>Restricted Area</td><td>65</td><td>67.7%</td><td>Above the Break 3</td><td>53</td><td>37.7%</td><td>Paint Non-RA</td><td>47</td><td>36.2%</td><td>194</td><td>45.9%</td><td>67</td><td>37.3%</td><td>1.0</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/e16814928705060d96ed9cfa2945768566e333aa.png" alt="M. Bradley"></div><span class="player-name">M. Bradley</span></div></td><td>Paint Non-RA</td><td>61</td><td>47.5%</td><td>Mid-Range</td><td>55</td><td>34.5%</td><td>Above the Break 3</td><td>30</td><td>23.3%</td><td>169</td><td>40.2%</td><td>32</td><td>25.0%</td><td>0.9</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ead675db46ba008005b223279dbadd77ef479de6.png" alt="J. Dixon"></div><span class="player-name">J. Dixon</span></div></td><td>Above the Break 3</td><td>54</td><td>42.6%</td><td>Restricted Area</td><td>32</td><td>75.0%</td><td>Paint Non-RA</td><td>17</td><td>47.1%</td><td>143</td><td>50.3%</td><td>78</td><td>42.3%</td><td>1.2</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/ebd1ea03f8c919928a4b1a2eb8c70c8c838470dc.png" alt="A. Hallman"></div><span class="player-name">A. Hallman</span></div></td><td>Restricted Area</td><td>35</td><td>65.7%</td><td>Above the Break 3</td><td>35</td><td>25.7%</td><td>Paint Non-RA</td><td>22</td><td>40.9%</td><td>115</td><td>40.0%</td><td>41</td><td>22.0%</td><td>0.9</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/4f79e234bd404d9715942f433e86cc34acf58872.png" alt="D. Wade"></div><span class="player-name">D. Wade</span></div></td><td>Above the Break 3</td><td>53</td><td>35.8%</td><td>Paint Non-RA</td><td>18</td><td>38.9%</td><td>Restricted Area</td><td>14</td><td>50.0%</td><td>106</td><td>38.7%</td><td>64</td><td>37.5%</td><td>1.0</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/1422086794ceb1963556e4609dff74b7036e29c0.png" alt="D. Horta"></div><span class="player-name">D. Horta</span></div></td><td>Above the Break 3</td><td>20</td><td>45.0%</td><td>Paint Non-RA</td><td>13</td><td>30.8%</td><td>Corner 3 Left</td><td>9</td><td>11.1%</td><td>64</td><td>43.8%</td><td>37</td><td>40.5%</td><td>1.1</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/c642bee6949168b2dc49a128d289ef4bda6ab823.png" alt="G. Tavares"></div><span class="player-name">G. Tavares</span></div></td><td>Above the Break 3</td><td>18</td><td>22.2%</td><td>Corner 3 Right</td><td>8</td><td>37.5%</td><td>Mid-Range</td><td>5</td><td>40.0%</td><td>41</td><td>29.3%</td><td>30</td><td>30.0%</td><td>0.8</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/fd48ae85592f1b25f0bcdbc12b526427ebed98ce.png" alt="C. Rupert III"></div><span class="player-name">C. Rupert III</span></div></td><td>Restricted Area</td><td>8</td><td>75.0%</td><td>Mid-Range</td><td>5</td><td>0.0%</td><td>Paint Non-RA</td><td>4</td><td>25.0%</td><td>22</td><td>45.5%</td><td>5</td><td>60.0%</td><td>1.0</td></tr><tr><td><div class="threat-player-cell"><div class="threat-avatar"><img src="../../assets/embedded/76c375e30d4b8f281b03b28d19052669245d43d1.png" alt="J. Carneiro"></div><span class="player-name">J. Carneiro</span></div></td><td>Restricted Area</td><td>4</td><td>0.0%</td><td>Paint Non-RA</td><td>2</td><td>0.0%</td><td>Above the Break 3</td><td>1</td><td>0.0%</td><td>8</td><td>0.0%</td><td>1</td><td>0.0%</td><td>0.0</td></tr></tbody></table></div></section>
+</div>
+
+</div>
+</body>
+</html>

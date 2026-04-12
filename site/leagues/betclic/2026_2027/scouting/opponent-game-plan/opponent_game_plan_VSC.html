@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Opponent Game Plan - Vitória Sport Clube</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+:root {
+    --bg:#08111f;
+    --bg-2:#0b1324;
+    --panel:rgba(15,23,42,.95);
+    --panel-soft:#111c31;
+    --panel-muted:#07101f;
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --line:#2c3f5f;
+    --accent:#38bdf8;
+    --good:#4ade80;
+    --bad:#f87171;
+}
+
+body {
+    margin:0;
+    background:radial-gradient(circle at top, #12203b 0%, #08111f 38%, #050b14 100%);
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--text);
+}
+.container {
+    max-width:1500px;
+    margin:auto;
+    padding:24px;
+}
+.hero-shell {
+    margin-bottom:24px;
+}
+.hero-shell > * {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:0 18px 40px rgba(0,0,0,.22);
+}
+.block {
+    background:var(--panel);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:24px;
+    border:1px solid var(--line);
+    box-shadow:0 14px 34px rgba(0,0,0,.16);
+}
+.block h2 {
+    margin:0 0 14px 0;
+    font-size:22px;
+    line-height:1.2;
+}
+.table-wrap {
+    overflow-x:auto;
+}
+table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+th {
+    background:var(--panel-soft);
+    color:var(--text);
+    padding:10px 8px;
+    text-align:left;
+    white-space:nowrap;
+    border-bottom:1px solid var(--line);
+}
+td {
+    padding:10px 8px;
+    border-bottom:1px solid rgba(148,163,184,.12);
+    vertical-align:middle;
+}
+tbody tr:hover {
+    background:rgba(56,189,248,.06);
+}
+.player-cell {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.avatar {
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ccc;
+    flex:0 0 28px;
+    border:1px solid rgba(148,163,184,.24);
+}
+.avatar img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+.avatar-empty {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    color:#111827;
+    font-weight:bold;
+}
+.card-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.card {
+    background:var(--panel-muted);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+}
+.card-title {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.card-value {
+    font-size:17px;
+    font-weight:800;
+    line-height:1.4;
+}
+.notes-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+}
+.note-card {
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    background:var(--panel-muted);
+}
+.note-card h3 {
+    margin:0 0 10px 0;
+    font-size:16px;
+}
+.note-card ul, .keys-card ul {
+    margin:0;
+    padding-left:18px;
+}
+.note-card li, .keys-card li {
+    margin-bottom:8px;
+    line-height:1.5;
+}
+.keys-card {
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    background:var(--panel-muted);
+}
+.mini-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.mini-card {
+    background:var(--panel-muted);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+}
+.mini-label {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.mini-value {
+    font-size:16px;
+    font-weight:800;
+    line-height:1.45;
+}
+.empty {
+    color:var(--muted);
+    font-style:italic;
+}
+.section-grid {
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+}
+.compact-table table {
+    font-size:13px;
+}
+.compact-table th,
+.compact-table td {
+    padding:9px 8px;
+}
+@media (max-width: 1100px) {
+    .section-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div></header>
+<div class="container">
+
+<div class="hero-shell">
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Vitória Sport Clube</h1><div class="sub">Opponent Game Plan - VSC</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/VSC.png" alt="Vitória Sport Clube logo"></div></div></div></div>
+</div>
+
+
+    <section class="block">
+        <h2>Team Identity vs League</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
+                <tbody><tr><td>Pace</td><td>80.5</td><td>79.3</td><td>2</td><td>1.2</td></tr><tr><td>OffRtg</td><td>102.7</td><td>107.9</td><td>11</td><td>-5.1</td></tr><tr><td>DefRtg</td><td>112.4</td><td>107.8</td><td>9</td><td>4.6</td></tr><tr><td>NetRtg</td><td>-9.6</td><td>0.1</td><td>10</td><td>-9.7</td></tr><tr><td>AST/G</td><td>12.9</td><td>18.5</td><td>12</td><td>-5.6</td></tr><tr><td>TOV%</td><td>21.3</td><td>18.4</td><td>12</td><td>2.8</td></tr><tr><td>ORB%</td><td>32.9</td><td>31.4</td><td>4</td><td>1.5</td></tr><tr><td>PF/G</td><td>21.5</td><td>21</td><td>7</td><td>0.5</td></tr><tr><td>FT Rate</td><td>37.7</td><td>35.2</td><td>3</td><td>2.5</td></tr><tr><td>3PA Rate</td><td>34.6</td><td>40.9</td><td>12</td><td>-6.2</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Above-average pace; expect a game that can speed up if you allow early flow.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Offensive rebounding is around league average; box-outs matter but this is not their main edge.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Loose enough with the ball to be pressured; there are possessions to steal here.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Foul profile sits near league average; physicality is part of the game, but not their defining trait.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
+
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Most-Used Player</div>
+                <div class="card-value">S. Peek</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Primary Scorer</div>
+                <div class="card-value">C. Jenkins</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Top 3PT Threat</div>
+                <div class="card-value">C. Jenkins (37.1%)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Preferred Team Scoring Area</div>
+                <div class="card-value">Restricted Area</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Most-Used Lineup</div>
+                <div class="card-value">B. Araujo | C. Jenkins | J. Sangha | M. Jacobs | S. Peek</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Best-Performing Lineup</div>
+                <div class="card-value">B. Araujo | C. Jenkins | J. Sangha | M. Jacobs | S. Peek</div>
+            </div>
+            </div>
+    </section>
+    
+
+<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Set the tempo early: if you let them run into flow, the game can speed up on their terms.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Know the first reference: C. Jenkins is a movement shooter, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: P. Pinto, C. Jenkins are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+
+
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_S._PEEK.png"></div><span class="player-name">S. Peek</span></div></td><td>34.1</td><td>16.4</td><td>54</td><td>29.6%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_M._JACOBS.png"></div><span class="player-name">M. Jacobs</span></div></td><td>25.1</td><td>14.4</td><td>39</td><td>30.8%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._SANGHA.png"></div><span class="player-name">J. Sangha</span></div></td><td>24.9</td><td>11.7</td><td>44</td><td>29.5%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_F._GEWERT.png"></div><span class="player-name">F. Gewert</span></div></td><td>20.2</td><td>6.2</td><td>22</td><td>36.4%</td><td>Restricted Area</td><td>spot-up shooter</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_B._ARAUJO.png"></div><span class="player-name">B. Araujo</span></div></td><td>22.3</td><td>5.8</td><td>31</td><td>29.0%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_C._JENKINS.png"></div><span class="player-name">C. Jenkins</span></div></td><td>29.7</td><td>18.0</td><td>62</td><td>37.1%</td><td>Above the Break 3</td><td>movement shooter</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>The main offensive references are S. Peek and M. Jacobs; load the scouting plan into those names first.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts start with P. Pinto, C. Jenkins, and F. Gewert; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from J. Baker and S. Peek; contest, but do not over-help into secondary advantages.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Their offense naturally flows toward Restricted Area; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially S. Peek, M. Jacobs, and J. Sangha; force them away from preferred areas.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup to rehearse first: B. Araujo | C. Jenkins | J. Sangha | M. Jacobs | S. Peek.</li><li>Secondary lineup to recognize: B. Araujo | C. Jenkins | J. Sangha | S. Peek | S. Verde.</li><li>Recognize the main duo/trio combinations: M. Jacobs | S. Peek and J. Sangha | M. Jacobs | S. Peek.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Offensive rebounding is around league average; box-outs matter but this is not their main edge.</li><li>Do not lose P. Pinto and C. Jenkins in help-and-recover situations.</li></ul>
+            </div>
+            </div>
+    </section>
+    
+
+<div class="section-grid">
+    <div>
+        
+    <section class="block">
+        <h2>Primary Shooting Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._PINTO.png"></div><span class="player-name">P. Pinto</span></div></td><td>Closeout | Preferred Area</td><td>37</td><td>37.8%</td><td>66.1%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_C._JENKINS.png"></div><span class="player-name">C. Jenkins</span></div></td><td>Closeout | Preferred Area</td><td>62</td><td>37.1%</td><td>38.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_F._GEWERT.png"></div><span class="player-name">F. Gewert</span></div></td><td>Closeout | Preferred Area</td><td>22</td><td>36.4%</td><td>25.3%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._BAKER.png"></div><span class="player-name">J. Baker</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>56</td><td>32.1%</td><td>71.8%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_S._PEEK.png"></div><span class="player-name">S. Peek</span></div></td><td>Volume 3PT | Preferred Area</td><td>54</td><td>29.6%</td><td>21.1%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._SANGHA.png"></div><span class="player-name">J. Sangha</span></div></td><td>Volume 3PT | Preferred Area</td><td>44</td><td>29.5%</td><td>24.9%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._BASTOS.png"></div><span class="player-name">P. Bastos</span></div></td><td>Volume 3PT</td><td>42</td><td>26.2%</td><td>93.3%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_M._JACOBS.png"></div><span class="player-name">M. Jacobs</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_A._MENDES.png"></div><span class="player-name">A. Mendes</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._PINTO.png"></div><span class="player-name">P. Pinto</span></div></td><td>37</td><td>37.8%</td><td>66.1%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_C._JENKINS.png"></div><span class="player-name">C. Jenkins</span></div></td><td>62</td><td>37.1%</td><td>38.0%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_F._GEWERT.png"></div><span class="player-name">F. Gewert</span></div></td><td>22</td><td>36.4%</td><td>25.3%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._BAKER.png"></div><span class="player-name">J. Baker</span></div></td><td>56</td><td>32.1%</td><td>71.8%</td><td>1.0</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._BAKER.png"></div><span class="player-name">J. Baker</span></div></td><td>56</td><td>32.1%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_S._PEEK.png"></div><span class="player-name">S. Peek</span></div></td><td>54</td><td>29.6%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._SANGHA.png"></div><span class="player-name">J. Sangha</span></div></td><td>44</td><td>29.5%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._BASTOS.png"></div><span class="player-name">P. Bastos</span></div></td><td>42</td><td>26.2%</td><td>0.8</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+    <div>
+        
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_S._PEEK.png"></div><span class="player-name">S. Peek</span></div></td><td>Restricted Area</td><td>33.2%</td><td>64.7%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_M._JACOBS.png"></div><span class="player-name">M. Jacobs</span></div></td><td>Restricted Area</td><td>39.5%</td><td>60.3%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._SANGHA.png"></div><span class="player-name">J. Sangha</span></div></td><td>Paint Non-RA</td><td>36.7%</td><td>46.2%</td><td>0.9</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_C._JENKINS.png"></div><span class="player-name">C. Jenkins</span></div></td><td>Above the Break 3</td><td>31.3%</td><td>41.2%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_F._GEWERT.png"></div><span class="player-name">F. Gewert</span></div></td><td>Restricted Area</td><td>48.3%</td><td>66.7%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._BAKER.png"></div><span class="player-name">J. Baker</span></div></td><td>Above the Break 3</td><td>52.6%</td><td>36.6%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_A._MENDES.png"></div><span class="player-name">A. Mendes</span></div></td><td>Restricted Area</td><td>69.0%</td><td>55.2%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._PINTO.png"></div><span class="player-name">P. Pinto</span></div></td><td>Above the Break 3</td><td>48.2%</td><td>25.9%</td><td>0.8</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Restricted Area</td><td>369</td><td>62.9%</td><td>1.3</td><td>29.8%</td></tr><tr><td>Above the Break 3</td><td>320</td><td>31.9%</td><td>1.0</td><td>25.8%</td></tr><tr><td>Paint Non-RA</td><td>283</td><td>44.9%</td><td>0.9</td><td>22.8%</td></tr><tr><td>Mid-Range</td><td>158</td><td>40.5%</td><td>0.8</td><td>12.8%</td></tr><tr><td>Corner 3 Left</td><td>61</td><td>31.1%</td><td>0.9</td><td>4.9%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Lineups to Prepare For</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>B. Araujo | C. Jenkins | J. Sangha | M. Jacobs | S. Peek</td><td>47.3</td><td>79.5</td><td>84.6</td><td>-5.1</td></tr><tr><td>Rotation lineup</td><td>B. Araujo | C. Jenkins | J. Sangha | S. Peek | S. Verde</td><td>42.6</td><td>76.0</td><td>86.4</td><td>-10.3</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+</div>
+
+
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_S._PEEK.png"></div><span class="player-name">S. Peek</span></div></td><td></td><td></td><td>19</td><td>34.1</td><td>16.4</td><td>6.4</td><td>1.9</td><td>1.9</td><td>3.4</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_M._JACOBS.png"></div><span class="player-name">M. Jacobs</span></div></td><td></td><td></td><td>18</td><td>25.1</td><td>14.4</td><td>5.3</td><td>3.5</td><td>1.8</td><td>2.8</td><td>1.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._SANGHA.png"></div><span class="player-name">J. Sangha</span></div></td><td></td><td></td><td>18</td><td>24.9</td><td>11.7</td><td>4.2</td><td>0.8</td><td>0.6</td><td>2.0</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_F._GEWERT.png"></div><span class="player-name">F. Gewert</span></div></td><td></td><td></td><td>19</td><td>20.2</td><td>6.2</td><td>4.6</td><td>0.7</td><td>1.1</td><td>1.2</td><td>0.8</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_B._ARAUJO.png"></div><span class="player-name">B. Araujo</span></div></td><td></td><td></td><td>17</td><td>22.3</td><td>5.8</td><td>3.9</td><td>0.6</td><td>0.8</td><td>1.0</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_C._JENKINS.png"></div><span class="player-name">C. Jenkins</span></div></td><td></td><td></td><td>12</td><td>29.7</td><td>18.0</td><td>4.8</td><td>3.7</td><td>0.7</td><td>2.6</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_S._VERDE.png"></div><span class="player-name">S. Verde</span></div></td><td></td><td></td><td>19</td><td>12.9</td><td>2.5</td><td>1.4</td><td>1.3</td><td>0.4</td><td>0.8</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_J._BAKER.png"></div><span class="player-name">J. Baker</span></div></td><td></td><td></td><td>19</td><td>12.0</td><td>4.8</td><td>1.7</td><td>0.3</td><td>0.5</td><td>0.6</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_A._MENDES.png"></div><span class="player-name">A. Mendes</span></div></td><td></td><td></td><td>18</td><td>12.2</td><td>2.8</td><td>3.2</td><td>0.2</td><td>0.1</td><td>1.6</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._PINTO.png"></div><span class="player-name">P. Pinto</span></div></td><td></td><td></td><td>19</td><td>8.4</td><td>4.1</td><td>0.6</td><td>1.2</td><td>0.3</td><td>0.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/VSC/VSC_P._BASTOS.png"></div><span class="player-name">P. Bastos</span></div></td><td></td><td></td><td>19</td><td>8.0</td><td>2.4</td><td>0.6</td><td>0.3</td><td>0.2</td><td>0.3</td><td>0.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>M. Jacobs | S. Peek</td><td>414.8</td><td>86.1</td><td>89.8</td><td>-3.7</td></tr><tr><td>trio</td><td>J. Sangha | M. Jacobs | S. Peek</td><td>281.4</td><td>85.3</td><td>87.3</td><td>-2.0</td></tr><tr><td>duo</td><td>M. Jacobs | P. Bastos</td><td>58.7</td><td>88.6</td><td>81.1</td><td>7.5</td></tr><tr><td>duo</td><td>C. Jenkins | J. Baker</td><td>58.0</td><td>100.6</td><td>86.8</td><td>13.8</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">P. Pinto, C. Jenkins, F. Gewert</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Paint help rule</div>
+                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">B. Araujo | C. Jenkins | J. Sangha | M. Jacobs | S. Peek</div>
+            </div>
+            </div>
+    </section>
+    
+
+</div>
+</body>
+</html>
