@@ -40,6 +40,19 @@ function buildRedirectUrl(requestUrl, targetPath) {
   return url.toString();
 }
 
+function buildLoginRedirectUrl(requestUrl) {
+  const request = new URL(requestUrl);
+  const loginUrl = new URL(requestUrl);
+  loginUrl.pathname = "/login.html";
+  loginUrl.search = "";
+  loginUrl.hash = "";
+
+  const nextValue = request.pathname + (request.search || "");
+  loginUrl.searchParams.set("next", nextValue);
+
+  return loginUrl.toString();
+}
+
 function canAccessLeaguePath(pathname, access) {
   const path = normalizePath(pathname);
   const parts = path.split("/").filter(Boolean);
@@ -98,7 +111,7 @@ export async function onRequest(context) {
   const session = await getSessionBundle(env, request);
 
   if (!session || !session.access) {
-    return Response.redirect(buildRedirectUrl(request.url, "/login.html"), 302);
+    return Response.redirect(buildLoginRedirectUrl(request.url), 302);
   }
 
   if (!canAccessLeaguePath(pathname, session.access)) {
