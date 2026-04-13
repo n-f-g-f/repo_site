@@ -90,7 +90,7 @@
     <section class="hero-card">
       <div class="eyebrow">Login</div>
       <h1>Member access</h1>
-      <p>Use your account credentials to open the platform according to your active plan. Access rights are applied after login and control which leagues and seasons can be opened.</p>
+      <p>Use your account credentials to open the platform according to your active plan. Access rights are applied after login and control which leagues can be opened.</p>
     </section>
 
     <section class="stack">
@@ -107,7 +107,7 @@
 
       <section class="info-card">
         <h2>Current account model</h2>
-        <p>The active access model is structured around three plans: Single League Current, Single League Full History, and Full Platform. Login is where that access is applied to the site.</p>
+        <p>The active access model is structured around four plans: One League, Two Leagues, All Leagues, and Full Access Yearly. Login is where that access is applied to the site.</p>
         <div id="pba-session-card" class="helper-copy">No active session detected.</div>
         <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
           <button id="pba-session-refresh" type="button">Refresh session</button>
@@ -118,12 +118,6 @@
 
     <script>
       (function () {
-        const CURRENT_SEASON_BY_LEAGUE = {
-          betclic: "2025_2026",
-          betclic_fem: "2025_2026",
-          proliga: "2025_2026",
-        };
-
         function normalizePath(pathname) {
           if (!pathname) return "/";
           return pathname.replace(/\/+/g, "/").replace(/\/index\.html$/, "").replace(/\/$/, "") || "/";
@@ -158,43 +152,20 @@
           if (access.can_access_all) return true;
 
           const leagueKey = String(parts[1] || "").trim().toLowerCase();
-          const seasonKey = String(parts[2] || "").trim();
-          const allowedLeagueKey = String(access.league_key || "").trim().toLowerCase();
-
           if (!leagueKey) return false;
 
-          if (access.can_access_history) {
-            return leagueKey === allowedLeagueKey;
-          }
-
-          if (access.can_access_current_only) {
-            const currentSeasonKey = CURRENT_SEASON_BY_LEAGUE[allowedLeagueKey] || "";
-            if (leagueKey !== allowedLeagueKey) return false;
-            if (!seasonKey) return true;
-            return seasonKey === currentSeasonKey;
-          }
-
-          return false;
+          const allowedLeagues = Array.isArray(access.allowed_leagues) ? access.allowed_leagues : [];
+          return allowedLeagues.includes(leagueKey);
         }
 
         function defaultRedirectForAccess(access) {
           if (!access) return "/access.html";
           if (access.can_access_all) return "/";
 
-          const leagueKey = String(access.league_key || "").trim().toLowerCase();
-          if (!leagueKey) return "/access.html";
+          const allowedLeagues = Array.isArray(access.allowed_leagues) ? access.allowed_leagues : [];
+          if (!allowedLeagues.length) return "/access.html";
 
-          if (access.can_access_history) {
-            return "/leagues/" + leagueKey + "/index.html";
-          }
-
-          if (access.can_access_current_only) {
-            const seasonKey = CURRENT_SEASON_BY_LEAGUE[leagueKey] || "";
-            if (!seasonKey) return "/access.html";
-            return "/leagues/" + leagueKey + "/" + seasonKey + "/index.html";
-          }
-
-          return "/access.html";
+          return "/leagues/" + allowedLeagues[0] + "/index.html";
         }
 
         function resolveSessionRedirect(access, nextPath) {
@@ -216,6 +187,16 @@
           return params.get("next") || "";
         }
 
+        function formatPlanName(planCode) {
+          const map = {
+            one_league: "one_league",
+            two_leagues: "two_leagues",
+            all_leagues: "all_leagues",
+            full_access_yearly: "full_access_yearly",
+          };
+          return map[planCode] || planCode || "no-plan";
+        }
+
         async function readSession() {
           const res = await fetch("/api/session", { credentials: "same-origin" });
           const card = document.getElementById("pba-session-card");
@@ -234,17 +215,24 @@
 
           const name = (data.user && data.user.full_name) || "";
           const email = (data.user && data.user.email) || "";
-          const plan = (data.access && data.access.plan_code) || "no-plan";
-          const league = (data.access && data.access.league_key) || "all-leagues";
+          const plan = formatPlanName(data.access && data.access.plan_code);
           const cycle = (data.access && data.access.billing_cycle) || "";
+          const canAccessAll = !!(data.access && data.access.can_access_all);
+          const allowedLeagues = Array.isArray(data.access && data.access.allowed_leagues)
+            ? data.access.allowed_leagues
+            : [];
+
+          const leagueLabel = canAccessAll
+            ? "all leagues"
+            : (allowedLeagues.length ? allowedLeagues.join(", ") : "no leagues");
 
           card.textContent =
             "Signed in as " +
             (name || email) +
             " · plan: " +
             plan +
-            " · league: " +
-            league +
+            " · leagues: " +
+            leagueLabel +
             (cycle ? (" · " + cycle) : "");
 
           return data;
