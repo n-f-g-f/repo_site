@@ -10,13 +10,13 @@ async function destroySession(env, request) {
 export async function onRequestPost(context) {
   await destroySession(context.env, context.request);
   return json(
-    { ok: true },
+    { ok: true, redirect_to: "/" },
     200,
-    { "set-cookie": clearSessionCookie() },
+    { "set-cookie": clearSessionCookie() }
   );
 }
 
 export async function onRequestGet(context) {
   await destroySession(context.env, context.request);
-  return Response.redirect(new URL("/login.html", context.request.url).toString(), 302);
+  return Response.redirect(new URL("/", context.request.url).toString(), 302);
 }
