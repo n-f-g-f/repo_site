@@ -12,12 +12,6 @@ const PUBLIC_PATHS = new Set([
   "/404.html",
 ]);
 
-const CURRENT_SEASON_BY_LEAGUE = {
-  betclic: "2025_2026",
-  betclic_fem: "2025_2026",
-  proliga: "2025_2026",
-};
-
 function normalizePath(pathname) {
   if (!pathname) return "/";
   return pathname.replace(/\/+/g, "/").replace(/\/index\.html$/, "").replace(/\/$/, "") || "/";
@@ -63,32 +57,12 @@ function canAccessLeaguePath(pathname, access) {
   if (access.can_access_all) return true;
 
   const leagueKey = String(parts[1] || "").trim().toLowerCase();
-  const seasonKey = String(parts[2] || "").trim();
-  const allowedLeagueKey = String(access.league_key || "").trim().toLowerCase();
-
   if (!leagueKey) {
     return false;
   }
 
-  if (access.can_access_history) {
-    return leagueKey === allowedLeagueKey;
-  }
-
-  if (access.can_access_current_only) {
-    const currentSeasonKey = CURRENT_SEASON_BY_LEAGUE[allowedLeagueKey] || "";
-
-    if (leagueKey !== allowedLeagueKey) {
-      return false;
-    }
-
-    if (!seasonKey) {
-      return true;
-    }
-
-    return seasonKey === currentSeasonKey;
-  }
-
-  return false;
+  const allowedLeagues = Array.isArray(access.allowed_leagues) ? access.allowed_leagues : [];
+  return allowedLeagues.includes(leagueKey);
 }
 
 export async function onRequest(context) {

@@ -6,12 +6,6 @@ import {
   randomToken,
 } from "./_auth.js";
 
-const CURRENT_SEASON_BY_LEAGUE = {
-  betclic: "2025_2026",
-  betclic_fem: "2025_2026",
-  proliga: "2025_2026",
-};
-
 function normalizePath(pathname) {
   if (!pathname) return "/";
   return pathname.replace(/\/+/g, "/").replace(/\/index\.html$/, "").replace(/\/$/, "") || "/";
@@ -48,26 +42,13 @@ function canAccessLeaguePath(pathname, access) {
   if (!parts.length) return true;
   if (parts[0] !== "leagues") return true;
   if (!access) return false;
-  if (access.plan_code === "full_platform") return true;
+  if (access.can_access_all) return true;
 
   const leagueKey = String(parts[1] || "").trim().toLowerCase();
-  const seasonKey = String(parts[2] || "").trim();
-  const allowedLeagueKey = String(access.league_key || "").trim().toLowerCase();
-
   if (!leagueKey) return false;
 
-  if (access.plan_code === "single_league_history") {
-    return leagueKey === allowedLeagueKey;
-  }
-
-  if (access.plan_code === "single_league_current") {
-    const currentSeasonKey = CURRENT_SEASON_BY_LEAGUE[allowedLeagueKey] || "";
-    if (leagueKey !== allowedLeagueKey) return false;
-    if (!seasonKey) return true;
-    return seasonKey === currentSeasonKey;
-  }
-
-  return false;
+  const allowedLeagues = Array.isArray(access.allowed_leagues) ? access.allowed_leagues : [];
+  return allowedLeagues.includes(leagueKey);
 }
 
 function defaultRedirectForAccess(access) {
@@ -75,28 +56,16 @@ function defaultRedirectForAccess(access) {
     return "/access.html";
   }
 
-  if (access.plan_code === "full_platform") {
+  if (access.can_access_all) {
     return "/";
   }
 
-  const leagueKey = String(access.league_key || "").trim().toLowerCase();
-  if (!leagueKey) {
+  const allowedLeagues = Array.isArray(access.allowed_leagues) ? access.allowed_leagues : [];
+  if (!allowedLeagues.length) {
     return "/access.html";
   }
 
-  if (access.plan_code === "single_league_history") {
-    return `/leagues/${leagueKey}/index.html`;
-  }
-
-  if (access.plan_code === "single_league_current") {
-    const seasonKey = CURRENT_SEASON_BY_LEAGUE[leagueKey];
-    if (!seasonKey) {
-      return "/access.html";
-    }
-    return `/leagues/${leagueKey}/${seasonKey}/index.html`;
-  }
-
-  return "/access.html";
+  return `/leagues/${allowedLeagues[0]}/index.html`;
 }
 
 function resolveRedirect(access, nextPath) {
@@ -166,8 +135,8 @@ export async function onRequestPost(context) {
     const accessRow = await context.env.AUTH_DB
       .prepare(
         `SELECT
+           id,
            plan_code,
-           league_key,
            billing_cycle,
            is_active
          FROM access_rights
@@ -178,10 +147,36 @@ export async function onRequestPost(context) {
       .bind(user.id)
       .first();
 
+    let leagueRows = [];
+    if (accessRow?.id) {
+      const result = await context.env.AUTH_DB
+        .prepare(
+          `SELECT
+             league_key
+           FROM access_leagues
+           WHERE access_right_id = ?
+           ORDER BY id ASC`
+        )
+        .bind(accessRow.id)
+        .all();
+
+      leagueRows = Array.isArray(result?.results) ? result.results : [];
+    }
+
+    const allowedLeagues = Array.from(
+      new Set(
+        leagueRows
+          .map((row) => String(row?.league_key || "").trim().toLowerCase())
+          .filter(Boolean)
+      )
+    );
+
     const access = {
       plan_code: accessRow?.plan_code || null,
-      league_key: accessRow?.league_key || null,
       billing_cycle: accessRow?.billing_cycle || null,
+      allowed_leagues: allowedLeagues,
+      can_access_all:
+        accessRow?.plan_code === "all_leagues" || accessRow?.plan_code === "full_access_yearly",
     };
 
     return json(

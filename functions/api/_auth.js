@@ -58,26 +58,30 @@ export function randomToken() {
   return Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-export function computeEntitlements(accessRow) {
+export function computeEntitlements(accessRow, leagueRows = []) {
   if (!accessRow || !accessRow.is_active) {
     return {
       plan_code: null,
-      league_key: null,
       billing_cycle: null,
+      allowed_leagues: [],
       can_access_all: false,
-      can_access_history: false,
-      can_access_current_only: false,
     };
   }
 
   const planCode = String(accessRow.plan_code || "").trim();
+  const allowedLeagues = Array.from(
+    new Set(
+      (leagueRows || [])
+        .map((row) => String(row?.league_key || "").trim().toLowerCase())
+        .filter(Boolean)
+    )
+  );
+
   return {
     plan_code: planCode,
-    league_key: accessRow.league_key || null,
     billing_cycle: accessRow.billing_cycle || null,
-    can_access_all: planCode === "full_platform",
-    can_access_history: planCode === "single_league_history" || planCode === "full_platform",
-    can_access_current_only: planCode === "single_league_current",
+    allowed_leagues: allowedLeagues,
+    can_access_all: planCode === "all_leagues" || planCode === "full_access_yearly",
   };
 }
 
@@ -120,7 +124,6 @@ export async function getSessionBundle(env, request) {
          id,
          user_id,
          plan_code,
-         league_key,
          billing_cycle,
          starts_at,
          ends_at,
@@ -133,6 +136,22 @@ export async function getSessionBundle(env, request) {
     .bind(sessionRow.user_id)
     .first();
 
+  let leagueRows = [];
+  if (accessRow?.id) {
+    const result = await env.AUTH_DB
+      .prepare(
+        `SELECT
+           league_key
+         FROM access_leagues
+         WHERE access_right_id = ?
+         ORDER BY id ASC`
+      )
+      .bind(accessRow.id)
+      .all();
+
+    leagueRows = Array.isArray(result?.results) ? result.results : [];
+  }
+
   return {
     session_token: token,
     user: {
@@ -140,7 +159,7 @@ export async function getSessionBundle(env, request) {
       email: sessionRow.email,
       full_name: sessionRow.full_name || "",
     },
-    access: computeEntitlements(accessRow),
+    access: computeEntitlements(accessRow, leagueRows),
   };
 }
 
