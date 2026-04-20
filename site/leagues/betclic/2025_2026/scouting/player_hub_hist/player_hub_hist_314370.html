@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Player History - J. Baker</title>
+<style>
+body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#07101c; color:#e5e7eb; }
+.container { max-width:1720px; margin:0 auto; padding:24px; }
+.block { background:#111827; border:1px solid #334155; border-radius:16px; padding:18px; margin-bottom:20px; }
+.block h2 { margin:0 0 14px 0; font-size:20px; }
+.hero { display:grid; grid-template-columns:180px 1fr; gap:18px; align-items:center; margin-bottom:20px; background:#111827; border:1px solid #334155; border-radius:18px; padding:20px; }
+.player-photo { width:180px; height:180px; border-radius:18px; overflow:hidden; border:1px solid #334155; background:#0b1220; display:flex; align-items:center; justify-content:center; }
+.player-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+.empty-photo { color:#94a3b8; font-weight:700; }
+.hero-title { font-size:32px; font-weight:700; margin:0 0 8px 0; }
+.hero-sub { color:#94a3b8; font-size:15px; margin-bottom:10px; }
+.hero-nav { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.hero-nav a { display:inline-flex; align-items:center; padding:9px 13px; border-radius:999px; background:#e5e7eb; color:#111827; text-decoration:none; font-size:13px; font-weight:700; }
+.hero-nav a.secondary { background:#1f2937; color:#e5e7eb; }
+.metric-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; }
+.metric-card { background:#0b1220; border:1px solid #334155; border-radius:12px; padding:12px 14px; }
+.metric-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; font-weight:700; }
+.metric-value { font-size:20px; font-weight:700; line-height:1.2; }
+.story-list { margin:0; padding-left:20px; color:#cbd5e1; line-height:1.6; }
+.table-wrap { overflow:auto; }
+.summary-table { width:100%; border-collapse:collapse; min-width:980px; }
+.summary-table th, .summary-table td { padding:10px 8px; border-bottom:1px solid #334155; font-size:13px; text-align:right; white-space:nowrap; }
+.summary-table th:first-child, .summary-table td:first-child { text-align:left; }
+.summary-table thead th { background:#162032; }
+.control-row { display:flex; gap:12px; flex-wrap:wrap; align-items:end; margin-bottom:14px; }
+.control { display:flex; flex-direction:column; gap:6px; }
+.control label { font-size:12px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.03em; }
+.control select { height:40px; border:1px solid #334155; border-radius:10px; background:#0b1220; color:#e5e7eb; padding:0 12px; font-size:14px; }
+.chart-wrap { position:relative; width:100%; overflow:auto; }
+#history-trend-chart { width:100%; min-width:980px; height:auto; display:block; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:12px; }
+.axis-label { fill:#94a3b8; font-size:14px; font-weight:700; }
+.axis-tick { fill:#94a3b8; font-size:11px; }
+.grid-line { stroke:rgba(148,163,184,0.22); stroke-width:1; }
+.plot-frame { stroke:#334155; fill:none; stroke-width:1.2; }
+.series-line { stroke:#38bdf8; fill:none; stroke-width:2.8; }
+.series-point { fill:#38bdf8; }
+.tooltip { position:absolute; pointer-events:none; opacity:0; transform:translate(-50%, calc(-100% - 12px)); background:rgba(15,23,42,0.96); color:#e5e7eb; border:1px solid #334155; border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.35; white-space:nowrap; z-index:20; }
+.empty { color:#94a3b8; font-style:italic; }
+@media (max-width: 760px) { .hero { grid-template-columns:1fr; } .metric-grid { grid-template-columns:1fr; } }
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2025-2026 </div></div></header>
+<div class="container">
+  <section class="hero">
+    <div class="player-photo empty-photo">No photo</div>
+    <div>
+      <div class="hero-title">J. Baker</div>
+      <div class="hero-sub">Historical hub · Vitória Sport Clube · No position · Global ID 314370</div>
+      <div class="hero-nav">
+        
+        <a class="secondary" href="../index.html">Site Home</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Career Snapshot</h2>
+    <div class="metric-grid"><div class="metric-card"><div class="metric-label">Latest Team</div><div class="metric-value">Vitória Sport Clube</div></div><div class="metric-card"><div class="metric-label">Seasons</div><div class="metric-value">1</div></div><div class="metric-card"><div class="metric-label">Career Games</div><div class="metric-value">21</div></div><div class="metric-card"><div class="metric-label">Best Scoring Season</div><div class="metric-value">2025_2026 · 5.2 PPG</div></div><div class="metric-card"><div class="metric-label">Best Efficiency Season</div><div class="metric-value">2025_2026 · 56.5% TS</div></div><div class="metric-card"><div class="metric-label">Best NetRtg Season</div><div class="metric-value">2025_2026 · -5.5</div></div></div>
+  </section>
+
+  <section class="block">
+    <h2>Historical Read</h2>
+    <ul class="story-list"><li>Current historical profile tag: Rotation.</li></ul>
+  </section>
+
+  <section class="block">
+    <h2>Trend View</h2>
+    <div class="control-row">
+      <div class="control"><label for="metricSelect">Metric</label><select id="metricSelect"><option value="mpg">MPG</option><option value="ppg">PPG</option><option value="ts_pct">TS%</option><option value="usg_pct">USG%</option><option value="netrtg">NetRtg</option><option value="on_off_net_diff_per40">On-Off/40</option></select></div>
+    </div>
+    <div class="chart-wrap">
+      <svg id="history-trend-chart" viewBox="0 0 1180 520" role="img" aria-label="Historical player trend"></svg>
+      <div id="historyTooltip" class="tooltip"></div>
+    </div>
+  </section>
+
+  <section class="block"><h2>Season-by-Season Table</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Season</th><th>League</th><th>Team</th><th>G</th><th>MPG</th><th>PPG</th><th>RPG</th><th>APG</th><th>TS%</th><th>USG%</th><th>NetRtg</th><th>On-Off/40</th><th>Profile</th></tr></thead><tbody><tr><td>2025_2026</td><td>Betclic</td><td>VSC</td><td>21</td><td>11.7</td><td>5.2</td><td>1.6</td><td>0.2</td><td>56.5%</td><td>19.2%</td><td>-5.5</td><td>3.1</td><td>Rotation</td></tr></tbody></table></div></section>
+</div>
+<script>
+const HISTORY_ROWS = [{"season_key":"2025_2026","league_key":"Betclic","team_key":"VSC","mpg":11.677777777777777,"ppg":5.190476190476191,"ts_pct":0.5648839137645107,"usg_pct":0.19249247061522315,"netrtg":-5.546869689348114,"on_off_net_diff_per40":3.060824558179135}];
+const METRIC_META = [{"key": "mpg", "label": "MPG", "kind": "number"}, {"key": "ppg", "label": "PPG", "kind": "number"}, {"key": "ts_pct", "label": "TS%", "kind": "pct"}, {"key": "usg_pct", "label": "USG%", "kind": "pct"}, {"key": "netrtg", "label": "NetRtg", "kind": "number"}, {"key": "on_off_net_diff_per40", "label": "On-Off/40", "kind": "number"}];
+const metricSelect = document.getElementById('metricSelect');
+const svg = document.getElementById('history-trend-chart');
+const tooltip = document.getElementById('historyTooltip');
+
+function fmtValue(value, kind) {
+  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  if (kind === 'pct') return (Number(value) * 100).toFixed(1) + '%';
+  return Number(value).toFixed(1);
+}
+
+function drawMetric(metricKey) {
+  const metric = METRIC_META.find(m => m.key === metricKey) || METRIC_META[0];
+  const rows = HISTORY_ROWS.filter(r => r[metric.key] !== null && r[metric.key] !== undefined && !Number.isNaN(r[metric.key]));
+  svg.innerHTML = '';
+  if (!rows.length) return;
+
+  const width = 1180, height = 520;
+  const margin = { top: 36, right: 30, bottom: 70, left: 78 };
+  const plotX = margin.left, plotY = margin.top, plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+  const xStep = rows.length === 1 ? 0 : plotW / (rows.length - 1);
+  const yVals = rows.map(r => Number(r[metric.key]));
+  const minYRaw = Math.min(...yVals), maxYRaw = Math.max(...yVals);
+  const yPad = Math.max((maxYRaw - minYRaw) * 0.12, metric.kind === 'pct' ? 0.01 : 1.0);
+  const minY = minYRaw - yPad;
+  const maxY = maxYRaw + yPad;
+  const sx = idx => plotX + idx * xStep;
+  const sy = val => plotY + plotH - ((val - minY) / (maxY - minY || 1)) * plotH;
+
+  function line(x1,y1,x2,y2,cls) { const e = document.createElementNS('http://www.w3.org/2000/svg', 'line'); e.setAttribute('x1', x1); e.setAttribute('y1', y1); e.setAttribute('x2', x2); e.setAttribute('y2', y2); e.setAttribute('class', cls); return e; }
+  function textNode(x,y,val,cls,anchor='middle') { const e = document.createElementNS('http://www.w3.org/2000/svg', 'text'); e.setAttribute('x', x); e.setAttribute('y', y); e.setAttribute('class', cls); e.setAttribute('text-anchor', anchor); e.textContent = val; return e; }
+
+  for (let i = 0; i <= 4; i += 1) {
+    const t = i / 4;
+    const yVal = minY + (maxY - minY) * t;
+    const y = sy(yVal);
+    svg.appendChild(line(plotX, y, plotX + plotW, y, 'grid-line'));
+    svg.appendChild(textNode(plotX - 12, y + 4, fmtValue(yVal, metric.kind), 'axis-tick', 'end'));
+  }
+
+  rows.forEach((row, idx) => {
+    const x = sx(idx);
+    svg.appendChild(line(x, plotY, x, plotY + plotH, 'grid-line'));
+    svg.appendChild(textNode(x, plotY + plotH + 24, row.season_key || '', 'axis-tick'));
+  });
+
+  const frame = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  frame.setAttribute('x', plotX);
+  frame.setAttribute('y', plotY);
+  frame.setAttribute('width', plotW);
+  frame.setAttribute('height', plotH);
+  frame.setAttribute('class', 'plot-frame');
+  svg.appendChild(frame);
+  svg.appendChild(textNode(plotX + plotW / 2, height - 20, 'Season', 'axis-label'));
+  const yLabel = textNode(22, plotY + plotH / 2, metric.label, 'axis-label');
+  yLabel.setAttribute('transform', 'rotate(-90 22 ' + (plotY + plotH / 2) + ')');
+  svg.appendChild(yLabel);
+
+  let path = '';
+  rows.forEach((row, idx) => {
+    const x = sx(idx), y = sy(Number(row[metric.key]));
+    path += (idx === 0 ? 'M ' : ' L ') + x.toFixed(2) + ' ' + y.toFixed(2);
+  });
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  pathEl.setAttribute('d', path);
+  pathEl.setAttribute('class', 'series-line');
+  svg.appendChild(pathEl);
+
+  rows.forEach((row, idx) => {
+    const x = sx(idx), y = sy(Number(row[metric.key]));
+    const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    hit.setAttribute('cx', x);
+    hit.setAttribute('cy', y);
+    hit.setAttribute('r', 12);
+    hit.setAttribute('fill', 'transparent');
+    hit.style.cursor = 'pointer';
+    const pt = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    pt.setAttribute('cx', x);
+    pt.setAttribute('cy', y);
+    pt.setAttribute('r', 4.5);
+    pt.setAttribute('class', 'series-point');
+    svg.appendChild(pt);
+    svg.appendChild(hit);
+
+    function showTooltip(evt) {
+      const rect = svg.getBoundingClientRect();
+      tooltip.style.opacity = '1';
+      tooltip.style.left = (evt.clientX - rect.left) + 'px';
+      tooltip.style.top = (evt.clientY - rect.top) + 'px';
+      tooltip.innerHTML = '<strong>' + (row.season_key || '') + '</strong><br>' + (row.league_key || '') + ' · ' + (row.team_key || '') + '<br>' + metric.label + ': ' + fmtValue(row[metric.key], metric.kind);
+    }
+    function moveTooltip(evt) {
+      const rect = svg.getBoundingClientRect();
+      tooltip.style.left = (evt.clientX - rect.left) + 'px';
+      tooltip.style.top = (evt.clientY - rect.top) + 'px';
+    }
+    function hideTooltip() { tooltip.style.opacity = '0'; }
+    hit.addEventListener('mouseenter', showTooltip);
+    hit.addEventListener('mousemove', moveTooltip);
+    hit.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
+metricSelect.addEventListener('change', () => drawMetric(metricSelect.value));
+drawMetric(metricSelect.value || METRIC_META[0].key);
+</script>
+</body>
+</html>
