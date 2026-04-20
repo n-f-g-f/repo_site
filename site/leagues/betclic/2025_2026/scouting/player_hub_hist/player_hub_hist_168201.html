@@ -61,18 +61,20 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#07101c; 
 
   <section class="block">
     <h2>Career Snapshot</h2>
-    <div class="metric-grid"><div class="metric-card"><div class="metric-label">Latest Team</div><div class="metric-value">Vitória Sport Clube</div></div><div class="metric-card"><div class="metric-label">Seasons</div><div class="metric-value">1</div></div><div class="metric-card"><div class="metric-label">Career Games</div><div class="metric-value">15</div></div><div class="metric-card"><div class="metric-label">Best Scoring Season</div><div class="metric-value">2024_2025 · 0.7 PPG</div></div><div class="metric-card"><div class="metric-label">Best Efficiency Season</div><div class="metric-value">2024_2025 · 47.0% TS</div></div><div class="metric-card"><div class="metric-label">Best NetRtg Season</div><div class="metric-value">2024_2025 · -12.4</div></div></div>
+    <div class="metric-grid"><div class="metric-card"><div class="metric-label">Latest Team</div><div class="metric-value">Vitória Sport Clube</div></div><div class="metric-card"><div class="metric-label">Seasons</div><div class="metric-value">1</div></div><div class="metric-card"><div class="metric-label">Career Games</div><div class="metric-value">15</div></div><div class="metric-card"><div class="metric-label">Peak Scoring</div><div class="metric-value">2024_2025 · 0.7 PPG</div></div><div class="metric-card"><div class="metric-label">Peak Efficiency</div><div class="metric-value">2024_2025 · 47.0% TS</div></div><div class="metric-card"><div class="metric-label">Best On-Off Season</div><div class="metric-value">2024_2025 · -12.8</div></div></div>
   </section>
 
   <section class="block">
     <h2>Historical Read</h2>
-    <ul class="story-list"><li>Current historical profile tag: Rotation.</li></ul>
+    <ul class="story-list"><li>Latest season reads more like a rotation than a neutral low-leverage season.</li></ul>
   </section>
+
+  <section class="block"><h2>What changed?</h2><div class="metric-grid"><div class="metric-card"><div class="metric-label">Role Growth</div><div class="metric-value">MPG +0.0 · USG +0.0 pp</div></div><div class="metric-card"><div class="metric-label">Scoring Growth</div><div class="metric-value">PPG +0.0 · APG +0.0</div></div><div class="metric-card"><div class="metric-label">Efficiency Change</div><div class="metric-value">TS +0.0 pp · NetRtg +0.0</div></div><div class="metric-card"><div class="metric-label">Current League Standing</div><div class="metric-value">—</div></div></div></section>
 
   <section class="block">
     <h2>Trend View</h2>
     <div class="control-row">
-      <div class="control"><label for="metricSelect">Metric</label><select id="metricSelect"><option value="mpg">MPG</option><option value="ppg">PPG</option><option value="ts_pct">TS%</option><option value="usg_pct">USG%</option><option value="netrtg">NetRtg</option><option value="on_off_net_diff_per40">On-Off/40</option></select></div>
+      <div class="control"><label for="metricSelect">Metric</label><select id="metricSelect"><option value="mpg">MPG</option><option value="ppg">PPG</option><option value="ts_pct">TS%</option><option value="usg_pct">USG%</option><option value="netrtg">NetRtg</option><option value="on_off_net_diff_per40">On-Off/40</option><option value="league_pct_scoring">Scoring Pctl</option><option value="league_pct_efficiency">Efficiency Pctl</option><option value="league_pct_creation">Creation Pctl</option><option value="league_pct_impact">Impact Pctl</option></select></div>
     </div>
     <div class="chart-wrap">
       <svg id="history-trend-chart" viewBox="0 0 1180 520" role="img" aria-label="Historical player trend"></svg>
@@ -80,11 +82,11 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#07101c; 
     </div>
   </section>
 
-  <section class="block"><h2>Season-by-Season Table</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Season</th><th>League</th><th>Team</th><th>G</th><th>MPG</th><th>PPG</th><th>RPG</th><th>APG</th><th>TS%</th><th>USG%</th><th>NetRtg</th><th>On-Off/40</th><th>Profile</th></tr></thead><tbody><tr><td>2024_2025</td><td>Betclic</td><td>VSC</td><td>15</td><td>3.9</td><td>0.7</td><td>0.8</td><td>0.1</td><td>47.0%</td><td>9.5%</td><td>-12.4</td><td>-12.8</td><td>Rotation</td></tr></tbody></table></div></section>
+  <section class="block"><h2>Season-by-Season Table</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Season</th><th>League</th><th>Team</th><th>G</th><th>MPG</th><th>PPG</th><th>APG</th><th>TS%</th><th>USG%</th><th>NetRtg</th><th>On-Off/40</th><th>Scoring Pctl</th><th>Efficiency Pctl</th><th>Creation Pctl</th><th>Δ PPG</th><th>Δ TS</th><th>Δ On-Off</th><th>Profile</th></tr></thead><tbody><tr><td>2024_2025</td><td>Betclic</td><td>VSC</td><td>15</td><td>3.9</td><td>0.7</td><td>0.1</td><td>47.0%</td><td>9.5%</td><td>-12.4</td><td>-12.8</td><td>19.2%</td><td>28.5%</td><td>15.2%</td><td>—</td><td>—</td><td>—</td><td>Rotation</td></tr></tbody></table></div></section>
 </div>
 <script>
-const HISTORY_ROWS = [{"season_key":"2024_2025","league_key":"Betclic","team_key":"VSC","mpg":3.8722222222222222,"ppg":0.6666666666666666,"ts_pct":0.4699248120300752,"usg_pct":0.09451794192110377,"netrtg":-12.406662837449744,"on_off_net_diff_per40":-12.841471702719389}];
-const METRIC_META = [{"key": "mpg", "label": "MPG", "kind": "number"}, {"key": "ppg", "label": "PPG", "kind": "number"}, {"key": "ts_pct", "label": "TS%", "kind": "pct"}, {"key": "usg_pct", "label": "USG%", "kind": "pct"}, {"key": "netrtg", "label": "NetRtg", "kind": "number"}, {"key": "on_off_net_diff_per40", "label": "On-Off/40", "kind": "number"}];
+const HISTORY_ROWS = [{"season_key":"2024_2025","league_key":"Betclic","team_key":"VSC","mpg":3.8722222222222222,"ppg":0.6666666666666666,"ts_pct":0.4699248120300752,"usg_pct":0.09451794192110377,"netrtg":-12.406662837449744,"on_off_net_diff_per40":-12.841471702719389,"league_pct_scoring":0.19202898550724637,"league_pct_efficiency":0.2846153846153846,"league_pct_creation":0.15151515151515152,"league_pct_impact":0.1893939393939394}];
+const METRIC_META = [{"key": "mpg", "label": "MPG", "kind": "number"}, {"key": "ppg", "label": "PPG", "kind": "number"}, {"key": "ts_pct", "label": "TS%", "kind": "pct"}, {"key": "usg_pct", "label": "USG%", "kind": "pct"}, {"key": "netrtg", "label": "NetRtg", "kind": "number"}, {"key": "on_off_net_diff_per40", "label": "On-Off/40", "kind": "number"}, {"key": "league_pct_scoring", "label": "Scoring Pctl", "kind": "pct"}, {"key": "league_pct_efficiency", "label": "Efficiency Pctl", "kind": "pct"}, {"key": "league_pct_creation", "label": "Creation Pctl", "kind": "pct"}, {"key": "league_pct_impact", "label": "Impact Pctl", "kind": "pct"}];
 const metricSelect = document.getElementById('metricSelect');
 const svg = document.getElementById('history-trend-chart');
 const tooltip = document.getElementById('historyTooltip');
