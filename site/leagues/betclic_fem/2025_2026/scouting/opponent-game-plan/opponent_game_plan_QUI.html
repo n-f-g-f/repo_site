@@ -213,6 +213,34 @@ tbody tr:hover {
     grid-template-columns:1.2fr .8fr;
     gap:24px;
 }
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
 .compact-table table {
     font-size:13px;
 }
@@ -221,7 +249,7 @@ tbody tr:hover {
     padding:9px 8px;
 }
 @media (max-width: 1100px) {
-    .section-grid {
+    .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
 }
@@ -235,205 +263,30 @@ tbody tr:hover {
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Quinta dos Lombos</h1><div class="sub">Opponent Game Plan - QUI</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/QUI.png" alt="Quinta dos Lombos logo"></div></div></div></div>
 </div>
 
-
+<div class="top-grid">
+    
     <section class="block">
         <h2>Team Identity vs League</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Pace</td><td>73.1</td><td>74.7</td><td>10</td><td>-1.7</td></tr><tr><td>OffRtg</td><td>107</td><td>95.7</td><td>1</td><td>11.3</td></tr><tr><td>DefRtg</td><td>86.6</td><td>95.6</td><td>2</td><td>-8.9</td></tr><tr><td>NetRtg</td><td>20.3</td><td>0.1</td><td>1</td><td>20.2</td></tr><tr><td>AST/G</td><td>18.7</td><td>15.6</td><td>2</td><td>3.1</td></tr><tr><td>TOV%</td><td>18</td><td>20.9</td><td>1</td><td>-2.9</td></tr><tr><td>ORB%</td><td>37.4</td><td>30.4</td><td>1</td><td>6.9</td></tr><tr><td>PF/G</td><td>14.6</td><td>17.2</td><td>1</td><td>-2.6</td></tr><tr><td>FT Rate</td><td>29.6</td><td>31.5</td><td>10</td><td>-1.9</td></tr><tr><td>3PA Rate</td><td>32.3</td><td>35.3</td><td>9</td><td>-3</td></tr></tbody>
+                <tbody><tr><td>Pace</td><td>72.8</td><td>74.8</td><td>10</td><td>-1.9</td></tr><tr><td>OffRtg</td><td>107.1</td><td>95.7</td><td>1</td><td>11.4</td></tr><tr><td>DefRtg</td><td>86.6</td><td>96</td><td>2</td><td>-9.4</td></tr><tr><td>NetRtg</td><td>20.5</td><td>-0.3</td><td>1</td><td>20.9</td></tr><tr><td>AST/G</td><td>18.8</td><td>15.4</td><td>2</td><td>3.4</td></tr><tr><td>TOV%</td><td>18.1</td><td>20.7</td><td>1</td><td>-2.6</td></tr><tr><td>ORB%</td><td>37.7</td><td>30.5</td><td>1</td><td>7.2</td></tr><tr><td>PF/G</td><td>15.1</td><td>17.4</td><td>1</td><td>-2.3</td></tr><tr><td>FT Rate</td><td>29.5</td><td>31.8</td><td>11</td><td>-2.3</td></tr><tr><td>3PA Rate</td><td>32.4</td><td>35.3</td><td>9</td><td>-2.9</td></tr></tbody>
             </table>
         </div>
     </section>
     
-
-<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Below-average pace; they are more comfortable when the game stays organized in the half court.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Above-average assist profile; expect cleaner passing sequences and more extra-pass possessions.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Better-than-average ball security; they do not hand away many live possessions.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
-
-
-    <section class="block">
-        <h2>Overview</h2>
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-title">Most-Used Player</div>
-                <div class="card-value">M. Ivanovic</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Primary Scorer</div>
-                <div class="card-value">C. Pinto</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Top 3PT Threat</div>
-                <div class="card-value">M. Ivanovic (32.6%)</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Preferred Team Scoring Area</div>
-                <div class="card-value">Restricted Area</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Most-Used Lineup</div>
-                <div class="card-value">A. Rivera | J. Powell | M. Ivanovic | N. Hardy | S. Caetano</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Best-Performing Lineup</div>
-                <div class="card-value">A. Rivera | J. Powell | M. Ivanovic | N. Hardy | S. Caetano</div>
-            </div>
-            </div>
-    </section>
-    
-
-<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Control the rhythm: they are more comfortable in a controlled half-court game, so do not let them play cleanly into structure.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Know the first reference: C. Pinto is a movement shooter, and the plan should start with taking away his comfort.</li></ul></div></section>
-
-
-    <section class="block">
-        <h2>Key Players</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>31.6</td><td>12.6</td><td>138</td><td>32.6%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td>26.6</td><td>13.2</td><td>25</td><td>20.0%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>25.3</td><td>13.5</td><td>73</td><td>41.1%</td><td>Restricted Area</td><td>movement shooter</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>25.3</td><td>9.4</td><td>55</td><td>27.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>25.1</td><td>9.8</td><td>40</td><td>22.5%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>23.6</td><td>10.9</td><td>16</td><td>37.5%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-
-
-    <section class="block">
-        <h2>Scouting Notes</h2>
-        <div class="notes-grid">
-            <div class="note-card">
-                <h3>Offense</h3>
-                <ul><li>The main offensive references are M. Ivanovic and N. Hardy; load the scouting plan into those names first.</li></ul>
-            </div>
-            
-            <div class="note-card">
-                <h3>Perimeter Shooting</h3>
-                <ul><li>Priority closeouts start with C. Pinto, S. Caetano, and M. Roseiro; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from M. Ivanovic and A. Rivera; contest, but do not over-help into secondary advantages.</li></ul>
-            </div>
-            
-            <div class="note-card">
-                <h3>Scoring Areas</h3>
-                <ul><li>Their offense naturally flows toward Restricted Area; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially M. Ivanovic, N. Hardy, and S. Caetano; force them away from preferred areas.</li></ul>
-            </div>
-            
-            <div class="note-card">
-                <h3>Units</h3>
-                <ul><li>Most-used lineup to rehearse first: A. Rivera | J. Powell | M. Ivanovic | N. Hardy | S. Caetano.</li><li>Secondary lineup to recognize: A. Rivera | C. Pinto | J. Powell | M. Ivanovic | N. Hardy.</li><li>Recognize the main duo/trio combinations: M. Ivanovic | N. Hardy and J. Powell | M. Ivanovic | N. Hardy.</li></ul>
-            </div>
-            
-            <div class="note-card">
-                <h3>Defensive Emphasis</h3>
-                <ul><li>Second-chance threat; the first stop is not enough against this team.</li><li>Do not lose C. Pinto and S. Caetano in help-and-recover situations.</li></ul>
-            </div>
-            </div>
-    </section>
-    
-
-<div class="section-grid">
-    <div>
-        
-    <section class="block">
-        <h2>Primary Shooting Threats</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>Closeout | Preferred Area</td><td>73</td><td>41.1%</td><td>33.3%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>Closeout | Preferred Area</td><td>16</td><td>37.5%</td><td>10.0%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td>Closeout</td><td>22</td><td>36.4%</td><td>53.7%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>138</td><td>32.6%</td><td>58.7%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>Volume 3PT | Preferred Area</td><td>55</td><td>27.3%</td><td>29.9%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>Volume 3PT | Preferred Area</td><td>40</td><td>22.5%</td><td>24.4%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td>Volume 3PT | Preferred Area</td><td>29</td><td>17.2%</td><td>65.9%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Silva</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
-    <section class="block">
-        <h2>Priority Closeouts</h2>
-        <div class="table-wrap compact-table">
-            <table>
-                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>73</td><td>41.1%</td><td>33.3%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>16</td><td>37.5%</td><td>10.0%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td>22</td><td>36.4%</td><td>53.7%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>138</td><td>32.6%</td><td>58.7%</td><td>0.9</td><td>Gap and recover</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
-    <section class="block">
-        <h2>Volume, Lower Efficiency</h2>
-        <div class="table-wrap compact-table">
-            <table>
-                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>138</td><td>32.6%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>55</td><td>27.3%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>40</td><td>22.5%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td>29</td><td>17.2%</td><td>0.7</td><td>Gap and recover</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-    </div>
-    <div>
-        
-    <section class="block">
-        <h2>Preferred Scoring Areas</h2>
-        <div class="table-wrap compact-table">
-            <table>
-                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>Above the Break 3</td><td>51.1%</td><td>30.0%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td>Restricted Area</td><td>44.4%</td><td>64.5%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>Restricted Area</td><td>57.5%</td><td>68.5%</td><td>1.4</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>Restricted Area</td><td>31.5%</td><td>65.2%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>Restricted Area</td><td>34.1%</td><td>71.4%</td><td>1.4</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>Paint Non-RA</td><td>25.5%</td><td>34.0%</td><td>0.7</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td>Above the Break 3</td><td>47.7%</td><td>19.0%</td><td>0.6</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Silva</span></div></td><td>Above the Break 3</td><td>38.5%</td><td>20.0%</td><td>0.6</td><td>Gap and recover</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
-    <section class="block">
-        <h2>Team Shot Map Summary</h2>
-        <div class="table-wrap compact-table">
-            <table>
-                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
-                <tbody><tr><td>Restricted Area</td><td>430</td><td>67.9%</td><td>1.4</td><td>29.7%</td></tr><tr><td>Above the Break 3</td><td>369</td><td>28.2%</td><td>0.8</td><td>25.5%</td></tr><tr><td>Paint Non-RA</td><td>313</td><td>41.2%</td><td>0.8</td><td>21.6%</td></tr><tr><td>Mid-Range</td><td>237</td><td>34.2%</td><td>0.7</td><td>16.4%</td></tr><tr><td>Corner 3 Left</td><td>53</td><td>26.4%</td><td>0.8</td><td>3.7%</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
-    <section class="block">
-        <h2>Lineups to Prepare For</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
-                <tbody><tr><td>Base lineup</td><td>A. Rivera | J. Powell | M. Ivanovic | N. Hardy | S. Caetano</td><td>131.9</td><td>78.6</td><td>59.8</td><td>18.8</td></tr><tr><td>Rotation lineup</td><td>A. Rivera | C. Pinto | J. Powell | M. Ivanovic | N. Hardy</td><td>79.9</td><td>83.6</td><td>68.6</td><td>15.0</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-    </div>
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Below-average pace; they are more comfortable when the game stays organized in the half court.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Above-average assist profile; expect cleaner passing sequences and more extra-pass possessions.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Better-than-average ball security; they do not hand away many live possessions.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
 </div>
 
-
-    <section class="block">
-        <h2>Roster</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td></td><td></td><td>22</td><td>31.6</td><td>12.6</td><td>2.5</td><td>3.1</td><td>1.7</td><td>1.5</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td></td><td></td><td>22</td><td>26.6</td><td>13.2</td><td>9.4</td><td>1.0</td><td>1.0</td><td>2.2</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td></td><td></td><td>22</td><td>25.3</td><td>13.5</td><td>5.1</td><td>3.5</td><td>1.6</td><td>2.0</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td></td><td></td><td>22</td><td>25.3</td><td>9.4</td><td>6.0</td><td>1.7</td><td>1.3</td><td>1.2</td><td>0.6</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td></td><td></td><td>22</td><td>25.1</td><td>9.8</td><td>3.0</td><td>3.5</td><td>1.0</td><td>1.9</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td></td><td></td><td>22</td><td>23.6</td><td>10.9</td><td>6.5</td><td>2.3</td><td>2.1</td><td>1.4</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Silva</span></div></td><td></td><td></td><td>17</td><td>12.8</td><td>2.9</td><td>2.8</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td></td><td></td><td>22</td><td>9.5</td><td>1.4</td><td>1.1</td><td>1.3</td><td>0.4</td><td>0.5</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Semedo</span></div></td><td></td><td></td><td>21</td><td>8.9</td><td>1.8</td><td>1.1</td><td>0.6</td><td>0.2</td><td>0.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td></td><td></td><td>21</td><td>6.3</td><td>1.7</td><td>0.5</td><td>1.2</td><td>0.1</td><td>0.2</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Silva</span></div></td><td></td><td></td><td>17</td><td>5.6</td><td>1.1</td><td>0.3</td><td>0.4</td><td>0.1</td><td>0.1</td><td>0.1</td></tr></tbody>
-            </table>
-        </div>
-    </section>
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Control the rhythm: they are more comfortable in a controlled half-court game, so do not let them play cleanly into structure.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Know the first reference: C. Pinto is a movement shooter, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: S. Caetano, M. Roseiro are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
     
-
-    <section class="block">
-        <h2>Duos / Trios to Recognize</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
-                <tbody><tr><td>duo</td><td>M. Ivanovic | N. Hardy</td><td>471.4</td><td>80.3</td><td>60.3</td><td>19.9</td></tr><tr><td>trio</td><td>J. Powell | M. Ivanovic | N. Hardy</td><td>335.6</td><td>80.2</td><td>62.3</td><td>17.9</td></tr><tr><td>duo</td><td>A. Rivera | L. Silva</td><td>45.8</td><td>90.0</td><td>57.7</td><td>32.3</td></tr><tr><td>trio</td><td>A. Rivera | D. Semedo | N. Hardy</td><td>45.5</td><td>79.9</td><td>48.3</td><td>31.6</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-
     <section class="block">
         <h2>Scout Team Emphasis</h2>
         <div class="mini-grid">
             <div class="mini-card">
                 <div class="mini-label">Matchups to rehearse</div>
-                <div class="mini-value">C. Pinto, S. Caetano, M. Roseiro</div>
+                <div class="mini-value">S. Caetano, M. Roseiro, C. Pinto</div>
             </div>
             
             <div class="mini-card">
@@ -448,6 +301,141 @@ tbody tr:hover {
             </div>
     </section>
     
+</div>
+
+
+    <section class="block">
+        <h2>Primary Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>Closeout | Preferred Area</td><td>20</td><td>40.0%</td><td>10.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td>Closeout | Preferred Area</td><td>31</td><td>38.7%</td><td>58.5%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>Closeout | Preferred Area</td><td>88</td><td>37.5%</td><td>35.5%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>155</td><td>32.3%</td><td>59.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>Volume 3PT | Preferred Area</td><td>57</td><td>26.3%</td><td>27.5%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>Volume 3PT | Preferred Area</td><td>47</td><td>25.5%</td><td>25.7%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td>Volume 3PT</td><td>29</td><td>17.2%</td><td>65.9%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Silva</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>31.2</td><td>12.2</td><td>155</td><td>32.3%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td>26.3</td><td>12.8</td><td>27</td><td>18.5%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>25.6</td><td>9.4</td><td>57</td><td>26.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>25.3</td><td>13.4</td><td>88</td><td>37.5%</td><td>Restricted Area</td><td>movement shooter</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>24.8</td><td>9.8</td><td>47</td><td>25.5%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>23.6</td><td>10.5</td><td>20</td><td>40.0%</td><td>Restricted Area</td><td>spot-up shooter</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>The main offensive references are M. Ivanovic and N. Hardy; load the scouting plan into those names first.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts start with S. Caetano, M. Roseiro, and C. Pinto; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from M. Ivanovic and A. Rivera; contest, but do not over-help into secondary advantages.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Their offense naturally flows toward Restricted Area; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially M. Ivanovic, N. Hardy, and S. Caetano; force them away from preferred areas.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup to rehearse first: A. Rivera | J. Powell | M. Ivanovic | N. Hardy | S. Caetano.</li><li>Secondary lineup to recognize: A. Rivera | C. Pinto | J. Powell | M. Ivanovic | N. Hardy.</li><li>Recognize the main duo/trio combinations: M. Ivanovic | N. Hardy and J. Powell | M. Ivanovic | N. Hardy.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Second-chance threat; the first stop is not enough against this team.</li><li>Do not lose S. Caetano and M. Roseiro in help-and-recover situations.</li></ul>
+            </div>
+            </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>20</td><td>40.0%</td><td>10.8%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td>31</td><td>38.7%</td><td>58.5%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>88</td><td>37.5%</td><td>35.5%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>155</td><td>32.3%</td><td>59.6%</td><td>0.9</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>155</td><td>32.3%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>57</td><td>26.3%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>47</td><td>25.5%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td>29</td><td>17.2%</td><td>0.7</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td>Above the Break 3</td><td>51.9%</td><td>30.4%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td>Restricted Area</td><td>43.0%</td><td>64.7%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td>Restricted Area</td><td>58.4%</td><td>65.7%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td>Restricted Area</td><td>31.0%</td><td>66.2%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td>Restricted Area</td><td>34.4%</td><td>68.3%</td><td>1.4</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td>Paint Non-RA</td><td>27.1%</td><td>35.7%</td><td>0.7</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td>Above the Break 3</td><td>49.1%</td><td>30.8%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Silva</span></div></td><td>Above the Break 3</td><td>40.6%</td><td>23.1%</td><td>0.7</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Restricted Area</td><td>494</td><td>66.8%</td><td>1.3</td><td>30.1%</td></tr><tr><td>Above the Break 3</td><td>421</td><td>29.0%</td><td>0.9</td><td>25.7%</td></tr><tr><td>Paint Non-RA</td><td>350</td><td>41.7%</td><td>0.8</td><td>21.3%</td></tr><tr><td>Mid-Range</td><td>265</td><td>34.7%</td><td>0.7</td><td>16.2%</td></tr><tr><td>Corner 3 Left</td><td>57</td><td>26.3%</td><td>0.8</td><td>3.5%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Lineups to Prepare For</summary><div class="detail-body">
+    <section class="block">
+        <h2>Lineups to Prepare For</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>A. Rivera | J. Powell | M. Ivanovic | N. Hardy | S. Caetano</td><td>148.6</td><td>78.9</td><td>61.6</td><td>17.2</td></tr><tr><td>Rotation lineup</td><td>A. Rivera | C. Pinto | J. Powell | M. Ivanovic | N. Hardy</td><td>100.4</td><td>80.1</td><td>65.7</td><td>14.3</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Ivanovic</span></div></td><td></td><td></td><td>25</td><td>31.2</td><td>12.2</td><td>2.6</td><td>3.0</td><td>1.6</td><td>1.6</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">N. Hardy</span></div></td><td></td><td></td><td>25</td><td>26.3</td><td>12.8</td><td>9.4</td><td>1.2</td><td>1.0</td><td>2.2</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Rivera</span></div></td><td></td><td></td><td>25</td><td>25.6</td><td>9.4</td><td>5.9</td><td>1.8</td><td>1.4</td><td>1.0</td><td>0.6</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Pinto</span></div></td><td></td><td></td><td>25</td><td>25.3</td><td>13.4</td><td>5.1</td><td>3.6</td><td>1.6</td><td>1.8</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Powell</span></div></td><td></td><td></td><td>25</td><td>24.8</td><td>9.8</td><td>2.9</td><td>3.4</td><td>1.0</td><td>1.9</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caetano</span></div></td><td></td><td></td><td>25</td><td>23.6</td><td>10.5</td><td>6.8</td><td>2.3</td><td>2.0</td><td>1.5</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Silva</span></div></td><td></td><td></td><td>20</td><td>13.0</td><td>3.4</td><td>2.8</td><td>0.4</td><td>0.3</td><td>0.4</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Polici</span></div></td><td></td><td></td><td>25</td><td>8.6</td><td>1.2</td><td>1.0</td><td>1.2</td><td>0.3</td><td>0.5</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Semedo</span></div></td><td></td><td></td><td>24</td><td>8.7</td><td>1.9</td><td>1.1</td><td>0.7</td><td>0.3</td><td>0.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Roseiro</span></div></td><td></td><td></td><td>24</td><td>7.1</td><td>2.2</td><td>0.5</td><td>1.1</td><td>0.1</td><td>0.4</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Silva</span></div></td><td></td><td></td><td>18</td><td>5.4</td><td>1.2</td><td>0.3</td><td>0.4</td><td>0.1</td><td>0.1</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Sumbane</span></div></td><td></td><td></td><td>13</td><td>5.0</td><td>1.3</td><td>1.1</td><td>0.1</td><td>0.2</td><td>0.4</td><td>0.1</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>M. Ivanovic | N. Hardy</td><td>528.3</td><td>80.0</td><td>59.7</td><td>20.3</td></tr><tr><td>trio</td><td>J. Powell | M. Ivanovic | N. Hardy</td><td>377.3</td><td>79.6</td><td>61.9</td><td>17.7</td></tr><tr><td>trio</td><td>M. Ivanovic | M. Roseiro | N. Hardy</td><td>56.9</td><td>94.9</td><td>55.6</td><td>39.4</td></tr><tr><td>duo</td><td>A. Rivera | L. Silva</td><td>47.6</td><td>93.3</td><td>56.3</td><td>37.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+</div>
 
 </div>
 </body>

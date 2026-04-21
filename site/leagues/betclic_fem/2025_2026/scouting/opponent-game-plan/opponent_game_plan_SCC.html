@@ -213,6 +213,34 @@ tbody tr:hover {
     grid-template-columns:1.2fr .8fr;
     gap:24px;
 }
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
 .compact-table table {
     font-size:13px;
 }
@@ -221,7 +249,7 @@ tbody tr:hover {
     padding:9px 8px;
 }
 @media (max-width: 1100px) {
-    .section-grid {
+    .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
 }
@@ -235,60 +263,60 @@ tbody tr:hover {
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>SC Coimbrões SANCHO PANZA</h1><div class="sub">Opponent Game Plan - SCC</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/SCC.png" alt="SC Coimbrões SANCHO PANZA logo"></div></div></div></div>
 </div>
 
-
+<div class="top-grid">
+    
     <section class="block">
         <h2>Team Identity vs League</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Pace</td><td>74.8</td><td>74.7</td><td>6</td><td>0</td></tr><tr><td>OffRtg</td><td>85.9</td><td>95.7</td><td>12</td><td>-9.7</td></tr><tr><td>DefRtg</td><td>99.8</td><td>95.6</td><td>11</td><td>4.3</td></tr><tr><td>NetRtg</td><td>-13.9</td><td>0.1</td><td>12</td><td>-14</td></tr><tr><td>AST/G</td><td>10</td><td>15.6</td><td>12</td><td>-5.6</td></tr><tr><td>TOV%</td><td>21.2</td><td>20.9</td><td>6</td><td>0.3</td></tr><tr><td>ORB%</td><td>32.6</td><td>30.4</td><td>4</td><td>2.2</td></tr><tr><td>PF/G</td><td>19.4</td><td>17.2</td><td>12</td><td>2.2</td></tr><tr><td>FT Rate</td><td>35</td><td>31.5</td><td>2</td><td>3.5</td></tr><tr><td>3PA Rate</td><td>28.9</td><td>35.3</td><td>12</td><td>-6.4</td></tr></tbody>
+                <tbody><tr><td>Pace</td><td>74.8</td><td>74.8</td><td>5</td><td>0</td></tr><tr><td>OffRtg</td><td>85.9</td><td>95.7</td><td>12</td><td>-9.7</td></tr><tr><td>DefRtg</td><td>99.8</td><td>96</td><td>11</td><td>3.8</td></tr><tr><td>NetRtg</td><td>-13.9</td><td>-0.3</td><td>12</td><td>-13.6</td></tr><tr><td>AST/G</td><td>10</td><td>15.4</td><td>12</td><td>-5.4</td></tr><tr><td>TOV%</td><td>21.2</td><td>20.7</td><td>7</td><td>0.5</td></tr><tr><td>ORB%</td><td>32.6</td><td>30.5</td><td>4</td><td>2.2</td></tr><tr><td>PF/G</td><td>19.4</td><td>17.4</td><td>12</td><td>2</td></tr><tr><td>FT Rate</td><td>35</td><td>31.8</td><td>2</td><td>3.2</td></tr><tr><td>3PA Rate</td><td>28.9</td><td>35.3</td><td>12</td><td>-6.4</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Above-average foul volume; contact pressure and discipline both matter in this matchup.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
+</div>
+
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Know the first reference: L. Golding is a paint finisher, and the plan should start with taking away his comfort.</li></ul></div></section>
+    
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">A. Cristovao, D. Baptista, E. Silva</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Paint help rule</div>
+                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">D. Baptista | L. Golding | M. Marinho | M. Monteiro | Z. Carter</div>
+            </div>
+            </div>
+    </section>
+    
+</div>
+
+
+    <section class="block">
+        <h2>Primary Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Cristovao</span></div></td><td>Closeout</td><td>10</td><td>30.0%</td><td>25.0%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Baptista</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>44</td><td>29.5%</td><td>83.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Silva</span></div></td><td>Closeout | Preferred Area</td><td>41</td><td>26.8%</td><td>59.4%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Marinho</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>92</td><td>26.1%</td><td>33.5%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Monteiro</span></div></td><td>Volume 3PT | Preferred Area</td><td>70</td><td>17.1%</td><td>32.4%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Peres</span></div></td><td>Volume 3PT | Preferred Area</td><td>50</td><td>26.0%</td><td>64.9%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Golding</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">Z. Carter</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Primm</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
     
 
-<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Above-average foul volume; contact pressure and discipline both matter in this matchup.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
-
-
-    <section class="block">
-        <h2>Overview</h2>
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-title">Most-Used Player</div>
-                <div class="card-value">M. Marinho</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Primary Scorer</div>
-                <div class="card-value">L. Golding</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Top 3PT Threat</div>
-                <div class="card-value">M. Marinho (26.1%)</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Preferred Team Scoring Area</div>
-                <div class="card-value">Paint Non-RA</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Most-Used Lineup</div>
-                <div class="card-value">D. Baptista | L. Golding | M. Marinho | M. Monteiro | Z. Carter</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Best-Performing Lineup</div>
-                <div class="card-value">D. Baptista | L. Golding | M. Marinho | M. Monteiro | Z. Carter</div>
-            </div>
-            </div>
-    </section>
-    
-
-<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Know the first reference: L. Golding is a paint finisher, and the plan should start with taking away his comfort.</li></ul></div></section>
-
-
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
     <section class="block">
         <h2>Key Players</h2>
         <div class="table-wrap">
@@ -298,9 +326,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
-
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
     <section class="block">
         <h2>Scouting Notes</h2>
         <div class="notes-grid">
@@ -330,22 +357,8 @@ tbody tr:hover {
             </div>
             </div>
     </section>
-    
-
-<div class="section-grid">
-    <div>
-        
-    <section class="block">
-        <h2>Primary Shooting Threats</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Cristovao</span></div></td><td>Closeout</td><td>10</td><td>30.0%</td><td>25.0%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Baptista</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>44</td><td>29.5%</td><td>83.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Silva</span></div></td><td>Closeout | Preferred Area</td><td>41</td><td>26.8%</td><td>59.4%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Marinho</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>92</td><td>26.1%</td><td>33.5%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Monteiro</span></div></td><td>Volume 3PT | Preferred Area</td><td>70</td><td>17.1%</td><td>32.4%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Peres</span></div></td><td>Volume 3PT | Preferred Area</td><td>50</td><td>26.0%</td><td>64.9%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Golding</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">Z. Carter</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Primm</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
     <section class="block">
         <h2>Priority Closeouts</h2>
         <div class="table-wrap compact-table">
@@ -355,8 +368,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
     <section class="block">
         <h2>Volume, Lower Efficiency</h2>
         <div class="table-wrap compact-table">
@@ -366,10 +379,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-    </div>
-    <div>
-        
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
     <section class="block">
         <h2>Preferred Scoring Areas</h2>
         <div class="table-wrap compact-table">
@@ -379,8 +390,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
     <section class="block">
         <h2>Team Shot Map Summary</h2>
         <div class="table-wrap compact-table">
@@ -390,8 +401,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Lineups to Prepare For</summary><div class="detail-body">
     <section class="block">
         <h2>Lineups to Prepare For</h2>
         <div class="table-wrap">
@@ -401,11 +412,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-    </div>
-</div>
-
-
+    </div></details>
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
     <section class="block">
         <h2>Roster</h2>
         <div class="table-wrap">
@@ -415,8 +423,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
     <section class="block">
         <h2>Duos / Trios to Recognize</h2>
         <div class="table-wrap">
@@ -426,28 +434,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
-    <section class="block">
-        <h2>Scout Team Emphasis</h2>
-        <div class="mini-grid">
-            <div class="mini-card">
-                <div class="mini-label">Matchups to rehearse</div>
-                <div class="mini-value">A. Cristovao, D. Baptista, E. Silva</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Paint help rule</div>
-                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Recognition lineup</div>
-                <div class="mini-value">D. Baptista | L. Golding | M. Marinho | M. Monteiro | Z. Carter</div>
-            </div>
-            </div>
-    </section>
-    
+    </div></details>
+</div>
 
 </div>
 </body>
