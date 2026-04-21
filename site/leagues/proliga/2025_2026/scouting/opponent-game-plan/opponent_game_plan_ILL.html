@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Opponent Game Plan - Illiabum MARGRES</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+:root {
+    --bg:#08111f;
+    --bg-2:#0b1324;
+    --panel:rgba(15,23,42,.95);
+    --panel-soft:#111c31;
+    --panel-muted:#07101f;
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --line:#2c3f5f;
+    --accent:#38bdf8;
+    --good:#4ade80;
+    --bad:#f87171;
+}
+
+body {
+    margin:0;
+    background:radial-gradient(circle at top, #12203b 0%, #08111f 38%, #050b14 100%);
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--text);
+}
+.container {
+    max-width:1500px;
+    margin:auto;
+    padding:24px;
+}
+.hero-shell {
+    margin-bottom:24px;
+}
+.hero-shell > * {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:0 18px 40px rgba(0,0,0,.22);
+}
+.block {
+    background:var(--panel);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:24px;
+    border:1px solid var(--line);
+    box-shadow:0 14px 34px rgba(0,0,0,.16);
+}
+.block h2 {
+    margin:0 0 14px 0;
+    font-size:22px;
+    line-height:1.2;
+}
+.table-wrap {
+    overflow-x:auto;
+}
+table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+th {
+    background:var(--panel-soft);
+    color:var(--text);
+    padding:10px 8px;
+    text-align:left;
+    white-space:nowrap;
+    border-bottom:1px solid var(--line);
+}
+td {
+    padding:10px 8px;
+    border-bottom:1px solid rgba(148,163,184,.12);
+    vertical-align:middle;
+}
+tbody tr:hover {
+    background:rgba(56,189,248,.06);
+}
+.player-cell {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.avatar {
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ccc;
+    flex:0 0 28px;
+    border:1px solid rgba(148,163,184,.24);
+}
+.avatar img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+.avatar-empty {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    color:#111827;
+    font-weight:bold;
+}
+.card-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.card {
+    background:var(--panel-muted);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+}
+.card-title {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.card-value {
+    font-size:17px;
+    font-weight:800;
+    line-height:1.4;
+}
+.notes-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+}
+.note-card {
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    background:var(--panel-muted);
+}
+.note-card h3 {
+    margin:0 0 10px 0;
+    font-size:16px;
+}
+.note-card ul, .keys-card ul {
+    margin:0;
+    padding-left:18px;
+}
+.note-card li, .keys-card li {
+    margin-bottom:8px;
+    line-height:1.5;
+}
+.keys-card {
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    background:var(--panel-muted);
+}
+.mini-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.mini-card {
+    background:var(--panel-muted);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+}
+.mini-label {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.mini-value {
+    font-size:16px;
+    font-weight:800;
+    line-height:1.45;
+}
+.empty {
+    color:var(--muted);
+    font-style:italic;
+}
+.section-grid {
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+}
+.compact-table table {
+    font-size:13px;
+}
+.compact-table th,
+.compact-table td {
+    padding:9px 8px;
+}
+@media (max-width: 1100px) {
+    .section-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Proliga </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Proliga </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Proliga · 2025-2026 </div></div></header>
+<div class="container">
+
+<div class="hero-shell">
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Illiabum MARGRES</h1><div class="sub">Opponent Game Plan - ILL</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/ILL.png" alt="Illiabum MARGRES logo"></div></div></div></div>
+</div>
+
+
+    <section class="block">
+        <h2>Team Identity vs League</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
+                <tbody><tr><td>Pace</td><td>75</td><td>76.9</td><td>16</td><td>-1.9</td></tr><tr><td>OffRtg</td><td>107</td><td>99.1</td><td>4</td><td>7.9</td></tr><tr><td>DefRtg</td><td>90.3</td><td>98.5</td><td>2</td><td>-8.1</td></tr><tr><td>NetRtg</td><td>16.6</td><td>0.6</td><td>2</td><td>16</td></tr><tr><td>AST/G</td><td>19.4</td><td>15.8</td><td>1</td><td>3.7</td></tr><tr><td>TOV%</td><td>21.2</td><td>20.7</td><td>10</td><td>0.5</td></tr><tr><td>ORB%</td><td>36.4</td><td>31.2</td><td>3</td><td>5.3</td></tr><tr><td>PF/G</td><td>19.6</td><td>19.1</td><td>12</td><td>0.5</td></tr><tr><td>FT Rate</td><td>39.2</td><td>33.7</td><td>2</td><td>5.5</td></tr><tr><td>3PA Rate</td><td>35.5</td><td>38.2</td><td>12</td><td>-2.7</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Below-average pace; they are more comfortable when the game stays organized in the half court.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Above-average assist profile; expect cleaner passing sequences and more extra-pass possessions.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Foul profile sits near league average; physicality is part of the game, but not their defining trait.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
+
+
+    <section class="block">
+        <h2>Overview</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">Most-Used Player</div>
+                <div class="card-value">H. Neto</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Primary Scorer</div>
+                <div class="card-value">R. Mitchell</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Top 3PT Threat</div>
+                <div class="card-value">R. Mitchell (31.2%)</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Preferred Team Scoring Area</div>
+                <div class="card-value">Restricted Area</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Most-Used Lineup</div>
+                <div class="card-value">F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">Best-Performing Lineup</div>
+                <div class="card-value">F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe</div>
+            </div>
+            </div>
+    </section>
+    
+
+<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Control the rhythm: they are more comfortable in a controlled half-court game, so do not let them play cleanly into structure.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Know the first reference: R. Mitchell is a primary scorer, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: H. Neto, J. Martinho are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+
+
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Neto</span></div></td><td>30.3</td><td>14.0</td><td>34</td><td>41.2%</td><td>Restricted Area</td><td>spot-up shooter</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Martinho</span></div></td><td>25.9</td><td>8.6</td><td>77</td><td>36.4%</td><td>Above the Break 3</td><td>movement shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Mitchell</span></div></td><td>29.5</td><td>17.1</td><td>96</td><td>31.2%</td><td>Above the Break 3</td><td>primary scorer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">P. Costa</span></div></td><td>19.3</td><td>5.7</td><td>75</td><td>18.7%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Cristo</span></div></td><td>19.8</td><td>8.7</td><td>71</td><td>33.8%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Nunes</span></div></td><td>23.4</td><td>7.0</td><td>43</td><td>23.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>The main offensive references are H. Neto and J. Martinho; load the scouting plan into those names first.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts start with H. Neto, J. Martinho, and R. Cristo; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from R. Mitchell and P. Costa; contest, but do not over-help into secondary advantages.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Their offense naturally flows toward Restricted Area; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially H. Neto, R. Mitchell, and J. Martinho; force them away from preferred areas.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup to rehearse first: F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe.</li><li>Secondary lineup to recognize: F. Nunes | H. Neto | J. Martinho | M. Sico | R. Mitchell.</li><li>Recognize the main duo/trio combinations: H. Neto | J. Martinho and H. Neto | J. Martinho | R. Mitchell.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Second-chance threat; the first stop is not enough against this team.</li><li>Do not lose H. Neto and J. Martinho in help-and-recover situations.</li></ul>
+            </div>
+            </div>
+    </section>
+    
+
+<div class="section-grid">
+    <div>
+        
+    <section class="block">
+        <h2>Primary Shooting Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Neto</span></div></td><td>Closeout | Preferred Area</td><td>34</td><td>41.2%</td><td>15.2%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Martinho</span></div></td><td>Closeout | Preferred Area</td><td>77</td><td>36.4%</td><td>44.3%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Cristo</span></div></td><td>Closeout | Preferred Area</td><td>71</td><td>33.8%</td><td>41.5%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Mitchell</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>96</td><td>31.2%</td><td>42.7%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">P. Costa</span></div></td><td>Volume 3PT | Preferred Area</td><td>75</td><td>18.7%</td><td>49.7%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caldeira</span></div></td><td>Volume 3PT | Preferred Area</td><td>53</td><td>26.4%</td><td>50.0%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Nunes</span></div></td><td>Volume 3PT</td><td>43</td><td>23.3%</td><td>33.1%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Arikawe</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Ketner</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Neto</span></div></td><td>34</td><td>41.2%</td><td>15.2%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Martinho</span></div></td><td>77</td><td>36.4%</td><td>44.3%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Cristo</span></div></td><td>71</td><td>33.8%</td><td>41.5%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Mitchell</span></div></td><td>96</td><td>31.2%</td><td>42.7%</td><td>1.0</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Mitchell</span></div></td><td>96</td><td>31.2%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">P. Costa</span></div></td><td>75</td><td>18.7%</td><td>0.7</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caldeira</span></div></td><td>53</td><td>26.4%</td><td>0.8</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Nunes</span></div></td><td>43</td><td>23.3%</td><td>0.8</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+    <div>
+        
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Neto</span></div></td><td>Restricted Area</td><td>54.0%</td><td>76.0%</td><td>1.5</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Mitchell</span></div></td><td>Above the Break 3</td><td>30.2%</td><td>27.9%</td><td>0.8</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Martinho</span></div></td><td>Above the Break 3</td><td>37.9%</td><td>37.9%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">P. Costa</span></div></td><td>Above the Break 3</td><td>38.4%</td><td>15.5%</td><td>0.5</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Cristo</span></div></td><td>Above the Break 3</td><td>26.9%</td><td>41.3%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caldeira</span></div></td><td>Above the Break 3</td><td>42.5%</td><td>26.7%</td><td>0.8</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Arikawe</span></div></td><td>Restricted Area</td><td>39.6%</td><td>55.6%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Ketner</span></div></td><td>Restricted Area</td><td>44.9%</td><td>62.9%</td><td>1.3</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Restricted Area</td><td>456</td><td>65.6%</td><td>1.3</td><td>29.3%</td></tr><tr><td>Above the Break 3</td><td>393</td><td>28.5%</td><td>0.9</td><td>25.3%</td></tr><tr><td>Paint Non-RA</td><td>377</td><td>46.2%</td><td>0.9</td><td>24.3%</td></tr><tr><td>Mid-Range</td><td>207</td><td>30.0%</td><td>0.6</td><td>13.3%</td></tr><tr><td>Corner 3 Left</td><td>66</td><td>34.8%</td><td>1.0</td><td>4.2%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+        
+    <section class="block">
+        <h2>Lineups to Prepare For</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe</td><td>100.7</td><td>68.7</td><td>66.4</td><td>2.4</td></tr><tr><td>Rotation lineup</td><td>F. Nunes | H. Neto | J. Martinho | M. Sico | R. Mitchell</td><td>66.0</td><td>74.0</td><td>76.4</td><td>-2.4</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    </div>
+</div>
+
+
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Neto</span></div></td><td></td><td></td><td>25</td><td>30.3</td><td>14.0</td><td>9.2</td><td>1.6</td><td>1.8</td><td>2.4</td><td>0.6</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Martinho</span></div></td><td></td><td></td><td>25</td><td>25.9</td><td>8.6</td><td>3.8</td><td>4.7</td><td>1.5</td><td>2.7</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Mitchell</span></div></td><td></td><td></td><td>20</td><td>29.5</td><td>17.1</td><td>4.2</td><td>1.6</td><td>0.7</td><td>2.0</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">P. Costa</span></div></td><td></td><td></td><td>25</td><td>19.3</td><td>5.7</td><td>2.5</td><td>2.3</td><td>0.7</td><td>1.4</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Cristo</span></div></td><td></td><td></td><td>24</td><td>19.8</td><td>8.7</td><td>3.0</td><td>1.0</td><td>0.7</td><td>1.6</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Nunes</span></div></td><td></td><td></td><td>19</td><td>23.4</td><td>7.0</td><td>2.8</td><td>2.1</td><td>0.7</td><td>1.8</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">S. Caldeira</span></div></td><td></td><td></td><td>23</td><td>19.0</td><td>4.3</td><td>3.3</td><td>1.3</td><td>0.9</td><td>0.8</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Sico</span></div></td><td></td><td></td><td>25</td><td>14.4</td><td>4.2</td><td>3.5</td><td>1.0</td><td>0.6</td><td>1.2</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Alves</span></div></td><td></td><td></td><td>25</td><td>12.2</td><td>3.8</td><td>1.8</td><td>1.0</td><td>0.2</td><td>1.1</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Arikawe</span></div></td><td></td><td></td><td>12</td><td>20.9</td><td>8.3</td><td>4.7</td><td>0.9</td><td>0.3</td><td>2.0</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Ketner</span></div></td><td></td><td></td><td>10</td><td>15.6</td><td>8.7</td><td>4.3</td><td>0.6</td><td>0.6</td><td>2.1</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">P. Lopes</span></div></td><td></td><td></td><td>22</td><td>4.1</td><td>1.2</td><td>0.4</td><td>0.4</td><td>0.3</td><td>0.5</td><td>0.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>H. Neto | J. Martinho</td><td>533.9</td><td>77.1</td><td>68.6</td><td>8.5</td></tr><tr><td>trio</td><td>H. Neto | J. Martinho | R. Mitchell</td><td>327.8</td><td>75.2</td><td>68.2</td><td>7.0</td></tr><tr><td>trio</td><td>H. Neto | M. Sico | P. Costa</td><td>101.5</td><td>72.9</td><td>56.4</td><td>16.6</td></tr><tr><td>duo</td><td>R. Cristo | T. Ketner</td><td>99.8</td><td>91.0</td><td>63.3</td><td>27.7</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">H. Neto, J. Martinho, R. Cristo</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Paint help rule</div>
+                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe</div>
+            </div>
+            </div>
+    </section>
+    
+
+</div>
+</body>
+</html>
