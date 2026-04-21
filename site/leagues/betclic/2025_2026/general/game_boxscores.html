@@ -122,6 +122,11 @@
       </div>
 
       <div class="card">
+        <div class="section-head">Game vs Season Averages</div>
+        <div class="section-body" id="game-vs-season"></div>
+      </div>
+
+      <div class="card">
         <div class="section-head">Quick Read</div>
         <div class="section-body" id="quick-read"></div>
       </div>
@@ -342,6 +347,86 @@
         `;
       }).join('');
       document.getElementById('team-summary').innerHTML = `<div class="summary-grid">${htmlBlocks}</div>`;
+    }
+
+    function getSeasonAverages(teamKey, currentGameCode) {
+      const rows = RAW_GAME_CONTEXT.filter(r =>
+        r.team_key === teamKey &&
+        r.game_code !== currentGameCode
+      );
+
+      if (!rows.length) return null;
+
+      function avg(key) {
+        const vals = rows.map(r => r[key]).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+        if (!vals.length) return null;
+        return vals.reduce((a,b) => a + b, 0) / vals.length;
+      }
+
+      return {
+        off_rating: avg('off_rating'),
+        def_rating: avg('def_rating'),
+        net_rating: avg('net_rating'),
+        pace: avg('pace'),
+        efg_pct_off: avg('efg_pct_off'),
+        tov_pct_off: avg('tov_pct_off'),
+        orb_pct_off: avg('orb_pct_off'),
+        ftr_off: avg('ftr_off'),
+      };
+    }
+
+    function renderGameVsSeason(meta) {
+      const teams = meta.teams || [];
+      const metrics = [
+        { key:'off_rating', label:'OffRtg', pct:false },
+        { key:'def_rating', label:'DefRtg', pct:false },
+        { key:'net_rating', label:'NetRtg', pct:false },
+        { key:'pace', label:'Pace', pct:false },
+        { key:'efg_pct_off', label:'eFG%', pct:true },
+        { key:'tov_pct_off', label:'TOV%', pct:true },
+        { key:'orb_pct_off', label:'ORB%', pct:true },
+        { key:'ftr_off', label:'FT Rate', pct:true },
+      ];
+
+      const blocks = teams.map(team => {
+        const game = getContextRow(meta.game_code, team.team_key) || {};
+        const season = getSeasonAverages(team.team_key, meta.game_code);
+
+        if (!season) {
+          return `
+            <div class="team-summary-card">
+              <div class="team-summary-title">${escapeHtml(team.team_name || team.team_key || '')}</div>
+              <div class="empty">Not enough season context to compare this game against team averages.</div>
+            </div>
+          `;
+        }
+
+        const rows = metrics.map(m => {
+          const gv = game[m.key];
+          const sv = season[m.key];
+          const delta = (gv !== null && gv !== undefined && sv !== null && sv !== undefined && !Number.isNaN(gv) && !Number.isNaN(sv))
+            ? Number(gv) - Number(sv)
+            : null;
+          const valueFmt = m.pct ? fmtPct : fmtNum;
+          const deltaFmt = m.pct ? fmtPct : (v => fmtSigned(v, 1));
+          return `
+            <div class="metric-card">
+              <div class="metric-label">${escapeHtml(m.label)}</div>
+              <div class="metric-value">${valueFmt(gv)}</div>
+              <div class="player-sub">Season ${valueFmt(sv)} · Δ ${delta === null ? '—' : deltaFmt(delta)}</div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="team-summary-card">
+            <div class="team-summary-title">${escapeHtml(team.team_name || team.team_key || '')}</div>
+            <div class="metrics-grid">${rows}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('game-vs-season').innerHTML = `<div class="summary-grid">${blocks}</div>`;
     }
 
     function renderQuickRead(meta) {
@@ -614,6 +699,7 @@
 
       renderGameHeader(meta, totals);
       renderTeamSummary(meta);
+      renderGameVsSeason(meta);
       renderQuickRead(meta);
       renderGameFactors(meta);
       renderTopPerformers(meta);
