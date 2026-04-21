@@ -213,6 +213,34 @@ tbody tr:hover {
     grid-template-columns:1.2fr .8fr;
     gap:24px;
 }
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
 .compact-table table {
     font-size:13px;
 }
@@ -221,7 +249,7 @@ tbody tr:hover {
     padding:9px 8px;
 }
 @media (max-width: 1100px) {
-    .section-grid {
+    .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
 }
@@ -235,7 +263,8 @@ tbody tr:hover {
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Esgueira Aveiro OLI</h1><div class="sub">Opponent Game Plan - ESG</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/ESG.png" alt="Esgueira Aveiro OLI logo"></div></div></div></div>
 </div>
 
-
+<div class="top-grid">
+    
     <section class="block">
         <h2>Team Identity vs League</h2>
         <div class="table-wrap compact-table">
@@ -246,49 +275,48 @@ tbody tr:hover {
         </div>
     </section>
     
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Limited offensive rebounding impact; finishing the first contest usually kills the possession.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Better-than-average ball security; they do not hand away many live possessions.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
+</div>
 
-<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Limited offensive rebounding impact; finishing the first contest usually kills the possession.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Better-than-average ball security; they do not hand away many live possessions.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
-
-
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Win the first action: they do not consistently hurt teams with second-chance volume, so clean first stops carry value.</li><li>Know the first reference: D. Barnstable is a movement shooter, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: B. Tong, L. Reid are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+    
     <section class="block">
-        <h2>Overview</h2>
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-title">Most-Used Player</div>
-                <div class="card-value">D. Barnstable</div>
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">B. Tong, L. Reid, D. Barnstable</div>
             </div>
             
-            <div class="card">
-                <div class="card-title">Primary Scorer</div>
-                <div class="card-value">D. Barnstable</div>
+            <div class="mini-card">
+                <div class="mini-label">Primary area</div>
+                <div class="mini-value">Above the Break 3</div>
             </div>
             
-            <div class="card">
-                <div class="card-title">Top 3PT Threat</div>
-                <div class="card-value">D. Barnstable (35.8%)</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Preferred Team Scoring Area</div>
-                <div class="card-value">Above the Break 3</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Most-Used Lineup</div>
-                <div class="card-value">D. Barnstable | E. Garita | H. Ferreira | M. Porter | N. Bilamu</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Best-Performing Lineup</div>
-                <div class="card-value">D. Barnstable | E. Garita | H. Ferreira | M. Porter | N. Bilamu</div>
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">D. Barnstable | E. Garita | H. Ferreira | M. Porter | N. Bilamu</div>
             </div>
             </div>
     </section>
     
+</div>
 
-<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Win the first action: they do not consistently hurt teams with second-chance volume, so clean first stops carry value.</li><li>Know the first reference: D. Barnstable is a movement shooter, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: B. Tong, L. Reid are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
 
+    <section class="block">
+        <h2>Primary Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_B._TONG.png"></div><span class="player-name">B. Tong</span></div></td><td>Closeout</td><td>36</td><td>38.9%</td><td>69.2%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_L._REID.png"></div><span class="player-name">L. Reid</span></div></td><td>Closeout | Preferred Area</td><td>26</td><td>38.5%</td><td>24.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_D._BARNSTABLE.png"></div><span class="player-name">D. Barnstable</span></div></td><td>Closeout | Preferred Area</td><td>137</td><td>35.8%</td><td>42.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_H._FERREIRA.png"></div><span class="player-name">H. Ferreira</span></div></td><td>Closeout | Preferred Area</td><td>126</td><td>34.9%</td><td>61.8%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_N._BILAMU.png"></div><span class="player-name">N. Bilamu</span></div></td><td>Volume 3PT | Preferred Area</td><td>122</td><td>27.0%</td><td>55.5%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Gordon JR</span></div></td><td>Volume 3PT | Preferred Area</td><td>53</td><td>32.1%</td><td>66.2%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_D._BARKER.png"></div><span class="player-name">D. Barker</span></div></td><td>Volume 3PT | Preferred Area</td><td>39</td><td>30.8%</td><td>52.0%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_T._BARRETO.png"></div><span class="player-name">T. Barreto</span></div></td><td>Volume 3PT</td><td>29</td><td>31.0%</td><td>64.4%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_M._PORTER.png"></div><span class="player-name">M. Porter</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_E._GARITA.png"></div><span class="player-name">E. Garita</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
 
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
     <section class="block">
         <h2>Key Players</h2>
         <div class="table-wrap">
@@ -298,9 +326,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
-
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
     <section class="block">
         <h2>Scouting Notes</h2>
         <div class="notes-grid">
@@ -330,22 +357,8 @@ tbody tr:hover {
             </div>
             </div>
     </section>
-    
-
-<div class="section-grid">
-    <div>
-        
-    <section class="block">
-        <h2>Primary Shooting Threats</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_B._TONG.png"></div><span class="player-name">B. Tong</span></div></td><td>Closeout</td><td>36</td><td>38.9%</td><td>69.2%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_L._REID.png"></div><span class="player-name">L. Reid</span></div></td><td>Closeout | Preferred Area</td><td>26</td><td>38.5%</td><td>24.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_D._BARNSTABLE.png"></div><span class="player-name">D. Barnstable</span></div></td><td>Closeout | Preferred Area</td><td>137</td><td>35.8%</td><td>42.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_H._FERREIRA.png"></div><span class="player-name">H. Ferreira</span></div></td><td>Closeout | Preferred Area</td><td>126</td><td>34.9%</td><td>61.8%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_N._BILAMU.png"></div><span class="player-name">N. Bilamu</span></div></td><td>Volume 3PT | Preferred Area</td><td>122</td><td>27.0%</td><td>55.5%</td><td>Above the Break 3</td><td>Contest volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Gordon JR</span></div></td><td>Volume 3PT | Preferred Area</td><td>53</td><td>32.1%</td><td>66.2%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_D._BARKER.png"></div><span class="player-name">D. Barker</span></div></td><td>Volume 3PT | Preferred Area</td><td>39</td><td>30.8%</td><td>52.0%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_T._BARRETO.png"></div><span class="player-name">T. Barreto</span></div></td><td>Volume 3PT</td><td>29</td><td>31.0%</td><td>64.4%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_M._PORTER.png"></div><span class="player-name">M. Porter</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESG/ESG_E._GARITA.png"></div><span class="player-name">E. Garita</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
     <section class="block">
         <h2>Priority Closeouts</h2>
         <div class="table-wrap compact-table">
@@ -355,8 +368,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
     <section class="block">
         <h2>Volume, Lower Efficiency</h2>
         <div class="table-wrap compact-table">
@@ -366,10 +379,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-    </div>
-    <div>
-        
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
     <section class="block">
         <h2>Preferred Scoring Areas</h2>
         <div class="table-wrap compact-table">
@@ -379,8 +390,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
     <section class="block">
         <h2>Team Shot Map Summary</h2>
         <div class="table-wrap compact-table">
@@ -390,8 +401,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Lineups to Prepare For</summary><div class="detail-body">
     <section class="block">
         <h2>Lineups to Prepare For</h2>
         <div class="table-wrap">
@@ -401,11 +412,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-    </div>
-</div>
-
-
+    </div></details>
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
     <section class="block">
         <h2>Roster</h2>
         <div class="table-wrap">
@@ -415,8 +423,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
     <section class="block">
         <h2>Duos / Trios to Recognize</h2>
         <div class="table-wrap">
@@ -426,28 +434,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
-    <section class="block">
-        <h2>Scout Team Emphasis</h2>
-        <div class="mini-grid">
-            <div class="mini-card">
-                <div class="mini-label">Matchups to rehearse</div>
-                <div class="mini-value">B. Tong, L. Reid, D. Barnstable</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Primary area</div>
-                <div class="mini-value">Above the Break 3</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Recognition lineup</div>
-                <div class="mini-value">D. Barnstable | E. Garita | H. Ferreira | M. Porter | N. Bilamu</div>
-            </div>
-            </div>
-    </section>
-    
+    </div></details>
+</div>
 
 </div>
 </body>

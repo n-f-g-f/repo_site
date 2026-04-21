@@ -213,6 +213,34 @@ tbody tr:hover {
     grid-template-columns:1.2fr .8fr;
     gap:24px;
 }
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
 .compact-table table {
     font-size:13px;
 }
@@ -221,7 +249,7 @@ tbody tr:hover {
     padding:9px 8px;
 }
 @media (max-width: 1100px) {
-    .section-grid {
+    .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
 }
@@ -235,7 +263,8 @@ tbody tr:hover {
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>SL Benfica</h1><div class="sub">Opponent Game Plan - SLB</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/SLB.png" alt="SL Benfica logo"></div></div></div></div>
 </div>
 
-
+<div class="top-grid">
+    
     <section class="block">
         <h2>Team Identity vs League</h2>
         <div class="table-wrap compact-table">
@@ -246,49 +275,43 @@ tbody tr:hover {
         </div>
     </section>
     
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Above-average pace; expect a game that can speed up if you allow early flow.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Above-average assist profile; expect cleaner passing sequences and more extra-pass possessions.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Foul profile sits near league average; physicality is part of the game, but not their defining trait.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
+</div>
 
-<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Above-average pace; expect a game that can speed up if you allow early flow.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Above-average assist profile; expect cleaner passing sequences and more extra-pass possessions.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Second-chance threat; the first stop is not enough against this team.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Foul profile sits near league average; physicality is part of the game, but not their defining trait.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
-
-
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Set the tempo early: if you let them run into flow, the game can speed up on their terms.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Load into A. Broussard: he is the main organizer, so make secondary creators finish possessions.</li><li>Closeout discipline matters: D. Gameiro, J. Silva are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+    
     <section class="block">
-        <h2>Overview</h2>
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-title">Most-Used Player</div>
-                <div class="card-value">A. Broussard</div>
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">D. Gameiro, J. Silva, A. Broussard</div>
             </div>
             
-            <div class="card">
-                <div class="card-title">Primary Scorer</div>
-                <div class="card-value">A. Broussard</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Top 3PT Threat</div>
-                <div class="card-value">J. Silva (43.6%)</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Preferred Team Scoring Area</div>
-                <div class="card-value">Restricted Area</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Most-Used Lineup</div>
-                <div class="card-value">A. Broussard | A. Dziewa | G. Crandall | J. Sueing | M. Romdhane</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Best-Performing Lineup</div>
-                <div class="card-value">A. Broussard | D. Relvao | G. Crandall | J. Sueing | M. Romdhane</div>
+            <div class="mini-card">
+                <div class="mini-label">Paint help rule</div>
+                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
             </div>
             </div>
     </section>
     
+</div>
 
-<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Set the tempo early: if you let them run into flow, the game can speed up on their terms.</li><li>Finish possessions: the first stop is not enough against this team because the offensive glass is a real source of extra points.</li><li>Load into A. Broussard: he is the main organizer, so make secondary creators finish possessions.</li><li>Closeout discipline matters: D. Gameiro, J. Silva are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
 
+    <section class="block">
+        <h2>Primary Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_D._GAMEIRO.png"></div><span class="player-name">D. Gameiro</span></div></td><td>Closeout | Preferred Area</td><td>56</td><td>44.6%</td><td>51.9%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_J._SILVA.png"></div><span class="player-name">J. Silva</span></div></td><td>Closeout | Preferred Area</td><td>94</td><td>43.6%</td><td>82.5%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_A._BROUSSARD.png"></div><span class="player-name">A. Broussard</span></div></td><td>Closeout | Preferred Area</td><td>63</td><td>36.5%</td><td>28.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_B._GOMES.png"></div><span class="player-name">B. Gomes</span></div></td><td>Closeout</td><td>66</td><td>36.4%</td><td>66.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_G._CRANDALL.png"></div><span class="player-name">G. Crandall</span></div></td><td>Volume 3PT | Preferred Area</td><td>65</td><td>32.3%</td><td>47.8%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_E._FRANCISCO.png"></div><span class="player-name">E. Francisco</span></div></td><td>Volume 3PT</td><td>45</td><td>28.9%</td><td>60.0%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_A._DZIEWA.png"></div><span class="player-name">A. Dziewa</span></div></td><td>Volume 3PT | Preferred Area</td><td>38</td><td>21.1%</td><td>26.0%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_J._SUEING.png"></div><span class="player-name">J. Sueing</span></div></td><td>Volume 3PT</td><td>37</td><td>29.7%</td><td>38.5%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_R._YUSSUF.png"></div><span class="player-name">R. Yussuf</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_M._ROMDHANE.png"></div><span class="player-name">M. Romdhane</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_K._MCEWEN.png"></div><span class="player-name">K. McEwen</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
 
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
     <section class="block">
         <h2>Key Players</h2>
         <div class="table-wrap">
@@ -298,9 +321,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
-
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
     <section class="block">
         <h2>Scouting Notes</h2>
         <div class="notes-grid">
@@ -330,22 +352,8 @@ tbody tr:hover {
             </div>
             </div>
     </section>
-    
-
-<div class="section-grid">
-    <div>
-        
-    <section class="block">
-        <h2>Primary Shooting Threats</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_D._GAMEIRO.png"></div><span class="player-name">D. Gameiro</span></div></td><td>Closeout | Preferred Area</td><td>56</td><td>44.6%</td><td>51.9%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_J._SILVA.png"></div><span class="player-name">J. Silva</span></div></td><td>Closeout | Preferred Area</td><td>94</td><td>43.6%</td><td>82.5%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_A._BROUSSARD.png"></div><span class="player-name">A. Broussard</span></div></td><td>Closeout | Preferred Area</td><td>63</td><td>36.5%</td><td>28.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_B._GOMES.png"></div><span class="player-name">B. Gomes</span></div></td><td>Closeout</td><td>66</td><td>36.4%</td><td>66.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_G._CRANDALL.png"></div><span class="player-name">G. Crandall</span></div></td><td>Volume 3PT | Preferred Area</td><td>65</td><td>32.3%</td><td>47.8%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_E._FRANCISCO.png"></div><span class="player-name">E. Francisco</span></div></td><td>Volume 3PT</td><td>45</td><td>28.9%</td><td>60.0%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_A._DZIEWA.png"></div><span class="player-name">A. Dziewa</span></div></td><td>Volume 3PT | Preferred Area</td><td>38</td><td>21.1%</td><td>26.0%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_J._SUEING.png"></div><span class="player-name">J. Sueing</span></div></td><td>Volume 3PT</td><td>37</td><td>29.7%</td><td>38.5%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_R._YUSSUF.png"></div><span class="player-name">R. Yussuf</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_M._ROMDHANE.png"></div><span class="player-name">M. Romdhane</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/SLB/SLB_K._MCEWEN.png"></div><span class="player-name">K. McEwen</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
     <section class="block">
         <h2>Priority Closeouts</h2>
         <div class="table-wrap compact-table">
@@ -355,8 +363,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
     <section class="block">
         <h2>Volume, Lower Efficiency</h2>
         <div class="table-wrap compact-table">
@@ -366,10 +374,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-    </div>
-    <div>
-        
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
     <section class="block">
         <h2>Preferred Scoring Areas</h2>
         <div class="table-wrap compact-table">
@@ -379,8 +385,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
     <section class="block">
         <h2>Team Shot Map Summary</h2>
         <div class="table-wrap compact-table">
@@ -390,17 +396,9 @@ tbody tr:hover {
             </table>
         </div>
     </section>
+    </div></details>
     
-        
-        <section class="block">
-            <h2>Lineups to Prepare For</h2>
-            <div class="empty">No data</div>
-        </section>
-        
-    </div>
-</div>
-
-
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
     <section class="block">
         <h2>Roster</h2>
         <div class="table-wrap">
@@ -410,8 +408,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
     <section class="block">
         <h2>Duos / Trios to Recognize</h2>
         <div class="table-wrap">
@@ -421,23 +419,8 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-
-    <section class="block">
-        <h2>Scout Team Emphasis</h2>
-        <div class="mini-grid">
-            <div class="mini-card">
-                <div class="mini-label">Matchups to rehearse</div>
-                <div class="mini-value">D. Gameiro, J. Silva, A. Broussard</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Paint help rule</div>
-                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
-            </div>
-            </div>
-    </section>
-    
+    </div></details>
+</div>
 
 </div>
 </body>
