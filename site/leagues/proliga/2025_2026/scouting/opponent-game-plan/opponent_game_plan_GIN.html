@@ -213,6 +213,34 @@ tbody tr:hover {
     grid-template-columns:1.2fr .8fr;
     gap:24px;
 }
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
 .compact-table table {
     font-size:13px;
 }
@@ -221,7 +249,7 @@ tbody tr:hover {
     padding:9px 8px;
 }
 @media (max-width: 1100px) {
-    .section-grid {
+    .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
 }
@@ -235,72 +263,71 @@ tbody tr:hover {
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Casino Ginásio</h1><div class="sub">Opponent Game Plan - GIN</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/GIN.png" alt="Casino Ginásio logo"></div></div></div></div>
 </div>
 
-
+<div class="top-grid">
+    
     <section class="block">
         <h2>Team Identity vs League</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Pace</td><td>75.7</td><td>76.9</td><td>13</td><td>-1.2</td></tr><tr><td>OffRtg</td><td>101.6</td><td>99.1</td><td>8</td><td>2.4</td></tr><tr><td>DefRtg</td><td>106.4</td><td>98.5</td><td>16</td><td>8</td></tr><tr><td>NetRtg</td><td>-4.9</td><td>0.6</td><td>13</td><td>-5.5</td></tr><tr><td>AST/G</td><td>15</td><td>15.8</td><td>11</td><td>-0.8</td></tr><tr><td>TOV%</td><td>19.8</td><td>20.7</td><td>4</td><td>-0.9</td></tr><tr><td>ORB%</td><td>27.5</td><td>31.2</td><td>12</td><td>-3.6</td></tr><tr><td>PF/G</td><td>17.9</td><td>19.1</td><td>4</td><td>-1.2</td></tr><tr><td>FT Rate</td><td>28.2</td><td>33.7</td><td>15</td><td>-5.6</td></tr><tr><td>3PA Rate</td><td>34.7</td><td>38.2</td><td>14</td><td>-3.5</td></tr></tbody>
+                <tbody><tr><td>Pace</td><td>75.9</td><td>76.7</td><td>13</td><td>-0.8</td></tr><tr><td>OffRtg</td><td>101.5</td><td>99.5</td><td>9</td><td>2</td></tr><tr><td>DefRtg</td><td>105.8</td><td>99.2</td><td>16</td><td>6.5</td></tr><tr><td>NetRtg</td><td>-4.3</td><td>0.3</td><td>11</td><td>-4.5</td></tr><tr><td>AST/G</td><td>14.8</td><td>15.6</td><td>12</td><td>-0.8</td></tr><tr><td>TOV%</td><td>19.5</td><td>20.9</td><td>4</td><td>-1.4</td></tr><tr><td>ORB%</td><td>27.7</td><td>31.7</td><td>13</td><td>-4.1</td></tr><tr><td>PF/G</td><td>17.9</td><td>19</td><td>4</td><td>-1.1</td></tr><tr><td>FT Rate</td><td>27.7</td><td>33.1</td><td>16</td><td>-5.4</td></tr><tr><td>3PA Rate</td><td>34.6</td><td>38.2</td><td>15</td><td>-3.5</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Ball movement is close to league average; they can share it but are not purely pass-first.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Limited offensive rebounding impact; finishing the first contest usually kills the possession.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Better-than-average ball security; they do not hand away many live possessions.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
+</div>
+
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Win the first action: they do not consistently hurt teams with second-chance volume, so clean first stops carry value.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Load into J. McClary: he is the main organizer, so make secondary creators finish possessions.</li></ul></div></section>
+    
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">E. Fortes, J. McClary, B. Neves</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Paint help rule</div>
+                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary</div>
+            </div>
+            </div>
+    </section>
+    
+</div>
+
+
+    <section class="block">
+        <h2>Primary Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>Closeout | Preferred Area</td><td>27</td><td>37.0%</td><td>19.6%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>Closeout | Preferred Area</td><td>152</td><td>36.8%</td><td>39.1%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>82</td><td>31.7%</td><td>51.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>73</td><td>30.1%</td><td>40.1%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>Volume 3PT | Preferred Area</td><td>101</td><td>28.7%</td><td>36.1%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td>Volume 3PT | Preferred Area</td><td>42</td><td>28.6%</td><td>31.6%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Espada</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
     
 
-<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Below-average pace; they are more comfortable when the game stays organized in the half court.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Ball movement is close to league average; they can share it but are not purely pass-first.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Limited offensive rebounding impact; finishing the first contest usually kills the possession.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
-
-
-    <section class="block">
-        <h2>Overview</h2>
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-title">Most-Used Player</div>
-                <div class="card-value">A. Akoi</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Primary Scorer</div>
-                <div class="card-value">J. McClary</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Top 3PT Threat</div>
-                <div class="card-value">J. McClary (37.1%)</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Preferred Team Scoring Area</div>
-                <div class="card-value">Paint Non-RA</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Most-Used Lineup</div>
-                <div class="card-value">A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Best-Performing Lineup</div>
-                <div class="card-value">A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary</div>
-            </div>
-            </div>
-    </section>
-    
-
-<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Control the rhythm: they are more comfortable in a controlled half-court game, so do not let them play cleanly into structure.</li><li>Win the first action: they do not consistently hurt teams with second-chance volume, so clean first stops carry value.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Load into J. McClary: he is the main organizer, so make secondary creators finish possessions.</li></ul></div></section>
-
-
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
     <section class="block">
         <h2>Key Players</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>32.8</td><td>13.4</td><td>98</td><td>28.6%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>33.0</td><td>22.0</td><td>143</td><td>37.1%</td><td>Above the Break 3</td><td>primary handler</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td>29.3</td><td>11.2</td><td>14</td><td>14.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>25.3</td><td>8.7</td><td>68</td><td>30.9%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>22.3</td><td>7.3</td><td>79</td><td>31.6%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>20.5</td><td>7.5</td><td>25</td><td>40.0%</td><td>Paint Non-RA</td><td>spot-up shooter</td><td>Wall off paint</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>32.7</td><td>13.7</td><td>101</td><td>28.7%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>33.1</td><td>22.0</td><td>152</td><td>36.8%</td><td>Above the Break 3</td><td>primary handler</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td>29.3</td><td>10.9</td><td>15</td><td>13.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>25.2</td><td>8.8</td><td>73</td><td>30.1%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>22.3</td><td>7.3</td><td>82</td><td>31.7%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>20.4</td><td>7.5</td><td>27</td><td>37.0%</td><td>Paint Non-RA</td><td>spot-up shooter</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-
-
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
     <section class="block">
         <h2>Scouting Notes</h2>
         <div class="notes-grid">
@@ -330,124 +357,85 @@ tbody tr:hover {
             </div>
             </div>
     </section>
-    
-
-<div class="section-grid">
-    <div>
-        
-    <section class="block">
-        <h2>Primary Shooting Threats</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>Closeout | Preferred Area</td><td>25</td><td>40.0%</td><td>19.1%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>Closeout | Preferred Area</td><td>143</td><td>37.1%</td><td>38.9%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>79</td><td>31.6%</td><td>52.3%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>68</td><td>30.9%</td><td>39.8%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>Volume 3PT | Preferred Area</td><td>98</td><td>28.6%</td><td>36.6%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td>Volume 3PT | Preferred Area</td><td>40</td><td>30.0%</td><td>31.0%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Espada</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
     <section class="block">
         <h2>Priority Closeouts</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>25</td><td>40.0%</td><td>19.1%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>143</td><td>37.1%</td><td>38.9%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>79</td><td>31.6%</td><td>52.3%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>68</td><td>30.9%</td><td>39.8%</td><td>1.0</td><td>Gap and recover</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>27</td><td>37.0%</td><td>19.6%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>152</td><td>36.8%</td><td>39.1%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>82</td><td>31.7%</td><td>51.6%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>73</td><td>30.1%</td><td>40.1%</td><td>1.0</td><td>Gap and recover</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
     <section class="block">
         <h2>Volume, Lower Efficiency</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>98</td><td>28.6%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>79</td><td>31.6%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>68</td><td>30.9%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td>40</td><td>30.0%</td><td>1.0</td><td>Wall off paint</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>101</td><td>28.7%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>82</td><td>31.7%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>73</td><td>30.1%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td>42</td><td>28.6%</td><td>1.0</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-    </div>
-    <div>
-        
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
     <section class="block">
         <h2>Preferred Scoring Areas</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>Above the Break 3</td><td>34.5%</td><td>37.8%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td>Paint Non-RA</td><td>56.3%</td><td>56.2%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>Paint Non-RA</td><td>36.9%</td><td>62.6%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>Above the Break 3</td><td>44.4%</td><td>31.3%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>Above the Break 3</td><td>36.3%</td><td>32.3%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>Paint Non-RA</td><td>43.5%</td><td>57.9%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td>Paint Non-RA</td><td>34.1%</td><td>50.0%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Espada</span></div></td><td>Paint Non-RA</td><td>37.5%</td><td>41.7%</td><td>0.8</td><td>Wall off paint</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td>Above the Break 3</td><td>34.2%</td><td>37.6%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td>Paint Non-RA</td><td>57.4%</td><td>54.2%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td>Paint Non-RA</td><td>37.5%</td><td>62.9%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td>Above the Break 3</td><td>42.8%</td><td>30.9%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td>Above the Break 3</td><td>36.3%</td><td>31.8%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td>Paint Non-RA</td><td>44.2%</td><td>59.0%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td>Paint Non-RA</td><td>34.6%</td><td>50.0%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Espada</span></div></td><td>Paint Non-RA</td><td>39.7%</td><td>37.0%</td><td>0.7</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
     <section class="block">
         <h2>Team Shot Map Summary</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
-                <tbody><tr><td>Paint Non-RA</td><td>615</td><td>55.4%</td><td>1.1</td><td>37.2%</td></tr><tr><td>Above the Break 3</td><td>495</td><td>31.7%</td><td>1.0</td><td>29.9%</td></tr><tr><td>Restricted Area</td><td>255</td><td>62.0%</td><td>1.2</td><td>15.4%</td></tr><tr><td>Mid-Range</td><td>211</td><td>38.9%</td><td>0.8</td><td>12.7%</td></tr><tr><td>Corner 3 Right</td><td>40</td><td>35.0%</td><td>1.1</td><td>2.4%</td></tr></tbody>
+                <tbody><tr><td>Paint Non-RA</td><td>652</td><td>54.8%</td><td>1.1</td><td>37.6%</td></tr><tr><td>Above the Break 3</td><td>512</td><td>31.4%</td><td>0.9</td><td>29.6%</td></tr><tr><td>Restricted Area</td><td>262</td><td>62.2%</td><td>1.2</td><td>15.1%</td></tr><tr><td>Mid-Range</td><td>218</td><td>39.0%</td><td>0.8</td><td>12.6%</td></tr><tr><td>Corner 3 Right</td><td>46</td><td>34.8%</td><td>1.0</td><td>2.7%</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Lineups to Prepare For</summary><div class="detail-body">
     <section class="block">
         <h2>Lineups to Prepare For</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
-                <tbody><tr><td>Base lineup</td><td>A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary</td><td>109.5</td><td>69.8</td><td>74.1</td><td>-4.4</td></tr><tr><td>Rotation lineup</td><td>A. Akoi | A. Howell | E. Fortes | G. Barbosa | J. McClary</td><td>65.5</td><td>61.6</td><td>81.2</td><td>-19.5</td></tr></tbody>
+                <tbody><tr><td>Base lineup</td><td>A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary</td><td>111.4</td><td>71.1</td><td>72.9</td><td>-1.8</td></tr><tr><td>Rotation lineup</td><td>A. Akoi | A. Howell | E. Fortes | G. Barbosa | J. McClary</td><td>75.0</td><td>62.9</td><td>81.0</td><td>-18.1</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-    </div>
-</div>
-
-
+    </div></details>
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
     <section class="block">
         <h2>Roster</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td></td><td></td><td>24</td><td>32.8</td><td>13.4</td><td>5.2</td><td>2.0</td><td>1.0</td><td>1.6</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td></td><td></td><td>21</td><td>33.0</td><td>22.0</td><td>3.7</td><td>4.3</td><td>2.7</td><td>3.0</td><td>0.4</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td></td><td></td><td>23</td><td>29.3</td><td>11.2</td><td>6.3</td><td>2.3</td><td>0.8</td><td>2.3</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td></td><td></td><td>24</td><td>25.3</td><td>8.7</td><td>4.8</td><td>1.2</td><td>1.2</td><td>1.8</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td></td><td></td><td>25</td><td>22.3</td><td>7.3</td><td>3.1</td><td>1.9</td><td>1.3</td><td>1.9</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td></td><td></td><td>24</td><td>20.5</td><td>7.5</td><td>2.6</td><td>0.9</td><td>0.4</td><td>1.8</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td></td><td></td><td>25</td><td>19.2</td><td>6.4</td><td>4.6</td><td>0.7</td><td>0.7</td><td>1.1</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Espada</span></div></td><td></td><td></td><td>25</td><td>12.7</td><td>2.5</td><td>1.4</td><td>1.2</td><td>0.4</td><td>0.7</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Oliveira</span></div></td><td></td><td></td><td>8</td><td>14.0</td><td>4.2</td><td>1.1</td><td>1.8</td><td>0.2</td><td>1.6</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Rosa</span></div></td><td></td><td></td><td>6</td><td>11.9</td><td>2.5</td><td>1.7</td><td>0.8</td><td>0.0</td><td>0.8</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Silva</span></div></td><td></td><td></td><td>15</td><td>4.5</td><td>1.1</td><td>0.5</td><td>0.4</td><td>0.3</td><td>0.5</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Figueiredo</span></div></td><td></td><td></td><td>15</td><td>3.5</td><td>0.9</td><td>0.2</td><td>0.2</td><td>0.0</td><td>0.5</td><td>0.0</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Akoi</span></div></td><td></td><td></td><td>25</td><td>32.7</td><td>13.7</td><td>5.4</td><td>2.0</td><td>1.0</td><td>1.6</td><td>0.4</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. McClary</span></div></td><td></td><td></td><td>22</td><td>33.1</td><td>22.0</td><td>4.0</td><td>4.3</td><td>2.6</td><td>3.0</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Howell</span></div></td><td></td><td></td><td>24</td><td>29.3</td><td>10.9</td><td>6.4</td><td>2.2</td><td>0.8</td><td>2.3</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">A. Mendes</span></div></td><td></td><td></td><td>25</td><td>25.2</td><td>8.8</td><td>4.9</td><td>1.2</td><td>1.2</td><td>1.8</td><td>0.4</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">B. Neves</span></div></td><td></td><td></td><td>26</td><td>22.3</td><td>7.3</td><td>3.0</td><td>1.8</td><td>1.3</td><td>1.8</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Fortes</span></div></td><td></td><td></td><td>25</td><td>20.4</td><td>7.5</td><td>2.6</td><td>0.9</td><td>0.4</td><td>1.8</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">G. Barbosa</span></div></td><td></td><td></td><td>26</td><td>19.2</td><td>6.2</td><td>4.4</td><td>0.7</td><td>0.7</td><td>1.1</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Espada</span></div></td><td></td><td></td><td>26</td><td>12.8</td><td>2.5</td><td>1.4</td><td>1.3</td><td>0.3</td><td>0.7</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Oliveira</span></div></td><td></td><td></td><td>8</td><td>14.0</td><td>4.2</td><td>1.1</td><td>1.8</td><td>0.2</td><td>1.6</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Rosa</span></div></td><td></td><td></td><td>7</td><td>10.2</td><td>2.1</td><td>1.4</td><td>0.7</td><td>0.0</td><td>0.7</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Silva</span></div></td><td></td><td></td><td>15</td><td>4.5</td><td>1.1</td><td>0.5</td><td>0.4</td><td>0.3</td><td>0.5</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Figueiredo</span></div></td><td></td><td></td><td>15</td><td>3.5</td><td>0.9</td><td>0.2</td><td>0.2</td><td>0.0</td><td>0.5</td><td>0.0</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
     <section class="block">
         <h2>Duos / Trios to Recognize</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
-                <tbody><tr><td>duo</td><td>A. Akoi | J. McClary</td><td>574.1</td><td>77.3</td><td>79.6</td><td>-2.3</td></tr><tr><td>trio</td><td>A. Akoi | A. Howell | J. McClary</td><td>383.6</td><td>73.2</td><td>78.7</td><td>-5.5</td></tr><tr><td>trio</td><td>A. Akoi | J. McClary | R. Rosa</td><td>45.6</td><td>99.2</td><td>70.2</td><td>29.0</td></tr></tbody>
+                <tbody><tr><td>duo</td><td>A. Akoi | J. McClary</td><td>602.7</td><td>77.9</td><td>79.6</td><td>-1.8</td></tr><tr><td>trio</td><td>A. Akoi | A. Howell | J. McClary</td><td>401.9</td><td>74.1</td><td>78.4</td><td>-4.3</td></tr><tr><td>trio</td><td>A. Akoi | J. McClary | R. Rosa</td><td>45.6</td><td>99.2</td><td>70.2</td><td>29.0</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-
-    <section class="block">
-        <h2>Scout Team Emphasis</h2>
-        <div class="mini-grid">
-            <div class="mini-card">
-                <div class="mini-label">Matchups to rehearse</div>
-                <div class="mini-value">E. Fortes, J. McClary, B. Neves</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Paint help rule</div>
-                <div class="mini-value">Show bodies early and finish possessions at the rim</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Recognition lineup</div>
-                <div class="mini-value">A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary</div>
-            </div>
-            </div>
-    </section>
-    
+    </div></details>
+</div>
 
 </div>
 </body>

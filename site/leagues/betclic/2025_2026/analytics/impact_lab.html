@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impact Lab</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0f172a;color:#e5e7eb;}
+.wrap{max-width:1400px;margin:0 auto;padding:24px;}
+.hero{background:linear-gradient(135deg,#111827 0%,#0b3b2e 100%);border:1px solid #334155;border-radius:20px;padding:24px;margin-bottom:20px;}
+.hero h1{margin:0 0 8px 0;font-size:34px;}
+.hero p{margin:0;color:#cbd5e1;max-width:980px;line-height:1.55;}
+.hero .meta{margin-top:10px;color:#94a3b8;font-size:13px;}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;}
+.panel{background:#111827;border:1px solid #334155;border-radius:18px;padding:18px;}
+.panel h2{margin:0 0 12px 0;font-size:20px;}
+.panel h3{margin:16px 0 8px 0;font-size:14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.03em;}
+label{display:block;font-size:13px;color:#cbd5e1;margin-bottom:6px;}
+select,input[type=range]{width:100%;}
+input[type=range]{accent-color:#38bdf8;}
+.slider-row{margin-bottom:14px;}
+.slider-head{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:4px;}
+.small{color:#94a3b8;font-size:12px;}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+.card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
+.card .k{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+.card .v{font-size:28px;font-weight:700;}
+.card .d{margin-top:6px;font-size:12px;color:#94a3b8;}
+.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.table{width:100%;border-collapse:collapse;font-size:13px;}
+.table th,.table td{padding:8px 10px;border-bottom:1px solid #233046;text-align:left;}
+.table th{color:#93c5fd;font-weight:700;}
+.bad{color:#fca5a5;}
+.good{color:#86efac;}
+.neutral{color:#cbd5e1;}
+.note{margin-top:12px;font-size:12px;color:#94a3b8;line-height:1.45;}
+@media (max-width:1100px){.grid{grid-template-columns:1fr;}.cards{grid-template-columns:repeat(2,minmax(0,1fr));}.section-grid{grid-template-columns:1fr;}}
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2025-2026 </div></div></header>
+<div class="wrap">
+    <section class="hero">
+        <h1>Impact Lab</h1>
+        <p>Interactive team analytics sandbox. Change four factors and shot distribution, then compare baseline vs simulated offense in real time. This is a transparent what-if model based on the team's own historical baseline, not a prediction engine.</p>
+        <div class="meta">Inputs: team_totals_adv + team_zone_profiles</div>
+    </section>
+
+    <div class="grid">
+        <aside class="panel">
+            <h2>Controls</h2>
+            <label for="teamSelect">Team</label>
+            <select id="teamSelect"></select>
+
+            <h3>Four Factors adjustments</h3>
+
+            <div class="slider-row">
+                <div class="slider-head"><span>eFG% delta</span><strong id="efgDeltaLabel">0.0 pp</strong></div>
+                <input id="efgDelta" type="range" min="-8" max="8" step="0.1" value="0">
+            </div>
+
+            <div class="slider-row">
+                <div class="slider-head"><span>TOV% delta</span><strong id="tovDeltaLabel">0.0 pp</strong></div>
+                <input id="tovDelta" type="range" min="-8" max="8" step="0.1" value="0">
+            </div>
+
+            <div class="slider-row">
+                <div class="slider-head"><span>ORB% delta</span><strong id="orbDeltaLabel">0.0 pp</strong></div>
+                <input id="orbDelta" type="range" min="-8" max="8" step="0.1" value="0">
+            </div>
+
+            <div class="slider-row">
+                <div class="slider-head"><span>FTR delta</span><strong id="ftrDeltaLabel">0.0 pp</strong></div>
+                <input id="ftrDelta" type="range" min="-12" max="12" step="0.1" value="0">
+            </div>
+
+            <h3>Shot mix rebuilder</h3>
+            <div id="zoneSliders"></div>
+            <div class="small">Zone sliders are normalized to 100% before the simulation is calculated.</div>
+        </aside>
+
+        <main class="panel">
+            <h2 id="teamTitle">Team</h2>
+
+            <div class="cards">
+                <div class="card"><div class="k">Off Rating</div><div class="v" id="offCard">-</div><div class="d" id="offDelta">Δ -</div></div>
+                <div class="card"><div class="k">Def Rating</div><div class="v" id="defCard">-</div><div class="d">Baseline defense held constant in v1</div></div>
+                <div class="card"><div class="k">Net Rating</div><div class="v" id="netCard">-</div><div class="d" id="netDelta">Δ -</div></div>
+                <div class="card"><div class="k">Shot PPS</div><div class="v" id="ppsCard">-</div><div class="d" id="ppsDelta">Δ -</div></div>
+            </div>
+
+            <div class="section-grid">
+                <section>
+                    <h3>Baseline vs simulation</h3>
+                    <table class="table">
+                        <thead><tr><th>Metric</th><th>Baseline</th><th>Simulated</th><th>Delta</th></tr></thead>
+                        <tbody id="summaryRows"></tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h3>Impact breakdown</h3>
+                    <table class="table">
+                        <thead><tr><th>Lever</th><th>Estimated ORtg impact</th></tr></thead>
+                        <tbody id="impactRows"></tbody>
+                    </table>
+                </section>
+            </div>
+
+            <div class="section-grid" style="margin-top:16px;">
+                <section>
+                    <h3>Zone mix</h3>
+                    <table class="table">
+                        <thead><tr><th>Zone</th><th>Base share</th><th>Sim share</th><th>PPS</th></tr></thead>
+                        <tbody id="zoneRows"></tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h3>Model notes</h3>
+                    <div class="note">
+                        <p><strong>ORtg simulation formula</strong></p>
+                        <p>1) Rebuild shot mix and compute expected shot points per shot from team zone PPS.</p>
+                        <p>2) Apply deltas to baseline four factors.</p>
+                        <p>3) Estimate offensive lift as the sum of:</p>
+                        <p>• shot mix effect = (sim shot PPS − base shot PPS) × FGA per 100 possessions</p>
+                        <p>• eFG effect = ΔeFG × 100 × 1.20</p>
+                        <p>• TOV effect = −ΔTOV × 100 × 0.80</p>
+                        <p>• ORB effect = ΔORB × 100 × 0.55</p>
+                        <p>• FTR effect = ΔFTR × 100 × 0.35</p>
+                        <p>v1 keeps DRtg fixed and turns the page into a clean offensive simulation sandbox first.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+const TEAMS = [{"team_key": "ADO", "team_name": "AD Ovarense", "team_code": "ADO", "games": 21, "baseline": {"off_rating": 106.10372405671949, "def_rating": 101.34886572654813, "net_rating": 4.754858330171359, "pace": 77.19479289940828, "efg_pct_off": 0.5137184115523465, "orb_pct_off": 0.325, "tov_pct_off": 0.19074137677248418, "ftr_off": 0.3191335740072202, "shot_pps": 1.0274368231046933, "shot_fg": 0.44693140794223823, "fga": 1385.0, "fta": 442.0, "poss_est": 1630.48, "fga_per_poss": 0.8494431087777832, "ft_rate_per_fga": 0.3191335740072202}, "zones": [{"zone": "Restricted Area", "attempts": 411.0, "fg_pct": 0.656934306569343, "pps": 1.313868613138686, "zone_share": 0.2967509025270758}, {"zone": "Paint Non-RA", "attempts": 261.0, "fg_pct": 0.42911877394636017, "pps": 0.8582375478927203, "zone_share": 0.1884476534296029}, {"zone": "Mid-Range", "attempts": 127.0, "fg_pct": 0.4094488188976378, "pps": 0.8188976377952756, "zone_share": 0.09169675090252707}, {"zone": "Corner 3 Left", "attempts": 94.0, "fg_pct": 0.2872340425531915, "pps": 0.8617021276595744, "zone_share": 0.06787003610108304}, {"zone": "Corner 3 Right", "attempts": 62.0, "fg_pct": 0.3064516129032258, "pps": 0.9193548387096774, "zone_share": 0.044765342960288806}, {"zone": "Above the Break 3", "attempts": 430.0, "fg_pct": 0.32325581395348835, "pps": 0.9697674418604652, "zone_share": 0.3104693140794224}]}, {"team_key": "ESG", "team_name": "Esgueira Aveiro OLI", "team_code": "ESG", "games": 21, "baseline": {"off_rating": 105.91010383575934, "def_rating": 113.34743245491055, "net_rating": -7.437328619151202, "pace": 79.30823529411765, "efg_pct_off": 0.5085106382978724, "orb_pct_off": 0.2757009345794392, "tov_pct_off": 0.17068891944431275, "ftr_off": 0.36312056737588655, "shot_pps": 1.0170212765957447, "shot_fg": 0.44042553191489364, "fga": 1410.0, "fta": 512.0, "poss_est": 1687.28, "fga_per_poss": 0.8356645014461145, "ft_rate_per_fga": 0.36312056737588655}, "zones": [{"zone": "Restricted Area", "attempts": 428.0, "fg_pct": 0.6658878504672897, "pps": 1.3317757009345794, "zone_share": 0.30354609929078014}, {"zone": "Paint Non-RA", "attempts": 269.0, "fg_pct": 0.3828996282527881, "pps": 0.7657992565055762, "zone_share": 0.19078014184397163}, {"zone": "Mid-Range", "attempts": 118.0, "fg_pct": 0.3474576271186441, "pps": 0.6949152542372882, "zone_share": 0.08368794326241134}, {"zone": "Corner 3 Left", "attempts": 64.0, "fg_pct": 0.34375, "pps": 1.03125, "zone_share": 0.04539007092198582}, {"zone": "Corner 3 Right", "attempts": 66.0, "fg_pct": 0.3484848484848485, "pps": 1.0454545454545454, "zone_share": 0.04680851063829787}, {"zone": "Above the Break 3", "attempts": 465.0, "fg_pct": 0.3161290322580645, "pps": 0.9483870967741935, "zone_share": 0.32978723404255317}]}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "team_code": "FCP", "games": 21, "baseline": {"off_rating": 112.12555197517604, "def_rating": 103.0300136099902, "net_rating": 9.095538365185831, "pace": 79.78666666666668, "efg_pct_off": 0.5483074753173484, "orb_pct_off": 0.30037546933667086, "tov_pct_off": 0.1736484067311135, "ftr_off": 0.3314527503526093, "shot_pps": 1.0966149506346967, "shot_fg": 0.47038081805359666, "fga": 1418.0, "fta": 470.0, "poss_est": 1675.8, "fga_per_poss": 0.8461630266141544, "ft_rate_per_fga": 0.3314527503526093}, "zones": [{"zone": "Restricted Area", "attempts": 358.0, "fg_pct": 0.7206703910614525, "pps": 1.441340782122905, "zone_share": 0.2524682651622003}, {"zone": "Paint Non-RA", "attempts": 278.0, "fg_pct": 0.4892086330935252, "pps": 0.9784172661870504, "zone_share": 0.19605077574047955}, {"zone": "Mid-Range", "attempts": 151.0, "fg_pct": 0.3443708609271523, "pps": 0.6887417218543046, "zone_share": 0.10648801128349789}, {"zone": "Corner 3 Left", "attempts": 80.0, "fg_pct": 0.375, "pps": 1.125, "zone_share": 0.056417489421720736}, {"zone": "Corner 3 Right", "attempts": 84.0, "fg_pct": 0.39285714285714285, "pps": 1.1785714285714286, "zone_share": 0.05923836389280677}, {"zone": "Above the Break 3", "attempts": 467.0, "fg_pct": 0.33832976445396146, "pps": 1.0149892933618843, "zone_share": 0.32933709449929477}]}, {"team_key": "GFC", "team_name": "Galitos BARREIRO", "team_code": "GFC", "games": 21, "baseline": {"off_rating": 102.55068049871514, "def_rating": 116.36913983363921, "net_rating": -13.818459334924071, "pace": 79.51242603550295, "efg_pct_off": 0.4915671117357695, "orb_pct_off": 0.28199052132701424, "tov_pct_off": 0.17785761873037023, "ftr_off": 0.31482782853127195, "shot_pps": 0.983134223471539, "shot_fg": 0.432888264230499, "fga": 1423.0, "fta": 448.0, "poss_est": 1681.12, "fga_per_poss": 0.8464595031883507, "ft_rate_per_fga": 0.31482782853127195}, "zones": [{"zone": "Restricted Area", "attempts": 302.0, "fg_pct": 0.6589403973509934, "pps": 1.3178807947019868, "zone_share": 0.2122276879831342}, {"zone": "Paint Non-RA", "attempts": 412.0, "fg_pct": 0.4733009708737864, "pps": 0.9466019417475728, "zone_share": 0.28952916373858045}, {"zone": "Mid-Range", "attempts": 170.0, "fg_pct": 0.3235294117647059, "pps": 0.6470588235294118, "zone_share": 0.11946591707659873}, {"zone": "Corner 3 Left", "attempts": 61.0, "fg_pct": 0.39344262295081966, "pps": 1.180327868852459, "zone_share": 0.04286718200983837}, {"zone": "Corner 3 Right", "attempts": 64.0, "fg_pct": 0.265625, "pps": 0.796875, "zone_share": 0.044975404075895994}, {"zone": "Above the Break 3", "attempts": 414.0, "fg_pct": 0.30434782608695654, "pps": 0.9130434782608695, "zone_share": 0.29093464511595224}]}, {"team_key": "IBC", "team_name": "Imortal LUZiGÁS", "team_code": "IBC", "games": 21, "baseline": {"off_rating": 105.68016175295057, "def_rating": 106.16963548425149, "net_rating": -0.48947373130091876, "pace": 79.45637426900586, "efg_pct_off": 0.5053003533568905, "orb_pct_off": 0.34502923976608185, "tov_pct_off": 0.20101565806178584, "ftr_off": 0.384452296819788, "shot_pps": 1.010600706713781, "shot_fg": 0.4438162544169611, "fga": 1415.0, "fta": 544.0, "poss_est": 1701.3600000000001, "fga_per_poss": 0.8316875911035877, "ft_rate_per_fga": 0.384452296819788}, "zones": [{"zone": "Restricted Area", "attempts": 319.0, "fg_pct": 0.567398119122257, "pps": 1.134796238244514, "zone_share": 0.2254416961130742}, {"zone": "Paint Non-RA", "attempts": 420.0, "fg_pct": 0.46904761904761905, "pps": 0.9380952380952381, "zone_share": 0.2968197879858657}, {"zone": "Mid-Range", "attempts": 166.0, "fg_pct": 0.4578313253012048, "pps": 0.9156626506024096, "zone_share": 0.11731448763250883}, {"zone": "Corner 3 Left", "attempts": 64.0, "fg_pct": 0.359375, "pps": 1.078125, "zone_share": 0.045229681978798585}, {"zone": "Corner 3 Right", "attempts": 62.0, "fg_pct": 0.3870967741935484, "pps": 1.1612903225806452, "zone_share": 0.04381625441696113}, {"zone": "Above the Break 3", "attempts": 384.0, "fg_pct": 0.3307291666666667, "pps": 0.9921875, "zone_share": 0.2713780918727915}]}, {"team_key": "CAQ", "team_name": "Queluz O NOSSO PREGO", "team_code": "CAQ", "games": 21, "baseline": {"off_rating": 107.3589453490088, "def_rating": 112.02272010097822, "net_rating": -4.663774751969413, "pace": 77.95714285714286, "efg_pct_off": 0.5081180811808118, "orb_pct_off": 0.2850061957868649, "tov_pct_off": 0.17893157558168135, "ftr_off": 0.35276752767527675, "shot_pps": 1.0162361623616236, "shot_fg": 0.43468634686346863, "fga": 1355.0, "fta": 478.0, "poss_est": 1626.32, "fga_per_poss": 0.8331693639628118, "ft_rate_per_fga": 0.35276752767527675}, "zones": [{"zone": "Restricted Area", "attempts": 293.0, "fg_pct": 0.6791808873720137, "pps": 1.3583617747440273, "zone_share": 0.21623616236162363}, {"zone": "Paint Non-RA", "attempts": 279.0, "fg_pct": 0.43010752688172044, "pps": 0.8602150537634409, "zone_share": 0.2059040590405904}, {"zone": "Mid-Range", "attempts": 219.0, "fg_pct": 0.3242009132420091, "pps": 0.6484018264840182, "zone_share": 0.16162361623616237}, {"zone": "Corner 3 Left", "attempts": 77.0, "fg_pct": 0.2857142857142857, "pps": 0.8571428571428571, "zone_share": 0.05682656826568266}, {"zone": "Corner 3 Right", "attempts": 60.0, "fg_pct": 0.5333333333333333, "pps": 1.6, "zone_share": 0.04428044280442804}, {"zone": "Above the Break 3", "attempts": 427.0, "fg_pct": 0.3395784543325527, "pps": 1.018735362997658, "zone_share": 0.3151291512915129}]}, {"team_key": "VGA", "team_name": "SC Vasco da Gama", "team_code": "VGA", "games": 21, "baseline": {"off_rating": 100.19594887101553, "def_rating": 117.1339065215403, "net_rating": -16.937957650524766, "pace": 82.95479289940829, "efg_pct_off": 0.49119097956307256, "orb_pct_off": 0.26218097447795824, "tov_pct_off": 0.18911344528241703, "ftr_off": 0.3692741367159972, "shot_pps": 0.9823819591261451, "shot_fg": 0.43551797040169127, "fga": 1419.0, "fta": 524.0, "poss_est": 1755.56, "fga_per_poss": 0.8082890929390052, "ft_rate_per_fga": 0.3692741367159972}, "zones": [{"zone": "Restricted Area", "attempts": 432.0, "fg_pct": 0.6597222222222222, "pps": 1.3194444444444444, "zone_share": 0.3044397463002114}, {"zone": "Paint Non-RA", "attempts": 321.0, "fg_pct": 0.411214953271028, "pps": 0.822429906542056, "zone_share": 0.226215644820296}, {"zone": "Mid-Range", "attempts": 151.0, "fg_pct": 0.2847682119205298, "pps": 0.5695364238410596, "zone_share": 0.10641296687808316}, {"zone": "Corner 3 Left", "attempts": 74.0, "fg_pct": 0.3783783783783784, "pps": 1.135135135135135, "zone_share": 0.05214940098661029}, {"zone": "Corner 3 Right", "attempts": 62.0, "fg_pct": 0.3548387096774194, "pps": 1.064516129032258, "zone_share": 0.04369274136715997}, {"zone": "Above the Break 3", "attempts": 379.0, "fg_pct": 0.2849604221635884, "pps": 0.8548812664907651, "zone_share": 0.2670894996476392}]}, {"team_key": "SLB", "team_name": "SL Benfica", "team_code": "SLB", "games": 21, "baseline": {"off_rating": 121.5257244234181, "def_rating": 94.7198710197501, "net_rating": 26.805853403667996, "pace": 80.4304761904762, "efg_pct_off": 0.5755116443189837, "orb_pct_off": 0.3859416445623342, "tov_pct_off": 0.18450620934358367, "ftr_off": 0.40578687367678196, "shot_pps": 1.1510232886379677, "shot_fg": 0.5010585744530699, "fga": 1417.0, "fta": 575.0, "poss_est": 1691.0, "fga_per_poss": 0.8379657007687759, "ft_rate_per_fga": 0.40578687367678196}, "zones": [{"zone": "Restricted Area", "attempts": 427.0, "fg_pct": 0.6932084309133489, "pps": 1.3864168618266979, "zone_share": 0.3013408609738885}, {"zone": "Paint Non-RA", "attempts": 285.0, "fg_pct": 0.543859649122807, "pps": 1.087719298245614, "zone_share": 0.20112914608327453}, {"zone": "Mid-Range", "attempts": 123.0, "fg_pct": 0.3902439024390244, "pps": 0.7804878048780488, "zone_share": 0.08680310515172901}, {"zone": "Corner 3 Left", "attempts": 87.0, "fg_pct": 0.3448275862068966, "pps": 1.0344827586206897, "zone_share": 0.061397318278052226}, {"zone": "Corner 3 Right", "attempts": 90.0, "fg_pct": 0.3888888888888889, "pps": 1.1666666666666667, "zone_share": 0.06351446718419196}, {"zone": "Above the Break 3", "attempts": 405.0, "fg_pct": 0.36049382716049383, "pps": 1.0814814814814815, "zone_share": 0.2858151023288638}]}, {"team_key": "SCB", "team_name": "Sporting Clube Braga", "team_code": "SCB", "games": 21, "baseline": {"off_rating": 102.56754448051156, "def_rating": 106.6238223910027, "net_rating": -4.056277910491147, "pace": 78.1447619047619, "efg_pct_off": 0.4830935251798561, "orb_pct_off": 0.31882352941176473, "tov_pct_off": 0.1915895833841798, "ftr_off": 0.3366906474820144, "shot_pps": 0.9661870503597123, "shot_fg": 0.4129496402877698, "fga": 1390.0, "fta": 468.0, "poss_est": 1638.92, "fga_per_poss": 0.8481194933248725, "ft_rate_per_fga": 0.3366906474820144}, "zones": [{"zone": "Restricted Area", "attempts": 380.0, "fg_pct": 0.6552631578947369, "pps": 1.3105263157894738, "zone_share": 0.2733812949640288}, {"zone": "Paint Non-RA", "attempts": 222.0, "fg_pct": 0.3783783783783784, "pps": 0.7567567567567568, "zone_share": 0.15971223021582734}, {"zone": "Mid-Range", "attempts": 146.0, "fg_pct": 0.3150684931506849, "pps": 0.6301369863013698, "zone_share": 0.10503597122302158}, {"zone": "Corner 3 Left", "attempts": 89.0, "fg_pct": 0.3595505617977528, "pps": 1.0786516853932584, "zone_share": 0.06402877697841726}, {"zone": "Corner 3 Right", "attempts": 92.0, "fg_pct": 0.358695652173913, "pps": 1.076086956521739, "zone_share": 0.06618705035971223}, {"zone": "Above the Break 3", "attempts": 461.0, "fg_pct": 0.28199566160520606, "pps": 0.8459869848156182, "zone_share": 0.3316546762589928}]}, {"team_key": "SCP", "team_name": "Sporting Clube Portugal", "team_code": "SCP", "games": 21, "baseline": {"off_rating": 114.65849560146289, "def_rating": 101.24378109452736, "net_rating": 13.414714506935525, "pace": 76.82666666666668, "efg_pct_off": 0.5290780141843971, "orb_pct_off": 0.3845208845208845, "tov_pct_off": 0.1896560245131956, "ftr_off": 0.34609929078014184, "shot_pps": 1.0581560283687943, "shot_fg": 0.4539007092198582, "fga": 1410.0, "fta": 488.0, "poss_est": 1618.72, "fga_per_poss": 0.8710586142136997, "ft_rate_per_fga": 0.34609929078014184}, "zones": [{"zone": "Restricted Area", "attempts": 439.0, "fg_pct": 0.7198177676537585, "pps": 1.439635535307517, "zone_share": 0.31134751773049646}, {"zone": "Paint Non-RA", "attempts": 198.0, "fg_pct": 0.3888888888888889, "pps": 0.7777777777777778, "zone_share": 0.14042553191489363}, {"zone": "Mid-Range", "attempts": 107.0, "fg_pct": 0.32710280373831774, "pps": 0.6542056074766355, "zone_share": 0.07588652482269503}, {"zone": "Corner 3 Left", "attempts": 62.0, "fg_pct": 0.3709677419354839, "pps": 1.1129032258064515, "zone_share": 0.04397163120567376}, {"zone": "Corner 3 Right", "attempts": 49.0, "fg_pct": 0.2653061224489796, "pps": 0.7959183673469388, "zone_share": 0.03475177304964539}, {"zone": "Above the Break 3", "attempts": 555.0, "fg_pct": 0.3171171171171171, "pps": 0.9513513513513514, "zone_share": 0.39361702127659576}]}, {"team_key": "UDO", "team_name": "UD Oliveirense", "team_code": "UDO", "games": 21, "baseline": {"off_rating": 108.72709739633557, "def_rating": 105.42678796090198, "net_rating": 3.30030943543359, "pace": 78.86857142857144, "efg_pct_off": 0.5283560660445082, "orb_pct_off": 0.29213483146067415, "tov_pct_off": 0.17418032786885246, "ftr_off": 0.3445800430725054, "shot_pps": 1.0567121320890167, "shot_fg": 0.4630294328786791, "fga": 1393.0, "fta": 480.0, "poss_est": 1659.2, "fga_per_poss": 0.8395612343297975, "ft_rate_per_fga": 0.3445800430725054}, "zones": [{"zone": "Restricted Area", "attempts": 306.0, "fg_pct": 0.6830065359477124, "pps": 1.3660130718954249, "zone_share": 0.21966977745872218}, {"zone": "Paint Non-RA", "attempts": 383.0, "fg_pct": 0.5065274151436031, "pps": 1.0130548302872062, "zone_share": 0.27494615936826994}, {"zone": "Mid-Range", "attempts": 138.0, "fg_pct": 0.43478260869565216, "pps": 0.8695652173913043, "zone_share": 0.0990667623833453}, {"zone": "Corner 3 Left", "attempts": 51.0, "fg_pct": 0.2549019607843137, "pps": 0.7647058823529411, "zone_share": 0.0366116295764537}, {"zone": "Corner 3 Right", "attempts": 79.0, "fg_pct": 0.3924050632911392, "pps": 1.1772151898734178, "zone_share": 0.05671213208901651}, {"zone": "Above the Break 3", "attempts": 436.0, "fg_pct": 0.3165137614678899, "pps": 0.9495412844036697, "zone_share": 0.31299353912419237}]}, {"team_key": "VSC", "team_name": "Vitória Sport Clube", "team_code": "VSC", "games": 21, "baseline": {"off_rating": 103.29698919136254, "def_rating": 112.01820442442585, "net_rating": -8.721215233063305, "pace": 80.86476190476192, "efg_pct_off": 0.5043227665706052, "orb_pct_off": 0.3401197604790419, "tov_pct_off": 0.21167900475390838, "ftr_off": 0.3753602305475504, "shot_pps": 1.0086455331412105, "shot_fg": 0.45028818443804036, "fga": 1388.0, "fta": 521.0, "poss_est": 1691.24, "fga_per_poss": 0.820699605023533, "ft_rate_per_fga": 0.3753602305475504}, "zones": [{"zone": "Restricted Area", "attempts": 431.0, "fg_pct": 0.6334106728538283, "pps": 1.2668213457076567, "zone_share": 0.31051873198847263}, {"zone": "Paint Non-RA", "attempts": 306.0, "fg_pct": 0.4444444444444444, "pps": 0.8888888888888888, "zone_share": 0.22046109510086456}, {"zone": "Mid-Range", "attempts": 167.0, "fg_pct": 0.39520958083832336, "pps": 0.7904191616766467, "zone_share": 0.12031700288184438}, {"zone": "Corner 3 Left", "attempts": 72.0, "fg_pct": 0.3194444444444444, "pps": 0.9583333333333334, "zone_share": 0.05187319884726225}, {"zone": "Corner 3 Right", "attempts": 57.0, "fg_pct": 0.2982456140350877, "pps": 0.8947368421052632, "zone_share": 0.04106628242074928}, {"zone": "Above the Break 3", "attempts": 355.0, "fg_pct": 0.30985915492957744, "pps": 0.9295774647887324, "zone_share": 0.2557636887608069}]}];
+
+const teamSelect = document.getElementById("teamSelect");
+const zoneSliders = document.getElementById("zoneSliders");
+
+const sliderIds = ["efgDelta","tovDelta","orbDelta","ftrDelta"];
+const sliderLabels = {
+  efgDelta: document.getElementById("efgDeltaLabel"),
+  tovDelta: document.getElementById("tovDeltaLabel"),
+  orbDelta: document.getElementById("orbDeltaLabel"),
+  ftrDelta: document.getElementById("ftrDeltaLabel"),
+};
+
+for (const team of TEAMS) {
+  const opt = document.createElement("option");
+  opt.value = team.team_key;
+  opt.textContent = `${team.team_name} (${team.team_key})`;
+  teamSelect.appendChild(opt);
+}
+
+function fmt(value, digits=1) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
+  return Number(value).toFixed(digits);
+}
+
+function pct(value, digits=1) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
+  return `${(Number(value) * 100).toFixed(digits)}%`;
+}
+
+function cssSafe(text) {
+  return String(text).replace(/[^a-zA-Z0-9_-]/g, "_");
+}
+
+function buildZoneControls(team) {
+  zoneSliders.innerHTML = "";
+  for (const zone of team.zones) {
+    const wrap = document.createElement("div");
+    wrap.className = "slider-row";
+    wrap.innerHTML = `
+      <div class="slider-head"><span>${zone.zone}</span><strong id="zoneLabel_${cssSafe(zone.zone)}">${(zone.zone_share*100).toFixed(1)}%</strong></div>
+      <input data-zone="${zone.zone}" type="range" min="0" max="60" step="0.5" value="${(zone.zone_share*100).toFixed(1)}">
+    `;
+    zoneSliders.appendChild(wrap);
+  }
+  zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
+    el.addEventListener("input", update);
+  });
+}
+
+function currentTeam() {
+  return TEAMS.find(t => t.team_key === teamSelect.value) || TEAMS[0];
+}
+
+function collectZoneShares(team) {
+  const sliders = [...zoneSliders.querySelectorAll('input[type="range"]')];
+  const raw = sliders.map(el => ({
+    zone: el.dataset.zone,
+    requested: Number(el.value) / 100
+  }));
+  const total = raw.reduce((acc, row) => acc + row.requested, 0);
+  const denom = total > 0 ? total : 1;
+  return raw.map(row => {
+    const base = team.zones.find(z => z.zone === row.zone);
+    return {
+      zone: row.zone,
+      share: row.requested / denom,
+      pps: base ? Number(base.pps) : 0,
+      fg_pct: base ? Number(base.fg_pct) : 0,
+      base_share: base ? Number(base.zone_share) : 0,
+    };
+  });
+}
+
+function calcSimulation(team) {
+  const base = team.baseline;
+  const deltas = {
+    efg: Number(document.getElementById("efgDelta").value) / 100,
+    tov: Number(document.getElementById("tovDelta").value) / 100,
+    orb: Number(document.getElementById("orbDelta").value) / 100,
+    ftr: Number(document.getElementById("ftrDelta").value) / 100,
+  };
+
+  const zones = collectZoneShares(team);
+
+  const baseShotPps = Number(base.shot_pps);
+  const simShotPps = zones.reduce((acc, z) => acc + z.share * z.pps, 0);
+
+  const fgaPer100 = base.fga_per_poss * 100;
+
+  const shotMixImpact = (simShotPps - baseShotPps) * fgaPer100;
+  const efgImpact = deltas.efg * 100 * 1.20;
+  const tovImpact = -deltas.tov * 100 * 0.80;
+  const orbImpact = deltas.orb * 100 * 0.55;
+  const ftrImpact = deltas.ftr * 100 * 0.35;
+
+  const totalImpact = shotMixImpact + efgImpact + tovImpact + orbImpact + ftrImpact;
+  const simOff = base.off_rating + totalImpact;
+  const simDef = base.def_rating;
+  const simNet = simOff - simDef;
+
+  return {
+    zones,
+    base,
+    sim: {
+      off_rating: simOff,
+      def_rating: simDef,
+      net_rating: simNet,
+      shot_pps: simShotPps,
+      efg_pct_off: Math.max(0, Math.min(1, base.efg_pct_off + deltas.efg)),
+      tov_pct_off: Math.max(0, Math.min(1, base.tov_pct_off + deltas.tov)),
+      orb_pct_off: Math.max(0, Math.min(1, base.orb_pct_off + deltas.orb)),
+      ftr_off: Math.max(0, base.ftr_off + deltas.ftr),
+    },
+    impacts: [
+      ["Shot mix", shotMixImpact],
+      ["eFG%", efgImpact],
+      ["TOV%", tovImpact],
+      ["ORB%", orbImpact],
+      ["FTR", ftrImpact],
+    ],
+  };
+}
+
+function render(sim, team) {
+  document.getElementById("teamTitle").textContent = `${team.team_name} · Impact Lab`;
+
+  document.getElementById("offCard").textContent = fmt(sim.sim.off_rating, 1);
+  document.getElementById("defCard").textContent = fmt(sim.sim.def_rating, 1);
+  document.getElementById("netCard").textContent = fmt(sim.sim.net_rating, 1);
+  document.getElementById("ppsCard").textContent = fmt(sim.sim.shot_pps, 3);
+
+  const offDelta = sim.sim.off_rating - sim.base.off_rating;
+  const netDelta = sim.sim.net_rating - sim.base.net_rating;
+  const ppsDelta = sim.sim.shot_pps - sim.base.shot_pps;
+
+  document.getElementById("offDelta").innerHTML = `Δ <span class="${offDelta >= 0 ? 'good' : 'bad'}">${fmt(offDelta,1)}</span>`;
+  document.getElementById("netDelta").innerHTML = `Δ <span class="${netDelta >= 0 ? 'good' : 'bad'}">${fmt(netDelta,1)}</span>`;
+  document.getElementById("ppsDelta").innerHTML = `Δ <span class="${ppsDelta >= 0 ? 'good' : 'bad'}">${fmt(ppsDelta,3)}</span>`;
+
+  const summaryRows = [
+    ["ORtg", fmt(sim.base.off_rating,1), fmt(sim.sim.off_rating,1), fmt(sim.sim.off_rating - sim.base.off_rating,1)],
+    ["DRtg", fmt(sim.base.def_rating,1), fmt(sim.sim.def_rating,1), fmt(sim.sim.def_rating - sim.base.def_rating,1)],
+    ["NetRtg", fmt(sim.base.net_rating,1), fmt(sim.sim.net_rating,1), fmt(sim.sim.net_rating - sim.base.net_rating,1)],
+    ["eFG%", pct(sim.base.efg_pct_off,1), pct(sim.sim.efg_pct_off,1), pct(sim.sim.efg_pct_off - sim.base.efg_pct_off,1)],
+    ["TOV%", pct(sim.base.tov_pct_off,1), pct(sim.sim.tov_pct_off,1), pct(sim.sim.tov_pct_off - sim.base.tov_pct_off,1)],
+    ["ORB%", pct(sim.base.orb_pct_off,1), pct(sim.sim.orb_pct_off,1), pct(sim.sim.orb_pct_off - sim.base.orb_pct_off,1)],
+    ["FTR", fmt(sim.base.ftr_off,3), fmt(sim.sim.ftr_off,3), fmt(sim.sim.ftr_off - sim.base.ftr_off,3)],
+    ["Shot PPS", fmt(sim.base.shot_pps,3), fmt(sim.sim.shot_pps,3), fmt(sim.sim.shot_pps - sim.base.shot_pps,3)],
+  ];
+
+  document.getElementById("summaryRows").innerHTML = summaryRows.map(row => {
+    const deltaNum = Number(row[3]);
+    const cls = Number.isNaN(deltaNum) ? "neutral" : (deltaNum >= 0 ? "good" : "bad");
+    return `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="${cls}">${row[3]}</td></tr>`;
+  }).join("");
+
+  document.getElementById("impactRows").innerHTML = sim.impacts.map(([name, val]) => {
+    const cls = val >= 0 ? "good" : "bad";
+    return `<tr><td>${name}</td><td class="${cls}">${fmt(val,2)}</td></tr>`;
+  }).join("");
+
+  document.getElementById("zoneRows").innerHTML = sim.zones.map(z => {
+    const delta = z.share - z.base_share;
+    const cls = delta >= 0 ? "good" : "bad";
+    const labelEl = document.getElementById(`zoneLabel_${cssSafe(z.zone)}`);
+    if (labelEl) labelEl.textContent = `${(z.share*100).toFixed(1)}%`;
+    return `<tr><td>${z.zone}</td><td>${pct(z.base_share,1)}</td><td class="${cls}">${pct(z.share,1)}</td><td>${fmt(z.pps,3)}</td></tr>`;
+  }).join("");
+}
+
+function updateSliderLabels() {
+  sliderLabels.efgDelta.textContent = `${Number(document.getElementById("efgDelta").value).toFixed(1)} pp`;
+  sliderLabels.tovDelta.textContent = `${Number(document.getElementById("tovDelta").value).toFixed(1)} pp`;
+  sliderLabels.orbDelta.textContent = `${Number(document.getElementById("orbDelta").value).toFixed(1)} pp`;
+  sliderLabels.ftrDelta.textContent = `${Number(document.getElementById("ftrDelta").value).toFixed(1)} pp`;
+}
+
+function update() {
+  updateSliderLabels();
+  const team = currentTeam();
+  const sim = calcSimulation(team);
+  render(sim, team);
+}
+
+teamSelect.addEventListener("change", () => {
+  const team = currentTeam();
+  buildZoneControls(team);
+  update();
+});
+
+sliderIds.forEach(id => document.getElementById(id).addEventListener("input", update));
+
+teamSelect.value = TEAMS[0].team_key;
+buildZoneControls(currentTeam());
+update();
+</script>
+</body>
+</html>
