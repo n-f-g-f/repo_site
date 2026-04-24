@@ -26,6 +26,20 @@ input[type=range]{accent-color:#38bdf8;}
 .rank-anchor .headline{font-size:18px;font-weight:700;line-height:1.35;}
 .rank-anchor .sub{font-size:12px;color:#94a3b8;margin-top:6px;line-height:1.45;}
 .rank-pill{display:inline-block;background:#0f3d2e;border:1px solid #1d6b52;color:#bbf7d0;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;}
+.preset-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;}
+.preset-btn{background:#0b1220;border:1px solid #263247;color:#e5e7eb;border-radius:10px;padding:9px 10px;font-size:12px;font-weight:700;cursor:pointer;}
+.preset-btn:hover{background:#13203a;border-color:#3b82f6;}
+.preset-btn.reset{grid-column:span 2;}
+.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.signal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
+.signal-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:8px;}
+.signal-main{font-size:18px;font-weight:700;line-height:1.4;}
+.signal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
+.causal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+.causal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
+.causal-step{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:8px;}
+.causal-main{font-size:16px;font-weight:700;line-height:1.35;}
+.causal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
 .waterfall-wrap{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:12px;}
 .waterfall-chart{width:100%;height:auto;display:block;}
 .halfcourt-wrap{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:12px;}
@@ -68,6 +82,12 @@ input[type=range]{accent-color:#38bdf8;}
             <h2>Controls</h2>
             <label for="teamSelect">Team</label>
             <select id="teamSelect"></select>
+            <div class="preset-row">
+                <button type="button" class="preset-btn" id="presetAttack">Attack up</button>
+                <button type="button" class="preset-btn" id="presetBalance">Balanced upside</button>
+                <button type="button" class="preset-btn" id="presetSpacing">Spacing tilt</button>
+                <button type="button" class="preset-btn reset" id="presetReset">Reset all controls</button>
+            </div>
 
             <h3>Four Factors adjustments</h3>
 
@@ -120,6 +140,42 @@ input[type=range]{accent-color:#38bdf8;}
                 <div class="rank-pill" id="rankPill">League anchor</div>
             </div>
 
+            <div class="signal-grid">
+                <div class="signal-card">
+                    <div class="signal-title">Credibility</div>
+                    <div class="signal-main" id="confidenceMain">-</div>
+                    <div class="signal-sub" id="confidenceSub">-</div>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-title">Historical envelope</div>
+                    <div class="signal-main" id="envelopeMain">-</div>
+                    <div class="signal-sub" id="envelopeSub">-</div>
+                </div>
+            </div>
+
+            <div class="causal-grid">
+                <div class="causal-card">
+                    <div class="causal-step">1 · Shot mix</div>
+                    <div class="causal-main" id="causalShot">-</div>
+                    <div class="causal-sub" id="causalShotSub">-</div>
+                </div>
+                <div class="causal-card">
+                    <div class="causal-step">2 · Four factors</div>
+                    <div class="causal-main" id="causalFactors">-</div>
+                    <div class="causal-sub" id="causalFactorsSub">-</div>
+                </div>
+                <div class="causal-card">
+                    <div class="causal-step">3 · Lineup mix</div>
+                    <div class="causal-main" id="causalLineups">-</div>
+                    <div class="causal-sub" id="causalLineupsSub">-</div>
+                </div>
+                <div class="causal-card">
+                    <div class="causal-step">4 · Outcome</div>
+                    <div class="causal-main" id="causalOutcome">-</div>
+                    <div class="causal-sub" id="causalOutcomeSub">-</div>
+                </div>
+            </div>
+
             <div class="section-grid">
                 <section>
                     <h3>Baseline vs simulation</h3>
@@ -166,6 +222,10 @@ const teamSelect = document.getElementById("teamSelect");
 const zoneSliders = document.getElementById("zoneSliders");
 const lineupMixer = document.getElementById("lineupMixer");
 const warningBox = document.getElementById("warningBox");
+const presetAttack = document.getElementById("presetAttack");
+const presetBalance = document.getElementById("presetBalance");
+const presetSpacing = document.getElementById("presetSpacing");
+const presetReset = document.getElementById("presetReset");
 
 const sliderIds = ["efgDelta","tovDelta","orbDelta","ftrDelta"];
 const sliderLabels = {
@@ -279,6 +339,62 @@ function buildLineupControls(team) {
   lineupMixer.querySelectorAll('input[type="range"]').forEach(el => {
     el.addEventListener("input", update);
   });
+}
+
+
+function setSliderValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const min = Number(el.min);
+  const max = Number(el.max);
+  el.value = String(Math.max(min, Math.min(max, value)));
+}
+
+function resetControls() {
+  sliderIds.forEach(id => setSliderValue(id, 0));
+  const team = currentTeam();
+  zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (zone) el.value = (Number(zone.zone_share || 0) * 100).toFixed(1);
+  });
+  lineupMixer.querySelectorAll('input[type="range"]').forEach(el => { el.value = "0"; });
+}
+
+function applySpacingPreset() {
+  const team = currentTeam();
+  setSliderValue("efgDelta", 1.5);
+  setSliderValue("tovDelta", -0.5);
+  setSliderValue("orbDelta", -0.5);
+  setSliderValue("ftrDelta", 0.5);
+  for (const el of zoneSliders.querySelectorAll('input[type="range"]')) {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (!zone) continue;
+    let target = Number(zone.zone_share || 0) * 100;
+    if (zone.zone === "Mid-Range") target -= 4;
+    if (zone.zone === "Paint Non-RA") target -= 1.5;
+    if (zone.zone === "Corner 3 Left" || zone.zone === "Corner 3 Right") target += 2;
+    if (zone.zone === "Above the Break 3") target += 1.5;
+    if (zone.zone === "Restricted Area") target += 1.5;
+    el.value = String(target.toFixed(1));
+  }
+}
+
+function applyAttackPreset() {
+  setSliderValue("efgDelta", 2.0);
+  setSliderValue("tovDelta", -1.0);
+  setSliderValue("orbDelta", 1.5);
+  setSliderValue("ftrDelta", 1.0);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "4.0" : idx === 1 ? "2.0" : "0"; });
+}
+
+function applyBalancedPreset() {
+  setSliderValue("efgDelta", 1.0);
+  setSliderValue("tovDelta", -0.8);
+  setSliderValue("orbDelta", 0.8);
+  setSliderValue("ftrDelta", 0.6);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "2.0" : idx === 1 ? "1.0" : "0"; });
 }
 
 function currentTeam() {
@@ -515,6 +631,38 @@ function calcSimulation(team) {
   };
 }
 
+
+function renderSignals(sim, team) {
+  const totalLineupMinutes = sim.lineup_mix.rows.reduce((acc, r) => acc + Number(r.base_minutes || 0), 0);
+  const coreMinutes = sim.lineup_mix.rows.filter(r => !r.is_rest).reduce((acc, r) => acc + Number(r.base_minutes || 0), 0);
+  const coreCoverage = totalLineupMinutes > 0 ? coreMinutes / totalLineupMinutes : 0;
+  const absNetDelta = Math.abs(Number(sim.sim.net_rating || 0) - Number(sim.base.net_rating || 0));
+  const signalLabel = coreCoverage >= 0.55 ? "Strong lineup signal" : coreCoverage >= 0.35 ? "Moderate lineup signal" : "Thin lineup signal";
+  const signalSub = `Top-lineup mixer covers ${pct(coreCoverage,1)} of tracked lineup minutes. Bigger changes beyond that become less reliable.`;
+  document.getElementById("confidenceMain").textContent = signalLabel;
+  document.getElementById("confidenceSub").textContent = signalSub;
+
+  const envelopeFlag = absNetDelta <= 2.5 ? "Inside historical envelope" : absNetDelta <= 5.0 ? "Stretching the profile" : "Outside normal team shape";
+  const envelopeSub = `NetRtg delta is ${fmt(absNetDelta,1)} points from baseline. Larger jumps should be read as directional, not literal.`;
+  document.getElementById("envelopeMain").textContent = envelopeFlag;
+  document.getElementById("envelopeSub").textContent = envelopeSub;
+
+  const shotMixImpact = Number(sim.impacts.find(x => x[0] === "Shot mix")?.[1] || 0);
+  const factorsImpact = ["eFG%","TOV%","ORB%","FTR"].reduce((acc, key) => acc + Number(sim.impacts.find(x => x[0] === key)?.[1] || 0), 0);
+  const lineupOff = Number(sim.impacts.find(x => x[0] === "Lineup offense mix")?.[1] || 0);
+  const lineupDef = Number(sim.impacts.find(x => x[0] === "Lineup defense mix")?.[1] || 0);
+  const outcomeDelta = Number(sim.sim.net_rating || 0) - Number(sim.base.net_rating || 0);
+
+  document.getElementById("causalShot").textContent = `${fmt(shotMixImpact,2)} ORtg`;
+  document.getElementById("causalShotSub").textContent = `Zone reallocation moves shot PPS from ${fmt(sim.base.shot_pps,3)} to ${fmt(sim.sim.shot_pps,3)}.`;
+  document.getElementById("causalFactors").textContent = `${fmt(factorsImpact,2)} ORtg`;
+  document.getElementById("causalFactorsSub").textContent = `Four-factor sliders push offensive efficiency after constraints are applied.`;
+  document.getElementById("causalLineups").textContent = `${fmt(lineupOff - lineupDef,2)} NetRtg`;
+  document.getElementById("causalLineupsSub").textContent = `Minutes reallocation changes offense by ${fmt(lineupOff,2)} and defense by ${fmt(-lineupDef,2)}.`;
+  document.getElementById("causalOutcome").textContent = `${fmt(outcomeDelta,2)} NetRtg`;
+  document.getElementById("causalOutcomeSub").textContent = `That is what feeds the simulated league ranking anchor.`;
+}
+
 function renderWarnings(sim) {
   if (!sim.warnings.length) {
     warningBox.style.display = "none";
@@ -740,6 +888,7 @@ function render(sim, team) {
     return `<tr class="${r.is_rest ? 'rest-row' : ''}"><td>${r.lineup_players}</td><td>${fmt(r.base_minutes,1)}</td><td class="${cls}">${fmt(r.sim_minutes,1)}</td><td>${fmt((r.shrunk_off_rating||0) - (r.shrunk_def_rating||0),1)}</td></tr>`;
   }).join("");
 
+  renderSignals(sim, team);
   renderWarnings(sim);
 }
 
@@ -757,10 +906,35 @@ function update() {
   render(sim, team);
 }
 
+
+presetAttack.addEventListener("click", () => {
+  resetControls();
+  applyAttackPreset();
+  update();
+});
+
+presetBalance.addEventListener("click", () => {
+  resetControls();
+  applyBalancedPreset();
+  update();
+});
+
+presetSpacing.addEventListener("click", () => {
+  resetControls();
+  applySpacingPreset();
+  update();
+});
+
+presetReset.addEventListener("click", () => {
+  resetControls();
+  update();
+});
+
 teamSelect.addEventListener("change", () => {
   const team = currentTeam();
   buildZoneControls(team);
   buildLineupControls(team);
+  resetControls();
   update();
 });
 
@@ -769,6 +943,7 @@ sliderIds.forEach(id => document.getElementById(id).addEventListener("input", up
 teamSelect.value = TEAMS[0].team_key;
 buildZoneControls(currentTeam());
 buildLineupControls(currentTeam());
+resetControls();
 update();
 </script>
 </body>
