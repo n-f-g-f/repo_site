@@ -40,6 +40,30 @@ input[type=range]{accent-color:#38bdf8;}
 .causal-step{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:8px;}
 .causal-main{font-size:16px;font-weight:700;line-height:1.35;}
 .causal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
+.component-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+.component-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
+.component-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px;}
+.component-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;}
+.component-badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;border:1px solid #334155;background:#111827;color:#e5e7eb;}
+.component-badge.high{border-color:#166534;color:#bbf7d0;background:#0f2d20;}
+.component-badge.medium{border-color:#92400e;color:#fde68a;background:#33210d;}
+.component-badge.low{border-color:#991b1b;color:#fecaca;background:#351313;}
+.component-value{font-size:20px;font-weight:700;line-height:1.2;}
+.component-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
+.preset-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;}
+.preset-btn{background:#0b1220;border:1px solid #263247;color:#e5e7eb;border-radius:10px;padding:9px 10px;font-size:12px;font-weight:700;cursor:pointer;}
+.preset-btn:hover{background:#13203a;border-color:#3b82f6;}
+.preset-btn.reset{grid-column:span 2;}
+.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.signal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
+.signal-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:8px;}
+.signal-main{font-size:18px;font-weight:700;line-height:1.4;}
+.signal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
+.causal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+.causal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
+.causal-step{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:8px;}
+.causal-main{font-size:16px;font-weight:700;line-height:1.35;}
+.causal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
 .waterfall-wrap{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:12px;}
 .waterfall-chart{width:100%;height:auto;display:block;}
 .halfcourt-wrap{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:12px;}
@@ -60,6 +84,9 @@ input[type=range]{accent-color:#38bdf8;}
 .neutral{color:#cbd5e1;}
 .note{margin-top:12px;font-size:12px;color:#94a3b8;line-height:1.45;}
 .warning{display:none;background:#3f1d1d;border:1px solid #7f1d1d;color:#fecaca;padding:12px 14px;border-radius:14px;margin-bottom:16px;font-size:13px;line-height:1.5;}
+.card.flash{box-shadow:0 0 0 2px rgba(56,189,248,0.85), 0 0 24px rgba(56,189,248,0.22);border-color:#38bdf8;transition:box-shadow .18s ease,border-color .18s ease;}
+.chart-tooltip{position:fixed;z-index:9999;pointer-events:none;opacity:0;transform:translate(-50%, calc(-100% - 10px));background:rgba(6,11,20,.98);color:#e5e7eb;border:1px solid #334155;border-radius:12px;padding:8px 10px;font-size:12px;line-height:1.45;white-space:nowrap;box-shadow:0 14px 28px rgba(0,0,0,.35);}
+.zone-legend-note{font-size:12px;color:#94a3b8;line-height:1.45;margin-bottom:8px;}
 .warning strong{display:block;margin-bottom:6px;}
 .warning ul{margin:0;padding-left:18px;}
 .lineup-block{background:#0b1220;border:1px solid #263247;border-radius:14px;padding:12px;margin-bottom:10px;}
@@ -213,6 +240,7 @@ input[type=range]{accent-color:#38bdf8;}
 
         </main>
     </div>
+<div id="chartTooltip" class="chart-tooltip"></div>
 </div>
 
 <script>
@@ -222,6 +250,7 @@ const teamSelect = document.getElementById("teamSelect");
 const zoneSliders = document.getElementById("zoneSliders");
 const lineupMixer = document.getElementById("lineupMixer");
 const warningBox = document.getElementById("warningBox");
+const chartTooltip = document.getElementById("chartTooltip");
 const presetAttack = document.getElementById("presetAttack");
 const presetBalance = document.getElementById("presetBalance");
 const presetSpacing = document.getElementById("presetSpacing");
@@ -306,7 +335,8 @@ function buildZoneControls(team) {
     zoneSliders.appendChild(wrap);
   }
   zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
-    el.addEventListener("input", update);
+    el.addEventListener("input", () => update());
+    ["change","mouseup","touchend"].forEach(evt => el.addEventListener(evt, () => update(true)));
   });
 }
 
@@ -337,7 +367,8 @@ function buildLineupControls(team) {
     lineupMixer.appendChild(wrap);
   }
   lineupMixer.querySelectorAll('input[type="range"]').forEach(el => {
-    el.addEventListener("input", update);
+    el.addEventListener("input", () => update());
+    ["change","mouseup","touchend"].forEach(evt => el.addEventListener(evt, () => update(true)));
   });
 }
 
@@ -395,6 +426,91 @@ function applyBalancedPreset() {
   setSliderValue("ftrDelta", 0.6);
   const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
   lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "2.0" : idx === 1 ? "1.0" : "0"; });
+}
+
+
+function setSliderValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const min = Number(el.min);
+  const max = Number(el.max);
+  el.value = String(Math.max(min, Math.min(max, value)));
+}
+
+function resetControls() {
+  sliderIds.forEach(id => setSliderValue(id, 0));
+  const team = currentTeam();
+  zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (zone) el.value = (Number(zone.zone_share || 0) * 100).toFixed(1);
+  });
+  lineupMixer.querySelectorAll('input[type="range"]').forEach(el => { el.value = "0"; });
+}
+
+function applySpacingPreset() {
+  const team = currentTeam();
+  setSliderValue("efgDelta", 1.5);
+  setSliderValue("tovDelta", -0.5);
+  setSliderValue("orbDelta", -0.5);
+  setSliderValue("ftrDelta", 0.5);
+  for (const el of zoneSliders.querySelectorAll('input[type="range"]')) {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (!zone) continue;
+    let target = Number(zone.zone_share || 0) * 100;
+    if (zone.zone === "Mid-Range") target -= 4;
+    if (zone.zone === "Paint Non-RA") target -= 1.5;
+    if (zone.zone === "Corner 3 Left" || zone.zone === "Corner 3 Right") target += 2;
+    if (zone.zone === "Above the Break 3") target += 1.5;
+    if (zone.zone === "Restricted Area") target += 1.5;
+    el.value = String(target.toFixed(1));
+  }
+}
+
+function applyAttackPreset() {
+  setSliderValue("efgDelta", 2.0);
+  setSliderValue("tovDelta", -1.0);
+  setSliderValue("orbDelta", 1.5);
+  setSliderValue("ftrDelta", 1.0);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "4.0" : idx === 1 ? "2.0" : "0"; });
+}
+
+function applyBalancedPreset() {
+  setSliderValue("efgDelta", 1.0);
+  setSliderValue("tovDelta", -0.8);
+  setSliderValue("orbDelta", 0.8);
+  setSliderValue("ftrDelta", 0.6);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "2.0" : idx === 1 ? "1.0" : "0"; });
+}
+
+
+function flashSummaryCards() {
+  document.querySelectorAll(".cards .card").forEach(card => {
+    card.classList.remove("flash");
+    void card.offsetWidth;
+    card.classList.add("flash");
+    window.setTimeout(() => card.classList.remove("flash"), 260);
+  });
+}
+
+function showChartTooltip(event, html) {
+  if (!chartTooltip) return;
+  chartTooltip.innerHTML = html;
+  chartTooltip.style.opacity = "1";
+  chartTooltip.style.left = `${event.clientX}px`;
+  chartTooltip.style.top = `${event.clientY}px`;
+}
+
+function moveChartTooltip(event) {
+  if (!chartTooltip || chartTooltip.style.opacity === "0") return;
+  chartTooltip.style.left = `${event.clientX}px`;
+  chartTooltip.style.top = `${event.clientY}px`;
+}
+
+function hideChartTooltip() {
+  if (!chartTooltip) return;
+  chartTooltip.style.opacity = "0";
 }
 
 function currentTeam() {
@@ -632,11 +748,22 @@ function calcSimulation(team) {
 }
 
 
+
+function setBadge(el, label, level) {
+  if (!el) return;
+  el.textContent = label;
+  el.className = `component-badge ${level}`;
+}
+
 function renderSignals(sim, team) {
   const totalLineupMinutes = sim.lineup_mix.rows.reduce((acc, r) => acc + Number(r.base_minutes || 0), 0);
   const coreMinutes = sim.lineup_mix.rows.filter(r => !r.is_rest).reduce((acc, r) => acc + Number(r.base_minutes || 0), 0);
   const coreCoverage = totalLineupMinutes > 0 ? coreMinutes / totalLineupMinutes : 0;
   const absNetDelta = Math.abs(Number(sim.sim.net_rating || 0) - Number(sim.base.net_rating || 0));
+  const shotShift = Number(sim.constraints.total_zone_shift_pp || 0);
+  const lineupShift = Number(sim.constraints.total_lineup_shift_min || 0);
+  const warningsCount = Number((sim.warnings || []).length);
+
   const signalLabel = coreCoverage >= 0.55 ? "Strong lineup signal" : coreCoverage >= 0.35 ? "Moderate lineup signal" : "Thin lineup signal";
   const signalSub = `Top-lineup mixer covers ${pct(coreCoverage,1)} of tracked lineup minutes. Bigger changes beyond that become less reliable.`;
   document.getElementById("confidenceMain").textContent = signalLabel;
@@ -661,6 +788,27 @@ function renderSignals(sim, team) {
   document.getElementById("causalLineupsSub").textContent = `Minutes reallocation changes offense by ${fmt(lineupOff,2)} and defense by ${fmt(-lineupDef,2)}.`;
   document.getElementById("causalOutcome").textContent = `${fmt(outcomeDelta,2)} NetRtg`;
   document.getElementById("causalOutcomeSub").textContent = `That is what feeds the simulated league ranking anchor.`;
+
+  let shotLevel = "high";
+  if (shotShift > 16) shotLevel = "low";
+  else if (shotShift > 10) shotLevel = "medium";
+  document.getElementById("shotConfidenceMain").textContent = shotLevel === "high" ? "High trust" : shotLevel === "medium" ? "Medium trust" : "Low trust";
+  document.getElementById("shotConfidenceSub").textContent = `Total shot-mix reallocation is ${fmt(shotShift,1)} percentage points against a cap of ${fmt(sim.constraints.max_total_zone_shift_pp,0)}.`;
+  setBadge(document.getElementById("shotBadge"), shotLevel.toUpperCase(), shotLevel);
+
+  let lineupLevel = "high";
+  if (coreCoverage < 0.35 || lineupShift > 12) lineupLevel = "low";
+  else if (coreCoverage < 0.55 || lineupShift > 8) lineupLevel = "medium";
+  document.getElementById("lineupConfidenceMain").textContent = lineupLevel === "high" ? "High trust" : lineupLevel === "medium" ? "Medium trust" : "Low trust";
+  document.getElementById("lineupConfidenceSub").textContent = `Lineup shift is ${fmt(lineupShift,1)} minutes with ${pct(coreCoverage,1)} top-lineup coverage.`;
+  setBadge(document.getElementById("lineupBadge"), lineupLevel.toUpperCase(), lineupLevel);
+
+  let outcomeLevel = "high";
+  if (absNetDelta > 5 || warningsCount >= 3) outcomeLevel = "low";
+  else if (absNetDelta > 2.5 || warningsCount >= 1 || shotLevel !== "high" || lineupLevel !== "high") outcomeLevel = "medium";
+  document.getElementById("outcomeConfidenceMain").textContent = outcomeLevel === "high" ? "High trust" : outcomeLevel === "medium" ? "Medium trust" : "Low trust";
+  document.getElementById("outcomeConfidenceSub").textContent = `${warningsCount} constraint alert(s). Read larger jumps as directional when confidence drops.`;
+  setBadge(document.getElementById("outcomeBadge"), outcomeLevel.toUpperCase(), outcomeLevel);
 }
 
 function renderWarnings(sim) {
@@ -739,9 +887,12 @@ function renderWaterfall(sim) {
     const rectH = Math.max(2, Math.abs(y1 - y0));
     const color = bar.value >= 0 ? '#22c55e' : '#ef4444';
     const labelY = bar.value >= 0 ? rectY - 6 : rectY + rectH + 14;
+    const tip = `${bar.name}: ${bar.value >= 0 ? '+' : ''}${bar.value.toFixed(2)} impact<br>Cumulative: ${bar.end >= 0 ? '+' : ''}${bar.end.toFixed(2)}`;
+    parts.push(`<g class="wf-bar" data-tip="${tip.replace(/"/g, '&quot;')}">`);
     parts.push(`<rect x="${x.toFixed(1)}" y="${rectY.toFixed(1)}" width="${barW.toFixed(1)}" height="${rectH.toFixed(1)}" rx="6" fill="${color}" opacity="0.92"></rect>`);
     parts.push(`<text x="${(x + barW/2).toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${color}">${bar.value >= 0 ? '+' : ''}${bar.value.toFixed(2)}</text>`);
     parts.push(`<text x="${(x + barW/2).toFixed(1)}" y="${(height - 42).toFixed(1)}" text-anchor="middle" font-size="11" fill="#cbd5e1">${bar.name}</text>`);
+    parts.push(`</g>`);
     parts.push(`<line x1="${(x + barW).toFixed(1)}" y1="${y1.toFixed(1)}" x2="${(x + step).toFixed(1)}" y2="${y1.toFixed(1)}" stroke="#64748b" stroke-width="1" stroke-dasharray="4 3"></line>`);
   });
 
@@ -750,11 +901,20 @@ function renderWaterfall(sim) {
   const totalRectY = Math.min(zeroY, totalY);
   const totalRectH = Math.max(2, Math.abs(totalY - zeroY));
   const totalColor = totalDelta >= 0 ? '#38bdf8' : '#f97316';
+  const totalTip = `Total delta: ${totalDelta >= 0 ? '+' : ''}${totalDelta.toFixed(2)}`;
+  parts.push(`<g class="wf-bar" data-tip="${totalTip.replace(/"/g, '&quot;')}">`);
   parts.push(`<rect x="${totalX.toFixed(1)}" y="${totalRectY.toFixed(1)}" width="${barW.toFixed(1)}" height="${totalRectH.toFixed(1)}" rx="6" fill="${totalColor}"></rect>`);
   parts.push(`<text x="${(totalX + barW/2).toFixed(1)}" y="${(totalDelta >= 0 ? totalRectY - 6 : totalRectY + totalRectH + 14).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${totalColor}">${totalDelta >= 0 ? '+' : ''}${totalDelta.toFixed(2)}</text>`);
   parts.push(`<text x="${(totalX + barW/2).toFixed(1)}" y="${(height - 42).toFixed(1)}" text-anchor="middle" font-size="11" fill="#cbd5e1">Total Δ</text>`);
+  parts.push(`</g>`);
 
   svg.innerHTML = parts.join('');
+
+  svg.querySelectorAll('.wf-bar').forEach(el => {
+    el.addEventListener('mouseenter', event => showChartTooltip(event, el.dataset.tip || ''));
+    el.addEventListener('mousemove', moveChartTooltip);
+    el.addEventListener('mouseleave', hideChartTooltip);
+  });
 }
 
 function zoneColor(share, maxShare) {
@@ -771,6 +931,7 @@ function renderHalfcourt(sim) {
   if (!svg || !legend) return;
   const zones = sim.zones || [];
   const shareMap = new Map(zones.map(z => [z.zone, Number(z.share || 0)]));
+  const ppsMap = new Map(zones.map(z => [z.zone, Number(z.pps || 0)]));
   const maxShare = Math.max(...zones.map(z => Number(z.share || 0)), 0.0001);
 
   const defs = [
@@ -797,8 +958,11 @@ function renderHalfcourt(sim) {
   `;
 
   const zoneShapes = defs.filter(d => d.path).map(d => {
+    const share = shareMap.get(d.key) || 0;
+    const pps = ppsMap.get(d.key) || 0;
+    const tip = `${d.label}<br>Sim share: ${pct(share,1)}<br>PPS: ${fmt(pps,3)}`;
     const colored = d.path.replace('/>', ` fill="${d.fill}" opacity="0.88" stroke="#0f172a" stroke-width="1.5"/>`);
-    return colored;
+    return `<g class="hc-zone" data-tip="${tip.replace(/"/g, '&quot;')}">${colored}</g>`;
   }).join('');
 
   const labels = defs.filter(d => d.path).map(d => {
@@ -811,12 +975,18 @@ function renderHalfcourt(sim) {
     else if (d.key === 'Corner 3 Right') { x = 460; y = 220; }
     else if (d.key === 'Above the Break 3') { x = 260; y = 100; }
     else if (d.key === 'Backcourt') { x = 260; y = 40; }
-    return `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="700" fill="#f8fafc">${(share*100).toFixed(1)}%</text>`;
+    return `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">${(share*100).toFixed(1)}%</text>`;
   }).join('');
 
-  svg.innerHTML = `<rect x="0" y="0" width="520" height="420" rx="16" fill="#08111f"></rect>${zoneShapes}${courtLines}${labels}`;
+  svg.innerHTML = `<rect x="0" y="0" width="520" height="420" rx="16" fill="#0b1220"></rect>${zoneShapes}${courtLines}${labels}`;
 
-  legend.innerHTML = zones
+  svg.querySelectorAll('.hc-zone').forEach(el => {
+    el.addEventListener('mouseenter', event => showChartTooltip(event, el.dataset.tip || ''));
+    el.addEventListener('mousemove', moveChartTooltip);
+    el.addEventListener('mouseleave', hideChartTooltip);
+  });
+
+  legend.innerHTML = `<div class="zone-legend-note">Color intensity represents <strong>simulated shot share</strong>. PPS is shown separately so color is not confused with efficiency.</div>` + zones
     .filter(z => ['Restricted Area','Paint Non-RA','Mid-Range','Corner 3 Left','Corner 3 Right','Above the Break 3','Backcourt','Unclassified'].includes(z.zone))
     .map(z => `<div class="zone-legend-item"><span class="zone-legend-swatch" style="background:${zoneColor(Number(z.share || 0), maxShare)}"></span><span>${z.zone}: ${pct(z.share,1)} · PPS ${fmt(z.pps,3)}</span></div>`)
     .join('');
@@ -899,36 +1069,38 @@ function updateSliderLabels() {
   sliderLabels.ftrDelta.textContent = `${Number(document.getElementById("ftrDelta").value).toFixed(1)} pp`;
 }
 
-function update() {
+function update(flash=false) {
   updateSliderLabels();
   const team = currentTeam();
   const sim = calcSimulation(team);
   render(sim, team);
+  if (flash) flashSummaryCards();
 }
 
 
 presetAttack.addEventListener("click", () => {
   resetControls();
   applyAttackPreset();
-  update();
+  update(true);
 });
 
 presetBalance.addEventListener("click", () => {
   resetControls();
   applyBalancedPreset();
-  update();
+  update(true);
 });
 
 presetSpacing.addEventListener("click", () => {
   resetControls();
   applySpacingPreset();
-  update();
+  update(true);
 });
 
 presetReset.addEventListener("click", () => {
   resetControls();
-  update();
+  update(true);
 });
+
 
 teamSelect.addEventListener("change", () => {
   const team = currentTeam();
@@ -938,7 +1110,11 @@ teamSelect.addEventListener("change", () => {
   update();
 });
 
-sliderIds.forEach(id => document.getElementById(id).addEventListener("input", update));
+sliderIds.forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener("input", () => update());
+  ["change","mouseup","touchend"].forEach(evt => el.addEventListener(evt, () => update(true)));
+});
 
 teamSelect.value = TEAMS[0].team_key;
 buildZoneControls(currentTeam());
