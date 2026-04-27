@@ -4,242 +4,749 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Impact Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0f172a;color:#e5e7eb;}
-.wrap{max-width:1460px;margin:0 auto;padding:24px;}
-.hero{background:linear-gradient(135deg,#111827 0%,#0b3b2e 100%);border:1px solid #334155;border-radius:20px;padding:24px;margin-bottom:20px;}
-.hero h1{margin:0 0 8px 0;font-size:34px;}
-.hero p{margin:0;color:#cbd5e1;max-width:980px;line-height:1.55;}
-.hero .meta{margin-top:10px;color:#94a3b8;font-size:13px;}
-.grid{display:grid;grid-template-columns:360px 1fr;gap:18px;}
-.panel{background:#111827;border:1px solid #334155;border-radius:18px;padding:18px;}
-.panel h2{margin:0 0 12px 0;font-size:20px;}
-.panel h3{margin:16px 0 8px 0;font-size:14px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.03em;}
-label{display:block;font-size:13px;color:#cbd5e1;margin-bottom:6px;}
-select,input[type=range]{width:100%;}
-input[type=range]{accent-color:#38bdf8;}
-.slider-row{margin-bottom:14px;}
-.slider-head{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:4px;}
-.small{color:#94a3b8;font-size:12px;line-height:1.4;}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
-.rank-anchor{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;}
-.rank-anchor .headline{font-size:18px;font-weight:700;line-height:1.35;}
-.rank-anchor .sub{font-size:12px;color:#94a3b8;margin-top:6px;line-height:1.45;}
-.rank-pill{display:inline-block;background:#0f3d2e;border:1px solid #1d6b52;color:#bbf7d0;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;}
-.preset-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;}
-.preset-btn{background:#0b1220;border:1px solid #263247;color:#e5e7eb;border-radius:10px;padding:9px 10px;font-size:12px;font-weight:700;cursor:pointer;}
-.preset-btn:hover{background:#13203a;border-color:#3b82f6;}
-.preset-btn.reset{grid-column:span 2;}
-.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-.signal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
-.signal-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:8px;}
-.signal-main{font-size:18px;font-weight:700;line-height:1.4;}
-.signal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
-.causal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
-.causal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
-.causal-step{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:8px;}
-.causal-main{font-size:16px;font-weight:700;line-height:1.35;}
-.causal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
-.component-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px;}
-.component-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
-.component-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px;}
-.component-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;}
-.component-badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;border:1px solid #334155;background:#111827;color:#e5e7eb;}
-.component-badge.high{border-color:#166534;color:#bbf7d0;background:#0f2d20;}
-.component-badge.medium{border-color:#92400e;color:#fde68a;background:#33210d;}
-.component-badge.low{border-color:#991b1b;color:#fecaca;background:#351313;}
-.component-value{font-size:20px;font-weight:700;line-height:1.2;}
-.component-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
-.preset-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;}
-.preset-btn{background:#0b1220;border:1px solid #263247;color:#e5e7eb;border-radius:10px;padding:9px 10px;font-size:12px;font-weight:700;cursor:pointer;}
-.preset-btn:hover{background:#13203a;border-color:#3b82f6;}
-.preset-btn.reset{grid-column:span 2;}
-.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-.signal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
-.signal-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8;margin-bottom:8px;}
-.signal-main{font-size:18px;font-weight:700;line-height:1.4;}
-.signal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
-.causal-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
-.causal-card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
-.causal-step{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:8px;}
-.causal-main{font-size:16px;font-weight:700;line-height:1.35;}
-.causal-sub{font-size:12px;color:#94a3b8;line-height:1.45;margin-top:6px;}
-.waterfall-wrap{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:12px;}
-.waterfall-chart{width:100%;height:auto;display:block;}
-.halfcourt-wrap{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:12px;}
-.halfcourt-chart{width:100%;height:auto;display:block;}
-.zone-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.zone-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#cbd5e1;}
-.zone-legend-swatch{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid rgba(255,255,255,0.25);}
-.card{background:#0b1220;border:1px solid #263247;border-radius:16px;padding:14px;}
-.card .k{font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
-.card .v{font-size:28px;font-weight:700;}
-.card .d{margin-top:6px;font-size:12px;color:#94a3b8;}
-.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.table{width:100%;border-collapse:collapse;font-size:13px;}
-.table th,.table td{padding:8px 10px;border-bottom:1px solid #233046;text-align:left;vertical-align:top;}
-.table th{color:#93c5fd;font-weight:700;}
-.bad{color:#fca5a5;}
-.good{color:#86efac;}
-.neutral{color:#cbd5e1;}
-.note{margin-top:12px;font-size:12px;color:#94a3b8;line-height:1.45;}
-.warning{display:none;background:#3f1d1d;border:1px solid #7f1d1d;color:#fecaca;padding:12px 14px;border-radius:14px;margin-bottom:16px;font-size:13px;line-height:1.5;}
-.card.flash{box-shadow:0 0 0 2px rgba(56,189,248,0.85), 0 0 24px rgba(56,189,248,0.22);border-color:#38bdf8;transition:box-shadow .18s ease,border-color .18s ease;}
-.chart-tooltip{position:fixed;z-index:9999;pointer-events:none;opacity:0;transform:translate(-50%, calc(-100% - 10px));background:rgba(6,11,20,.98);color:#e5e7eb;border:1px solid #334155;border-radius:12px;padding:8px 10px;font-size:12px;line-height:1.45;white-space:nowrap;box-shadow:0 14px 28px rgba(0,0,0,.35);}
-.zone-legend-note{font-size:12px;color:#94a3b8;line-height:1.45;margin-bottom:8px;}
-.warning strong{display:block;margin-bottom:6px;}
-.warning ul{margin:0;padding-left:18px;}
-.lineup-block{background:#0b1220;border:1px solid #263247;border-radius:14px;padding:12px;margin-bottom:10px;}
-.lineup-title{font-size:13px;font-weight:700;line-height:1.4;margin-bottom:4px;}
-.lineup-meta{font-size:12px;color:#94a3b8;margin-bottom:8px;}
-.rest-row{background:#0f172a;border-style:dashed;}
-@media (max-width:1160px){.grid{grid-template-columns:1fr;}.cards{grid-template-columns:repeat(2,minmax(0,1fr));}.section-grid{grid-template-columns:1fr;}}
+:root {
+  --bg:        #07101e;
+  --surface:   #0c1929;
+  --surface2:  #0f2035;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.13);
+  --accent:    #22d3a5;
+  --accent-d:  #16a580;
+  --warn:      #f59e0b;
+  --bad:       #f87171;
+  --good:      #34d399;
+  --text:      #dde6f0;
+  --muted:     #4e6a88;
+  --muted-hi:  #7a99bb;
+  --display:   'Syne', sans-serif;
+  --mono:      'DM Mono', monospace;
+  --body:      'Outfit', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── layout ── */
+.wrap { max-width: 1520px; margin: 0 auto; padding: 28px 24px 64px; }
+
+/* ── hero ── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-hi);
+  border-radius: 20px;
+  padding: 32px 36px 28px;
+  margin-bottom: 20px;
+  background: var(--surface);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 90% at 100% -10%, rgba(34,211,165,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 60% at -5% 110%, rgba(34,211,165,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.hero h1 {
+  font-family: var(--display);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1;
+  color: #f0f6ff;
+  margin-bottom: 12px;
+}
+.hero p {
+  color: var(--muted-hi);
+  font-size: 14px;
+  max-width: 720px;
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+/* ── grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 370px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── panel ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+}
+.panel-title {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #e8f0fa;
+  margin-bottom: 16px;
+  letter-spacing: -.01em;
+}
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── team select ── */
+.team-select-wrap { margin-bottom: 4px; }
+select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234e6a88' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  transition: border-color .15s;
+}
+select:focus { outline: none; border-color: var(--accent); }
+
+/* ── preset buttons ── */
+.preset-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+.preset-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  color: var(--muted-hi);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--body);
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+.preset-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(34,211,165,0.05);
+}
+.preset-btn.reset {
+  grid-column: span 2;
+  color: var(--muted);
+  border-style: dashed;
+}
+.preset-btn.reset:hover {
+  border-color: var(--muted-hi);
+  color: var(--text);
+  background: transparent;
+}
+
+/* ── sliders ── */
+.slider-row { margin-bottom: 16px; }
+.slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted-hi);
+  margin-bottom: 6px;
+}
+.slider-head strong {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--border-hi), var(--border-hi));
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--accent);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(34,211,165,0.18);
+}
+input[type=range]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  cursor: pointer;
+}
+.small {
+  font-family: var(--mono);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* ── KPI cards ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--border-hi);
+  transition: border-left-color .2s;
+}
+.card:first-child { border-left-color: var(--accent); }
+.card:nth-child(2) { border-left-color: #f87171; }
+.card:nth-child(3) { border-left-color: var(--warn); }
+.card:nth-child(4) { border-left-color: #818cf8; }
+.card .k {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.card .v {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 500;
+  color: #f0f6ff;
+  line-height: 1;
+}
+.card .d {
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.card.flash {
+  box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(34,211,165,0.15);
+  border-left-color: var(--accent) !important;
+  transition: box-shadow .18s ease;
+}
+
+/* ── rank anchor ── */
+.rank-anchor {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rank-anchor .headline {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #f0f6ff;
+}
+.rank-anchor .sub {
+  font-size: 12px;
+  color: var(--muted-hi);
+  margin-top: 5px;
+  line-height: 1.5;
+  font-family: var(--mono);
+}
+.rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34,211,165,0.1);
+  border: 1px solid rgba(34,211,165,0.3);
+  color: var(--accent);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── signal cards ── */
+.signal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.signal-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.signal-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.signal-main {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #f0f6ff;
+}
+.signal-sub {
+  font-size: 12px;
+  color: var(--muted-hi);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* ── causal chain ── */
+.causal-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.causal-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  position: relative;
+}
+.causal-card:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+  z-index: 1;
+}
+.causal-step {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.causal-main {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #f0f6ff;
+}
+.causal-sub {
+  font-size: 12px;
+  color: var(--muted-hi);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* ── section grid ── */
+.section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.section-grid h3, .panel h3 {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin: 0 0 10px 0;
+}
+
+/* ── table ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th, .table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.table th {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+  background: var(--surface2);
+}
+.table td { font-family: var(--mono); font-size: 13px; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── chart wraps ── */
+.waterfall-wrap, .halfcourt-wrap {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+.waterfall-chart, .halfcourt-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── zone legend ── */
+.zone-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.zone-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted-hi);
+}
+.zone-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+.zone-legend-note {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+}
+
+/* ── lineup ── */
+.lineup-block {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.lineup-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 3px;
+  color: #f0f6ff;
+}
+.lineup-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.rest-row { opacity: 0.6; font-style: italic; }
+
+/* ── state colours ── */
+.bad   { color: var(--bad);  }
+.good  { color: var(--good); }
+.neutral { color: var(--muted-hi); }
+
+/* ── warning ── */
+.warning {
+  display: none;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.warning strong { display: block; margin-bottom: 6px; font-weight: 600; }
+.warning ul { margin: 0; padding-left: 18px; }
+
+/* ── tooltip ── */
+.chart-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, calc(-100% - 10px));
+  background: rgba(7,16,30,.97);
+  color: var(--text);
+  border: 1px solid var(--border-hi);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-family: var(--mono);
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: 0 12px 32px rgba(0,0,0,.5);
+}
+
+/* ── component badges ── */
+.component-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: .04em;
+}
+.component-badge.high  { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); color: #34d399; }
+.component-badge.medium { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #f59e0b; }
+.component-badge.low   { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); color: #f87171; }
+
+@media (max-width: 1180px) {
+  .grid { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .section-grid { grid-template-columns: 1fr; }
+  .causal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .causal-card::after { display: none; }
+  .hero h1 { font-size: 36px; }
+}
 </style>
 <style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
 <body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2025-2026 </div></div></header>
 <div class="wrap">
-    <section class="hero">
-        <h1>Impact Lab</h1>
-        <p>Interactive team analytics sandbox. Change four factors, shot distribution and top lineup minutes, then compare baseline vs simulated profile in real time. This is a transparent what-if model based on the team's own historical baseline, not a prediction engine.</p>
-        <div class="meta">Inputs: team_totals_adv + team_zone_profiles + lineups_adv</div>
-    </section>
 
-    <div class="grid">
-        <aside class="panel">
-            <h2>Controls</h2>
-            <label for="teamSelect">Team</label>
-            <select id="teamSelect"></select>
-            <div class="preset-row">
-                <button type="button" class="preset-btn" id="presetAttack">Attack up</button>
-                <button type="button" class="preset-btn" id="presetBalance">Balanced upside</button>
-                <button type="button" class="preset-btn" id="presetSpacing">Spacing tilt</button>
-                <button type="button" class="preset-btn reset" id="presetReset">Reset all controls</button>
-            </div>
-
-            <h3>Four Factors adjustments</h3>
-
-            <div class="slider-row">
-                <div class="slider-head"><span>eFG% delta</span><strong id="efgDeltaLabel">0.0 pp</strong></div>
-                <input id="efgDelta" type="range" min="-8" max="8" step="0.1" value="0">
-            </div>
-
-            <div class="slider-row">
-                <div class="slider-head"><span>TOV% delta</span><strong id="tovDeltaLabel">0.0 pp</strong></div>
-                <input id="tovDelta" type="range" min="-8" max="8" step="0.1" value="0">
-            </div>
-
-            <div class="slider-row">
-                <div class="slider-head"><span>ORB% delta</span><strong id="orbDeltaLabel">0.0 pp</strong></div>
-                <input id="orbDelta" type="range" min="-8" max="8" step="0.1" value="0">
-            </div>
-
-            <div class="slider-row">
-                <div class="slider-head"><span>FTR delta</span><strong id="ftrDeltaLabel">0.0 pp</strong></div>
-                <input id="ftrDelta" type="range" min="-12" max="12" step="0.1" value="0">
-            </div>
-
-            <h3>Shot mix rebuilder</h3>
-            <div id="zoneSliders"></div>
-            <div class="small">Zone sliders are normalized to 100% before the simulation is calculated.</div>
-
-            <h3>Lineup mixer</h3>
-            <div id="lineupMixer"></div>
-            <div class="small">Top lineups can gain or lose minutes. The rest of the team's lineup pool absorbs the difference automatically. Sample-adjusted ratings use shrinkage toward team baseline.</div>
-        </aside>
-
-        <main class="panel">
-            <h2 id="teamTitle">Team</h2>
-
-            <div id="warningBox" class="warning"></div>
-
-            <div class="cards">
-                <div class="card"><div class="k">Off Rating</div><div class="v" id="offCard">-</div><div class="d" id="offDelta">Δ -</div></div>
-                <div class="card"><div class="k">Def Rating</div><div class="v" id="defCard">-</div><div class="d" id="defDelta">Δ -</div></div>
-                <div class="card"><div class="k">Net Rating</div><div class="v" id="netCard">-</div><div class="d" id="netDelta">Δ -</div></div>
-                <div class="card"><div class="k">Shot PPS</div><div class="v" id="ppsCard">-</div><div class="d" id="ppsDelta">Δ -</div></div>
-            </div>
-
-            <div class="rank-anchor">
-                <div>
-                    <div class="headline" id="rankHeadline">-</div>
-                    <div class="sub" id="rankSubline">-</div>
-                </div>
-                <div class="rank-pill" id="rankPill">League anchor</div>
-            </div>
-
-            <div class="signal-grid">
-                <div class="signal-card">
-                    <div class="signal-title">Credibility</div>
-                    <div class="signal-main" id="confidenceMain">-</div>
-                    <div class="signal-sub" id="confidenceSub">-</div>
-                </div>
-                <div class="signal-card">
-                    <div class="signal-title">Historical envelope</div>
-                    <div class="signal-main" id="envelopeMain">-</div>
-                    <div class="signal-sub" id="envelopeSub">-</div>
-                </div>
-            </div>
-
-            <div class="causal-grid">
-                <div class="causal-card">
-                    <div class="causal-step">1 · Shot mix</div>
-                    <div class="causal-main" id="causalShot">-</div>
-                    <div class="causal-sub" id="causalShotSub">-</div>
-                </div>
-                <div class="causal-card">
-                    <div class="causal-step">2 · Four factors</div>
-                    <div class="causal-main" id="causalFactors">-</div>
-                    <div class="causal-sub" id="causalFactorsSub">-</div>
-                </div>
-                <div class="causal-card">
-                    <div class="causal-step">3 · Lineup mix</div>
-                    <div class="causal-main" id="causalLineups">-</div>
-                    <div class="causal-sub" id="causalLineupsSub">-</div>
-                </div>
-                <div class="causal-card">
-                    <div class="causal-step">4 · Outcome</div>
-                    <div class="causal-main" id="causalOutcome">-</div>
-                    <div class="causal-sub" id="causalOutcomeSub">-</div>
-                </div>
-            </div>
-
-            <div class="section-grid">
-                <section>
-                    <h3>Baseline vs simulation</h3>
-                    <table class="table">
-                        <thead><tr><th>Metric</th><th>Baseline</th><th>Simulated</th><th>Delta</th></tr></thead>
-                        <tbody id="summaryRows"></tbody>
-                    </table>
-                </section>
-
-                <section>
-                    <h3>Impact breakdown</h3>
-                    <div class="waterfall-wrap">
-                        <svg id="waterfallChart" class="waterfall-chart" viewBox="0 0 760 280" preserveAspectRatio="xMidYMid meet"></svg>
-                    </div>
-                </section>
-            </div>
-
-            <div class="section-grid" style="margin-top:16px;">
-                <section>
-                    <h3>Shot mix board</h3>
-                    <div class="halfcourt-wrap">
-                        <svg id="halfcourtChart" class="halfcourt-chart" viewBox="0 0 520 420" preserveAspectRatio="xMidYMid meet"></svg>
-                        <div id="zoneLegend" class="zone-legend"></div>
-                    </div>
-                </section>
-
-                <section>
-                    <h3>Lineup minutes mix</h3>
-                    <table class="table">
-                        <thead><tr><th>Lineup</th><th>Base Min</th><th>Sim Min</th><th>Shrunk Net</th></tr></thead>
-                        <tbody id="lineupRows"></tbody>
-                    </table>
-                </section>
-            </div>
-
-        </main>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Team Analytics Sandbox</div>
+      <h1>Impact Lab</h1>
+      <p>Adjust four factors, shot distribution and lineup minutes — then compare your simulation against the team's real baseline in real time.</p>
     </div>
+  </section>
+
+  <div class="grid">
+
+    <aside class="panel">
+      <div class="panel-title">Controls</div>
+
+      <div class="team-select-wrap">
+        <select id="teamSelect"></select>
+      </div>
+
+      <div class="preset-row">
+        <button type="button" class="preset-btn" id="presetAttack">Attack up</button>
+        <button type="button" class="preset-btn" id="presetBalance">Balanced upside</button>
+        <button type="button" class="preset-btn" id="presetSpacing">Spacing tilt</button>
+        <button type="button" class="preset-btn reset" id="presetReset">Reset all controls</button>
+      </div>
+
+      <div class="section-label">Four Factors</div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>eFG% delta</span><strong id="efgDeltaLabel">0.0 pp</strong></div>
+        <input id="efgDelta" type="range" min="-8" max="8" step="0.1" value="0">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>TOV% delta</span><strong id="tovDeltaLabel">0.0 pp</strong></div>
+        <input id="tovDelta" type="range" min="-8" max="8" step="0.1" value="0">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>ORB% delta</span><strong id="orbDeltaLabel">0.0 pp</strong></div>
+        <input id="orbDelta" type="range" min="-8" max="8" step="0.1" value="0">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>FTR delta</span><strong id="ftrDeltaLabel">0.0 pp</strong></div>
+        <input id="ftrDelta" type="range" min="-12" max="12" step="0.1" value="0">
+      </div>
+
+      <div class="section-label">Shot mix rebuilder</div>
+      <div id="zoneSliders"></div>
+      <div class="small">Zone sliders normalise to 100% before simulation.</div>
+
+      <div class="section-label">Lineup mixer</div>
+      <div id="lineupMixer"></div>
+      <div class="small">Top lineups gain or lose minutes. Rest of pool absorbs difference automatically. Ratings use shrinkage toward team baseline.</div>
+    </aside>
+
+    <main class="panel">
+      <div class="panel-title" id="teamTitle">Team</div>
+
+      <div id="warningBox" class="warning"></div>
+
+      <div class="cards">
+        <div class="card"><div class="k">Off Rating</div><div class="v" id="offCard">—</div><div class="d" id="offDelta">Δ —</div></div>
+        <div class="card"><div class="k">Def Rating</div><div class="v" id="defCard">—</div><div class="d" id="defDelta">Δ —</div></div>
+        <div class="card"><div class="k">Net Rating</div><div class="v" id="netCard">—</div><div class="d" id="netDelta">Δ —</div></div>
+        <div class="card"><div class="k">Shot PPS</div><div class="v" id="ppsCard">—</div><div class="d" id="ppsDelta">Δ —</div></div>
+      </div>
+
+      <div class="rank-anchor">
+        <div>
+          <div class="headline" id="rankHeadline">—</div>
+          <div class="sub" id="rankSubline">—</div>
+        </div>
+        <div class="rank-pill" id="rankPill">League rank</div>
+      </div>
+
+      <div class="signal-grid">
+        <div class="signal-card">
+          <div class="signal-title">Credibility</div>
+          <div class="signal-main" id="confidenceMain">—</div>
+          <div class="signal-sub" id="confidenceSub">—</div>
+        </div>
+        <div class="signal-card">
+          <div class="signal-title">Historical envelope</div>
+          <div class="signal-main" id="envelopeMain">—</div>
+          <div class="signal-sub" id="envelopeSub">—</div>
+        </div>
+      </div>
+
+      <div class="causal-grid">
+        <div class="causal-card">
+          <div class="causal-step">1 · Shot mix</div>
+          <div class="causal-main" id="causalShot">—</div>
+          <div class="causal-sub" id="causalShotSub">—</div>
+        </div>
+        <div class="causal-card">
+          <div class="causal-step">2 · Four factors</div>
+          <div class="causal-main" id="causalFactors">—</div>
+          <div class="causal-sub" id="causalFactorsSub">—</div>
+        </div>
+        <div class="causal-card">
+          <div class="causal-step">3 · Lineup mix</div>
+          <div class="causal-main" id="causalLineups">—</div>
+          <div class="causal-sub" id="causalLineupsSub">—</div>
+        </div>
+        <div class="causal-card">
+          <div class="causal-step">4 · Outcome</div>
+          <div class="causal-main" id="causalOutcome">—</div>
+          <div class="causal-sub" id="causalOutcomeSub">—</div>
+        </div>
+      </div>
+
+      <div class="section-grid">
+        <section>
+          <h3>Baseline vs simulation</h3>
+          <table class="table">
+            <thead><tr><th>Metric</th><th>Baseline</th><th>Simulated</th><th>Delta</th></tr></thead>
+            <tbody id="summaryRows"></tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Impact breakdown</h3>
+          <div class="waterfall-wrap">
+            <svg id="waterfallChart" class="waterfall-chart" viewBox="0 0 760 280" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+        </section>
+      </div>
+
+      <div class="section-grid" style="margin-top:14px;">
+        <section>
+          <h3>Shot mix board</h3>
+          <div class="halfcourt-wrap">
+            <svg id="halfcourtChart" class="halfcourt-chart" viewBox="0 0 520 420" preserveAspectRatio="xMidYMid meet"></svg>
+            <div id="zoneLegend" class="zone-legend"></div>
+          </div>
+        </section>
+        <section>
+          <h3>Lineup minutes mix</h3>
+          <table class="table">
+            <thead><tr><th>Lineup</th><th>Base Min</th><th>Sim Min</th><th>Shrunk Net</th></tr></thead>
+            <tbody id="lineupRows"></tbody>
+          </table>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
 <div id="chartTooltip" class="chart-tooltip"></div>
 </div>
 
