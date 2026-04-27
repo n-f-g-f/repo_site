@@ -167,6 +167,7 @@
     function escapeHtml(text) { return String(text ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
     function fmtNum(v, digits=1) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : Number(v).toFixed(digits); }
     function fmtPct(v) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : (Number(v) * 100).toFixed(1) + '%'; }
+    function fmtSignedPct(v) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : ((Number(v) > 0 ? '+' : Number(v) < 0 ? '-' : '') + Math.abs(Number(v) * 100).toFixed(1) + '%'); }
     function fmtInt(v) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : String(Math.round(Number(v))); }
     function sortBy(arr, key, desc=true) {
       return arr.slice().sort((a,b) => {
@@ -215,6 +216,46 @@
     function getRotationRows(gameCode) {
       return RAW_ROTATION.filter(r => r.game_code === gameCode);
     }
+    function buildStretchRuns(gameCode) {
+      const rows = getRotationRows(gameCode)
+        .filter(r => r && r.team_key && r.lineup_players && r.segment_start_second !== null && r.segment_end_second !== null)
+        .slice()
+        .sort((a,b) => {
+          const tc = String(a.team_key || '').localeCompare(String(b.team_key || ''));
+          if (tc !== 0) return tc;
+          const lc = String(a.lineup_players || '').localeCompare(String(b.lineup_players || ''));
+          if (lc !== 0) return lc;
+          return Number(a.segment_start_second || 0) - Number(b.segment_start_second || 0);
+        });
+
+      const runs = [];
+      for (const row of rows) {
+        const last = runs[runs.length - 1];
+        const sameGroup = last
+          && last.team_key === row.team_key
+          && last.lineup_players === row.lineup_players
+          && Number(last.segment_end_second || 0) === Number(row.segment_start_second || 0);
+
+        if (sameGroup) {
+          last.segment_end_second = row.segment_end_second;
+          last.segment_net = Number(last.segment_net || 0) + Number(row.segment_net || 0);
+          last.score_end = row.score_end || last.score_end;
+        } else {
+          runs.push({
+            game_code: row.game_code,
+            team_key: row.team_key,
+            team_name: row.team_name,
+            lineup_players: row.lineup_players,
+            segment_start_second: row.segment_start_second,
+            segment_end_second: row.segment_end_second,
+            segment_net: Number(row.segment_net || 0),
+            score_start: row.score_start || '',
+            score_end: row.score_end || '',
+          });
+        }
+      }
+      return runs.sort((a,b) => Math.abs(Number(b.segment_net || 0)) - Math.abs(Number(a.segment_net || 0)));
+    }
     function compositePerformance(row) {
       const pts = Number(row.points || 0);
       const reb = Number(row.rebounds_total || 0);
@@ -227,7 +268,7 @@
 
     function buildRoundOptions() {
       const select = document.getElementById('round-filter');
-      const rounds = Array.from(new Set(RAW_GAMES.map(g => g.round).filter(v => v !== null && v !== undefined))).sort((a,b) => a-b);
+      const rounds = Array.from(new Set(RAW_GAMES.map(g => g.round).filter(v => v !== null && v !== undefined))).sort((a,b) => b-a);
       select.innerHTML = '<option value="">Choose round</option>' + rounds.map(r => `<option value="${r}">Round ${r}</option>`).join('');
     }
 
@@ -238,6 +279,13 @@
       if (roundValue) {
         games = games.filter(g => String(g.round ?? '') === roundValue);
       }
+      games.sort((a,b) => {
+        const roundCmp = Number(b.round || -Infinity) - Number(a.round || -Infinity);
+        if (roundCmp !== 0) return roundCmp;
+        const dateCmp = String(b.game_date || '').localeCompare(String(a.game_date || ''));
+        if (dateCmp !== 0) return dateCmp;
+        return String(a.label || '').localeCompare(String(b.label || ''));
+      });
       select.innerHTML = '<option value="">Choose game</option>' + games.map(g => `<option value="${escapeHtml(g.game_code)}">${escapeHtml(g.label)}</option>`).join('');
     }
 
@@ -408,12 +456,13 @@
             ? Number(gv) - Number(sv)
             : null;
           const valueFmt = m.pct ? fmtPct : fmtNum;
-          const deltaFmt = m.pct ? fmtPct : (v => fmtSigned(v, 1));
+          const deltaFmt = m.pct ? fmtSignedPct : (v => fmtSigned(v, 1));
+          const deltaClass = delta === null ? '' : (Number(delta) < 0 ? 'bad' : Number(delta) > 0 ? 'good' : '');
           return `
             <div class="metric-card">
               <div class="metric-label">${escapeHtml(m.label)}</div>
               <div class="metric-value">${valueFmt(gv)}</div>
-              <div class="player-sub">Season ${valueFmt(sv)} · Δ ${delta === null ? '—' : deltaFmt(delta)}</div>
+              <div class="player-sub">Season ${valueFmt(sv)} · <span class="${deltaClass}">Δ ${delta === null ? '—' : deltaFmt(delta)}</span></div>
             </div>
           `;
         }).join('');
@@ -444,9 +493,7 @@
       factorCandidates.sort((x,y) => y.diff - x.diff);
       const topFactor = factorCandidates[0] || null;
 
-      const stretches = getRotationRows(meta.game_code)
-        .filter(r => r.segment_net !== null && r.segment_net !== undefined && !Number.isNaN(Number(r.segment_net)))
-        .sort((a,b) => Math.abs(Number(b.segment_net)) - Math.abs(Number(a.segment_net)));
+      const stretches = buildStretchRuns(meta.game_code);
       const bestStretch = stretches[0] || null;
       const margin = (() => {
         const totals = RAW_TEAM_TOTALS.filter(t => t.game_code === meta.game_code);
@@ -509,9 +556,8 @@
     }
 
     function renderGameFlow(meta) {
-      const rows = getRotationRows(meta.game_code)
+      const rows = buildStretchRuns(meta.game_code)
         .filter(r => r.segment_net !== null && r.segment_net !== undefined && !Number.isNaN(Number(r.segment_net)))
-        .sort((a,b) => Math.abs(Number(b.segment_net)) - Math.abs(Number(a.segment_net)))
         .slice(0, 6);
 
       if (!rows.length) {
@@ -521,14 +567,13 @@
 
       document.getElementById('game-flow').innerHTML = `<div class="flow-grid">${rows.map(row => {
         const rotationHref = buildRotationHref(row.team_key, row.game_code);
-        const scoreText = (row.score_for_start === null || row.score_against_start === null || row.score_for_end === null || row.score_against_end === null)
-          ? ''
-          : `${row.score_for_start}-${row.score_against_start} → ${row.score_for_end}-${row.score_against_end}`;
+        const scoreText = row.score_start && row.score_end ? `${row.score_start} → ${row.score_end}` : '';
+        const flowTeamName = getTeamDisplayName(meta, row.team_key) || row.team_name || row.team_key || '';
         return `
           <div class="flow-card">
             <div class="flow-top">
               <div>
-                <div class="flow-team">${rotationHref ? `<a class="team-link" href="${rotationHref}">${escapeHtml(row.team_name || row.team_key || '')}</a>` : escapeHtml(row.team_name || row.team_key || '')}</div>
+                <div class="flow-team">${rotationHref ? `<a class="team-link" href="${rotationHref}">${escapeHtml(flowTeamName)}</a>` : escapeHtml(flowTeamName)}</div>
                 <div class="flow-time">${secsToClock(row.segment_start_second)}–${secsToClock(row.segment_end_second)}</div>
               </div>
               <div class="flow-net ${Number(row.segment_net) >= 0 ? 'good' : 'bad'}">${fmtSigned(row.segment_net, 0)}</div>
