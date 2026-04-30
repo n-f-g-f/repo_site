@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Matchup Matrix</title>
+  <style>
+    :root { --bg:#f3f4f6; --panel:#fff; --text:#111827; --muted:#64748b; --line:#e5e7eb; --brand:#1d4ed8; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:1480px; margin:0 auto; padding:28px 20px 44px; }
+    .hero { background:linear-gradient(135deg,#0f172a 0%,#111827 100%); color:#fff; border-radius:20px; padding:28px; margin-bottom:22px; }
+    .eyebrow { display:inline-flex; padding:7px 12px; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.14); font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; margin-bottom:12px; }
+    h1 { margin:0 0 8px 0; font-size:34px; }
+    .sub { max-width:980px; color:rgba(255,255,255,.88); font-size:15px; line-height:1.6; }
+    .meta { margin-top:12px; color:rgba(255,255,255,.72); font-size:13px; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:20px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+    .toolbar { padding:18px; display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; }
+    .toolbar-left { display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+    .control { display:flex; flex-direction:column; gap:6px; min-width:200px; }
+    .control label, .metric-title { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+    .control select { border:1px solid #cbd5e1; background:#fff; border-radius:12px; padding:10px 12px; font-size:14px; }
+    .metric-group { display:flex; flex-direction:column; gap:8px; }
+    .metric-buttons { display:flex; flex-wrap:wrap; gap:8px; }
+    .metric-btn { border:1px solid #cbd5e1; background:#f8fafc; color:#475569; border-radius:999px; padding:10px 14px; font-size:14px; font-weight:700; cursor:pointer; }
+    .metric-btn.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+    .toolbar-right { color:var(--muted); font-size:13px; font-weight:700; }
+    .canvas-wrap { padding:18px; overflow:auto; }
+    canvas { display:block; background:#fff; border-radius:14px; }
+    .legend { display:flex; gap:14px; flex-wrap:wrap; align-items:center; padding:0 18px 18px; color:var(--muted); font-size:13px; }
+    .legend-bar { width:220px; height:12px; border-radius:999px; background:linear-gradient(90deg,#f97316 0%,#f9fafb 50%,#1d4ed8 100%); border:1px solid #e5e7eb; }
+    .notes { padding:0 18px 18px; color:var(--muted); font-size:13px; line-height:1.55; }
+    .tooltip { position:fixed; display:none; pointer-events:none; z-index:50; max-width:280px; background:rgba(15,23,42,.96); color:#fff; border-radius:14px; padding:12px 14px; box-shadow:0 8px 24px rgba(0,0,0,.18); font-size:13px; line-height:1.5; }
+    .tt-title { font-size:14px; font-weight:800; margin-bottom:6px; }
+    .tt-sub { color:rgba(255,255,255,.76); font-size:12px; margin-bottom:8px; }
+    .tt-grid { display:grid; grid-template-columns:auto auto; gap:4px 10px; }
+    .tt-grid div:nth-child(odd) { color:rgba(255,255,255,.72); }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2023-2024 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2023-2024 </div></div></header>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Analytics · Matchup Matrix</div>
+    <h1 id="page-title">Matchup Matrix</h1>
+    <div class="sub">Explore team-vs-team matchups across the selected season context. Switch the main metric dynamically and scan where each team performs better or worse against each opponent.</div>
+    <div class="meta" id="page-meta"></div>
+  </section>
+  <section class="panel">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="control"><label for="phase-filter">Scope</label><select id="phase-filter"></select></div>
+        <div class="metric-group"><div class="metric-title">Métrica principal</div><div class="metric-buttons" id="metric-buttons"></div></div>
+      </div>
+      <div class="toolbar-right" id="matrix-status"></div>
+    </div>
+    <div class="canvas-wrap"><canvas id="matrix-canvas"></canvas></div>
+    <div class="legend"><span>Lower relative edge</span><div class="legend-bar"></div><span>Higher relative edge</span></div>
+    <div class="notes">The value shown in each cell is the selected metric for the row team against the column team. The colour is scaled relative to the visible matrix and respects whether higher or lower is better for the selected metric.</div>
+  </section>
+</div>
+<div class="tooltip" id="tooltip"></div>
+<script>
+const DATA_URL = 'data/matchup_matrix_data.json';
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+const phaseFilter = document.getElementById('phase-filter');
+const metricButtons = document.getElementById('metric-buttons');
+const matrixStatus = document.getElementById('matrix-status');
+const pageTitle = document.getElementById('page-title');
+const pageMeta = document.getElementById('page-meta');
+const layout = { leftPad: 148, topPad: 108, cellW: 92, cellH: 62, rightPad: 24, bottomPad: 24, maxNameLen: 16 };
+let payload = null, selectedMetric = 'net_rating_avg', selectedPhase = '__season_full__', hoverCell = null, currentCells = [];
+function esc(t){return String(t??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
+function fmtSeason(v){return String(v||'').replaceAll('_','/');}
+function metricMeta(k){return (payload?.metrics||[]).find(m=>m.key===k)||null;}
+function labelForMetric(k){const m=metricMeta(k); return m?m.label:k;}
+function formatMetric(k,v){const m=metricMeta(k); if(v==null||Number.isNaN(Number(v))) return '—'; const n=Number(v); if(!m) return n.toFixed(1); if(m.format==='signed1') return `${n>0?'+':''}${n.toFixed(1)}`; if(m.format==='pct1') return `${(n*100).toFixed(1)}%`; return n.toFixed(1);}
+function buildPhaseOptions(){const phases=payload?.phases||[]; phaseFilter.innerHTML=['<option value="__season_full__">Época completa</option>'].concat(phases.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`)).join(''); phaseFilter.value=selectedPhase;}
+function buildMetricButtons(){metricButtons.innerHTML=(payload?.metrics||[]).map(m=>`<button class="metric-btn ${m.key===selectedMetric?'active':''}" data-metric="${esc(m.key)}">${esc(m.label)}</button>`).join(''); metricButtons.querySelectorAll('[data-metric]').forEach(btn=>btn.addEventListener('click',()=>{selectedMetric=btn.getAttribute('data-metric'); buildMetricButtons(); render();}));}
+function activeRows(){if(!payload) return []; if(selectedPhase==='__season_full__') return payload.summary||[]; return (payload.summary_by_phase||[]).filter(r=>r.phase===selectedPhase);}
+function teamList(){return payload?.teams||[];}
+function buildCellMap(rows){const map=new Map(); rows.forEach(r=>map.set(`${r.team_key}__${r.opp_team_key}`,r)); return map;}
+function visibleValues(rows,k){return rows.map(r=>r[k]).filter(v=>v!=null&&!Number.isNaN(Number(v))).map(Number);}
+function colorForValue(v,min,max,higher){if(v==null||Number.isNaN(Number(v))) return '#f8fafc'; const num=Number(v); const span=max-min; const ratio=span<=0?0.5:Math.max(0,Math.min(1,(num-min)/span)); const signed=higher?ratio:1-ratio; const warm=[249,115,22], cool=[29,78,216], neutral=[248,250,252]; const target=signed>=0.5?cool:warm; const local=signed>=0.5?(signed-0.5)/0.5:(0.5-signed)/0.5; const mix=0.18+local*0.82; const rgb=neutral.map((b,i)=>Math.round(b+(target[i]-b)*mix)); return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;}
+function textColor(fill){const rgb=fill.match(/\d+/g); if(!rgb) return '#111827'; const [r,g,b]=rgb.map(Number); const lum=(0.299*r+0.587*g+0.114*b)/255; return lum<0.62?'#ffffff':'#111827';}
+function trunc(t){const s=String(t||''); return s.length<=layout.maxNameLen?s:`${s.slice(0,layout.maxNameLen-1)}…`;}
+function drawHeaders(teams){ctx.fillStyle='#111827'; ctx.font='700 13px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; teams.forEach((t,i)=>ctx.fillText(trunc(t.team_name), layout.leftPad+i*layout.cellW+layout.cellW/2, layout.topPad-28)); ctx.textAlign='right'; teams.forEach((t,i)=>ctx.fillText(trunc(t.team_name), layout.leftPad-12, layout.topPad+i*layout.cellH+layout.cellH/2)); ctx.textAlign='left'; ctx.fillStyle='#475569'; ctx.font='700 12px Arial'; ctx.fillText('Equipa vs adversário', 14, layout.topPad-28);}
+function drawGrid(teams,rows,metricKey){const meta=metricMeta(metricKey); const higher=meta?!!meta.higher_is_better:true; const vals=visibleValues(rows,metricKey); const min=vals.length?Math.min(...vals):0; const max=vals.length?Math.max(...vals):0; const rowMap=buildCellMap(rows); currentCells=[]; teams.forEach((rt,rIdx)=>{teams.forEach((ct,cIdx)=>{const x=layout.leftPad+cIdx*layout.cellW, y=layout.topPad+rIdx*layout.cellH, same=rt.team_key===ct.team_key; ctx.strokeStyle='#ffffff'; ctx.lineWidth=1; if(same){ctx.fillStyle='#f3f4f6'; ctx.fillRect(x,y,layout.cellW,layout.cellH); ctx.strokeRect(x,y,layout.cellW,layout.cellH); ctx.fillStyle='#475569'; ctx.font='700 18px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('—',x+layout.cellW/2,y+layout.cellH/2); return;} const row=rowMap.get(`${rt.team_key}__${ct.team_key}`)||null; const value=row?row[metricKey]:null; const fill=colorForValue(value,min,max,higher); ctx.fillStyle=fill; ctx.fillRect(x,y,layout.cellW,layout.cellH); ctx.strokeRect(x,y,layout.cellW,layout.cellH); ctx.fillStyle=textColor(fill); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.font='700 16px Arial'; ctx.fillText(formatMetric(metricKey,value),x+layout.cellW/2,y+24); ctx.font='700 11px Arial'; const gamesTxt=row&&row.games?`${row.games}J`:'—'; const wlTxt=row&&row.wins!=null&&row.losses!=null?`${row.wins}-${row.losses}`:''; ctx.fillText(wlTxt?`${gamesTxt} · ${wlTxt}`:gamesTxt,x+layout.cellW/2,y+44); currentCells.push({x,y,w:layout.cellW,h:layout.cellH,row,metricKey});});});}
+function drawHover(){if(!hoverCell) return; ctx.save(); ctx.strokeStyle='#111827'; ctx.lineWidth=3; ctx.strokeRect(hoverCell.x+1.5,hoverCell.y+1.5,hoverCell.w-3,hoverCell.h-3); ctx.restore();}
+function resizeCanvas(n){canvas.width=layout.leftPad+n*layout.cellW+layout.rightPad; canvas.height=layout.topPad+n*layout.cellH+layout.bottomPad;}
+function render(){const teams=teamList(); const rows=activeRows(); resizeCanvas(teams.length); ctx.clearRect(0,0,canvas.width,canvas.height); drawHeaders(teams); drawGrid(teams,rows,selectedMetric); drawHover(); const phaseLabel=selectedPhase==='__season_full__'?'Época completa':selectedPhase; matrixStatus.textContent=`${labelForMetric(selectedMetric)} · ${phaseLabel} · ${teams.length} equipas`; pageTitle.textContent=`Matchup Matrix · ${payload.league_name} · ${fmtSeason(payload.season_key)}`; pageMeta.textContent=`${payload.league_name} · ${fmtSeason(payload.season_key)} · ${rows.length} matchup rows available`; }
+function ttHtml(cell){if(!cell||!cell.row) return ''; const r=cell.row; return `<div class="tt-title">${esc(r.team_key)} vs ${esc(r.opp_team_key)}</div><div class="tt-sub">${esc(labelForMetric(cell.metricKey))}: ${esc(formatMetric(cell.metricKey,r[cell.metricKey]))}</div><div class="tt-grid"><div>Games</div><div>${esc(String(r.games??'—'))}</div><div>Record</div><div>${esc(`${r.wins??'—'}-${r.losses??'—'}`)}</div><div>Win %</div><div>${r.win_pct==null?'—':esc(`${(Number(r.win_pct)*100).toFixed(1)}%`)}</div><div>Net Rating</div><div>${esc(formatMetric('net_rating_avg',r.net_rating_avg))}</div><div>ORtg</div><div>${esc(formatMetric('off_rating_avg',r.off_rating_avg))}</div><div>DRtg</div><div>${esc(formatMetric('def_rating_avg',r.def_rating_avg))}</div><div>Pace</div><div>${esc(formatMetric('pace_avg',r.pace_avg))}</div><div>eFG%</div><div>${esc(formatMetric('efg_pct_off_avg',r.efg_pct_off_avg))}</div><div>TOV%</div><div>${esc(formatMetric('tov_pct_off_avg',r.tov_pct_off_avg))}</div><div>REB%</div><div>${esc(formatMetric('orb_pct_off_avg',r.orb_pct_off_avg))}</div></div>`;}
+function findCell(cx,cy){const rect=canvas.getBoundingClientRect(); const x=cx-rect.left, y=cy-rect.top; return currentCells.find(c=>x>=c.x&&x<=c.x+c.w&&y>=c.y&&y<=c.y+c.h)||null;}
+canvas.addEventListener('mousemove',ev=>{const cell=findCell(ev.clientX,ev.clientY); hoverCell=cell; render(); if(!cell||!cell.row){tooltip.style.display='none'; return;} tooltip.innerHTML=ttHtml(cell); tooltip.style.display='block'; tooltip.style.left=`${ev.clientX+16}px`; tooltip.style.top=`${ev.clientY+16}px`;});
+canvas.addEventListener('mouseleave',()=>{hoverCell=null; tooltip.style.display='none'; render();});
+phaseFilter.addEventListener('change',()=>{selectedPhase=phaseFilter.value; hoverCell=null; tooltip.style.display='none'; render();});
+async function init(){const resp=await fetch(DATA_URL,{cache:'no-store'}); payload=await resp.json(); buildPhaseOptions(); buildMetricButtons(); render();}
+init();
+</script>
+</body>
+</html>

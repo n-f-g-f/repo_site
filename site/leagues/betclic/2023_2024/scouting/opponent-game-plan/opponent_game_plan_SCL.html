@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Opponent Game Plan - Lusitânia EXPERT</title>
+
+<style>
+
+.hero-body { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-copy { min-width: 0; flex: 1 1 auto; }
+.hero-logo-wrap { flex: 0 0 auto; display: flex; align-items: center; justify-content: flex-end; }
+.hero-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 112px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.hero-logo { display: block; max-height: 84px; max-width: 160px; width: auto; height: auto; object-fit: contain; }
+@media (max-width: 760px) {
+    .hero-body { flex-direction: column; align-items: flex-start; }
+    .hero-logo-wrap { width: 100%; justify-content: flex-start; }
+    .hero-logo-badge { min-width: 96px; min-height: 96px; padding: 10px; border-radius: 14px; }
+    .hero-logo { max-height: 68px; max-width: 132px; }
+}
+
+
+:root {
+    --bg:#08111f;
+    --bg-2:#0b1324;
+    --panel:rgba(15,23,42,.95);
+    --panel-soft:#111c31;
+    --panel-muted:#07101f;
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --line:#2c3f5f;
+    --accent:#38bdf8;
+    --good:#4ade80;
+    --bad:#f87171;
+}
+
+body {
+    margin:0;
+    background:radial-gradient(circle at top, #12203b 0%, #08111f 38%, #050b14 100%);
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--text);
+}
+.container {
+    max-width:1500px;
+    margin:auto;
+    padding:24px;
+}
+.hero-shell {
+    margin-bottom:24px;
+}
+.hero-shell > * {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:0 18px 40px rgba(0,0,0,.22);
+}
+.block {
+    background:var(--panel);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:24px;
+    border:1px solid var(--line);
+    box-shadow:0 14px 34px rgba(0,0,0,.16);
+}
+.block h2 {
+    margin:0 0 14px 0;
+    font-size:22px;
+    line-height:1.2;
+}
+.table-wrap {
+    overflow-x:auto;
+}
+table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+th {
+    background:var(--panel-soft);
+    color:var(--text);
+    padding:10px 8px;
+    text-align:left;
+    white-space:nowrap;
+    border-bottom:1px solid var(--line);
+}
+td {
+    padding:10px 8px;
+    border-bottom:1px solid rgba(148,163,184,.12);
+    vertical-align:middle;
+}
+tbody tr:hover {
+    background:rgba(56,189,248,.06);
+}
+.player-cell {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.avatar {
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ccc;
+    flex:0 0 28px;
+    border:1px solid rgba(148,163,184,.24);
+}
+.avatar img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+.avatar-empty {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    color:#111827;
+    font-weight:bold;
+}
+.card-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.card {
+    background:var(--panel-muted);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+}
+.card-title {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.card-value {
+    font-size:17px;
+    font-weight:800;
+    line-height:1.4;
+}
+.notes-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+}
+.note-card {
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    background:var(--panel-muted);
+}
+.note-card h3 {
+    margin:0 0 10px 0;
+    font-size:16px;
+}
+.note-card ul, .keys-card ul {
+    margin:0;
+    padding-left:18px;
+}
+.note-card li, .keys-card li {
+    margin-bottom:8px;
+    line-height:1.5;
+}
+.keys-card {
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    background:var(--panel-muted);
+}
+.mini-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+}
+.mini-card {
+    background:var(--panel-muted);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+}
+.mini-label {
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+}
+.mini-value {
+    font-size:16px;
+    font-weight:800;
+    line-height:1.45;
+}
+.empty {
+    color:var(--muted);
+    font-style:italic;
+}
+.section-grid {
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+}
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
+.compact-table table {
+    font-size:13px;
+}
+.compact-table th,
+.compact-table td {
+    padding:9px 8px;
+}
+@media (max-width: 1100px) {
+    .section-grid, .top-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2023-2024 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2023-2024 </div></div></header>
+<div class="container">
+
+<div class="hero-shell">
+<div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Lusitânia EXPERT</h1><div class="sub">Opponent Game Plan - SCL</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/SCL.png" alt="Lusitânia EXPERT logo"></div></div></div></div>
+</div>
+
+<div class="top-grid">
+    
+    <section class="block">
+        <h2>Team Identity vs League</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Metric</th><th>Team</th><th>League Avg</th><th>Rank</th><th>Delta</th></tr></thead>
+                <tbody><tr><td>Pace</td><td>78.5</td><td>76.6</td><td>3</td><td>1.8</td></tr><tr><td>OffRtg</td><td>92.5</td><td>104</td><td>13</td><td>-11.5</td></tr><tr><td>DefRtg</td><td>118.5</td><td>104.8</td><td>14</td><td>13.8</td></tr><tr><td>NetRtg</td><td>-26</td><td>-0.8</td><td>14</td><td>-25.2</td></tr><tr><td>AST/G</td><td>14.3</td><td>16.8</td><td>12</td><td>-2.6</td></tr><tr><td>TOV%</td><td>21.4</td><td>19.4</td><td>11</td><td>1.9</td></tr><tr><td>ORB%</td><td>22.9</td><td>30.2</td><td>14</td><td>-7.2</td></tr><tr><td>PF/G</td><td>17.6</td><td>19.5</td><td>2</td><td>-1.8</td></tr><tr><td>FT Rate</td><td>25.1</td><td>33.1</td><td>14</td><td>-8</td></tr><tr><td>3PA Rate</td><td>37.4</td><td>39.2</td><td>9</td><td>-1.8</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">Above-average pace; expect a game that can speed up if you allow early flow.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Limited offensive rebounding impact; finishing the first contest usually kills the possession.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Loose enough with the ball to be pressured; there are possessions to steal here.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Lower foul volume than league average; this is not a team that wants constant contact chaos.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Perimeter volume is close to league average; shot mix alone does not define them.</div></div></div></section>
+</div>
+
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Set the tempo early: if you let them run into flow, the game can speed up on their terms.</li><li>Win the first action: they do not consistently hurt teams with second-chance volume, so clean first stops carry value.</li><li>Know the first reference: L. Rahama is a movement shooter, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: L. Rahama, R. Larson are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+    
+    <section class="block">
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">L. Rahama, R. Larson, X. Williams</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Primary area</div>
+                <div class="mini-value">Above the Break 3</div>
+            </div>
+            
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">I. Sassinda | L. Rahama | R. Larson | R. Perkins | T. Verhoeven</div>
+            </div>
+            </div>
+    </section>
+    
+</div>
+
+
+    <section class="block">
+        <h2>Primary Threats</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Rahama</span></div></td><td>Closeout | Preferred Area</td><td>104</td><td>38.5%</td><td>38.2%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Larson</span></div></td><td>Closeout</td><td>22</td><td>36.4%</td><td>50.0%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">X. Williams</span></div></td><td>Closeout</td><td>14</td><td>35.7%</td><td>29.8%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Hodges</span></div></td><td>Closeout | Preferred Area</td><td>28</td><td>32.1%</td><td>26.2%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Ferreira</span></div></td><td>Volume 3PT | Preferred Area</td><td>66</td><td>31.8%</td><td>86.8%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Freitas</span></div></td><td>Volume 3PT | Preferred Area</td><td>58</td><td>31.0%</td><td>85.3%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Ferreira</span></div></td><td>Volume 3PT | Preferred Area</td><td>49</td><td>30.6%</td><td>51.0%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Perkins</span></div></td><td>Volume 3PT | Preferred Area</td><td>41</td><td>29.3%</td><td>34.2%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Verhoeven</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Bowman</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    
+
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Rahama</span></div></td><td>35.7</td><td>14.9</td><td>104</td><td>38.5%</td><td>Above the Break 3</td><td>movement shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Bowman</span></div></td><td>29.0</td><td>11.8</td><td>41</td><td>26.8%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Romao</span></div></td><td>17.3</td><td>2.1</td><td>24</td><td>16.7%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Verhoeven</span></div></td><td>32.4</td><td>11.5</td><td>3</td><td>0.0%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Perkins</span></div></td><td>30.5</td><td>12.1</td><td>41</td><td>29.3%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Ferreira</span></div></td><td>21.8</td><td>7.9</td><td>49</td><td>30.6%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
+    <section class="block">
+        <h2>Scouting Notes</h2>
+        <div class="notes-grid">
+            <div class="note-card">
+                <h3>Offense</h3>
+                <ul><li>The main offensive references are L. Rahama and M. Bowman; load the scouting plan into those names first.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Perimeter Shooting</h3>
+                <ul><li>Priority closeouts start with L. Rahama, R. Larson, and X. Williams; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from F. Ferreira and M. Freitas; contest, but do not over-help into secondary advantages.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Scoring Areas</h3>
+                <ul><li>Their offense naturally flows toward Above the Break 3; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially L. Rahama, F. Ferreira, and T. Verhoeven; force them away from preferred areas.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Units</h3>
+                <ul><li>Most-used lineup to rehearse first: I. Sassinda | L. Rahama | R. Larson | R. Perkins | T. Verhoeven.</li><li>Secondary lineup to recognize: H. Ferreira | L. Rahama | M. Bowman | M. Romao | Q. McConico.</li><li>Recognize the main duo/trio combinations: L. Rahama | M. Bowman and L. Rahama | R. Perkins | T. Verhoeven.</li></ul>
+            </div>
+            
+            <div class="note-card">
+                <h3>Defensive Emphasis</h3>
+                <ul><li>Limited offensive rebounding impact; finishing the first contest usually kills the possession.</li><li>Do not lose L. Rahama and R. Larson in help-and-recover situations.</li></ul>
+            </div>
+            </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
+    <section class="block">
+        <h2>Priority Closeouts</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Rahama</span></div></td><td>104</td><td>38.5%</td><td>38.2%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Larson</span></div></td><td>22</td><td>36.4%</td><td>50.0%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">X. Williams</span></div></td><td>14</td><td>35.7%</td><td>29.8%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Hodges</span></div></td><td>28</td><td>32.1%</td><td>26.2%</td><td>1.0</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
+    <section class="block">
+        <h2>Volume, Lower Efficiency</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Ferreira</span></div></td><td>66</td><td>31.8%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Freitas</span></div></td><td>58</td><td>31.0%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Ferreira</span></div></td><td>49</td><td>30.6%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Perkins</span></div></td><td>41</td><td>29.3%</td><td>0.9</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
+    <section class="block">
+        <h2>Preferred Scoring Areas</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Rahama</span></div></td><td>Above the Break 3</td><td>30.5%</td><td>33.7%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Ferreira</span></div></td><td>Above the Break 3</td><td>78.9%</td><td>33.3%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Verhoeven</span></div></td><td>Restricted Area</td><td>50.5%</td><td>66.7%</td><td>1.3</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Freitas</span></div></td><td>Above the Break 3</td><td>72.1%</td><td>30.6%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Bowman</span></div></td><td>Paint Non-RA</td><td>31.0%</td><td>31.2%</td><td>0.6</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Ferreira</span></div></td><td>Above the Break 3</td><td>45.8%</td><td>31.8%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Perkins</span></div></td><td>Paint Non-RA</td><td>32.5%</td><td>30.8%</td><td>0.6</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Hodges</span></div></td><td>Paint Non-RA</td><td>32.7%</td><td>34.3%</td><td>0.7</td><td>Wall off paint</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
+    <section class="block">
+        <h2>Team Shot Map Summary</h2>
+        <div class="table-wrap compact-table">
+            <table>
+                <thead><tr><th>Area</th><th>Attempts</th><th>FG%</th><th>Pts/Shot</th><th>Zone Share</th></tr></thead>
+                <tbody><tr><td>Above the Break 3</td><td>447</td><td>29.8%</td><td>0.9</td><td>32.0%</td></tr><tr><td>Paint Non-RA</td><td>340</td><td>42.1%</td><td>0.8</td><td>24.3%</td></tr><tr><td>Restricted Area</td><td>320</td><td>69.7%</td><td>1.4</td><td>22.9%</td></tr><tr><td>Mid-Range</td><td>214</td><td>30.4%</td><td>0.6</td><td>15.3%</td></tr><tr><td>Corner 3 Left</td><td>42</td><td>45.2%</td><td>1.4</td><td>3.0%</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Lineups to Prepare For</summary><div class="detail-body">
+    <section class="block">
+        <h2>Lineups to Prepare For</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>Base lineup</td><td>I. Sassinda | L. Rahama | R. Larson | R. Perkins | T. Verhoeven</td><td>33.8</td><td>62.8</td><td>91.3</td><td>-28.4</td></tr><tr><td>Rotation lineup</td><td>H. Ferreira | L. Rahama | M. Bowman | M. Romao | Q. McConico</td><td>28.6</td><td>68.5</td><td>92.3</td><td>-23.8</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
+    <section class="block">
+        <h2>Roster</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Rahama</span></div></td><td></td><td></td><td>22</td><td>35.7</td><td>14.9</td><td>6.6</td><td>1.7</td><td>1.5</td><td>2.6</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Bowman</span></div></td><td></td><td></td><td>14</td><td>29.0</td><td>11.8</td><td>5.5</td><td>1.3</td><td>1.0</td><td>2.6</td><td>0.6</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Romao</span></div></td><td></td><td></td><td>22</td><td>17.3</td><td>2.1</td><td>1.8</td><td>1.3</td><td>0.5</td><td>0.9</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Verhoeven</span></div></td><td></td><td></td><td>11</td><td>32.4</td><td>11.5</td><td>6.9</td><td>0.9</td><td>0.6</td><td>2.2</td><td>1.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Perkins</span></div></td><td></td><td></td><td>11</td><td>30.5</td><td>12.1</td><td>4.0</td><td>3.6</td><td>1.5</td><td>3.0</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">H. Ferreira</span></div></td><td></td><td></td><td>14</td><td>21.8</td><td>7.9</td><td>3.1</td><td>3.4</td><td>1.3</td><td>2.5</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Sassinda</span></div></td><td></td><td></td><td>19</td><td>15.4</td><td>4.3</td><td>1.4</td><td>0.4</td><td>0.4</td><td>1.2</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">F. Ferreira</span></div></td><td></td><td></td><td>19</td><td>13.7</td><td>4.0</td><td>1.7</td><td>0.7</td><td>0.5</td><td>0.4</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Freitas</span></div></td><td></td><td></td><td>21</td><td>12.2</td><td>3.4</td><td>0.9</td><td>1.4</td><td>0.5</td><td>1.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">T. Hodges</span></div></td><td></td><td></td><td>11</td><td>23.2</td><td>10.8</td><td>3.2</td><td>1.6</td><td>0.3</td><td>1.5</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">Q. McConico</span></div></td><td></td><td></td><td>11</td><td>21.5</td><td>8.3</td><td>4.4</td><td>0.3</td><td>0.5</td><td>0.8</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">K. Clergeot</span></div></td><td></td><td></td><td>8</td><td>21.8</td><td>10.6</td><td>1.9</td><td>2.5</td><td>0.5</td><td>2.2</td><td>0.0</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
+    <section class="block">
+        <h2>Duos / Trios to Recognize</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
+                <tbody><tr><td>duo</td><td>L. Rahama | M. Bowman</td><td>357.1</td><td>72.0</td><td>97.1</td><td>-25.1</td></tr><tr><td>trio</td><td>L. Rahama | R. Perkins | T. Verhoeven</td><td>245.4</td><td>71.2</td><td>84.9</td><td>-13.7</td></tr><tr><td>duo</td><td>T. Verhoeven | X. Williams</td><td>91.2</td><td>67.5</td><td>78.9</td><td>-11.4</td></tr><tr><td>duo</td><td>M. Romao | R. Perkins</td><td>78.6</td><td>74.8</td><td>82.0</td><td>-7.1</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+</div>
+
+</div>
+</body>
+</html>
