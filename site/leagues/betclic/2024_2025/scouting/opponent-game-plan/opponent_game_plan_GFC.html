@@ -213,6 +213,34 @@ tbody tr:hover {
     grid-template-columns:1.2fr .8fr;
     gap:24px;
 }
+.top-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+.detail-stack {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.detail-block {
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+}
+.detail-block summary {
+    list-style:none;
+    cursor:pointer;
+    padding:16px 18px;
+    font-size:18px;
+    font-weight:700;
+    background:var(--panel-soft);
+}
+.detail-block summary::-webkit-details-marker { display:none; }
+.detail-block summary::after { content:'+'; float:right; color:var(--muted); }
+.detail-block[open] summary::after { content:'–'; }
+.detail-body { padding:18px; }
 .compact-table table {
     font-size:13px;
 }
@@ -221,7 +249,7 @@ tbody tr:hover {
     padding:9px 8px;
 }
 @media (max-width: 1100px) {
-    .section-grid {
+    .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
 }
@@ -235,7 +263,8 @@ tbody tr:hover {
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>Galitos BARREIRO</h1><div class="sub">Opponent Game Plan - GFC</div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/logos/GFC.png" alt="Galitos BARREIRO logo"></div></div></div></div>
 </div>
 
-
+<div class="top-grid">
+    
     <section class="block">
         <h2>Team Identity vs League</h2>
         <div class="table-wrap compact-table">
@@ -246,61 +275,59 @@ tbody tr:hover {
         </div>
     </section>
     
+    <section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Offensive rebounding is around league average; box-outs matter but this is not their main edge.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Foul profile sits near league average; physicality is part of the game, but not their defining trait.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
+</div>
 
-<section class="block"><h2>How They Play</h2><div class="mini-grid"><div class="mini-card"><div class="mini-label">Tempo</div><div class="mini-value">League-average pace; rhythm control matters more than pure speed against them.</div></div><div class="mini-card"><div class="mini-label">Ball Movement</div><div class="mini-value">Below-average assist profile; more possessions end through direct creation than collective flow.</div></div><div class="mini-card"><div class="mini-label">Offensive Glass</div><div class="mini-value">Offensive rebounding is around league average; box-outs matter but this is not their main edge.</div></div><div class="mini-card"><div class="mini-label">Turnovers</div><div class="mini-value">Turnover profile is close to league average; pressure helps, but it is not the whole plan.</div></div><div class="mini-card"><div class="mini-label">Physicality</div><div class="mini-value">Foul profile sits near league average; physicality is part of the game, but not their defining trait.</div></div><div class="mini-card"><div class="mini-label">Shot Mix</div><div class="mini-value">Less three-point dependent than league average; more of their offense is built away from pure perimeter volume.</div></div></div></section>
-
-
+<div class="top-grid">
+    <section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Know the first reference: E. McCadden is a inside scorer, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: L. Bryan JR, M. Correia are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+    
     <section class="block">
-        <h2>Overview</h2>
-        <div class="card-grid">
-            <div class="card">
-                <div class="card-title">Most-Used Player</div>
-                <div class="card-value">C. Robinson</div>
+        <h2>Scout Team Emphasis</h2>
+        <div class="mini-grid">
+            <div class="mini-card">
+                <div class="mini-label">Matchups to rehearse</div>
+                <div class="mini-value">L. Bryan JR, M. Correia, R. Palhares</div>
             </div>
             
-            <div class="card">
-                <div class="card-title">Primary Scorer</div>
-                <div class="card-value">E. Cadden</div>
+            <div class="mini-card">
+                <div class="mini-label">Primary area</div>
+                <div class="mini-value">Above the Break 3</div>
             </div>
             
-            <div class="card">
-                <div class="card-title">Top 3PT Threat</div>
-                <div class="card-value">M. Correia (44.9%)</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Preferred Team Scoring Area</div>
-                <div class="card-value">Above the Break 3</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Most-Used Lineup</div>
-                <div class="card-value">C. Robinson | E. Cadden | L. Bryan JR | M. Richardson | R. Stein</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">Best-Performing Lineup</div>
-                <div class="card-value">C. Robinson | E. Cadden | L. Bryan JR | M. Richardson | R. Stein</div>
+            <div class="mini-card">
+                <div class="mini-label">Recognition lineup</div>
+                <div class="mini-value">C. Robinson | E. McCadden | L. Bryan JR | M. Richardson | R. Stein</div>
             </div>
             </div>
     </section>
     
-
-<section class="block"><h2>Game Plan in 4 Keys</h2><div class="keys-card"><ul><li>Own the rhythm: pace itself is not the main separator, so the quality of possessions matters more than speed.</li><li>Do not overreact to the arc: make them finish over traffic instead of giving up easy paint comfort.</li><li>Know the first reference: E. Cadden is a movement shooter, and the plan should start with taking away his comfort.</li><li>Closeout discipline matters: L. Bryan JR, M. Correia are the first perimeter names you cannot lose in help situations.</li></ul></div></section>
+</div>
 
 
     <section class="block">
-        <h2>Key Players</h2>
+        <h2>Primary Threats</h2>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>32.5</td><td>13.8</td><td>99</td><td>37.4%</td><td>Paint Non-RA</td><td>movement shooter</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>31.3</td><td>9.8</td><td>60</td><td>26.7%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>24.2</td><td>9.9</td><td>69</td><td>44.9%</td><td>Above the Break 3</td><td>movement shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>27.5</td><td>10.9</td><td>11</td><td>45.5%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>24.7</td><td>9.6</td><td>54</td><td>31.5%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Cadden</span></div></td><td>31.5</td><td>18.0</td><td>48</td><td>41.7%</td><td>Paint Non-RA</td><td>movement shooter</td><td>Wall off paint</td></tr></tbody>
+                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>Closeout | Preferred Area</td><td>11</td><td>45.5%</td><td>7.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>Closeout | Preferred Area</td><td>69</td><td>44.9%</td><td>48.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td>Closeout | Preferred Area</td><td>13</td><td>38.5%</td><td>13.4%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>Closeout | Preferred Area</td><td>99</td><td>37.4%</td><td>37.6%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. McCadden</span></div></td><td>Volume 3PT | Preferred Area</td><td>70</td><td>31.4%</td><td>28.5%</td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>Volume 3PT | Preferred Area</td><td>60</td><td>26.7%</td><td>32.8%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>Volume 3PT | Preferred Area</td><td>54</td><td>31.5%</td><td>36.5%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Machado</span></div></td><td>Volume 3PT</td><td>42</td><td>19.0%</td><td>49.4%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Conceicao</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
             </table>
         </div>
     </section>
     
 
-
+<div class="detail-stack">
+    <details class="detail-block" open><summary>Supporting Player Context</summary><div class="detail-body">
+    <section class="block">
+        <h2>Key Players</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Player</th><th>Mpg</th><th>Ppg</th><th>3PA</th><th>3P%</th><th>Main Area</th><th>Role</th><th>Defensive Cue</th></tr></thead>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>32.5</td><td>13.8</td><td>99</td><td>37.4%</td><td>Paint Non-RA</td><td>movement shooter</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>31.3</td><td>9.8</td><td>60</td><td>26.7%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. McCadden</span></div></td><td>33.2</td><td>18.7</td><td>70</td><td>31.4%</td><td>Paint Non-RA</td><td>inside scorer</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>24.2</td><td>9.9</td><td>69</td><td>44.9%</td><td>Above the Break 3</td><td>movement shooter</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>27.5</td><td>10.9</td><td>11</td><td>45.5%</td><td>Restricted Area</td><td>paint finisher</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>24.7</td><td>9.6</td><td>54</td><td>31.5%</td><td>Above the Break 3</td><td>bench spacer</td><td>Gap and recover</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+    </div></details>
+    <details class="detail-block"><summary>Scouting Notes</summary><div class="detail-body">
     <section class="block">
         <h2>Scouting Notes</h2>
         <div class="notes-grid">
@@ -311,17 +338,17 @@ tbody tr:hover {
             
             <div class="note-card">
                 <h3>Perimeter Shooting</h3>
-                <ul><li>Priority closeouts start with L. Bryan JR, M. Correia, and E. Cadden; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from R. Stein and M. Richardson; contest, but do not over-help into secondary advantages.</li></ul>
+                <ul><li>Priority closeouts start with L. Bryan JR, M. Correia, and R. Palhares; do not lose them in help-and-recover situations.</li><li>Some perimeter volume comes from E. McCadden and R. Stein; contest, but do not over-help into secondary advantages.</li></ul>
             </div>
             
             <div class="note-card">
                 <h3>Scoring Areas</h3>
-                <ul><li>Their offense naturally flows toward Above the Break 3; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially C. Robinson, L. Bryan JR, and R. Stein; force them away from preferred areas.</li></ul>
+                <ul><li>Their offense naturally flows toward Above the Break 3; protect that area early in possessions.</li><li>Several players have clear comfort zones, especially C. Robinson, E. McCadden, and L. Bryan JR; force them away from preferred areas.</li></ul>
             </div>
             
             <div class="note-card">
                 <h3>Units</h3>
-                <ul><li>Most-used lineup to rehearse first: C. Robinson | E. Cadden | L. Bryan JR | M. Richardson | R. Stein.</li><li>Secondary lineup to recognize: C. Robinson | M. Correia | M. Richardson | R. Palhares | R. Stein.</li><li>Recognize the main duo/trio combinations: C. Robinson | R. Stein and C. Robinson | M. Correia | R. Stein.</li></ul>
+                <ul><li>Most-used lineup to rehearse first: C. Robinson | E. McCadden | L. Bryan JR | M. Richardson | R. Stein.</li><li>Secondary lineup to recognize: C. Robinson | E. McCadden | L. Bryan JR | M. Correia | R. Stein.</li><li>Recognize the main duo/trio combinations: C. Robinson | R. Stein and C. Robinson | M. Correia | R. Stein.</li></ul>
             </div>
             
             <div class="note-card">
@@ -330,57 +357,41 @@ tbody tr:hover {
             </div>
             </div>
     </section>
-    
-
-<div class="section-grid">
-    <div>
-        
-    <section class="block">
-        <h2>Primary Shooting Threats</h2>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Player</th><th>Threat Profile</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Preferred Area</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>Closeout | Preferred Area</td><td>11</td><td>45.5%</td><td>7.8%</td><td>Restricted Area</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>Closeout | Preferred Area</td><td>69</td><td>44.9%</td><td>48.6%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Cadden</span></div></td><td>Closeout | Preferred Area</td><td>48</td><td>41.7%</td><td>31.2%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td>Closeout | Preferred Area</td><td>13</td><td>38.5%</td><td>13.4%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>Volume 3PT | Preferred Area</td><td>60</td><td>26.7%</td><td>32.8%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>Volume 3PT | Preferred Area</td><td>54</td><td>31.5%</td><td>36.5%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Machado</span></div></td><td>Volume 3PT</td><td>42</td><td>19.0%</td><td>49.4%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Guerreiro</span></div></td><td>Volume 3PT</td><td>26</td><td>26.9%</td><td>83.9%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Conceicao</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
-            </table>
-        </div>
-    </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Priority Closeouts</summary><div class="detail-body">
     <section class="block">
         <h2>Priority Closeouts</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>3PA Rate</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>11</td><td>45.5%</td><td>7.8%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>69</td><td>44.9%</td><td>48.6%</td><td>1.3</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Cadden</span></div></td><td>48</td><td>41.7%</td><td>31.2%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td>13</td><td>38.5%</td><td>13.4%</td><td>1.1</td><td>Wall off paint</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>11</td><td>45.5%</td><td>7.8%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>69</td><td>44.9%</td><td>48.6%</td><td>1.3</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td>13</td><td>38.5%</td><td>13.4%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>99</td><td>37.4%</td><td>37.6%</td><td>1.0</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Volume, Lower Efficiency</summary><div class="detail-body">
     <section class="block">
         <h2>Volume, Lower Efficiency</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Player</th><th>3PA</th><th>3P%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>60</td><td>26.7%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>54</td><td>31.5%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Machado</span></div></td><td>42</td><td>19.0%</td><td>0.8</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Guerreiro</span></div></td><td>26</td><td>26.9%</td><td>0.7</td><td>Gap and recover</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. McCadden</span></div></td><td>70</td><td>31.4%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>60</td><td>26.7%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>54</td><td>31.5%</td><td>1.0</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Machado</span></div></td><td>42</td><td>19.0%</td><td>0.8</td><td>Gap and recover</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-    </div>
-    <div>
-        
+    </div></details>
+    <details class="detail-block"><summary>Preferred Scoring Areas</summary><div class="detail-body">
     <section class="block">
         <h2>Preferred Scoring Areas</h2>
         <div class="table-wrap compact-table">
             <table>
                 <thead><tr><th>Player</th><th>Area</th><th>Zone Share</th><th>FG%</th><th>Pts/Shot</th><th>Defensive Cue</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>Paint Non-RA</td><td>32.7%</td><td>46.5%</td><td>0.9</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>Restricted Area</td><td>48.9%</td><td>60.9%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>Restricted Area</td><td>32.8%</td><td>60.0%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>Above the Break 3</td><td>40.8%</td><td>39.7%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>Above the Break 3</td><td>33.8%</td><td>30.0%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Conceicao</span></div></td><td>Above the Break 3</td><td>55.6%</td><td>35.6%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td>Paint Non-RA</td><td>46.4%</td><td>51.1%</td><td>1.0</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Cadden</span></div></td><td>Paint Non-RA</td><td>29.2%</td><td>62.2%</td><td>1.2</td><td>Wall off paint</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td>Paint Non-RA</td><td>32.7%</td><td>46.5%</td><td>0.9</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. McCadden</span></div></td><td>Paint Non-RA</td><td>32.5%</td><td>55.0%</td><td>1.1</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td>Restricted Area</td><td>48.9%</td><td>60.9%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td>Restricted Area</td><td>32.8%</td><td>60.0%</td><td>1.2</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td>Above the Break 3</td><td>40.8%</td><td>39.7%</td><td>1.2</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td>Above the Break 3</td><td>33.8%</td><td>30.0%</td><td>0.9</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Conceicao</span></div></td><td>Above the Break 3</td><td>55.6%</td><td>35.6%</td><td>1.1</td><td>Gap and recover</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td>Paint Non-RA</td><td>46.4%</td><td>51.1%</td><td>1.0</td><td>Wall off paint</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Team Shot Map Summary</summary><div class="detail-body">
     <section class="block">
         <h2>Team Shot Map Summary</h2>
         <div class="table-wrap compact-table">
@@ -390,64 +401,41 @@ tbody tr:hover {
             </table>
         </div>
     </section>
-    
-        
+    </div></details>
+    <details class="detail-block"><summary>Lineups to Prepare For</summary><div class="detail-body">
     <section class="block">
         <h2>Lineups to Prepare For</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Category</th><th>Lineup</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
-                <tbody><tr><td>Base lineup</td><td>C. Robinson | E. Cadden | L. Bryan JR | M. Richardson | R. Stein</td><td>68.2</td><td>76.2</td><td>78.0</td><td>-1.8</td></tr><tr><td>Rotation lineup</td><td>C. Robinson | M. Correia | M. Richardson | R. Palhares | R. Stein</td><td>55.2</td><td>88.5</td><td>79.1</td><td>9.4</td></tr></tbody>
+                <tbody><tr><td>Base lineup</td><td>C. Robinson | E. McCadden | L. Bryan JR | M. Richardson | R. Stein</td><td>116.0</td><td>75.5</td><td>77.2</td><td>-1.7</td></tr><tr><td>Rotation lineup</td><td>C. Robinson | E. McCadden | L. Bryan JR | M. Correia | R. Stein</td><td>71.0</td><td>87.8</td><td>69.8</td><td>18.0</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-    </div>
-</div>
-
-
+    </div></details>
+    <details class="detail-block"><summary>Roster</summary><div class="detail-body">
     <section class="block">
         <h2>Roster</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Player</th><th>Position</th><th>Height Cm</th><th>Games</th><th>Mpg</th><th>Ppg</th><th>Rpg</th><th>Apg</th><th>Spg</th><th>Tov Pg</th><th>Bpg</th></tr></thead>
-                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td></td><td></td><td>22</td><td>32.5</td><td>13.8</td><td>7.0</td><td>1.5</td><td>1.0</td><td>1.5</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td></td><td></td><td>21</td><td>31.3</td><td>9.8</td><td>6.7</td><td>3.1</td><td>1.0</td><td>1.6</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td></td><td></td><td>22</td><td>24.2</td><td>9.9</td><td>2.0</td><td>2.9</td><td>1.3</td><td>1.0</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td></td><td></td><td>19</td><td>27.5</td><td>10.9</td><td>5.7</td><td>1.1</td><td>0.6</td><td>1.2</td><td>1.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td></td><td></td><td>19</td><td>24.7</td><td>9.6</td><td>3.3</td><td>3.9</td><td>1.8</td><td>3.1</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. Cadden</span></div></td><td></td><td></td><td>11</td><td>31.5</td><td>18.0</td><td>4.8</td><td>2.6</td><td>1.4</td><td>2.6</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td></td><td></td><td>21</td><td>15.2</td><td>6.4</td><td>3.3</td><td>0.5</td><td>0.5</td><td>1.1</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Machado</span></div></td><td></td><td></td><td>22</td><td>12.3</td><td>3.3</td><td>0.9</td><td>0.5</td><td>0.5</td><td>0.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Conceicao</span></div></td><td></td><td></td><td>12</td><td>20.7</td><td>7.3</td><td>2.7</td><td>1.6</td><td>0.8</td><td>2.5</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. McCadden</span></div></td><td></td><td></td><td>5</td><td>36.5</td><td>19.2</td><td>5.2</td><td>2.0</td><td>0.8</td><td>4.0</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Guerreiro</span></div></td><td></td><td></td><td>22</td><td>3.6</td><td>1.1</td><td>0.6</td><td>0.1</td><td>0.0</td><td>0.0</td><td>0.0</td></tr></tbody>
+                <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">C. Robinson</span></div></td><td></td><td></td><td>22</td><td>32.5</td><td>13.8</td><td>7.0</td><td>1.5</td><td>1.0</td><td>1.5</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/GFC/GFC_R._STEIN.png"></div><span class="player-name">R. Stein</span></div></td><td></td><td></td><td>21</td><td>31.3</td><td>9.8</td><td>6.7</td><td>3.1</td><td>1.0</td><td>1.6</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">E. McCadden</span></div></td><td></td><td></td><td>17</td><td>33.2</td><td>18.7</td><td>4.9</td><td>2.3</td><td>1.2</td><td>3.0</td><td>0.5</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Correia</span></div></td><td></td><td></td><td>22</td><td>24.2</td><td>9.9</td><td>2.0</td><td>2.9</td><td>1.3</td><td>1.0</td><td>0.2</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">L. Bryan JR</span></div></td><td></td><td></td><td>19</td><td>27.5</td><td>10.9</td><td>5.7</td><td>1.1</td><td>0.6</td><td>1.2</td><td>1.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">M. Richardson</span></div></td><td></td><td></td><td>19</td><td>24.7</td><td>9.6</td><td>3.3</td><td>3.9</td><td>1.8</td><td>3.1</td><td>0.3</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Palhares</span></div></td><td></td><td></td><td>21</td><td>15.2</td><td>6.4</td><td>3.3</td><td>0.5</td><td>0.5</td><td>1.1</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">D. Machado</span></div></td><td></td><td></td><td>22</td><td>12.3</td><td>3.3</td><td>0.9</td><td>0.5</td><td>0.5</td><td>0.6</td><td>0.0</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">J. Conceicao</span></div></td><td></td><td></td><td>12</td><td>20.7</td><td>7.3</td><td>2.7</td><td>1.6</td><td>0.8</td><td>2.5</td><td>0.1</td></tr><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">R. Guerreiro</span></div></td><td></td><td></td><td>22</td><td>3.6</td><td>1.1</td><td>0.6</td><td>0.1</td><td>0.0</td><td>0.0</td><td>0.0</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-
+    </div></details>
+    <details class="detail-block"><summary>Duos / Trios to Recognize</summary><div class="detail-body">
     <section class="block">
         <h2>Duos / Trios to Recognize</h2>
         <div class="table-wrap">
             <table>
                 <thead><tr><th>Type</th><th>Players</th><th>Minutes</th><th>Pts For/40</th><th>Pts Allowed/40</th><th>Net/40</th></tr></thead>
-                <tbody><tr><td>duo</td><td>C. Robinson | R. Stein</td><td>536.5</td><td>80.8</td><td>80.5</td><td>0.3</td></tr><tr><td>trio</td><td>C. Robinson | M. Correia | R. Stein</td><td>315.1</td><td>83.1</td><td>82.4</td><td>0.8</td></tr><tr><td>trio</td><td>E. Cadden | M. Correia | R. Stein</td><td>63.6</td><td>90.0</td><td>72.3</td><td>17.6</td></tr></tbody>
+                <tbody><tr><td>duo</td><td>C. Robinson | R. Stein</td><td>536.5</td><td>80.8</td><td>80.5</td><td>0.3</td></tr><tr><td>trio</td><td>C. Robinson | M. Correia | R. Stein</td><td>315.1</td><td>83.1</td><td>82.4</td><td>0.8</td></tr><tr><td>duo</td><td>E. McCadden | M. Correia</td><td>264.8</td><td>83.2</td><td>75.8</td><td>7.4</td></tr></tbody>
             </table>
         </div>
     </section>
-    
-
-    <section class="block">
-        <h2>Scout Team Emphasis</h2>
-        <div class="mini-grid">
-            <div class="mini-card">
-                <div class="mini-label">Matchups to rehearse</div>
-                <div class="mini-value">L. Bryan JR, M. Correia, E. Cadden</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Primary area</div>
-                <div class="mini-value">Above the Break 3</div>
-            </div>
-            
-            <div class="mini-card">
-                <div class="mini-label">Recognition lineup</div>
-                <div class="mini-value">C. Robinson | E. Cadden | L. Bryan JR | M. Richardson | R. Stein</div>
-            </div>
-            </div>
-    </section>
-    
+    </div></details>
+</div>
 
 </div>
 </body>
