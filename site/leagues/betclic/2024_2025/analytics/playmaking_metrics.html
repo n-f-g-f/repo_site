@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Playmaking Metrics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0b1728;
+      --panel: rgba(15, 23, 42, 0.92);
+      --panel-2: rgba(17, 24, 39, 0.94);
+      --card: rgba(11, 18, 32, 0.95);
+      --text: #e5eefb;
+      --muted: #94a3b8;
+      --line: rgba(148, 163, 184, 0.18);
+      --line-2: rgba(148, 163, 184, 0.28);
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --accent-3: #60a5fa;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.30);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(34,197,94,0.12), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
+    .wrap { max-width: 1500px; margin: 0 auto; padding: 28px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.25fr 0.9fr;
+      gap: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 26px;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(9,15,28,0.96));
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56,189,248,0.18), rgba(56,189,248,0));
+      pointer-events: none;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(11,18,32,0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .hero h1 { margin: 0 0 10px 0; font-size: 34px; line-height: 1.05; }
+    .subtitle { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 760px; }
+    .hero-notes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .hero-note {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(11,18,32,0.92);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .hero-side {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-content: start;
+    }
+    .spotlight {
+      min-height: 122px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(12,20,34,0.96), rgba(9,15,28,0.96));
+      padding: 16px;
+    }
+    .spotlight-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .spotlight-value { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .spotlight-detail { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.96), rgba(10,16,28,0.96));
+      box-shadow: var(--shadow);
+    }
+    .chart-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .chart-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .chart-subtitle { color: var(--muted); font-size: 13px; }
+    .leader-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 124px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(11,18,32,0.92);
+      border: 1px solid var(--line);
+      text-align: right;
+    }
+    .leader-badge span:first-child { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .leader-badge strong { font-size: 15px; }
+    .leader-badge em { font-style: normal; color: var(--accent); font-size: 13px; }
+    .chart-note {
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(11,18,32,0.88);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .bars { display: grid; gap: 10px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(165px, 205px) 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .team-chip { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .team-chip img,
+    .mini-team img,
+    .team-cell img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+    .team-chip-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track {
+      position: relative;
+      height: 13px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8,13,24,0.95);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.10);
+    }
+    .bar-value { min-width: 74px; text-align: right; font-size: 13px; font-weight: 700; }
+    .mini-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(11,18,32,0.90);
+      padding: 12px;
+    }
+    .mini-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .mini-team { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .mini-team-name { font-size: 13px; font-weight: 700; }
+    .mini-value { color: var(--accent); font-weight: 700; font-size: 14px; }
+    .source-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.96), rgba(10,16,28,0.96));
+      box-shadow: var(--shadow);
+    }
+    .source-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .source-title { font-size: 20px; font-weight: 700; }
+    .source-subtitle { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow: auto; border-radius: 16px; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(17,24,39,0.98);
+      font-weight: 700;
+    }
+    tbody tr:hover { background: rgba(56, 189, 248, 0.07); }
+    .sticky-left { position: sticky; left: 0; z-index: 1; text-align: left; background: rgba(15,23,42,0.98); }
+    thead .sticky-left { z-index: 3; background: rgba(17,24,39,0.98); }
+    .team-cell { display: flex; align-items: center; gap: 10px; }
+    .team-meta { display: flex; flex-direction: column; gap: 2px; }
+    .team-name { font-weight: 700; color: var(--text); line-height: 1.1; }
+    .team-key { font-size: 12px; color: var(--muted); line-height: 1.1; }
+    .footnote { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    @media (max-width: 1200px) {
+      .hero, .dashboard-grid { grid-template-columns: 1fr; }
+      .hero-side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 820px) {
+      .wrap { padding: 16px; }
+      .hero-side, .mini-board { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; gap: 6px; }
+      .bar-value { text-align: left; }
+    }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2024-2025 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2024-2025 </div></div></header>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Analytics · Team Playmaking Profile</div>
+        <h1>Playmaking Metrics</h1>
+        <div class="subtitle">A cleaner read of how each team creates offense and disrupts plays across four direct metrics already stored in the canonical team advanced source.</div>
+        <div class="hero-notes">
+          <span class="hero-note">One page · four clear league views</span>
+          <span class="hero-note">Best-to-worst ordering in every chart</span>
+          <span class="hero-note">No metric logic hidden in the page</span>
+        </div>
+      </div>
+      <div class="hero-side" id="hero-side"></div>
+    </section>
+
+    <section class="dashboard-grid" id="dashboard-grid"></section>
+
+    <section class="source-card">
+      <div class="source-head">
+        <div>
+          <div class="source-title">Source table</div>
+          <div class="source-subtitle">Exact values read from team_totals_adv</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sticky-left">Team</th>
+              <th>G</th>
+              <th>AST/TO</th>
+              <th>Assist FG%</th>
+              <th>AST/100 Poss</th>
+              <th>Stocks/100 Poss</th>
+              <th>AST</th>
+              <th>TOV</th>
+              <th>FGM</th>
+              <th>STL</th>
+              <th>BLK</th>
+              <th>Poss</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="footnote">Assist FG% is read from the source as AST / FGM. Stocks/100 Poss is read from the source as (STL + BLK) / Poss * 100. This page is presentation only.</div>
+    </section>
+  </div>
+
+  <script>
+    const DATA = [{"team_key": "SLB", "team_name": "SL Benfica", "team_code": "SLB", "games": 22, "ast": 507.0, "tov": 286.0, "fgm": 695.0, "stl": 180.0, "blk": 67.0, "poss_est": 1728.0, "ast_to_ratio": 1.7727272727272727, "assist_fg_pct": 0.7294964028776978, "ast_per_100_poss": 29.34027777777778, "stocks_per_100_poss": 14.293981481481483, "logo_src": "assets/logos/SLB.png"}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "team_code": "FCP", "games": 22, "ast": 440.0, "tov": 255.0, "fgm": 688.0, "stl": 172.0, "blk": 80.0, "poss_est": 1667.2, "ast_to_ratio": 1.7254901960784315, "assist_fg_pct": 0.6395348837209303, "ast_per_100_poss": 26.391554702495203, "stocks_per_100_poss": 15.115163147792707, "logo_src": "assets/logos/FCP.png"}, {"team_key": "ESG", "team_name": "Esgueira Aveiro OLI", "team_code": "ESG", "games": 22, "ast": 381.0, "tov": 233.0, "fgm": 642.0, "stl": 142.0, "blk": 49.0, "poss_est": 1698.48, "ast_to_ratio": 1.6351931330472103, "assist_fg_pct": 0.5934579439252337, "ast_per_100_poss": 22.431821393245727, "stocks_per_100_poss": 11.24534878244077, "logo_src": "assets/logos/ESG.png"}, {"team_key": "CDP", "team_name": "CD Póvoa Esc Online", "team_code": "CDP", "games": 7, "ast": 116.0, "tov": 84.0, "fgm": 179.0, "stl": 41.0, "blk": 15.0, "poss_est": 529.76, "ast_to_ratio": 1.380952380952381, "assist_fg_pct": 0.6480446927374302, "ast_per_100_poss": 21.89670794321957, "stocks_per_100_poss": 10.570824524312897, "logo_src": "assets/logos/CDP.png"}, {"team_key": "UDO", "team_name": "UD Oliveirense", "team_code": "UDO", "games": 22, "ast": 430.0, "tov": 332.0, "fgm": 622.0, "stl": 180.0, "blk": 58.0, "poss_est": 1667.24, "ast_to_ratio": 1.2951807228915662, "assist_fg_pct": 0.6913183279742765, "ast_per_100_poss": 25.791127852018906, "stocks_per_100_poss": 14.275089369256975, "logo_src": "assets/logos/UDO.png"}, {"team_key": "ADO", "team_name": "AD Ovarense", "team_code": "ADO", "games": 22, "ast": 396.0, "tov": 310.0, "fgm": 634.0, "stl": 132.0, "blk": 51.0, "poss_est": 1684.44, "ast_to_ratio": 1.2774193548387096, "assist_fg_pct": 0.6246056782334385, "ast_per_100_poss": 23.509296858303056, "stocks_per_100_poss": 10.864144760276412, "logo_src": "assets/logos/ADO.png"}, {"team_key": "CAQ", "team_name": "Queluz O NOSSO PREGO", "team_code": "CAQ", "games": 22, "ast": 387.0, "tov": 316.0, "fgm": 627.0, "stl": 132.0, "blk": 41.0, "poss_est": 1712.72, "ast_to_ratio": 1.2246835443037976, "assist_fg_pct": 0.6172248803827751, "ast_per_100_poss": 22.59563734877855, "stocks_per_100_poss": 10.10089214816199, "logo_src": "assets/logos/CAQ.png"}, {"team_key": "SCP", "team_name": "Sporting Clube Portugal", "team_code": "SCP", "games": 22, "ast": 376.0, "tov": 314.0, "fgm": 676.0, "stl": 183.0, "blk": 61.0, "poss_est": 1723.56, "ast_to_ratio": 1.197452229299363, "assist_fg_pct": 0.5562130177514792, "ast_per_100_poss": 21.81531249274757, "stocks_per_100_poss": 14.156745341038315, "logo_src": "assets/logos/SCP.png"}, {"team_key": "GFC", "team_name": "Galitos BARREIRO", "team_code": "GFC", "games": 22, "ast": 342.0, "tov": 302.0, "fgm": 653.0, "stl": 169.0, "blk": 52.0, "poss_est": 1656.68, "ast_to_ratio": 1.1324503311258278, "assist_fg_pct": 0.5237366003062787, "ast_per_100_poss": 20.643697032619453, "stocks_per_100_poss": 13.3399328778038, "logo_src": "assets/logos/GFC.png"}, {"team_key": "IBC", "team_name": "Imortal LUZiGÁS", "team_code": "IBC", "games": 22, "ast": 380.0, "tov": 343.0, "fgm": 598.0, "stl": 164.0, "blk": 51.0, "poss_est": 1679.28, "ast_to_ratio": 1.1078717201166182, "assist_fg_pct": 0.6354515050167224, "ast_per_100_poss": 22.628745652898864, "stocks_per_100_poss": 12.803106093087512, "logo_src": "assets/logos/IBC.png"}, {"team_key": "VSC", "team_name": "Vitória Sport Clube", "team_code": "VSC", "games": 22, "ast": 361.0, "tov": 340.0, "fgm": 618.0, "stl": 143.0, "blk": 49.0, "poss_est": 1740.6399999999999, "ast_to_ratio": 1.061764705882353, "assist_fg_pct": 0.5841423948220065, "ast_per_100_poss": 20.73949811563563, "stocks_per_100_poss": 11.030425590587372, "logo_src": "assets/logos/VSC.png"}, {"team_key": "ADG", "team_name": "AD Galomar", "team_code": "ADG", "games": 22, "ast": 284.0, "tov": 291.0, "fgm": 597.0, "stl": 131.0, "blk": 52.0, "poss_est": 1628.0, "ast_to_ratio": 0.9759450171821306, "assist_fg_pct": 0.47571189279731996, "ast_per_100_poss": 17.444717444717444, "stocks_per_100_poss": 11.24078624078624, "logo_src": "assets/logos/ADG.png"}, {"team_key": "CDP", "team_name": "CD Póvoa ESC ONLINE", "team_code": "CDP", "games": 15, "ast": 207.0, "tov": 216.0, "fgm": 385.0, "stl": 75.0, "blk": 35.0, "poss_est": 1126.8, "ast_to_ratio": 0.9583333333333334, "assist_fg_pct": 0.5376623376623376, "ast_per_100_poss": 18.370607028753994, "stocks_per_100_poss": 9.762158324458644, "logo_src": "assets/logos/CDP.png"}];
+    const METRICS = [{"key": "ast_to_ratio", "label": "AST/TO Ratio", "kind": "number", "subtitle": "Ball security + play creation", "blurb": "Higher is better. Teams near the top create assists without leaking too many possessions."}, {"key": "assist_fg_pct", "label": "Assist FG%", "kind": "pct", "subtitle": "How much of the made offense is created", "blurb": "Higher is better. Shows how often made field goals come from assisted action."}, {"key": "ast_per_100_poss", "label": "AST/100 Poss", "kind": "number", "subtitle": "Playmaking volume adjusted for pace", "blurb": "Higher is better. Cleaner for team-to-team comparison than raw assists."}, {"key": "stocks_per_100_poss", "label": "Stocks/100 Poss", "kind": "number", "subtitle": "Steals + blocks per 100 possessions", "blurb": "Higher is better. Defensive disruption in one quick number."}];
+
+    function fmtNumber(value, digits = 2) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      return Number(value).toFixed(digits);
+    }
+
+    function fmtPct(value, digits = 1) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      return (Number(value) * 100).toFixed(digits) + "%";
+    }
+
+    function metricValue(kind, value) {
+      return kind === "pct" ? fmtPct(value) : fmtNumber(value);
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function teamChip(row, prefix = "../") {
+      const avatar = row.logo_src ? `<img src="${prefix}${row.logo_src}" alt="${escapeHtml(row.team_key)} logo">` : "";
+      return `
+        <div class="team-chip">
+          ${avatar}
+          <div class="team-chip-name">${escapeHtml(row.team_name)}</div>
+        </div>
+      `;
+    }
+
+    function miniTeam(row, kind, value) {
+      const avatar = row.logo_src ? `<img src="../${row.logo_src}" alt="${escapeHtml(row.team_key)} logo">` : "";
+      return `
+        <div class="mini-team">
+          ${avatar}
+          <div>
+            <div class="mini-team-name">${escapeHtml(row.team_name)}</div>
+            <div class="mini-value">${escapeHtml(metricValue(kind, value))}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function avg(values) {
+      const clean = values.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      if (!clean.length) return null;
+      return clean.reduce((a, b) => a + b, 0) / clean.length;
+    }
+
+    function orderedRows(key) {
+      return [...DATA]
+        .filter(r => r[key] !== null && r[key] !== undefined && !Number.isNaN(r[key]))
+        .sort((a, b) => b[key] - a[key]);
+    }
+
+    function buildHero() {
+      const root = document.getElementById("hero-side");
+      root.innerHTML = "";
+
+      METRICS.forEach(metric => {
+        const rows = orderedRows(metric.key);
+        const best = rows[0];
+        const avgValue = avg(rows.map(r => r[metric.key]));
+        if (!best) return;
+
+        root.innerHTML += `
+          <div class="spotlight">
+            <div class="spotlight-label">${escapeHtml(metric.label)} leader</div>
+            <div class="spotlight-value">${escapeHtml(metricValue(metric.kind, best[metric.key]))}</div>
+            <div class="spotlight-detail">${escapeHtml(best.team_name)} · League avg ${escapeHtml(metricValue(metric.kind, avgValue))}</div>
+          </div>
+        `;
+      });
+    }
+
+    function buildDashboard() {
+      const root = document.getElementById("dashboard-grid");
+      root.innerHTML = "";
+
+      METRICS.forEach(metric => {
+        const rows = orderedRows(metric.key);
+        if (!rows.length) return;
+
+        const best = rows[0];
+        const last = rows[rows.length - 1];
+        const maxValue = Math.max(...rows.map(r => r[metric.key]));
+        const avgValue = avg(rows.map(r => r[metric.key]));
+
+        const bars = rows.map(row => {
+          const pct = maxValue > 0 ? (row[metric.key] / maxValue) * 100 : 0;
+          return `
+            <div class="bar-row">
+              ${teamChip(row)}
+              <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(2)}%"></div></div>
+              <div class="bar-value">${escapeHtml(metricValue(metric.kind, row[metric.key]))}</div>
+            </div>
+          `;
+        }).join("");
+
+        root.innerHTML += `
+          <article class="chart-card">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">${escapeHtml(metric.label)}</div>
+                <div class="chart-subtitle">${escapeHtml(metric.subtitle)}</div>
+              </div>
+              <div class="leader-badge">
+                <span>League leader</span>
+                <strong>${escapeHtml(best.team_name)}</strong>
+                <em>${escapeHtml(metricValue(metric.kind, best[metric.key]))}</em>
+              </div>
+            </div>
+            <div class="chart-note">${escapeHtml(metric.blurb)} League average: ${escapeHtml(metricValue(metric.kind, avgValue))}.</div>
+            <div class="bars">${bars}</div>
+            <div class="mini-board">
+              <div class="mini-card">
+                <div class="mini-label">Top team</div>
+                ${miniTeam(best, metric.kind, best[metric.key])}
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Lowest team</div>
+                ${miniTeam(last, metric.kind, last[metric.key])}
+              </div>
+            </div>
+          </article>
+        `;
+      });
+    }
+
+    function buildTable() {
+      const root = document.getElementById("table-body");
+      const rows = [...DATA].sort((a, b) => (b.ast_to_ratio ?? -Infinity) - (a.ast_to_ratio ?? -Infinity));
+
+      root.innerHTML = rows.map(row => {
+        const avatar = row.logo_src ? `<img src="../${row.logo_src}" alt="${escapeHtml(row.team_key)} logo">` : "";
+        return `
+          <tr>
+            <td class="sticky-left">
+              <div class="team-cell">
+                ${avatar}
+                <div class="team-meta">
+                  <div class="team-name">${escapeHtml(row.team_name)}</div>
+                  <div class="team-key">${escapeHtml(row.team_key)}</div>
+                </div>
+              </div>
+            </td>
+            <td>${row.games ?? ""}</td>
+            <td>${escapeHtml(fmtNumber(row.ast_to_ratio))}</td>
+            <td>${escapeHtml(fmtPct(row.assist_fg_pct))}</td>
+            <td>${escapeHtml(fmtNumber(row.ast_per_100_poss))}</td>
+            <td>${escapeHtml(fmtNumber(row.stocks_per_100_poss))}</td>
+            <td>${escapeHtml(fmtNumber(row.ast))}</td>
+            <td>${escapeHtml(fmtNumber(row.tov))}</td>
+            <td>${escapeHtml(fmtNumber(row.fgm))}</td>
+            <td>${escapeHtml(fmtNumber(row.stl))}</td>
+            <td>${escapeHtml(fmtNumber(row.blk))}</td>
+            <td>${escapeHtml(fmtNumber(row.poss_est))}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    buildHero();
+    buildDashboard();
+    buildTable();
+  </script>
+</body>
+</html>
