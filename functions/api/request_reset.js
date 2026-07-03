@@ -33,82 +33,80 @@ function extractUserAgent(request) {
 
 async function isRateLimited(db, email) {
     try {
-        const cutoff = new Date(Date.now() - RATE_LIMIT_MINUTES * 60 * 1000).toISOString();
         const row = await db
             .prepare(
-                "SELECT id FROM password_reset_requests WHERE lower(email) = lower(?) AND requested_at > ? LIMIT 1"
+                `SELECT id FROM password_reset_requests WHERE lower(email) = lower(?) AND requested_at > datetime('now', '-${RATE_LIMIT_MINUTES} minutes') LIMIT 1`
             )
-            .bind(email, cutoff)
-            .first();
-        return !!row;
-    } catch (_e) {
-        return false;
-    }
-}
-
-async function userExists(db, email) {
-    try {
-        const row = await db
-            .prepare("SELECT id FROM users WHERE lower(email) = lower(?) AND is_active = 1 LIMIT 1")
             .bind(email)
             .first();
-        return !!row;
-    } catch (_e) {
+        return row !== null && row !== undefined;
+    } catch (_) {
         return false;
     }
 }
 
-async function insertRequest(db, email, status, ip, ua) {
+async function emailExists(db, email) {
+    try {
+        const row = await db
+            .prepare("SELECT id FROM users WHERE lower(email) = lower(?) LIMIT 1")
+            .bind(email)
+            .first();
+        return row !== null && row !== undefined;
+    } catch (_) {
+        return false;
+    }
+}
+
+async function insertRequest(db, email, status, ipAddress, userAgent) {
     try {
         await db
             .prepare(
-                "INSERT INTO password_reset_requests (email, ip_address, user_agent, status) VALUES (?, ?, ?, ?)"
+                "INSERT INTO password_reset_requests (email, status, ip_address, user_agent) VALUES (?, ?, ?, ?)"
             )
-            .bind(email, ip, ua, status)
+            .bind(email, status, ipAddress, userAgent)
             .run();
-    } catch (_e) {
-        // silent — never surface DB errors to the client
+    } catch (_) {
+        // silent - never crash
     }
 }
 
 export async function onRequestPost(context) {
-    const { request, env } = context;
-    const db = env.AUTH_DB;
+    const db = context.env.AUTH_DB;
+    const request = context.request;
 
-    if (!db) {
-        return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
-    }
-
-    let body = {};
+    // Always return the same message
     try {
-        body = await request.json();
-    } catch (_e) {
+        const body = await request.json().catch(() => ({}));
+        const email = String(body?.email || "").trim().toLowerCase();
+
+        if (!email || !EMAIL_REGEX.test(email)) {
+            return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
+        }
+
+        const ipAddress = extractIP(request);
+        const userAgent = extractUserAgent(request);
+
+        // Rate limit check — silent
+        if (await isRateLimited(db, email)) {
+            return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
+        }
+
+        // Check if email exists
+        const exists = await emailExists(db, email);
+        const status = exists ? "pending" : "ignored";
+
+        // Insert request (always — for audit)
+        await insertRequest(db, email, status, ipAddress, userAgent);
+
+        return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
+    } catch (_) {
+        // Never crash — always same message
         return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
     }
-
-    const email = String(body.email || "").trim().toLowerCase();
-
-    if (!email || !EMAIL_REGEX.test(email) || email.length > 254) {
-        return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
-    }
-
-    const ip = extractIP(request);
-    const ua = extractUserAgent(request);
-
-    if (await isRateLimited(db, email)) {
-        return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
-    }
-
-    const exists = await userExists(db, email);
-    const status = exists ? "pending" : "ignored";
-
-    await insertRequest(db, email, status, ip, ua);
-
-    return jsonResponse({ ok: true, message: SUCCESS_MESSAGE });
 }
 
 export async function onRequestGet() {
-    return jsonResponse({ ok: false, error: "Method not allowed" }, 405);
+    return jsonResponse({ ok: false, error: "Method not allowed." }, 405);
 }
 
 export async function onRequestOptions() {
