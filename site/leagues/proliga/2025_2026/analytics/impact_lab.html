@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impact Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #07101e;
+  --surface:   #0c1929;
+  --surface2:  #0f2035;
+  --border:    rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.13);
+  --accent:    #22d3a5;
+  --accent-d:  #16a580;
+  --warn:      #f59e0b;
+  --bad:       #f87171;
+  --good:      #34d399;
+  --text:      #dde6f0;
+  --muted:     #4e6a88;
+  --muted-hi:  #7a99bb;
+  --display:   'Syne', sans-serif;
+  --mono:      'DM Mono', monospace;
+  --body:      'Outfit', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── layout ── */
+.wrap { max-width: 1520px; margin: 0 auto; padding: 28px 24px 64px; }
+
+/* ── hero ── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-hi);
+  border-radius: 20px;
+  padding: 32px 36px 28px;
+  margin-bottom: 20px;
+  background: var(--surface);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 90% at 100% -10%, rgba(34,211,165,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 60% at -5% 110%, rgba(34,211,165,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.hero h1 {
+  font-family: var(--display);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1;
+  color: #f0f6ff;
+  margin-bottom: 12px;
+}
+.hero p {
+  color: var(--muted-hi);
+  font-size: 14px;
+  max-width: 720px;
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+/* ── grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: 370px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── panel ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+}
+.panel-title {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #e8f0fa;
+  margin-bottom: 16px;
+  letter-spacing: -.01em;
+}
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── team select ── */
+.team-select-wrap { margin-bottom: 4px; }
+select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234e6a88' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  transition: border-color .15s;
+}
+select:focus { outline: none; border-color: var(--accent); }
+
+/* ── preset buttons ── */
+.preset-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+.preset-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  color: var(--muted-hi);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--body);
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+.preset-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(34,211,165,0.05);
+}
+.preset-btn.reset {
+  grid-column: span 2;
+  color: var(--muted);
+  border-style: dashed;
+}
+.preset-btn.reset:hover {
+  border-color: var(--muted-hi);
+  color: var(--text);
+  background: transparent;
+}
+
+/* ── sliders ── */
+.slider-row { margin-bottom: 16px; }
+.slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted-hi);
+  margin-bottom: 6px;
+}
+.slider-head strong {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--border-hi), var(--border-hi));
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--accent);
+  cursor: pointer;
+  transition: box-shadow .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(34,211,165,0.18);
+}
+input[type=range]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  cursor: pointer;
+}
+.small {
+  font-family: var(--mono);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* ── KPI cards ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--border-hi);
+  transition: border-left-color .2s;
+}
+.card:first-child { border-left-color: var(--accent); }
+.card:nth-child(2) { border-left-color: #f87171; }
+.card:nth-child(3) { border-left-color: var(--warn); }
+.card:nth-child(4) { border-left-color: #818cf8; }
+.card .k {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.card .v {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 500;
+  color: #f0f6ff;
+  line-height: 1;
+}
+.card .d {
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.card.flash {
+  box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(34,211,165,0.15);
+  border-left-color: var(--accent) !important;
+  transition: box-shadow .18s ease;
+}
+
+/* ── rank anchor ── */
+.rank-anchor {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rank-anchor .headline {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #f0f6ff;
+}
+.rank-anchor .sub {
+  font-size: 12px;
+  color: var(--muted-hi);
+  margin-top: 5px;
+  line-height: 1.5;
+  font-family: var(--mono);
+}
+.rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34,211,165,0.1);
+  border: 1px solid rgba(34,211,165,0.3);
+  color: var(--accent);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── signal cards ── */
+.signal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.signal-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.signal-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.signal-main {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #f0f6ff;
+}
+.signal-sub {
+  font-size: 12px;
+  color: var(--muted-hi);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* ── causal chain ── */
+.causal-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.causal-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  position: relative;
+}
+.causal-card:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+  z-index: 1;
+}
+.causal-step {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.causal-main {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #f0f6ff;
+}
+.causal-sub {
+  font-size: 12px;
+  color: var(--muted-hi);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* ── section grid ── */
+.section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.section-grid h3, .panel h3 {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin: 0 0 10px 0;
+}
+
+/* ── table ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th, .table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.table th {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+  background: var(--surface2);
+}
+.table td { font-family: var(--mono); font-size: 13px; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── chart wraps ── */
+.waterfall-wrap, .halfcourt-wrap {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+.waterfall-chart, .halfcourt-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── zone legend ── */
+.zone-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.zone-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted-hi);
+}
+.zone-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+.zone-legend-note {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+}
+
+/* ── lineup ── */
+.lineup-block {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.lineup-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 3px;
+  color: #f0f6ff;
+}
+.lineup-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.rest-row { opacity: 0.6; font-style: italic; }
+
+/* ── state colours ── */
+.bad   { color: var(--bad);  }
+.good  { color: var(--good); }
+.neutral { color: var(--muted-hi); }
+
+/* ── warning ── */
+.warning {
+  display: none;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.25);
+  color: #fca5a5;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.warning strong { display: block; margin-bottom: 6px; font-weight: 600; }
+.warning ul { margin: 0; padding-left: 18px; }
+
+/* ── tooltip ── */
+.chart-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, calc(-100% - 10px));
+  background: rgba(7,16,30,.97);
+  color: var(--text);
+  border: 1px solid var(--border-hi);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-family: var(--mono);
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: 0 12px 32px rgba(0,0,0,.5);
+}
+
+/* ── component badges ── */
+.component-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: .04em;
+}
+.component-badge.high  { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25); color: #34d399; }
+.component-badge.medium { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: #f59e0b; }
+.component-badge.low   { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); color: #f87171; }
+
+@media (max-width: 1180px) {
+  .grid { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .section-grid { grid-template-columns: 1fr; }
+  .causal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .causal-card::after { display: none; }
+  .hero h1 { font-size: 36px; }
+}
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Proliga </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Proliga </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Proliga · 2025-2026 </div></div></header>
+<div class="wrap">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Team Analytics Sandbox</div>
+      <h1>Impact Lab</h1>
+      <p>Adjust four factors, shot distribution and lineup minutes — then compare your simulation against the team's real baseline in real time.</p>
+    </div>
+  </section>
+
+  <div class="grid">
+
+    <aside class="panel">
+      <div class="panel-title">Controls</div>
+
+      <div class="team-select-wrap">
+        <select id="teamSelect"></select>
+      </div>
+
+      <div class="preset-row">
+        <button type="button" class="preset-btn" id="presetAttack">Attack up</button>
+        <button type="button" class="preset-btn" id="presetBalance">Balanced upside</button>
+        <button type="button" class="preset-btn" id="presetSpacing">Spacing tilt</button>
+        <button type="button" class="preset-btn reset" id="presetReset">Reset all controls</button>
+      </div>
+
+      <div class="section-label">Four Factors</div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>eFG% delta</span><strong id="efgDeltaLabel">0.0 pp</strong></div>
+        <input id="efgDelta" type="range" min="-8" max="8" step="0.1" value="0">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>TOV% delta</span><strong id="tovDeltaLabel">0.0 pp</strong></div>
+        <input id="tovDelta" type="range" min="-8" max="8" step="0.1" value="0">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>ORB% delta</span><strong id="orbDeltaLabel">0.0 pp</strong></div>
+        <input id="orbDelta" type="range" min="-8" max="8" step="0.1" value="0">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head"><span>FTR delta</span><strong id="ftrDeltaLabel">0.0 pp</strong></div>
+        <input id="ftrDelta" type="range" min="-12" max="12" step="0.1" value="0">
+      </div>
+
+      <div class="section-label">Shot mix rebuilder</div>
+      <div id="zoneSliders"></div>
+      <div class="small">Zone sliders normalise to 100% before simulation.</div>
+
+      <div class="section-label">Lineup mixer</div>
+      <div id="lineupMixer"></div>
+      <div class="small">Top lineups gain or lose minutes. Rest of pool absorbs difference automatically. Ratings use shrinkage toward team baseline.</div>
+    </aside>
+
+    <main class="panel">
+      <div class="panel-title" id="teamTitle">Team</div>
+
+      <div id="warningBox" class="warning"></div>
+
+      <div class="cards">
+        <div class="card"><div class="k">Off Rating</div><div class="v" id="offCard">—</div><div class="d" id="offDelta">Δ —</div></div>
+        <div class="card"><div class="k">Def Rating</div><div class="v" id="defCard">—</div><div class="d" id="defDelta">Δ —</div></div>
+        <div class="card"><div class="k">Net Rating</div><div class="v" id="netCard">—</div><div class="d" id="netDelta">Δ —</div></div>
+        <div class="card"><div class="k">Shot PPS</div><div class="v" id="ppsCard">—</div><div class="d" id="ppsDelta">Δ —</div></div>
+      </div>
+
+      <div class="rank-anchor">
+        <div>
+          <div class="headline" id="rankHeadline">—</div>
+          <div class="sub" id="rankSubline">—</div>
+        </div>
+        <div class="rank-pill" id="rankPill">League rank</div>
+      </div>
+
+      <div class="signal-grid">
+        <div class="signal-card">
+          <div class="signal-title">Credibility</div>
+          <div class="signal-main" id="confidenceMain">—</div>
+          <div class="signal-sub" id="confidenceSub">—</div>
+        </div>
+        <div class="signal-card">
+          <div class="signal-title">Historical envelope</div>
+          <div class="signal-main" id="envelopeMain">—</div>
+          <div class="signal-sub" id="envelopeSub">—</div>
+        </div>
+      </div>
+
+      <div class="causal-grid">
+        <div class="causal-card">
+          <div class="causal-step">1 · Shot mix</div>
+          <div class="causal-main" id="causalShot">—</div>
+          <div class="causal-sub" id="causalShotSub">—</div>
+        </div>
+        <div class="causal-card">
+          <div class="causal-step">2 · Four factors</div>
+          <div class="causal-main" id="causalFactors">—</div>
+          <div class="causal-sub" id="causalFactorsSub">—</div>
+        </div>
+        <div class="causal-card">
+          <div class="causal-step">3 · Lineup mix</div>
+          <div class="causal-main" id="causalLineups">—</div>
+          <div class="causal-sub" id="causalLineupsSub">—</div>
+        </div>
+        <div class="causal-card">
+          <div class="causal-step">4 · Outcome</div>
+          <div class="causal-main" id="causalOutcome">—</div>
+          <div class="causal-sub" id="causalOutcomeSub">—</div>
+        </div>
+      </div>
+
+      <div class="section-grid">
+        <section>
+          <h3>Baseline vs simulation</h3>
+          <table class="table">
+            <thead><tr><th>Metric</th><th>Baseline</th><th>Simulated</th><th>Delta</th></tr></thead>
+            <tbody id="summaryRows"></tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Impact breakdown</h3>
+          <div class="waterfall-wrap">
+            <svg id="waterfallChart" class="waterfall-chart" viewBox="0 0 760 280" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+        </section>
+      </div>
+
+      <div class="section-grid" style="margin-top:14px;">
+        <section>
+          <h3>Shot mix board</h3>
+          <div class="halfcourt-wrap">
+            <svg id="halfcourtChart" class="halfcourt-chart" viewBox="0 0 520 420" preserveAspectRatio="xMidYMid meet"></svg>
+            <div id="zoneLegend" class="zone-legend"></div>
+          </div>
+        </section>
+        <section>
+          <h3>Lineup minutes mix</h3>
+          <table class="table">
+            <thead><tr><th>Lineup</th><th>Base Min</th><th>Sim Min</th><th>Shrunk Net</th></tr></thead>
+            <tbody id="lineupRows"></tbody>
+          </table>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+<div id="chartTooltip" class="chart-tooltip"></div>
+</div>
+
+<script>
+const TEAMS = [{"team_key": "ADG", "team_name": "AD Galomar", "team_code": "ADG", "games": 24, "baseline": {"off_rating": 107.73563169347614, "def_rating": 101.47152233749735, "net_rating": 6.264109355978789, "pace": 78.01367875647668, "efg_pct_off": 0.520320197044335, "orb_pct_off": 0.33648790746582546, "tov_pct_off": 0.19680419848956776, "ftr_off": 0.28263546798029554, "shot_pps": 1.04064039408867, "shot_fg": 0.4501231527093596, "fga": 1624.0, "fta": 459.0, "poss_est": 1874.96, "fga_per_poss": 0.8661518112386397, "ft_rate_per_fga": 0.28263546798029554}, "zones": [{"zone": "Restricted Area", "attempts": 360.0, "fg_pct": 0.6722222222222223, "pps": 1.3444444444444446, "zone_share": 0.22167487684729065}, {"zone": "Paint Non-RA", "attempts": 384.0, "fg_pct": 0.4817708333333333, "pps": 0.9635416666666666, "zone_share": 0.23645320197044334}, {"zone": "Mid-Range", "attempts": 192.0, "fg_pct": 0.3958333333333333, "pps": 0.7916666666666666, "zone_share": 0.11822660098522167}, {"zone": "Corner 3 Left", "attempts": 78.0, "fg_pct": 0.32051282051282054, "pps": 0.9615384615384616, "zone_share": 0.0480295566502463}, {"zone": "Corner 3 Right", "attempts": 68.0, "fg_pct": 0.38235294117647056, "pps": 1.1470588235294117, "zone_share": 0.04187192118226601}, {"zone": "Above the Break 3", "attempts": 542.0, "fg_pct": 0.32656826568265684, "pps": 0.9797047970479705, "zone_share": 0.33374384236453203}], "lineups": [{"lineup_id": "ADG_A._GUEDES | ADG_H._SEMEDO | ADG_J._CONCEICAO | ADG_L._BLACK | ADG_R._ROUSSEAU", "lineup_players": "A. Guedes | H. Semedo | J. Conceicao | L. Black | R. Rousseau", "minutes": 52.36666666666667, "off_rating": 113.20754716981132, "def_rating": 99.62640099626401, "net_rating": 13.58114617354731, "shrunk_off_rating": 110.28572935391, "shrunk_def_rating": 100.61163339443073}, {"lineup_id": "ADG_A._GUEDES | ADG_H._SEMEDO | ADG_J._CARDOSO | ADG_R._SOARES | ADG_T._NAZARIO", "lineup_players": "A. Guedes | H. Semedo | J. Cardoso | R. Soares | T. Nazario", "minutes": 50.583333333333336, "off_rating": 104.66507177033493, "def_rating": 100.54666146036703, "net_rating": 4.118410309967899, "shrunk_off_rating": 106.33108770451855, "shrunk_def_rating": 101.04846992422071}, {"lineup_id": "ADG_A._GUEDES | ADG_L._BLACK | ADG_N._FERRAR | ADG_R._ROUSSEAU | ADG_R._SOARES", "lineup_players": "A. Guedes | L. Black | N. Ferrar | R. Rousseau | R. Soares", "minutes": 45.33333333333333, "off_rating": 118.7305814469596, "def_rating": 106.45302897278314, "net_rating": 12.27755247417646, "shrunk_off_rating": 112.46763538484876, "shrunk_def_rating": 103.61546190205073}, {"lineup_id": "ADG_A._GUEDES | ADG_H._SEMEDO | ADG_L._BLACK | ADG_R._SOARES | ADG_T._NAZARIO", "lineup_players": "A. Guedes | H. Semedo | L. Black | R. Soares | T. Nazario", "minutes": 39.68333333333334, "off_rating": 124.93424513413993, "def_rating": 105.29019003595275, "net_rating": 19.64405509818718, "shrunk_off_rating": 114.58229589715788, "shrunk_def_rating": 102.99171089961445}, {"lineup_id": "ADG_A._GUEDES | ADG_L._BLACK | ADG_N._FERRAR | ADG_R._SOARES | ADG_T._NAZARIO", "lineup_players": "A. Guedes | L. Black | N. Ferrar | R. Soares | T. Nazario", "minutes": 29.416666666666668, "off_rating": 126.77484787018254, "def_rating": 72.99270072992701, "net_rating": 53.78214714025553, "shrunk_off_rating": 113.9992321691307, "shrunk_def_rating": 92.10244123081299}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 747.6166666666666, "off_rating": 105.00590664119207, "def_rating": 102.35501695421542, "net_rating": 2.6508896869766545, "shrunk_off_rating": 105.2087052087514, "shrunk_def_rating": 102.28937977857134}}, {"team_key": "AAC", "team_name": "Académica Efapel", "team_code": "AAC", "games": 25, "baseline": {"off_rating": 82.52055248389969, "def_rating": 102.3669751603401, "net_rating": -19.84642267644041, "pace": 76.92640000000002, "efg_pct_off": 0.41726854891661197, "orb_pct_off": 0.23541247484909456, "tov_pct_off": 0.22312646248783416, "ftr_off": 0.31582403151674326, "shot_pps": 0.8345370978332238, "shot_fg": 0.3801707156927117, "fga": 1523.0, "fta": 481.0, "poss_est": 1931.64, "fga_per_poss": 0.7884491934314882, "ft_rate_per_fga": 0.31582403151674326}, "zones": [{"zone": "Restricted Area", "attempts": 261.0, "fg_pct": 0.6590038314176245, "pps": 1.318007662835249, "zone_share": 0.17137229152987524}, {"zone": "Paint Non-RA", "attempts": 495.0, "fg_pct": 0.4404040404040404, "pps": 0.8808080808080808, "zone_share": 0.325016414970453}, {"zone": "Mid-Range", "attempts": 252.0, "fg_pct": 0.30158730158730157, "pps": 0.6031746031746031, "zone_share": 0.1654629021667761}, {"zone": "Corner 3 Left", "attempts": 74.0, "fg_pct": 0.32432432432432434, "pps": 0.972972972972973, "zone_share": 0.048588312541037425}, {"zone": "Corner 3 Right", "attempts": 55.0, "fg_pct": 0.34545454545454546, "pps": 1.0363636363636364, "zone_share": 0.03611293499671701}, {"zone": "Above the Break 3", "attempts": 386.0, "fg_pct": 0.18134715025906736, "pps": 0.5440414507772021, "zone_share": 0.25344714379514116}], "lineups": [{"lineup_id": "AAC_A._NAIA | AAC_J._POWELL | AAC_M._SANTANA | AAC_M._SILVA | AAC_M._WALLER", "lineup_players": "A. Naia | J. Powell | M. Santana | M. Silva | M. Waller", "minutes": 85.2, "off_rating": 85.41718247090864, "def_rating": 98.49790691947796, "net_rating": -13.080724448569313, "shrunk_off_rating": 84.2202279308223, "shrunk_def_rating": 100.09669544875985}, {"lineup_id": "AAC_A._NAIA | AAC_D._MONTEIRO | AAC_M._SILVA | AAC_M._WALLER | AAC_N._BRITO", "lineup_players": "A. Naia | D. Monteiro | M. Silva | M. Waller | N. Brito", "minutes": 84.75, "off_rating": 67.8248453117563, "def_rating": 112.35955056179776, "net_rating": -44.534705250041455, "shrunk_off_rating": 73.91633014995045, "shrunk_def_rating": 108.21755039539045}, {"lineup_id": "AAC_A._NAIA | AAC_J._POWELL | AAC_M._SANTANA | AAC_M._SILVA | AAC_N._BRITO", "lineup_players": "A. Naia | J. Powell | M. Santana | M. Silva | N. Brito", "minutes": 74.58333333333333, "off_rating": 94.01835949067218, "def_rating": 85.50131540485239, "net_rating": 8.51704408581979, "shrunk_off_rating": 88.89240218734328, "shrunk_def_rating": 93.02037114723703}, {"lineup_id": "AAC_J._POWELL | AAC_M._SANTANA | AAC_M._SILVA | AAC_M._WALLER | AAC_N._BRITO", "lineup_players": "J. Powell | M. Santana | M. Silva | M. Waller | N. Brito", "minutes": 59.8, "off_rating": 95.09938313913639, "def_rating": 100.90466249130132, "net_rating": -5.805279352164931, "shrunk_off_rating": 88.79946795287427, "shrunk_def_rating": 101.63703945409203}, {"lineup_id": "AAC_A._NAIA | AAC_B._MORAIS | AAC_D._MONTEIRO | AAC_M._SILVA | AAC_M._WALLER", "lineup_players": "A. Naia | B. Morais | D. Monteiro | M. Silva | M. Waller", "minutes": 31.633333333333333, "off_rating": 81.80628272251309, "def_rating": 97.35973597359737, "net_rating": -15.553453251084278, "shrunk_off_rating": 82.27397481800087, "shrunk_def_rating": 100.63839386233398}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 664.0333333333332, "off_rating": 81.29683541981542, "def_rating": 104.42208041472526, "net_rating": -23.125244994909835, "shrunk_off_rating": 81.39824376728339, "shrunk_def_rating": 104.25177566550131}}, {"team_key": "BSA", "team_name": "BSA - GALP", "team_code": "BSA", "games": 25, "baseline": {"off_rating": 93.30035971223022, "def_rating": 98.09508303484206, "net_rating": -4.794723322611844, "pace": 77.67445544554455, "efg_pct_off": 0.4497471554993679, "orb_pct_off": 0.2983316977428852, "tov_pct_off": 0.22379823413996078, "ftr_off": 0.3463969658659924, "shot_pps": 0.8994943109987357, "shot_fg": 0.39190897597977237, "fga": 1582.0, "fta": 548.0, "poss_est": 1957.12, "fga_per_poss": 0.8083306082406803, "ft_rate_per_fga": 0.3463969658659924}, "zones": [{"zone": "Restricted Area", "attempts": 316.0, "fg_pct": 0.680379746835443, "pps": 1.360759493670886, "zone_share": 0.1997471554993679}, {"zone": "Paint Non-RA", "attempts": 434.0, "fg_pct": 0.4078341013824885, "pps": 0.815668202764977, "zone_share": 0.2743362831858407}, {"zone": "Mid-Range", "attempts": 176.0, "fg_pct": 0.2556818181818182, "pps": 0.5113636363636364, "zone_share": 0.11125158027812895}, {"zone": "Corner 3 Left", "attempts": 63.0, "fg_pct": 0.30158730158730157, "pps": 0.9047619047619048, "zone_share": 0.03982300884955752}, {"zone": "Corner 3 Right", "attempts": 69.0, "fg_pct": 0.21739130434782608, "pps": 0.6521739130434783, "zone_share": 0.04361567635903919}, {"zone": "Above the Break 3", "attempts": 524.0, "fg_pct": 0.28435114503816794, "pps": 0.8530534351145038, "zone_share": 0.33122629582806573}], "lineups": [{"lineup_id": "BSA_A._ANDREWS | BSA_C._BAER | BSA_F._MIGUEL | BSA_G._SAIOTE | BSA_M._MAULTSBY", "lineup_players": "A. Andrews | C. Baer | F. Miguel | G. Saiote | M. Maultsby", "minutes": 151.11666666666667, "off_rating": 95.37809380555177, "def_rating": 94.29498445315669, "net_rating": 1.083109352395084, "shrunk_off_rating": 94.78759544477515, "shrunk_def_rating": 95.37498405006735}, {"lineup_id": "BSA_A._ANDREWS | BSA_C._BAER | BSA_F._MIGUEL | BSA_M._MAULTSBY | BSA_P._FORTUNATO", "lineup_players": "A. Andrews | C. Baer | F. Miguel | M. Maultsby | P. Fortunato", "minutes": 58.36666666666666, "off_rating": 84.36139332365748, "def_rating": 69.86404833836858, "net_rating": 14.497344985288905, "shrunk_off_rating": 88.89255060313675, "shrunk_def_rating": 84.17434472069814}, {"lineup_id": "BSA_A._ANDREWS | BSA_C._AZEVEDO | BSA_C._BAER | BSA_G._SAIOTE | BSA_M._MAULTSBY", "lineup_players": "A. Andrews | C. Azevedo | C. Baer | G. Saiote | M. Maultsby", "minutes": 48.7, "off_rating": 95.9342165372316, "def_rating": 116.33663366336636, "net_rating": -20.40241712613475, "shrunk_off_rating": 94.4803857230634, "shrunk_def_rating": 106.26770047374853}, {"lineup_id": "BSA_C._AZEVEDO | BSA_C._BAER | BSA_G._SAIOTE | BSA_M._MAULTSBY | BSA_M._SANTANA", "lineup_players": "C. Azevedo | C. Baer | G. Saiote | M. Maultsby | M. Santana", "minutes": 33.766666666666666, "off_rating": 108.41836734693877, "def_rating": 104.86322188449849, "net_rating": 3.5551454624402794, "shrunk_off_rating": 98.7445622482984, "shrunk_def_rating": 100.53238294764049}, {"lineup_id": "BSA_C._AZEVEDO | BSA_G._SAIOTE | BSA_M._MAULTSBY | BSA_M._SANTANA | BSA_T._ALMEIDA", "lineup_players": "C. Azevedo | G. Saiote | M. Maultsby | M. Santana | T. Almeida", "minutes": 31.666666666666664, "off_rating": 103.2540675844806, "def_rating": 92.65614275909402, "net_rating": 10.59792482538657, "shrunk_off_rating": 96.7389133408258, "shrunk_def_rating": 96.21617639412912}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 691.3833333333333, "off_rating": 91.09610037710358, "def_rating": 100.25094896584669, "net_rating": -9.154848588743107, "shrunk_off_rating": 91.27211647200534, "shrunk_def_rating": 100.07879721570546}}, {"team_key": "CAB", "team_name": "CAB Madeira", "team_code": "CAB", "games": 25, "baseline": {"off_rating": 109.32686703854799, "def_rating": 97.4998440002496, "net_rating": 11.827023038298393, "pace": 76.13544554455446, "efg_pct_off": 0.5231848688224527, "orb_pct_off": 0.30665280665280664, "tov_pct_off": 0.17952293730746816, "ftr_off": 0.3227577791336181, "shot_pps": 1.0463697376449053, "shot_fg": 0.4472239170225747, "fga": 1639.0, "fta": 529.0, "poss_est": 1921.76, "fga_per_poss": 0.8528640412954791, "ft_rate_per_fga": 0.3227577791336181}, "zones": [{"zone": "Restricted Area", "attempts": 333.0, "fg_pct": 0.6426426426426426, "pps": 1.2852852852852852, "zone_share": 0.2031726662599146}, {"zone": "Paint Non-RA", "attempts": 445.0, "fg_pct": 0.501123595505618, "pps": 1.002247191011236, "zone_share": 0.27150701647345943}, {"zone": "Mid-Range", "attempts": 139.0, "fg_pct": 0.3381294964028777, "pps": 0.6762589928057554, "zone_share": 0.0848078096400244}, {"zone": "Corner 3 Left", "attempts": 81.0, "fg_pct": 0.345679012345679, "pps": 1.037037037037037, "zone_share": 0.04942037827943868}, {"zone": "Corner 3 Right", "attempts": 83.0, "fg_pct": 0.42168674698795183, "pps": 1.2650602409638554, "zone_share": 0.05064063453325198}, {"zone": "Above the Break 3", "attempts": 558.0, "fg_pct": 0.3333333333333333, "pps": 1.0, "zone_share": 0.3404514948139109}], "lineups": [{"lineup_id": "CAB_B._FERREIRA | CAB_J._EMBALO | CAB_J._GALLINA | CAB_M._NEWMAN | CAB_T._EBERHART", "lineup_players": "B. Ferreira | J. Embalo | J. Gallina | M. Newman | T. Eberhart", "minutes": 149.01666666666665, "off_rating": 114.54046639231822, "def_rating": 97.56269371653985, "net_rating": 16.97777267577837, "shrunk_off_rating": 113.04385865182121, "shrunk_def_rating": 97.54465217450613}, {"lineup_id": "CAB_B._FERREIRA | CAB_J._EMBALO | CAB_M._NEWMAN | CAB_T._EBERHART | CAB_V._BUCCILLA", "lineup_players": "B. Ferreira | J. Embalo | M. Newman | T. Eberhart | V. Buccilla", "minutes": 84.41666666666667, "off_rating": 116.973618715779, "def_rating": 103.48720521826394, "net_rating": 13.48641349751506, "shrunk_off_rating": 113.79666475870665, "shrunk_def_rating": 100.9996691092216}, {"lineup_id": "CAB_B._FERREIRA | CAB_J._EMBALO | CAB_J._GALLINA | CAB_M._NEWMAN | CAB_T._DIAS", "lineup_players": "B. Ferreira | J. Embalo | J. Gallina | M. Newman | T. Dias", "minutes": 69.66666666666666, "off_rating": 126.94049159120311, "def_rating": 90.01252348152788, "net_rating": 36.927968109675234, "shrunk_off_rating": 118.79022830205679, "shrunk_def_rating": 93.47709338736311}, {"lineup_id": "CAB_B._FERREIRA | CAB_J._EMBALO | CAB_M._NEWMAN | CAB_T._DIAS | CAB_V._BUCCILLA", "lineup_players": "B. Ferreira | J. Embalo | M. Newman | T. Dias | V. Buccilla", "minutes": 65.01666666666667, "off_rating": 123.30754352030948, "def_rating": 97.97297297297298, "net_rating": 25.334570547336497, "shrunk_off_rating": 116.59771345307293, "shrunk_def_rating": 97.74590134228318}, {"lineup_id": "CAB_B._FERREIRA | CAB_J._GALLINA | CAB_M._NEWMAN | CAB_T._EBERHART | CAB_V._BUCCILLA", "lineup_players": "B. Ferreira | J. Gallina | M. Newman | T. Eberhart | V. Buccilla", "minutes": 56.016666666666666, "off_rating": 125.18011527377521, "def_rating": 89.94126284875182, "net_rating": 35.238852425023396, "shrunk_off_rating": 116.98133727538159, "shrunk_def_rating": 93.85031214416799}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 590.8666666666667, "off_rating": 102.27773221314514, "def_rating": 98.62552248308201, "net_rating": 3.6522097300631344, "shrunk_off_rating": 102.92755515105998, "shrunk_def_rating": 98.52175206061462}}, {"team_key": "CDP", "team_name": "CD Póvoa / Esc Online", "team_code": "CDP", "games": 26, "baseline": {"off_rating": 107.48198924209176, "def_rating": 84.76382376874491, "net_rating": 22.718165473346843, "pace": 78.93665071770334, "efg_pct_off": 0.5127027027027027, "orb_pct_off": 0.362147406733394, "tov_pct_off": 0.18253490494591917, "ftr_off": 0.28486486486486484, "shot_pps": 1.0254054054054054, "shot_fg": 0.4545945945945946, "fga": 1850.0, "fta": 527.0, "poss_est": 2059.88, "fga_per_poss": 0.8981105695477406, "ft_rate_per_fga": 0.28486486486486484}, "zones": [{"zone": "Restricted Area", "attempts": 475.0, "fg_pct": 0.6568421052631579, "pps": 1.3136842105263158, "zone_share": 0.25675675675675674}, {"zone": "Paint Non-RA", "attempts": 522.0, "fg_pct": 0.4942528735632184, "pps": 0.9885057471264368, "zone_share": 0.28216216216216217}, {"zone": "Mid-Range", "attempts": 193.0, "fg_pct": 0.29015544041450775, "pps": 0.5803108808290155, "zone_share": 0.10432432432432433}, {"zone": "Corner 3 Left", "attempts": 77.0, "fg_pct": 0.2727272727272727, "pps": 0.8181818181818182, "zone_share": 0.04162162162162162}, {"zone": "Corner 3 Right", "attempts": 66.0, "fg_pct": 0.3939393939393939, "pps": 1.1818181818181819, "zone_share": 0.03567567567567568}, {"zone": "Above the Break 3", "attempts": 517.0, "fg_pct": 0.32495164410058025, "pps": 0.9748549323017408, "zone_share": 0.27945945945945944}], "lineups": [{"lineup_id": "CDP_J._OKEMIRIE | CDP_J._RODRIGUES | CDP_M._LAMUT | CDP_M._RODRIGUES | CDP_S._SUGGS", "lineup_players": "J. Okemirie | J. Rodrigues | M. Lamut | M. Rodrigues | S. Suggs", "minutes": 185.86666666666667, "off_rating": 109.65657939476368, "def_rating": 84.78931140801643, "net_rating": 24.86726798674725, "shrunk_off_rating": 109.12590392366695, "shrunk_def_rating": 84.78309153943066}, {"lineup_id": "CDP_J._MANJATE | CDP_J._RODRIGUES | CDP_M._LAMUT | CDP_M._RODRIGUES | CDP_S._SUGGS", "lineup_players": "J. Manjate | J. Rodrigues | M. Lamut | M. Rodrigues | S. Suggs", "minutes": 88.66666666666667, "off_rating": 102.65843816757653, "def_rating": 81.315289648623, "net_rating": 21.34314851895354, "shrunk_off_rating": 104.60516281648401, "shrunk_def_rating": 82.7070747195242}, {"lineup_id": "CDP_F._KUYO | CDP_J._OKEMIRIE | CDP_J._RODRIGUES | CDP_M._LAMUT | CDP_S._SUGGS", "lineup_players": "F. Kuyo | J. Okemirie | J. Rodrigues | M. Lamut | S. Suggs", "minutes": 77.78333333333333, "off_rating": 103.75494071146245, "def_rating": 76.48183556405354, "net_rating": 27.273105147408913, "shrunk_off_rating": 105.37794478915272, "shrunk_def_rating": 80.08836242227163}, {"lineup_id": "CDP_D._BUCCILLI | CDP_F._KUYO | CDP_J._OKEMIRIE | CDP_M._LAMUT | CDP_S._SUGGS", "lineup_players": "D. Buccilli | F. Kuyo | J. Okemirie | M. Lamut | S. Suggs", "minutes": 55.93333333333334, "off_rating": 117.14391967274081, "def_rating": 77.89317507418397, "net_rating": 39.250744598556835, "shrunk_off_rating": 112.1434956430777, "shrunk_def_rating": 81.44900246067326}, {"lineup_id": "CDP_J._COSTA | CDP_J._OKEMIRIE | CDP_J._RODRIGUES | CDP_M._LAMUT | CDP_S._SUGGS", "lineup_players": "J. Costa | J. Okemirie | J. Rodrigues | M. Lamut | S. Suggs", "minutes": 38.333333333333336, "off_rating": 104.27394438722966, "def_rating": 71.4643931795386, "net_rating": 32.80955120769106, "shrunk_off_rating": 106.23139548511162, "shrunk_def_rating": 79.57929997973227}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 598.4166666666667, "off_rating": 107.41466688429732, "def_rating": 87.7317122005749, "net_rating": 19.682954683722414, "shrunk_off_rating": 107.42080181628214, "shrunk_def_rating": 87.4612553380363}}, {"team_key": "GIN", "team_name": "Casino Ginásio", "team_code": "GIN", "games": 27, "baseline": {"off_rating": 101.51081363407744, "def_rating": 105.77406505008315, "net_rating": -4.2632514160057156, "pace": 75.89577981651375, "efg_pct_off": 0.5112586605080831, "orb_pct_off": 0.2766169154228856, "tov_pct_off": 0.19489689325647075, "ftr_off": 0.27655889145496537, "shot_pps": 1.0225173210161662, "shot_fg": 0.4572748267898383, "fga": 1732.0, "fta": 479.0, "poss_est": 2067.76, "fga_per_poss": 0.8376213873950554, "ft_rate_per_fga": 0.27655889145496537}, "zones": [{"zone": "Restricted Area", "attempts": 262.0, "fg_pct": 0.6221374045801527, "pps": 1.2442748091603053, "zone_share": 0.151270207852194}, {"zone": "Paint Non-RA", "attempts": 652.0, "fg_pct": 0.5475460122699386, "pps": 1.0950920245398772, "zone_share": 0.37644341801385683}, {"zone": "Mid-Range", "attempts": 218.0, "fg_pct": 0.38990825688073394, "pps": 0.7798165137614679, "zone_share": 0.1258660508083141}, {"zone": "Corner 3 Left", "attempts": 42.0, "fg_pct": 0.23809523809523808, "pps": 0.7142857142857143, "zone_share": 0.02424942263279446}, {"zone": "Corner 3 Right", "attempts": 46.0, "fg_pct": 0.34782608695652173, "pps": 1.0434782608695652, "zone_share": 0.026558891454965358}, {"zone": "Above the Break 3", "attempts": 512.0, "fg_pct": 0.314453125, "pps": 0.943359375, "zone_share": 0.2956120092378753}], "lineups": [{"lineup_id": "GIN_A._AKOI | GIN_A._HOWELL | GIN_A._MENDES | GIN_E._FORTES | GIN_J._MCCLARY", "lineup_players": "A. Akoi | A. Howell | A. Mendes | E. Fortes | J. McClary", "minutes": 111.38333333333334, "off_rating": 91.49722735674676, "def_rating": 96.33637053910402, "net_rating": -4.839143182357262, "shrunk_off_rating": 95.00290766389355, "shrunk_def_rating": 99.6404355239844}, {"lineup_id": "GIN_A._AKOI | GIN_A._HOWELL | GIN_E._FORTES | GIN_G._BARBOSA | GIN_J._MCCLARY", "lineup_players": "A. Akoi | A. Howell | E. Fortes | G. Barbosa | J. McClary", "minutes": 75.03333333333333, "off_rating": 86.61186142102171, "def_rating": 108.47844704538967, "net_rating": -21.866585624367957, "shrunk_off_rating": 93.23198336214743, "shrunk_def_rating": 107.27679619583358}, {"lineup_id": "GIN_A._AKOI | GIN_A._HOWELL | GIN_A._MENDES | GIN_B._NEVES | GIN_J._MCCLARY", "lineup_players": "A. Akoi | A. Howell | A. Mendes | B. Neves | J. McClary", "minutes": 46.53333333333333, "off_rating": 116.57433056325024, "def_rating": 108.44485463774802, "net_rating": 8.12947592550222, "shrunk_off_rating": 108.09049749926055, "shrunk_def_rating": 106.94065524544615}, {"lineup_id": "GIN_A._AKOI | GIN_A._MENDES | GIN_B._NEVES | GIN_E._FORTES | GIN_J._MCCLARY", "lineup_players": "A. Akoi | A. Mendes | B. Neves | E. Fortes | J. McClary", "minutes": 37.71666666666667, "off_rating": 119.4168734491315, "def_rating": 89.62868117797696, "net_rating": 29.788192271154543, "shrunk_off_rating": 108.42219234147422, "shrunk_def_rating": 99.54227182092124}, {"lineup_id": "GIN_A._AKOI | GIN_A._HOWELL | GIN_B._NEVES | GIN_E._FORTES | GIN_J._MCCLARY", "lineup_players": "A. Akoi | A. Howell | B. Neves | E. Fortes | J. McClary", "minutes": 32.666666666666664, "off_rating": 107.6487252124646, "def_rating": 110.8748481166464, "net_rating": -3.226122904181807, "shrunk_off_rating": 103.67453785955206, "shrunk_def_rating": 107.57218282174935}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 786.6666666666667, "off_rating": 103.02535172362586, "def_rating": 106.89865875669803, "net_rating": -3.873307033072166, "shrunk_off_rating": 102.91802225271299, "shrunk_def_rating": 106.81896313969384}}, {"team_key": "CBQ", "team_name": "Clube Basket de Queluz", "team_code": "CBQ", "games": 26, "baseline": {"off_rating": 92.16776149570491, "def_rating": 103.90492015887168, "net_rating": -11.737158663166767, "pace": 75.29371428571427, "efg_pct_off": 0.4418468731735827, "orb_pct_off": 0.2702702702702703, "tov_pct_off": 0.1869631126831733, "ftr_off": 0.2630040911747516, "shot_pps": 0.8836937463471654, "shot_fg": 0.3763880771478667, "fga": 1711.0, "fta": 450.0, "poss_est": 1979.0, "fga_per_poss": 0.864578069732188, "ft_rate_per_fga": 0.2630040911747516}, "zones": [{"zone": "Restricted Area", "attempts": 240.0, "fg_pct": 0.625, "pps": 1.25, "zone_share": 0.1402688486265342}, {"zone": "Paint Non-RA", "attempts": 446.0, "fg_pct": 0.4349775784753363, "pps": 0.8699551569506726, "zone_share": 0.26066627703097606}, {"zone": "Mid-Range", "attempts": 247.0, "fg_pct": 0.3076923076923077, "pps": 0.6153846153846154, "zone_share": 0.14436002337814144}, {"zone": "Corner 3 Left", "attempts": 90.0, "fg_pct": 0.2777777777777778, "pps": 0.8333333333333334, "zone_share": 0.052600818234950324}, {"zone": "Corner 3 Right", "attempts": 68.0, "fg_pct": 0.3382352941176471, "pps": 1.0147058823529411, "zone_share": 0.03974284044418469}, {"zone": "Above the Break 3", "attempts": 620.0, "fg_pct": 0.2838709677419355, "pps": 0.8516129032258064, "zone_share": 0.36236119228521335}], "lineups": [{"lineup_id": "CBQ_B._NEWSOM | CBQ_D._SILVA | CBQ_D._WESTBROOK | CBQ_G._GOGUA | CBQ_T._MARTINS", "lineup_players": "B. Newsom | D. Silva | D. Westbrook | G. Gogua | T. Martins", "minutes": 165.43333333333334, "off_rating": 114.0269698572184, "def_rating": 84.02777777777779, "net_rating": 29.99919207944062, "shrunk_off_rating": 108.20905250534435, "shrunk_def_rating": 89.31816019474792}, {"lineup_id": "CBQ_B._NEWSOM | CBQ_D._SILVA | CBQ_D._WESTBROOK | CBQ_L._SPINU | CBQ_T._MARTINS", "lineup_players": "B. Newsom | D. Silva | D. Westbrook | L. Spinu | T. Martins", "minutes": 66.56666666666666, "off_rating": 88.02287089978934, "def_rating": 117.01501324698265, "net_rating": -28.992142347193308, "shrunk_off_rating": 89.98779138244618, "shrunk_def_rating": 110.8000626126398}, {"lineup_id": "CBQ_A._CANDEIAS | CBQ_B._NEWSOM | CBQ_D._SILVA | CBQ_D._WESTBROOK | CBQ_T._MARTINS", "lineup_players": "A. Candeias | B. Newsom | D. Silva | D. Westbrook | T. Martins", "minutes": 59.416666666666664, "off_rating": 85.16678495386799, "def_rating": 85.54787040407717, "net_rating": -0.3810854502091843, "shrunk_off_rating": 88.68437260922221, "shrunk_def_rating": 94.77123106245264}, {"lineup_id": "CBQ_A._CANDEIAS | CBQ_B._NEWSOM | CBQ_D._WESTBROOK | CBQ_M._CARMINE | CBQ_T._MARTINS", "lineup_players": "A. Candeias | B. Newsom | D. Westbrook | M. Carmine | T. Martins", "minutes": 29.55, "off_rating": 96.28851540616246, "def_rating": 95.07481296758105, "net_rating": 1.2137024385814073, "shrunk_off_rating": 93.5275412618023, "shrunk_def_rating": 100.99113269373893}, {"lineup_id": "CBQ_A._CANDEIAS | CBQ_D._SILVA | CBQ_G._GOGUA | CBQ_L._SPINU | CBQ_T._MARTINS", "lineup_players": "A. Candeias | D. Silva | G. Gogua | L. Spinu | T. Martins", "minutes": 26.366666666666667, "off_rating": 77.6778413736713, "def_rating": 111.88554658840792, "net_rating": -34.20770521473662, "shrunk_off_rating": 87.74416951711417, "shrunk_def_rating": 106.34130591949041}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 707.6666666666666, "off_rating": 88.49149020329205, "def_rating": 108.0203914856453, "net_rating": -19.52890128235326, "shrunk_off_rating": 88.77882360869123, "shrunk_def_rating": 107.69873067851579}}, {"team_key": "GAL", "team_name": "Clube dos Galitos", "team_code": "GAL", "games": 1, "baseline": {"off_rating": 105.54737358861071, "def_rating": 110.97852028639619, "net_rating": -5.431146697785479, "pace": 73.45777777777778, "efg_pct_off": 0.5373134328358209, "orb_pct_off": 0.4166666666666667, "tov_pct_off": 0.2700049091801669, "ftr_off": 0.2537313432835821, "shot_pps": 1.0746268656716418, "shot_fg": 0.4776119402985074, "fga": 67.0, "fta": 17.0, "poss_est": 81.48, "fga_per_poss": 0.822287677957781, "ft_rate_per_fga": 0.2537313432835821}, "zones": [{"zone": "Restricted Area", "attempts": 6.0, "fg_pct": 0.6666666666666666, "pps": 1.3333333333333333, "zone_share": 0.08955223880597014}, {"zone": "Paint Non-RA", "attempts": 25.0, "fg_pct": 0.6, "pps": 1.2, "zone_share": 0.373134328358209}, {"zone": "Mid-Range", "attempts": 12.0, "fg_pct": 0.4166666666666667, "pps": 0.8333333333333334, "zone_share": 0.1791044776119403}, {"zone": "Corner 3 Left", "attempts": 2.0, "fg_pct": 0.5, "pps": 1.5, "zone_share": 0.029850746268656716}, {"zone": "Corner 3 Right", "attempts": 4.0, "fg_pct": 0.5, "pps": 1.5, "zone_share": 0.05970149253731343}, {"zone": "Above the Break 3", "attempts": 18.0, "fg_pct": 0.2777777777777778, "pps": 0.8333333333333334, "zone_share": 0.26865671641791045}], "lineups": [{"lineup_id": "GAL_H._SEMEDO | GAL_J._CARDOSO | GAL_J._CONCEICAO | GAL_R._GARRIDO | GAL_T._NAZARIO", "lineup_players": "H. Semedo | J. Cardoso | J. Conceicao | R. Garrido | T. Nazario", "minutes": 37.5, "off_rating": 107.98816568047339, "def_rating": 110.27278003482297, "net_rating": -2.2846143543495856, "shrunk_off_rating": 106.48613977778868, "shrunk_def_rating": 110.70708172809881}, {"lineup_id": "GAL_H._SEMEDO | GAL_J._CARDOSO | GAL_J._CONCEICAO | GAL_J._CORREIA | GAL_R._GARRIDO", "lineup_players": "H. Semedo | J. Cardoso | J. Conceicao | J. Correia | R. Garrido", "minutes": 3.3166666666666664, "off_rating": 81.9672131147541, "def_rating": 155.27950310559007, "net_rating": -73.31228999083596, "shrunk_off_rating": 104.31219276884302, "shrunk_def_rating": 113.2991034875069}, {"lineup_id": "GAL_J._CARDOSO | GAL_J._CONCEICAO | GAL_J._CORREIA | GAL_R._GARRIDO | GAL_T._NAZARIO", "lineup_players": "J. Cardoso | J. Conceicao | J. Correia | R. Garrido | T. Nazario", "minutes": 3.183333333333333, "off_rating": 71.42857142857143, "def_rating": 83.33333333333334, "net_rating": -11.904761904761912, "shrunk_off_rating": 103.82838355627955, "shrunk_def_rating": 109.58568707404194}, {"lineup_id": "GAL_H._SEMEDO | GAL_J._CARDOSO | GAL_J._CORREIA | GAL_R._GARRIDO | GAL_T._NAZARIO", "lineup_players": "H. Semedo | J. Cardoso | J. Correia | R. Garrido | T. Nazario", "minutes": 1.0, "off_rating": 200.0, "def_rating": 81.9672131147541, "net_rating": 118.0327868852459, "shrunk_off_rating": 107.09577730027283, "shrunk_def_rating": 110.50292508686108}], "lineup_rest": null}, {"team_key": "GCO", "team_name": "Ginásio ANTRIX", "team_code": "GCO", "games": 24, "baseline": {"off_rating": 95.67301731619622, "def_rating": 97.80697217337332, "net_rating": -2.133954857177102, "pace": 80.1898445595855, "efg_pct_off": 0.48083067092651754, "orb_pct_off": 0.2676767676767677, "tov_pct_off": 0.2025044426995082, "ftr_off": 0.3539936102236422, "shot_pps": 0.9616613418530351, "shot_fg": 0.42747603833865816, "fga": 1565.0, "fta": 554.0, "poss_est": 1935.76, "fga_per_poss": 0.8084679918998223, "ft_rate_per_fga": 0.3539936102236422}, "zones": [{"zone": "Restricted Area", "attempts": 400.0, "fg_pct": 0.655, "pps": 1.31, "zone_share": 0.25559105431309903}, {"zone": "Paint Non-RA", "attempts": 397.0, "fg_pct": 0.46851385390428213, "pps": 0.9370277078085643, "zone_share": 0.2536741214057508}, {"zone": "Mid-Range", "attempts": 151.0, "fg_pct": 0.3576158940397351, "pps": 0.7152317880794702, "zone_share": 0.09648562300319488}, {"zone": "Corner 3 Left", "attempts": 72.0, "fg_pct": 0.2361111111111111, "pps": 0.7083333333333334, "zone_share": 0.04600638977635783}, {"zone": "Corner 3 Right", "attempts": 53.0, "fg_pct": 0.20754716981132076, "pps": 0.6226415094339622, "zone_share": 0.03386581469648562}, {"zone": "Above the Break 3", "attempts": 492.0, "fg_pct": 0.28252032520325204, "pps": 0.8475609756097561, "zone_share": 0.31437699680511183}], "lineups": [{"lineup_id": "GCO_A._CALABOTE | GCO_D._MITCHELL | GCO_E._HALBLEIB | GCO_G._MORAIS | GCO_R._MCCOY", "lineup_players": "A. Calabote | D. Mitchell | E. Halbleib | G. Morais | R. McCoy", "minutes": 49.9, "off_rating": 105.59006211180125, "def_rating": 103.84012539184953, "net_rating": 1.7499367199517195, "shrunk_off_rating": 100.17584293312697, "shrunk_def_rating": 100.54632017703085}, {"lineup_id": "GCO_D._MITCHELL | GCO_E._HALBLEIB | GCO_J._SERRA | GCO_M._TAVARES | GCO_R._MCCOY", "lineup_players": "D. Mitchell | E. Halbleib | J. Serra | M. Tavares | R. McCoy", "minutes": 48.08333333333333, "off_rating": 103.98423817863399, "def_rating": 82.91351805205709, "net_rating": 21.0707201265769, "shrunk_off_rating": 99.37045327427377, "shrunk_def_rating": 91.18127978478468}, {"lineup_id": "GCO_D._MITCHELL | GCO_E._HALBLEIB | GCO_G._MORAIS | GCO_J._SERRA | GCO_M._TAVARES", "lineup_players": "D. Mitchell | E. Halbleib | G. Morais | J. Serra | M. Tavares", "minutes": 39.71666666666667, "off_rating": 94.38909281594127, "def_rating": 104.68594217347957, "net_rating": -10.296849357538306, "shrunk_off_rating": 95.16163638955281, "shrunk_def_rating": 100.54683269656456}, {"lineup_id": "GCO_A._CALABOTE | GCO_D._MITCHELL | GCO_E._HALBLEIB | GCO_J._SERRA | GCO_R._MCCOY", "lineup_players": "A. Calabote | D. Mitchell | E. Halbleib | J. Serra | R. McCoy", "minutes": 38.5, "off_rating": 107.96915167095116, "def_rating": 84.49304174950298, "net_rating": 23.476109921448185, "shrunk_off_rating": 100.47912059191262, "shrunk_def_rating": 92.60305012952553}, {"lineup_id": "GCO_D._MITCHELL | GCO_E._HALBLEIB | GCO_J._SERRA | GCO_M._TAVARES | GCO_R._MENDES", "lineup_players": "D. Mitchell | E. Halbleib | J. Serra | M. Tavares | R. Mendes", "minutes": 37.083333333333336, "off_rating": 89.64719491035281, "def_rating": 126.70842824601367, "net_rating": -37.06123333566086, "shrunk_off_rating": 93.37130832855647, "shrunk_def_rating": 108.84658414961791}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 751.7166666666667, "off_rating": 94.08316217786148, "def_rating": 97.95796179973371, "net_rating": -3.874799621872228, "shrunk_off_rating": 94.20068016439218, "shrunk_def_rating": 97.9468010364358}}, {"team_key": "ILL", "team_name": "Illiabum Clube", "team_code": "ILL", "games": 7, "baseline": {"off_rating": 106.99295457952331, "def_rating": 90.34792368125702, "net_rating": 16.6450308982663, "pace": 74.96701754385964, "efg_pct_off": 0.5227790432801822, "orb_pct_off": 0.3643410852713178, "tov_pct_off": 0.21173737070903914, "ftr_off": 0.3917995444191344, "shot_pps": 0.9781209781209782, "shot_fg": 0.44079794079794077, "fga": 439.0, "fta": 172.0, "poss_est": 533.68, "fga_per_poss": 0.8225903162944087, "ft_rate_per_fga": 0.3917995444191344}, "zones": [{"zone": "Restricted Area", "attempts": 456.0, "fg_pct": 0.6557017543859649, "pps": 1.3114035087719298, "zone_share": 0.29343629343629346}, {"zone": "Paint Non-RA", "attempts": 377.0, "fg_pct": 0.46153846153846156, "pps": 0.9230769230769231, "zone_share": 0.2425997425997426}, {"zone": "Mid-Range", "attempts": 207.0, "fg_pct": 0.2995169082125604, "pps": 0.5990338164251208, "zone_share": 0.13320463320463322}, {"zone": "Corner 3 Left", "attempts": 66.0, "fg_pct": 0.3484848484848485, "pps": 1.0454545454545454, "zone_share": 0.04247104247104247}, {"zone": "Corner 3 Right", "attempts": 55.0, "fg_pct": 0.2727272727272727, "pps": 0.8181818181818182, "zone_share": 0.035392535392535396}, {"zone": "Above the Break 3", "attempts": 393.0, "fg_pct": 0.28498727735368956, "pps": 0.8549618320610687, "zone_share": 0.2528957528957529}], "lineups": [{"lineup_id": "ILL_F._NUNES | ILL_H._NETO | ILL_J._MARTINHO | ILL_R._MITCHELL | ILL_T._ARIKAWE", "lineup_players": "F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe", "minutes": 87.75, "off_rating": 91.91176470588236, "def_rating": 86.18721461187215, "net_rating": 5.724550094010212, "shrunk_off_rating": 98.03610577132031, "shrunk_def_rating": 87.8768426603533}, {"lineup_id": "ILL_F._NUNES | ILL_H._NETO | ILL_J._MARTINHO | ILL_M._SICO | ILL_R._MITCHELL", "lineup_players": "F. Nunes | H. Neto | J. Martinho | M. Sico | R. Mitchell", "minutes": 65.96666666666667, "off_rating": 94.83830845771143, "def_rating": 96.77419354838712, "net_rating": -1.9358850906756828, "shrunk_off_rating": 100.62776678511588, "shrunk_def_rating": 93.71325526819811}, {"lineup_id": "ILL_H._NETO | ILL_J._MARTINHO | ILL_R._CRISTO | ILL_R._MITCHELL | ILL_T._KETNER", "lineup_players": "H. Neto | J. Martinho | R. Cristo | R. Mitchell | T. Ketner", "minutes": 36.71666666666667, "off_rating": 109.40919037199124, "def_rating": 73.28072153325817, "net_rating": 36.12846883873307, "shrunk_off_rating": 107.91023313385847, "shrunk_def_rating": 83.86868081859262}, {"lineup_id": "ILL_D._ALVES | ILL_H._NETO | ILL_J._MARTINHO | ILL_P._COSTA | ILL_S._CALDEIRA", "lineup_players": "D. Alves | H. Neto | J. Martinho | P. Costa | S. Caldeira", "minutes": 29.43333333333333, "off_rating": 112.68143621084799, "def_rating": 86.33921719109748, "net_rating": 26.342219019750516, "shrunk_off_rating": 108.86508625319445, "shrunk_def_rating": 89.02862147074234}, {"lineup_id": "ILL_H._NETO | ILL_J._MARTINHO | ILL_R._CRISTO | ILL_S._CALDEIRA | ILL_T._KETNER", "lineup_players": "H. Neto | J. Martinho | R. Cristo | S. Caldeira | T. Ketner", "minutes": 23.933333333333334, "off_rating": 113.44884488448845, "def_rating": 87.57297748123436, "net_rating": 25.87586740325409, "shrunk_off_rating": 108.83383195798439, "shrunk_def_rating": 89.55665625805754}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 766.2, "off_rating": 100.87086240062524, "def_rating": 95.28305272466692, "net_rating": 5.587809675958326, "shrunk_off_rating": 101.31545878253505, "shrunk_def_rating": 94.92465555375843}}, {"team_key": "ILL", "team_name": "Illiabum MARGRES", "team_code": "ILL", "games": 18, "baseline": {"off_rating": 98.02631578947368, "def_rating": 93.40963364202925, "net_rating": 4.616682147444436, "pace": 75.62813793103449, "efg_pct_off": 0.4757847533632287, "orb_pct_off": 0.3431952662721893, "tov_pct_off": 0.22587719298245615, "ftr_off": 0.35874439461883406, "shot_pps": 0.9781209781209782, "shot_fg": 0.44079794079794077, "fga": 1115.0, "fta": 400.0, "poss_est": 1368.0, "fga_per_poss": 0.8150584795321637, "ft_rate_per_fga": 0.35874439461883406}, "zones": [{"zone": "Restricted Area", "attempts": 456.0, "fg_pct": 0.6557017543859649, "pps": 1.3114035087719298, "zone_share": 0.29343629343629346}, {"zone": "Paint Non-RA", "attempts": 377.0, "fg_pct": 0.46153846153846156, "pps": 0.9230769230769231, "zone_share": 0.2425997425997426}, {"zone": "Mid-Range", "attempts": 207.0, "fg_pct": 0.2995169082125604, "pps": 0.5990338164251208, "zone_share": 0.13320463320463322}, {"zone": "Corner 3 Left", "attempts": 66.0, "fg_pct": 0.3484848484848485, "pps": 1.0454545454545454, "zone_share": 0.04247104247104247}, {"zone": "Corner 3 Right", "attempts": 55.0, "fg_pct": 0.2727272727272727, "pps": 0.8181818181818182, "zone_share": 0.035392535392535396}, {"zone": "Above the Break 3", "attempts": 393.0, "fg_pct": 0.28498727735368956, "pps": 0.8549618320610687, "zone_share": 0.2528957528957529}], "lineups": [{"lineup_id": "ILL_F._NUNES | ILL_H._NETO | ILL_J._MARTINHO | ILL_R._MITCHELL | ILL_T._ARIKAWE", "lineup_players": "F. Nunes | H. Neto | J. Martinho | R. Mitchell | T. Arikawe", "minutes": 87.75, "off_rating": 91.91176470588236, "def_rating": 86.18721461187215, "net_rating": 5.724550094010212, "shrunk_off_rating": 94.39483113576716, "shrunk_def_rating": 89.12017665457554}, {"lineup_id": "ILL_F._NUNES | ILL_H._NETO | ILL_J._MARTINHO | ILL_M._SICO | ILL_R._MITCHELL", "lineup_players": "F. Nunes | H. Neto | J. Martinho | M. Sico | R. Mitchell", "minutes": 65.96666666666667, "off_rating": 94.83830845771143, "def_rating": 96.77419354838712, "net_rating": -1.9358850906756828, "shrunk_off_rating": 96.35680890681756, "shrunk_def_rating": 95.1715981973831}, {"lineup_id": "ILL_H._NETO | ILL_J._MARTINHO | ILL_R._CRISTO | ILL_R._MITCHELL | ILL_T._KETNER", "lineup_players": "H. Neto | J. Martinho | R. Cristo | R. Mitchell | T. Ketner", "minutes": 36.71666666666667, "off_rating": 109.40919037199124, "def_rating": 73.28072153325817, "net_rating": 36.12846883873307, "shrunk_off_rating": 102.34761041385525, "shrunk_def_rating": 85.76807007566312}, {"lineup_id": "ILL_D._ALVES | ILL_H._NETO | ILL_J._MARTINHO | ILL_P._COSTA | ILL_S._CALDEIRA", "lineup_players": "D. Alves | H. Neto | J. Martinho | P. Costa | S. Caldeira", "minutes": 29.43333333333333, "off_rating": 112.68143621084799, "def_rating": 86.33921719109748, "net_rating": 26.342219019750516, "shrunk_off_rating": 102.84945083683616, "shrunk_def_rating": 91.0826944969779}, {"lineup_id": "ILL_H._NETO | ILL_J._MARTINHO | ILL_R._CRISTO | ILL_S._CALDEIRA | ILL_T._KETNER", "lineup_players": "H. Neto | J. Martinho | R. Cristo | S. Caldeira | T. Ketner", "minutes": 23.933333333333334, "off_rating": 113.44884488448845, "def_rating": 87.57297748123436, "net_rating": 25.87586740325409, "shrunk_off_rating": 102.42400279909268, "shrunk_def_rating": 91.74532898617113}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 766.2, "off_rating": 100.87086240062524, "def_rating": 95.28305272466692, "net_rating": 5.587809675958326, "shrunk_off_rating": 100.66428675711387, "shrunk_def_rating": 95.1470019561384}}, {"team_key": "IBC", "team_name": "Imortal LUZiGÁS", "team_code": "IBC", "games": 25, "baseline": {"off_rating": 96.02971260601005, "def_rating": 100.52745577794713, "net_rating": -4.497743171937074, "pace": 78.59686274509804, "efg_pct_off": 0.45490554539914685, "orb_pct_off": 0.3155430711610487, "tov_pct_off": 0.21400623646944328, "ftr_off": 0.3863497867154174, "shot_pps": 0.9098110907982937, "shot_fg": 0.3857404021937843, "fga": 1641.0, "fta": 634.0, "poss_est": 2013.96, "fga_per_poss": 0.8148126079961866, "ft_rate_per_fga": 0.3863497867154174}, "zones": [{"zone": "Restricted Area", "attempts": 300.0, "fg_pct": 0.5366666666666666, "pps": 1.0733333333333333, "zone_share": 0.18281535648994515}, {"zone": "Paint Non-RA", "attempts": 424.0, "fg_pct": 0.419811320754717, "pps": 0.839622641509434, "zone_share": 0.2583790371724558}, {"zone": "Mid-Range", "attempts": 185.0, "fg_pct": 0.3621621621621622, "pps": 0.7243243243243244, "zone_share": 0.11273613650213285}, {"zone": "Corner 3 Left", "attempts": 95.0, "fg_pct": 0.30526315789473685, "pps": 0.9157894736842105, "zone_share": 0.0578915295551493}, {"zone": "Corner 3 Right", "attempts": 92.0, "fg_pct": 0.40217391304347827, "pps": 1.2065217391304348, "zone_share": 0.056063375990249846}, {"zone": "Above the Break 3", "attempts": 545.0, "fg_pct": 0.29541284403669726, "pps": 0.8862385321100917, "zone_share": 0.332114564290067}], "lineups": [{"lineup_id": "IBC_L._BARREIRA | IBC_L._SILVA | IBC_M._BAKER | IBC_S._GOMES | IBC_S._VICTO", "lineup_players": "L. Barreira | L. Silva | M. Baker | S. Gomes | S. Victo", "minutes": 38.53333333333333, "off_rating": 110.11419249592169, "def_rating": 68.12339331619538, "net_rating": 41.99079917972631, "shrunk_off_rating": 101.53771624360742, "shrunk_def_rating": 87.85523108045557}, {"lineup_id": "IBC_L._SILVA | IBC_M._BAKER | IBC_S._GOMES | IBC_S._VICTO | IBC_T._COELHO", "lineup_players": "L. Silva | M. Baker | S. Gomes | S. Victo | T. Coelho", "minutes": 38.4, "off_rating": 110.88113542282673, "def_rating": 85.8250276854928, "net_rating": 25.05610773733393, "shrunk_off_rating": 101.82538980281655, "shrunk_def_rating": 94.7899228638186}, {"lineup_id": "IBC_L._BARREIRA | IBC_L._SILVA | IBC_M._BAKER | IBC_S._VICTO | IBC_T._COELHO", "lineup_players": "L. Barreira | L. Silva | M. Baker | S. Victo | T. Coelho", "minutes": 38.233333333333334, "off_rating": 144.7233606557377, "def_rating": 107.34609415416452, "net_rating": 37.37726650157319, "shrunk_off_rating": 114.98173646520164, "shrunk_def_rating": 103.18133369363133}, {"lineup_id": "IBC_E._SVALBE | IBC_L._SILVA | IBC_M._BAKER | IBC_S._VICTO | IBC_T._COELHO", "lineup_players": "E. Svalbe | L. Silva | M. Baker | S. Victo | T. Coelho", "minutes": 23.466666666666665, "off_rating": 95.66326530612244, "def_rating": 92.27467811158799, "net_rating": 3.388587194534452, "shrunk_off_rating": 95.92668588910874, "shrunk_def_rating": 98.20718601871516}, {"lineup_id": "IBC_E._SVALBE | IBC_L._BARREIRA | IBC_M._BAKER | IBC_S._VICTO | IBC_T._COELHO", "lineup_players": "E. Svalbe | L. Barreira | M. Baker | S. Victo | T. Coelho", "minutes": 22.15, "off_rating": 82.54716981132076, "def_rating": 93.9306358381503, "net_rating": -11.383466026829538, "shrunk_off_rating": 92.39443174292583, "shrunk_def_rating": 98.74876360915223}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 859.2166666666667, "off_rating": 93.53826283009823, "def_rating": 102.59903245651485, "net_rating": -9.060769626416615, "shrunk_off_rating": 93.70088715140955, "shrunk_def_rating": 102.46381449841931}}, {"team_key": "MBC", "team_name": "Maia Basket Clube", "team_code": "MBC", "games": 26, "baseline": {"off_rating": 104.16866591175173, "def_rating": 93.30305373018942, "net_rating": 10.865612181562312, "pace": 79.49703349282298, "efg_pct_off": 0.4865696698377168, "orb_pct_off": 0.3743016759776536, "tov_pct_off": 0.2092010057002476, "ftr_off": 0.33463905987688863, "shot_pps": 0.9731393396754335, "shot_fg": 0.4224958030218243, "fga": 1787.0, "fta": 598.0, "poss_est": 2084.12, "fga_per_poss": 0.8574362320787671, "ft_rate_per_fga": 0.33463905987688863}, "zones": [{"zone": "Restricted Area", "attempts": 465.0, "fg_pct": 0.5612903225806452, "pps": 1.1225806451612903, "zone_share": 0.2602126468942362}, {"zone": "Paint Non-RA", "attempts": 455.0, "fg_pct": 0.4307692307692308, "pps": 0.8615384615384616, "zone_share": 0.25461667599328486}, {"zone": "Mid-Range", "attempts": 198.0, "fg_pct": 0.3484848484848485, "pps": 0.696969696969697, "zone_share": 0.11080022383883603}, {"zone": "Corner 3 Left", "attempts": 53.0, "fg_pct": 0.2641509433962264, "pps": 0.7924528301886793, "zone_share": 0.02965864577504197}, {"zone": "Corner 3 Right", "attempts": 75.0, "fg_pct": 0.38666666666666666, "pps": 1.16, "zone_share": 0.041969781757134866}, {"zone": "Above the Break 3", "attempts": 541.0, "fg_pct": 0.3438077634011091, "pps": 1.0314232902033271, "zone_share": 0.30274202574146614}], "lineups": [{"lineup_id": "MBC_G._SKORIC | MBC_J._GUERREIRO | MBC_M._TOMLEY | MBC_T._LISBOA | MBC_W._HEINZ", "lineup_players": "G. Skoric | J. Guerreiro | M. Tomley | T. Lisboa | W. Heinz", "minutes": 98.23333333333333, "off_rating": 112.96980230284596, "def_rating": 98.77913429522754, "net_rating": 14.190668007618427, "shrunk_off_rating": 109.63252707555091, "shrunk_def_rating": 96.7026765288343}, {"lineup_id": "MBC_G._SKORIC | MBC_M._MAGALHAES | MBC_M._TOMLEY | MBC_T._LISBOA | MBC_W._HEINZ", "lineup_players": "G. Skoric | M. Magalhaes | M. Tomley | T. Lisboa | W. Heinz", "minutes": 96.11666666666666, "off_rating": 106.48342425514059, "def_rating": 103.15277190012696, "net_rating": 3.330652355013626, "shrunk_off_rating": 105.59379790345915, "shrunk_def_rating": 99.36724981068795}, {"lineup_id": "MBC_F._CAETANO | MBC_M._MAGALHAES | MBC_M._TOMLEY | MBC_T._LISBOA | MBC_W._HEINZ", "lineup_players": "F. Caetano | M. Magalhaes | M. Tomley | T. Lisboa | W. Heinz", "minutes": 88.58333333333333, "off_rating": 100.71221900734474, "def_rating": 80.71850841291497, "net_rating": 19.99371059442977, "shrunk_off_rating": 102.10797995584336, "shrunk_def_rating": 85.80032144064218}, {"lineup_id": "MBC_F._CAETANO | MBC_J._GUERREIRO | MBC_M._TOMLEY | MBC_T._LISBOA | MBC_W._HEINZ", "lineup_players": "F. Caetano | J. Guerreiro | M. Tomley | T. Lisboa | W. Heinz", "minutes": 66.71666666666667, "off_rating": 107.0528967254408, "def_rating": 98.90640077195239, "net_rating": 8.146495953488412, "shrunk_off_rating": 105.68722121192236, "shrunk_def_rating": 96.25323105600518}, {"lineup_id": "MBC_F._CAETANO | MBC_J._GUERREIRO | MBC_M._MAGALHAES | MBC_M._TOMLEY | MBC_T._LISBOA", "lineup_players": "F. Caetano | J. Guerreiro | M. Magalhaes | M. Tomley | T. Lisboa", "minutes": 43.71666666666667, "off_rating": 124.21611191509892, "def_rating": 75.07149666348903, "net_rating": 49.14461525160989, "shrunk_off_rating": 112.61868212045809, "shrunk_def_rating": 85.61843631319519}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 656.6333333333332, "off_rating": 101.56306216973468, "def_rating": 92.80826460102247, "net_rating": 8.754797568712206, "shrunk_off_rating": 101.78121588551824, "shrunk_def_rating": 92.84969073398217}}, {"team_key": "PSC", "team_name": "Portimonense SC", "team_code": "PSC", "games": 26, "baseline": {"off_rating": 103.56382872939164, "def_rating": 97.55008926800237, "net_rating": 6.013739461389278, "pace": 76.35488151658767, "efg_pct_off": 0.5179833012202955, "orb_pct_off": 0.3304157549234136, "tov_pct_off": 0.22771115486347276, "ftr_off": 0.43545279383429675, "shot_pps": 1.035966602440591, "shot_fg": 0.4611432241490045, "fga": 1557.0, "fta": 678.0, "poss_est": 2011.32, "fga_per_poss": 0.7741184893502775, "ft_rate_per_fga": 0.43545279383429675}, "zones": [{"zone": "Restricted Area", "attempts": 269.0, "fg_pct": 0.6765799256505576, "pps": 1.3531598513011152, "zone_share": 0.17276814386640976}, {"zone": "Paint Non-RA", "attempts": 555.0, "fg_pct": 0.5225225225225225, "pps": 1.045045045045045, "zone_share": 0.35645472061657035}, {"zone": "Mid-Range", "attempts": 182.0, "fg_pct": 0.3791208791208791, "pps": 0.7582417582417582, "zone_share": 0.11689145793192036}, {"zone": "Corner 3 Left", "attempts": 83.0, "fg_pct": 0.2891566265060241, "pps": 0.8674698795180723, "zone_share": 0.05330764290301863}, {"zone": "Corner 3 Right", "attempts": 58.0, "fg_pct": 0.3448275862068966, "pps": 1.0344827586206897, "zone_share": 0.037251123956326265}, {"zone": "Above the Break 3", "attempts": 410.0, "fg_pct": 0.32439024390243903, "pps": 0.973170731707317, "zone_share": 0.26332691072575465}], "lineups": [{"lineup_id": "PSC_C._FALL | PSC_F._STAINE | PSC_H._SOTTA | PSC_J._GREWAL | PSC_P._OLIVEIRA", "lineup_players": "C. Fall | F. Staine | H. Sotta | J. Grewal | P. Oliveira", "minutes": 130.35, "off_rating": 105.61135023114939, "def_rating": 101.6029792746114, "net_rating": 4.008370956537988, "shrunk_off_rating": 104.96595338268358, "shrunk_def_rating": 100.32547257434064}, {"lineup_id": "PSC_C._FALL | PSC_D._FRAGOSO | PSC_F._STAINE | PSC_J._GREWAL | PSC_J._MOTA", "lineup_players": "C. Fall | D. Fragoso | F. Staine | J. Grewal | J. Mota", "minutes": 100.64999999999999, "off_rating": 100.60153495125492, "def_rating": 102.38194734642707, "net_rating": -1.7804123951721493, "shrunk_off_rating": 101.70790050798199, "shrunk_def_rating": 100.57733181760366}, {"lineup_id": "PSC_C._FALL | PSC_D._FRAGOSO | PSC_H._SOTTA | PSC_J._GREWAL | PSC_P._OLIVEIRA", "lineup_players": "C. Fall | D. Fragoso | H. Sotta | J. Grewal | P. Oliveira", "minutes": 59.35, "off_rating": 108.97435897435899, "def_rating": 83.91492190096378, "net_rating": 25.059437073395216, "shrunk_off_rating": 106.25436052695187, "shrunk_def_rating": 90.7696352819635}, {"lineup_id": "PSC_C._FALL | PSC_D._FRAGOSO | PSC_F._STAINE | PSC_H._SOTTA | PSC_J._GREWAL", "lineup_players": "C. Fall | D. Fragoso | F. Staine | H. Sotta | J. Grewal", "minutes": 54.9, "off_rating": 109.57324106113033, "def_rating": 119.72402597402596, "net_rating": -10.150784912895631, "shrunk_off_rating": 106.4351667364626, "shrunk_def_rating": 108.14494675417029}, {"lineup_id": "PSC_C._FALL | PSC_D._FRAGOSO | PSC_F._STAINE | PSC_G._SANTINHOS | PSC_J._GREWAL", "lineup_players": "C. Fall | D. Fragoso | F. Staine | G. Santinhos | J. Grewal", "minutes": 27.71666666666667, "off_rating": 111.94029850746267, "def_rating": 72.43539545810494, "net_rating": 39.504903049357736, "shrunk_off_rating": 106.21062128894553, "shrunk_def_rating": 89.61436139305283}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 682.0333333333333, "off_rating": 102.49916758061984, "def_rating": 95.98271422893765, "net_rating": 6.516453351682188, "shrunk_off_rating": 102.58525491127835, "shrunk_def_rating": 96.10945045239197}}, {"team_key": "SLB", "team_name": "SL Benfica", "team_code": "SLB", "games": 25, "baseline": {"off_rating": 91.2168419319655, "def_rating": 94.27453403357018, "net_rating": -3.0576921016046725, "pace": 77.71839999999999, "efg_pct_off": 0.4323832625833839, "orb_pct_off": 0.3154121863799283, "tov_pct_off": 0.19961722881896568, "ftr_off": 0.35657974530018194, "shot_pps": 0.8647665251667678, "shot_fg": 0.37962401455427536, "fga": 1649.0, "fta": 588.0, "poss_est": 1943.72, "fga_per_poss": 0.8483732224806042, "ft_rate_per_fga": 0.35657974530018194}, "zones": [{"zone": "Restricted Area", "attempts": 290.0, "fg_pct": 0.6448275862068965, "pps": 1.289655172413793, "zone_share": 0.17586416009702852}, {"zone": "Paint Non-RA", "attempts": 523.0, "fg_pct": 0.4110898661567878, "pps": 0.8221797323135756, "zone_share": 0.3171619163129169}, {"zone": "Mid-Range", "attempts": 195.0, "fg_pct": 0.2564102564102564, "pps": 0.5128205128205128, "zone_share": 0.11825348696179502}, {"zone": "Corner 3 Left", "attempts": 73.0, "fg_pct": 0.2465753424657534, "pps": 0.7397260273972602, "zone_share": 0.044269254093389936}, {"zone": "Corner 3 Right", "attempts": 79.0, "fg_pct": 0.24050632911392406, "pps": 0.7215189873417721, "zone_share": 0.04790782292298363}, {"zone": "Above the Break 3", "attempts": 489.0, "fg_pct": 0.28016359918200406, "pps": 0.8404907975460123, "zone_share": 0.296543359611886}], "lineups": [{"lineup_id": "SLB_A._MARTINS | SLB_J._ANDRADE | SLB_J._MENDES | SLB_P._PARDAL_SANTOS | SLB_T._FILIPE", "lineup_players": "A. Martins | J. Andrade | J. Mendes | P. Pardal Santos | T. Filipe", "minutes": 62.71666666666667, "off_rating": 96.68935643564356, "def_rating": 108.99814471243043, "net_rating": -12.30878827678687, "shrunk_off_rating": 94.01367366866802, "shrunk_def_rating": 101.79931292594438}, {"lineup_id": "SLB_A._MARTINS | SLB_J._ANDRADE | SLB_J._MENDES | SLB_T._FILIPE | SLB_T._SILVA", "lineup_players": "A. Martins | J. Andrade | J. Mendes | T. Filipe | T. Silva", "minutes": 35.31666666666666, "off_rating": 101.78117048346056, "def_rating": 97.6054138469547, "net_rating": 4.175756636505852, "shrunk_off_rating": 95.13112977959935, "shrunk_def_rating": 95.50868936222236}, {"lineup_id": "SLB_A._MARTINS | SLB_F._SIMOES | SLB_J._MENDES | SLB_P._PARDAL_SANTOS | SLB_T._FILIPE", "lineup_players": "A. Martins | F. Simoes | J. Mendes | P. Pardal Santos | T. Filipe", "minutes": 27.05, "off_rating": 64.04782237403927, "def_rating": 113.4453781512605, "net_rating": -49.39755577722123, "shrunk_off_rating": 82.7743148895542, "shrunk_def_rating": 100.23170041362215}, {"lineup_id": "SLB_A._ALBERTO | SLB_A._MARTINS | SLB_F._SIMOES | SLB_J._MENDES | SLB_T._FILIPE", "lineup_players": "A. Alberto | A. Martins | F. Simoes | J. Mendes | T. Filipe", "minutes": 25.983333333333334, "off_rating": 88.04258804258804, "def_rating": 94.03669724770644, "net_rating": -5.994109205118406, "shrunk_off_rating": 90.25761304777487, "shrunk_def_rating": 94.20266205272863}, {"lineup_id": "SLB_F._SIMOES | SLB_J._MENDES | SLB_P._PARDAL_SANTOS | SLB_T._FILIPE | SLB_T._SILVA", "lineup_players": "F. Simoes | J. Mendes | P. Pardal Santos | T. Filipe | T. Silva", "minutes": 21.95, "off_rating": 118.01541425818884, "def_rating": 121.33468149646107, "net_rating": -3.319267238272232, "shrunk_off_rating": 98.39473897358359, "shrunk_def_rating": 101.52249299403942}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 826.9833333333332, "off_rating": 90.58021767972261, "def_rating": 92.37167286625615, "net_rating": -1.7914551865335397, "shrunk_off_rating": 90.62328213617752, "shrunk_def_rating": 92.5003919365568}}, {"team_key": "SBC", "team_name": "Sampaense Inspecentro", "team_code": "SBC", "games": 23, "baseline": {"off_rating": 95.51694345780935, "def_rating": 104.38840674635664, "net_rating": -8.87146328854729, "pace": 72.61677419354838, "efg_pct_off": 0.47809948032665184, "orb_pct_off": 0.25589622641509435, "tov_pct_off": 0.19979360660458864, "ftr_off": 0.3437268002969562, "shot_pps": 0.9561989606533037, "shot_fg": 0.42242019302152933, "fga": 1347.0, "fta": 463.0, "poss_est": 1666.72, "fga_per_poss": 0.8081741384275704, "ft_rate_per_fga": 0.3437268002969562}, "zones": [{"zone": "Restricted Area", "attempts": 245.0, "fg_pct": 0.6653061224489796, "pps": 1.3306122448979592, "zone_share": 0.18188567186340016}, {"zone": "Paint Non-RA", "attempts": 438.0, "fg_pct": 0.4680365296803653, "pps": 0.9360730593607306, "zone_share": 0.32516703786191536}, {"zone": "Mid-Range", "attempts": 166.0, "fg_pct": 0.3072289156626506, "pps": 0.6144578313253012, "zone_share": 0.12323682256867112}, {"zone": "Corner 3 Left", "attempts": 40.0, "fg_pct": 0.325, "pps": 0.975, "zone_share": 0.02969561989606533}, {"zone": "Corner 3 Right", "attempts": 30.0, "fg_pct": 0.26666666666666666, "pps": 0.8, "zone_share": 0.022271714922048998}, {"zone": "Above the Break 3", "attempts": 428.0, "fg_pct": 0.3014018691588785, "pps": 0.9042056074766355, "zone_share": 0.317743132887899}], "lineups": [{"lineup_id": "SBC_A._IYAYE | SBC_D._GONCALVES | SBC_M._BASTOS | SBC_T._ARIKAWE | SBC_V._BANARU", "lineup_players": "A. Iyaye | D. Goncalves | M. Bastos | T. Arikawe | V. Banaru", "minutes": 113.15, "off_rating": 102.42718446601941, "def_rating": 110.63218390804599, "net_rating": -8.204999442026576, "shrunk_off_rating": 100.0326452774973, "shrunk_def_rating": 108.46858801026163}, {"lineup_id": "SBC_A._IYAYE | SBC_M._BASTOS | SBC_S._QUISSANGA | SBC_T._ARIKAWE | SBC_V._BANARU", "lineup_players": "A. Iyaye | M. Bastos | S. Quissanga | T. Arikawe | V. Banaru", "minutes": 60.766666666666666, "off_rating": 93.32579185520362, "def_rating": 115.28201219512195, "net_rating": -21.95622033991833, "shrunk_off_rating": 94.41441257965582, "shrunk_def_rating": 109.86978757249497}, {"lineup_id": "SBC_A._DUSELS | SBC_D._GONCALVES | SBC_M._BASTOS | SBC_M._TERRY | SBC_V._BANARU", "lineup_players": "A. Dusels | D. Goncalves | M. Bastos | M. Terry | V. Banaru", "minutes": 56.53333333333333, "off_rating": 91.31971720345639, "def_rating": 90.37290715372906, "net_rating": 0.9468100497273326, "shrunk_off_rating": 93.4807604694276, "shrunk_def_rating": 97.58912547945263}, {"lineup_id": "SBC_A._IYAYE | SBC_A._MARQUES | SBC_D._GONCALVES | SBC_M._BASTOS | SBC_T._ARIKAWE", "lineup_players": "A. Iyaye | A. Marques | D. Goncalves | M. Bastos | T. Arikawe", "minutes": 38.75, "off_rating": 101.97775030902349, "def_rating": 94.5626477541371, "net_rating": 7.4151025548863885, "shrunk_off_rating": 98.05219677917185, "shrunk_def_rating": 100.53272916713125}, {"lineup_id": "SBC_D._GONCALVES | SBC_M._BASTOS | SBC_M._TERRY | SBC_S._QUISSANGA | SBC_V._BANARU", "lineup_players": "D. Goncalves | M. Bastos | M. Terry | S. Quissanga | V. Banaru", "minutes": 35.8, "off_rating": 103.76134889753568, "def_rating": 119.60326721120187, "net_rating": -15.841918313666184, "shrunk_off_rating": 98.5978381837196, "shrunk_def_rating": 110.07412704532803}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 624.9999999999999, "off_rating": 95.76635317138819, "def_rating": 103.45580057417583, "net_rating": -7.689447402787636, "shrunk_off_rating": 95.74450706508932, "shrunk_def_rating": 103.53748870604568}}, {"team_key": "SDC", "team_name": "Sangalhos", "team_code": "SDC", "games": 25, "baseline": {"off_rating": 92.61197153620762, "def_rating": 111.62307401654141, "net_rating": -19.01110248033379, "pace": 75.95462686567164, "efg_pct_off": 0.48131147540983604, "orb_pct_off": 0.2654320987654321, "tov_pct_off": 0.22080368354960234, "ftr_off": 0.33114754098360655, "shot_pps": 0.9626229508196722, "shot_fg": 0.4183606557377049, "fga": 1525.0, "fta": 505.0, "poss_est": 1911.2, "fga_per_poss": 0.7979280033486814, "ft_rate_per_fga": 0.33114754098360655}, "zones": [{"zone": "Restricted Area", "attempts": 327.0, "fg_pct": 0.7431192660550459, "pps": 1.4862385321100917, "zone_share": 0.21442622950819673}, {"zone": "Paint Non-RA", "attempts": 384.0, "fg_pct": 0.3932291666666667, "pps": 0.7864583333333334, "zone_share": 0.2518032786885246}, {"zone": "Mid-Range", "attempts": 183.0, "fg_pct": 0.28415300546448086, "pps": 0.5683060109289617, "zone_share": 0.12}, {"zone": "Corner 3 Left", "attempts": 58.0, "fg_pct": 0.3275862068965517, "pps": 0.9827586206896551, "zone_share": 0.0380327868852459}, {"zone": "Corner 3 Right", "attempts": 57.0, "fg_pct": 0.3508771929824561, "pps": 1.0526315789473684, "zone_share": 0.037377049180327866}, {"zone": "Above the Break 3", "attempts": 516.0, "fg_pct": 0.29651162790697677, "pps": 0.8895348837209303, "zone_share": 0.3383606557377049}], "lineups": [{"lineup_id": "SDC_D._MANHANGA | SDC_G._MADUREIRA | SDC_J._MCLOYD | SDC_J._PATCHA | SDC_K._JONES", "lineup_players": "D. Manhanga | G. Madureira | J. McLoyd | J. Patcha | K. Jones", "minutes": 56.13333333333333, "off_rating": 115.39848539487917, "def_rating": 125.44802867383513, "net_rating": -10.049543278955952, "shrunk_off_rating": 103.62588925664474, "shrunk_def_rating": 118.30539997603701}, {"lineup_id": "SDC_D._MANHANGA | SDC_G._MADUREIRA | SDC_J._BOBAN | SDC_L._VITOSIS | SDC_N._SUSA", "lineup_players": "D. Manhanga | G. Madureira | J. Boban | L. Vitosis | N. Susa", "minutes": 50.75, "off_rating": 83.09098462816785, "def_rating": 106.27321502269915, "net_rating": -23.182230394531302, "shrunk_off_rating": 88.24908137292981, "shrunk_def_rating": 109.1715584956611}, {"lineup_id": "SDC_D._MANHANGA | SDC_J._BOBAN | SDC_L._VITOSIS | SDC_N._SUSA | SDC_R._COTTON", "lineup_players": "D. Manhanga | J. Boban | L. Vitosis | N. Susa | R. Cotton", "minutes": 47.43333333333333, "off_rating": 98.01762114537446, "def_rating": 110.67708333333334, "net_rating": -12.65946218795888, "shrunk_off_rating": 94.99864215173488, "shrunk_def_rating": 111.20540577508777}, {"lineup_id": "SDC_D._MANHANGA | SDC_G._MADUREIRA | SDC_I._SASSINDA | SDC_J._LOYD | SDC_K._JONES", "lineup_players": "D. Manhanga | G. Madureira | I. Sassinda | J. Loyd | K. Jones", "minutes": 33.733333333333334, "off_rating": 101.97368421052633, "def_rating": 93.05993690851734, "net_rating": 8.913747302008986, "shrunk_off_rating": 95.98112275470353, "shrunk_def_rating": 104.9424571056878}, {"lineup_id": "SDC_D._MANHANGA | SDC_G._MADUREIRA | SDC_J._BOBAN | SDC_N._SUSA | SDC_R._ABREU", "lineup_players": "D. Manhanga | G. Madureira | J. Boban | N. Susa | R. Abreu", "minutes": 32.03333333333333, "off_rating": 91.63208852005533, "def_rating": 110.87267525035764, "net_rating": -19.24058673030231, "shrunk_off_rating": 92.27091120353019, "shrunk_def_rating": 111.36188849886571}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 784.9166666666667, "off_rating": 91.18960711279665, "def_rating": 112.25682519354555, "net_rating": -21.0672180807489, "shrunk_off_rating": 91.29061336438517, "shrunk_def_rating": 112.21182067165553}}, {"team_key": "SCL", "team_name": "Sport Club Lusitânia", "team_code": "SCL", "games": 26, "baseline": {"off_rating": 107.56360756360756, "def_rating": 97.98135403329066, "net_rating": 9.582253530316905, "pace": 76.92937799043062, "efg_pct_off": 0.5120137299771167, "orb_pct_off": 0.37780040733197556, "tov_pct_off": 0.1975051975051975, "ftr_off": 0.31750572082379863, "shot_pps": 1.0240274599542332, "shot_fg": 0.46739130434782605, "fga": 1748.0, "fta": 555.0, "poss_est": 2020.2, "fga_per_poss": 0.8652608652608652, "ft_rate_per_fga": 0.31750572082379863}, "zones": [{"zone": "Restricted Area", "attempts": 404.0, "fg_pct": 0.7400990099009901, "pps": 1.4801980198019802, "zone_share": 0.2311212814645309}, {"zone": "Paint Non-RA", "attempts": 578.0, "fg_pct": 0.48961937716262977, "pps": 0.9792387543252595, "zone_share": 0.3306636155606407}, {"zone": "Mid-Range", "attempts": 212.0, "fg_pct": 0.37264150943396224, "pps": 0.7452830188679245, "zone_share": 0.12128146453089245}, {"zone": "Corner 3 Left", "attempts": 60.0, "fg_pct": 0.3, "pps": 0.9, "zone_share": 0.034324942791762014}, {"zone": "Corner 3 Right", "attempts": 60.0, "fg_pct": 0.4166666666666667, "pps": 1.25, "zone_share": 0.034324942791762014}, {"zone": "Above the Break 3", "attempts": 434.0, "fg_pct": 0.26036866359447003, "pps": 0.7811059907834101, "zone_share": 0.2482837528604119}], "lineups": [{"lineup_id": "SCL_D._TAVARES | SCL_K._CIPALLA | SCL_O._EYISI | SCL_R._UGWUAKAZI | SCL_S._SILVA", "lineup_players": "D. Tavares | K. Cipalla | O. Eyisi | R. Ugwuakazi | S. Silva", "minutes": 114.85, "off_rating": 112.41007194244605, "def_rating": 96.74226061915047, "net_rating": 15.667811323295581, "shrunk_off_rating": 110.74700152362817, "shrunk_def_rating": 97.16745710098297}, {"lineup_id": "SCL_B._ALMEIDA | SCL_D._TAVARES | SCL_J._NEVES | SCL_K._CIPALLA | SCL_R._UGWUAKAZI", "lineup_players": "B. Almeida | D. Tavares | J. Neves | K. Cipalla | R. Ugwuakazi", "minutes": 61.05, "off_rating": 137.64624913971096, "def_rating": 91.95193008011653, "net_rating": 45.694319059594434, "shrunk_off_rating": 122.73539829653703, "shrunk_def_rating": 94.94049213869107}, {"lineup_id": "SCL_K._CIPALLA | SCL_M._FREITAS | SCL_O._EYISI | SCL_R._UGWUAKAZI | SCL_S._SILVA", "lineup_players": "K. Cipalla | M. Freitas | O. Eyisi | R. Ugwuakazi | S. Silva", "minutes": 54.849999999999994, "off_rating": 126.7375306623058, "def_rating": 100.20661157024793, "net_rating": 26.53091909205787, "shrunk_off_rating": 116.72067923938988, "shrunk_def_rating": 99.04409130714444}, {"lineup_id": "SCL_D._TAVARES | SCL_K._CIPALLA | SCL_M._FREITAS | SCL_O._EYISI | SCL_R._UGWUAKAZI", "lineup_players": "D. Tavares | K. Cipalla | M. Freitas | O. Eyisi | R. Ugwuakazi", "minutes": 53.266666666666666, "off_rating": 104.5045045045045, "def_rating": 110.80074487895718, "net_rating": -6.29624037445268, "shrunk_off_rating": 106.1249828760129, "shrunk_def_rating": 104.01001400132336}, {"lineup_id": "SCL_D._TAVARES | SCL_M._FREITAS | SCL_O._EYISI | SCL_R._UGWUAKAZI | SCL_S._SILVA", "lineup_players": "D. Tavares | M. Freitas | O. Eyisi | R. Ugwuakazi | S. Silva", "minutes": 41.06666666666666, "off_rating": 111.11111111111111, "def_rating": 94.9367088607595, "net_rating": 16.17440225035162, "shrunk_off_rating": 109.00507338502061, "shrunk_def_rating": 96.74421588930701}], "lineup_rest": {"lineup_id": "__REST__", "lineup_players": "Rest of team lineups", "minutes": 719.9166666666666, "off_rating": 103.50524005869597, "def_rating": 97.32239904749567, "net_rating": 6.18284101120031, "shrunk_off_rating": 103.81745553081227, "shrunk_def_rating": 97.37309330861036}}];
+
+const teamSelect = document.getElementById("teamSelect");
+const zoneSliders = document.getElementById("zoneSliders");
+const lineupMixer = document.getElementById("lineupMixer");
+const warningBox = document.getElementById("warningBox");
+const chartTooltip = document.getElementById("chartTooltip");
+const presetAttack = document.getElementById("presetAttack");
+const presetBalance = document.getElementById("presetBalance");
+const presetSpacing = document.getElementById("presetSpacing");
+const presetReset = document.getElementById("presetReset");
+
+const sliderIds = ["efgDelta","tovDelta","orbDelta","ftrDelta"];
+const sliderLabels = {
+  efgDelta: document.getElementById("efgDeltaLabel"),
+  tovDelta: document.getElementById("tovDeltaLabel"),
+  orbDelta: document.getElementById("orbDeltaLabel"),
+  ftrDelta: document.getElementById("ftrDeltaLabel"),
+};
+
+const FACTOR_BOUNDS = {
+  efg_pct_off: [0.40, 0.68],
+  tov_pct_off: [0.08, 0.24],
+  orb_pct_off: [0.18, 0.42],
+  ftr_off: [0.12, 0.50],
+};
+
+const MAX_TOTAL_ZONE_SHIFT_PP = 24;
+const MAX_TOTAL_LINEUP_SHIFT_MIN = 20.0;
+const MAX_PER_LINEUP_SHIFT_MIN = 8.0;
+
+for (const team of TEAMS) {
+  const opt = document.createElement("option");
+  opt.value = team.team_key;
+  opt.textContent = `${team.team_name} (${team.team_key})`;
+  teamSelect.appendChild(opt);
+}
+
+function fmt(value, digits=1) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
+  return Number(value).toFixed(digits);
+}
+
+function pct(value, digits=1) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
+  return `${(Number(value) * 100).toFixed(digits)}%`;
+}
+
+function cssSafe(text) {
+  return String(text).replace(/[^a-zA-Z0-9_-]/g, "_");
+}
+
+function clamp(value, minValue, maxValue) {
+  return Math.max(minValue, Math.min(maxValue, value));
+}
+
+function zoneBounds(zone) {
+  const base = Number(zone.zone_share);
+  const min = Math.max(0, base - Math.min(0.12, Math.max(0.03, base * 0.45)));
+  const max = Math.min(0.60, base + Math.min(0.12, Math.max(0.03, base * 0.45)));
+  return { min, max };
+}
+
+function lineupBounds(lineup) {
+  const base = Number(lineup.minutes || 0);
+  return {
+    min: -Math.min(MAX_PER_LINEUP_SHIFT_MIN, Math.max(2, base * 0.35)),
+    max: Math.min(MAX_PER_LINEUP_SHIFT_MIN, Math.max(2, base * 0.35)),
+  };
+}
+
+function buildZoneControls(team) {
+  zoneSliders.innerHTML = "";
+  for (const zone of team.zones) {
+    const bounds = zoneBounds(zone);
+    const wrap = document.createElement("div");
+    wrap.className = "slider-row";
+    wrap.innerHTML = `
+      <div class="slider-head"><span>${zone.zone}</span><strong id="zoneLabel_${cssSafe(zone.zone)}">${(zone.zone_share*100).toFixed(1)}%</strong></div>
+      <input
+        data-zone="${zone.zone}"
+        type="range"
+        min="${(bounds.min*100).toFixed(1)}"
+        max="${(bounds.max*100).toFixed(1)}"
+        step="0.5"
+        value="${(zone.zone_share*100).toFixed(1)}">
+      <div class="small">Allowed band: ${(bounds.min*100).toFixed(1)}% to ${(bounds.max*100).toFixed(1)}%</div>
+    `;
+    zoneSliders.appendChild(wrap);
+  }
+  zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
+    el.addEventListener("input", () => update());
+    ["change","mouseup","touchend"].forEach(evt => el.addEventListener(evt, () => update(true)));
+  });
+}
+
+function buildLineupControls(team) {
+  lineupMixer.innerHTML = "";
+  const lineups = Array.isArray(team.lineups) ? team.lineups : [];
+  if (!lineups.length) {
+    lineupMixer.innerHTML = `<div class="small">No lineup data available for this team.</div>`;
+    return;
+  }
+  for (const lineup of lineups) {
+    const bounds = lineupBounds(lineup);
+    const wrap = document.createElement("div");
+    wrap.className = "lineup-block";
+    wrap.innerHTML = `
+      <div class="lineup-title">${lineup.lineup_players}</div>
+      <div class="lineup-meta">Base ${fmt(lineup.minutes,1)} min · shrunk Off ${fmt(lineup.shrunk_off_rating,1)} · shrunk Def ${fmt(lineup.shrunk_def_rating,1)}</div>
+      <div class="slider-head"><span>Minutes delta</span><strong id="lineupLabel_${cssSafe(lineup.lineup_id)}">0.0 min</strong></div>
+      <input
+        data-lineup="${lineup.lineup_id}"
+        type="range"
+        min="${bounds.min.toFixed(1)}"
+        max="${bounds.max.toFixed(1)}"
+        step="0.5"
+        value="0">
+      <div class="small">Allowed change: ${bounds.min.toFixed(1)} to ${bounds.max.toFixed(1)} minutes</div>
+    `;
+    lineupMixer.appendChild(wrap);
+  }
+  lineupMixer.querySelectorAll('input[type="range"]').forEach(el => {
+    el.addEventListener("input", () => update());
+    ["change","mouseup","touchend"].forEach(evt => el.addEventListener(evt, () => update(true)));
+  });
+}
+
+
+function setSliderValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const min = Number(el.min);
+  const max = Number(el.max);
+  el.value = String(Math.max(min, Math.min(max, value)));
+}
+
+function resetControls() {
+  sliderIds.forEach(id => setSliderValue(id, 0));
+  const team = currentTeam();
+  zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (zone) el.value = (Number(zone.zone_share || 0) * 100).toFixed(1);
+  });
+  lineupMixer.querySelectorAll('input[type="range"]').forEach(el => { el.value = "0"; });
+}
+
+function applySpacingPreset() {
+  const team = currentTeam();
+  setSliderValue("efgDelta", 1.5);
+  setSliderValue("tovDelta", -0.5);
+  setSliderValue("orbDelta", -0.5);
+  setSliderValue("ftrDelta", 0.5);
+  for (const el of zoneSliders.querySelectorAll('input[type="range"]')) {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (!zone) continue;
+    let target = Number(zone.zone_share || 0) * 100;
+    if (zone.zone === "Mid-Range") target -= 4;
+    if (zone.zone === "Paint Non-RA") target -= 1.5;
+    if (zone.zone === "Corner 3 Left" || zone.zone === "Corner 3 Right") target += 2;
+    if (zone.zone === "Above the Break 3") target += 1.5;
+    if (zone.zone === "Restricted Area") target += 1.5;
+    el.value = String(target.toFixed(1));
+  }
+}
+
+function applyAttackPreset() {
+  setSliderValue("efgDelta", 2.0);
+  setSliderValue("tovDelta", -1.0);
+  setSliderValue("orbDelta", 1.5);
+  setSliderValue("ftrDelta", 1.0);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "4.0" : idx === 1 ? "2.0" : "0"; });
+}
+
+function applyBalancedPreset() {
+  setSliderValue("efgDelta", 1.0);
+  setSliderValue("tovDelta", -0.8);
+  setSliderValue("orbDelta", 0.8);
+  setSliderValue("ftrDelta", 0.6);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "2.0" : idx === 1 ? "1.0" : "0"; });
+}
+
+
+function setSliderValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const min = Number(el.min);
+  const max = Number(el.max);
+  el.value = String(Math.max(min, Math.min(max, value)));
+}
+
+function resetControls() {
+  sliderIds.forEach(id => setSliderValue(id, 0));
+  const team = currentTeam();
+  zoneSliders.querySelectorAll('input[type="range"]').forEach(el => {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (zone) el.value = (Number(zone.zone_share || 0) * 100).toFixed(1);
+  });
+  lineupMixer.querySelectorAll('input[type="range"]').forEach(el => { el.value = "0"; });
+}
+
+function applySpacingPreset() {
+  const team = currentTeam();
+  setSliderValue("efgDelta", 1.5);
+  setSliderValue("tovDelta", -0.5);
+  setSliderValue("orbDelta", -0.5);
+  setSliderValue("ftrDelta", 0.5);
+  for (const el of zoneSliders.querySelectorAll('input[type="range"]')) {
+    const zone = (team.zones || []).find(z => z.zone === el.dataset.zone);
+    if (!zone) continue;
+    let target = Number(zone.zone_share || 0) * 100;
+    if (zone.zone === "Mid-Range") target -= 4;
+    if (zone.zone === "Paint Non-RA") target -= 1.5;
+    if (zone.zone === "Corner 3 Left" || zone.zone === "Corner 3 Right") target += 2;
+    if (zone.zone === "Above the Break 3") target += 1.5;
+    if (zone.zone === "Restricted Area") target += 1.5;
+    el.value = String(target.toFixed(1));
+  }
+}
+
+function applyAttackPreset() {
+  setSliderValue("efgDelta", 2.0);
+  setSliderValue("tovDelta", -1.0);
+  setSliderValue("orbDelta", 1.5);
+  setSliderValue("ftrDelta", 1.0);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "4.0" : idx === 1 ? "2.0" : "0"; });
+}
+
+function applyBalancedPreset() {
+  setSliderValue("efgDelta", 1.0);
+  setSliderValue("tovDelta", -0.8);
+  setSliderValue("orbDelta", 0.8);
+  setSliderValue("ftrDelta", 0.6);
+  const lineupSliders = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  lineupSliders.forEach((el, idx) => { el.value = idx === 0 ? "2.0" : idx === 1 ? "1.0" : "0"; });
+}
+
+
+function flashSummaryCards() {
+  document.querySelectorAll(".cards .card").forEach(card => {
+    card.classList.remove("flash");
+    void card.offsetWidth;
+    card.classList.add("flash");
+    window.setTimeout(() => card.classList.remove("flash"), 260);
+  });
+}
+
+function showChartTooltip(event, html) {
+  if (!chartTooltip) return;
+  chartTooltip.innerHTML = html;
+  chartTooltip.style.opacity = "1";
+  chartTooltip.style.left = `${event.clientX}px`;
+  chartTooltip.style.top = `${event.clientY}px`;
+}
+
+function moveChartTooltip(event) {
+  if (!chartTooltip || chartTooltip.style.opacity === "0") return;
+  chartTooltip.style.left = `${event.clientX}px`;
+  chartTooltip.style.top = `${event.clientY}px`;
+}
+
+function hideChartTooltip() {
+  if (!chartTooltip) return;
+  chartTooltip.style.opacity = "0";
+}
+
+function currentTeam() {
+  return TEAMS.find(t => t.team_key === teamSelect.value) || TEAMS[0];
+}
+
+function collectZoneShares(team) {
+  const sliders = [...zoneSliders.querySelectorAll('input[type="range"]')];
+  const warnings = [];
+  const baseMap = new Map(team.zones.map(z => [z.zone, z]));
+  let raw = sliders.map(el => {
+    const zone = baseMap.get(el.dataset.zone);
+    const requested = Number(el.value) / 100;
+    const bounds = zoneBounds(zone);
+    const clamped = clamp(requested, bounds.min, bounds.max);
+    if (Math.abs(clamped - requested) > 0.000001) {
+      warnings.push(`${zone.zone}: request clamped to realistic band.`);
+    }
+    return {
+      zone: el.dataset.zone,
+      requested: clamped,
+      base_share: Number(zone.zone_share),
+      pps: Number(zone.pps),
+      fg_pct: Number(zone.fg_pct),
+    };
+  });
+
+  const rawShiftPp = raw.reduce((acc, row) => acc + Math.abs(row.requested - row.base_share) * 100, 0);
+  if (rawShiftPp > MAX_TOTAL_ZONE_SHIFT_PP) {
+    const scale = MAX_TOTAL_ZONE_SHIFT_PP / rawShiftPp;
+    raw = raw.map(row => ({
+      ...row,
+      requested: row.base_share + ((row.requested - row.base_share) * scale),
+    }));
+    warnings.push(`Shot mix reallocation capped at ${MAX_TOTAL_ZONE_SHIFT_PP.toFixed(0)} total percentage points.`);
+  }
+
+  const total = raw.reduce((acc, row) => acc + row.requested, 0);
+  const denom = total > 0 ? total : 1;
+  return {
+    warnings,
+    zones: raw.map(row => ({
+      zone: row.zone,
+      share: row.requested / denom,
+      pps: row.pps,
+      fg_pct: row.fg_pct,
+      base_share: row.base_share,
+    })),
+  };
+}
+
+function collectLineupMix(team) {
+  const controls = [...lineupMixer.querySelectorAll('input[type="range"]')];
+  const warnings = [];
+  const baseMap = new Map((team.lineups || []).map(l => [l.lineup_id, l]));
+  let entries = controls.map(el => {
+    const lineup = baseMap.get(el.dataset.lineup);
+    const requestedDelta = Number(el.value);
+    const bounds = lineupBounds(lineup);
+    const delta = clamp(requestedDelta, bounds.min, bounds.max);
+    if (Math.abs(delta - requestedDelta) > 0.000001) {
+      warnings.push(`${lineup.lineup_players}: minutes delta clamped.`);
+    }
+    return {
+      lineup_id: lineup.lineup_id,
+      lineup_players: lineup.lineup_players,
+      base_minutes: Number(lineup.minutes || 0),
+      delta_minutes: delta,
+      shrunk_off_rating: Number(lineup.shrunk_off_rating || 0),
+      shrunk_def_rating: Number(lineup.shrunk_def_rating || 0),
+    };
+  });
+
+  const absShift = entries.reduce((acc, e) => acc + Math.abs(e.delta_minutes), 0);
+  if (absShift > MAX_TOTAL_LINEUP_SHIFT_MIN) {
+    const scale = MAX_TOTAL_LINEUP_SHIFT_MIN / absShift;
+    entries = entries.map(e => ({ ...e, delta_minutes: e.delta_minutes * scale }));
+    warnings.push(`Lineup reallocation capped at ${MAX_TOTAL_LINEUP_SHIFT_MIN.toFixed(0)} total minutes.`);
+  }
+
+  const rest = team.lineup_rest ? {
+    lineup_id: team.lineup_rest.lineup_id,
+    lineup_players: team.lineup_rest.lineup_players,
+    base_minutes: Number(team.lineup_rest.minutes || 0),
+    shrunk_off_rating: Number(team.lineup_rest.shrunk_off_rating || 0),
+    shrunk_def_rating: Number(team.lineup_rest.shrunk_def_rating || 0),
+  } : null;
+
+  const deltaSum = entries.reduce((acc, e) => acc + e.delta_minutes, 0);
+  let restMinutes = rest ? (rest.base_minutes - deltaSum) : 0;
+  if (rest && restMinutes < 0) {
+    const positiveSum = entries.filter(e => e.delta_minutes > 0).reduce((acc, e) => acc + e.delta_minutes, 0);
+    if (positiveSum > 0) {
+      const reduceRatio = Math.min(1, rest.base_minutes / positiveSum);
+      entries = entries.map(e => ({
+        ...e,
+        delta_minutes: e.delta_minutes > 0 ? e.delta_minutes * reduceRatio : e.delta_minutes,
+      }));
+      restMinutes = 0;
+    } else {
+      restMinutes = 0;
+    }
+    warnings.push(`Lineup gains were reduced because the rest-of-team pool had no minutes left to give.`);
+  }
+
+  const mixed = entries.map(e => ({
+    ...e,
+    sim_minutes: Math.max(0, e.base_minutes + e.delta_minutes),
+  }));
+
+  if (rest) {
+    mixed.push({
+      lineup_id: rest.lineup_id,
+      lineup_players: rest.lineup_players,
+      base_minutes: rest.base_minutes,
+      delta_minutes: restMinutes - rest.base_minutes,
+      sim_minutes: Math.max(0, restMinutes),
+      shrunk_off_rating: rest.shrunk_off_rating,
+      shrunk_def_rating: rest.shrunk_def_rating,
+      is_rest: true,
+    });
+  }
+
+  const totalBase = mixed.reduce((acc, e) => acc + Number(e.base_minutes || 0), 0);
+  const totalSim = mixed.reduce((acc, e) => acc + Number(e.sim_minutes || 0), 0);
+  const baseOff = totalBase > 0 ? mixed.reduce((acc, e) => acc + (Number(e.base_minutes || 0) * Number(e.shrunk_off_rating || 0)), 0) / totalBase : 0;
+  const baseDef = totalBase > 0 ? mixed.reduce((acc, e) => acc + (Number(e.base_minutes || 0) * Number(e.shrunk_def_rating || 0)), 0) / totalBase : 0;
+  const simOff = totalSim > 0 ? mixed.reduce((acc, e) => acc + (Number(e.sim_minutes || 0) * Number(e.shrunk_off_rating || 0)), 0) / totalSim : baseOff;
+  const simDef = totalSim > 0 ? mixed.reduce((acc, e) => acc + (Number(e.sim_minutes || 0) * Number(e.shrunk_def_rating || 0)), 0) / totalSim : baseDef;
+
+  return {
+    warnings,
+    rows: mixed,
+    base_off_rating: baseOff,
+    base_def_rating: baseDef,
+    sim_off_rating: simOff,
+    sim_def_rating: simDef,
+  };
+}
+
+function applyFactorConstraints(base, deltas) {
+  const warnings = [];
+  const sim = {
+    efg_pct_off: base.efg_pct_off + deltas.efg,
+    tov_pct_off: base.tov_pct_off + deltas.tov,
+    orb_pct_off: base.orb_pct_off + deltas.orb,
+    ftr_off: base.ftr_off + deltas.ftr,
+  };
+
+  for (const [metric, bounds] of Object.entries(FACTOR_BOUNDS)) {
+    const original = sim[metric];
+    sim[metric] = clamp(sim[metric], bounds[0], bounds[1]);
+    if (Math.abs(sim[metric] - original) > 0.000001) {
+      warnings.push(`${metric.replaceAll("_", " ")} clamped to realistic range.`);
+    }
+  }
+
+  return { sim, warnings };
+}
+
+function calcSimulation(team) {
+  const base = team.baseline;
+  const deltas = {
+    efg: Number(document.getElementById("efgDelta").value) / 100,
+    tov: Number(document.getElementById("tovDelta").value) / 100,
+    orb: Number(document.getElementById("orbDelta").value) / 100,
+    ftr: Number(document.getElementById("ftrDelta").value) / 100,
+  };
+
+  const zoneResult = collectZoneShares(team);
+  const factorResult = applyFactorConstraints(base, deltas);
+  const lineupResult = collectLineupMix(team);
+
+  const zones = zoneResult.zones;
+  const constrained = factorResult.sim;
+  const warnings = [...zoneResult.warnings, ...factorResult.warnings, ...lineupResult.warnings];
+
+  const baseShotPps = Number(base.shot_pps);
+  const simShotPps = zones.reduce((acc, z) => acc + z.share * z.pps, 0);
+
+  const fgaPer100 = base.fga_per_poss * 100;
+
+  const effectiveEfgDelta = constrained.efg_pct_off - base.efg_pct_off;
+  const effectiveTovDelta = constrained.tov_pct_off - base.tov_pct_off;
+  const effectiveOrbDelta = constrained.orb_pct_off - base.orb_pct_off;
+  const effectiveFtrDelta = constrained.ftr_off - base.ftr_off;
+
+  const shotMixImpact = (simShotPps - baseShotPps) * fgaPer100;
+  const efgImpact = effectiveEfgDelta * 100 * 1.20;
+  const tovImpact = -effectiveTovDelta * 100 * 0.80;
+  const orbImpact = effectiveOrbDelta * 100 * 0.55;
+  const ftrImpact = effectiveFtrDelta * 100 * 0.35;
+
+  const lineupOffImpact = lineupResult.sim_off_rating - lineupResult.base_off_rating;
+  const lineupDefImpact = lineupResult.sim_def_rating - lineupResult.base_def_rating;
+
+  const totalOffImpact = shotMixImpact + efgImpact + tovImpact + orbImpact + ftrImpact + lineupOffImpact;
+  const totalDefImpact = lineupDefImpact;
+
+  const simOff = base.off_rating + totalOffImpact;
+  const simDef = base.def_rating + totalDefImpact;
+  const simNet = simOff - simDef;
+
+  return {
+    zones,
+    base,
+    warnings,
+    constraints: {
+      total_zone_shift_pp: zones.reduce((acc, z) => acc + Math.abs(z.share - z.base_share) * 100, 0),
+      max_total_zone_shift_pp: MAX_TOTAL_ZONE_SHIFT_PP,
+      total_lineup_shift_min: lineupResult.rows.filter(r => !r.is_rest).reduce((acc, r) => acc + Math.abs(Number(r.sim_minutes || 0) - Number(r.base_minutes || 0)), 0),
+      max_total_lineup_shift_min: MAX_TOTAL_LINEUP_SHIFT_MIN,
+    },
+    lineup_mix: lineupResult,
+    sim: {
+      off_rating: simOff,
+      def_rating: simDef,
+      net_rating: simNet,
+      shot_pps: simShotPps,
+      efg_pct_off: constrained.efg_pct_off,
+      tov_pct_off: constrained.tov_pct_off,
+      orb_pct_off: constrained.orb_pct_off,
+      ftr_off: constrained.ftr_off,
+    },
+    impacts: [
+      ["Shot mix", shotMixImpact],
+      ["eFG%", efgImpact],
+      ["TOV%", tovImpact],
+      ["ORB%", orbImpact],
+      ["FTR", ftrImpact],
+      ["Lineup offense mix", lineupOffImpact],
+      ["Lineup defense mix", -lineupDefImpact],
+    ],
+  };
+}
+
+
+
+function setBadge(el, label, level) {
+  if (!el) return;
+  el.textContent = label;
+  el.className = `component-badge ${level}`;
+}
+
+function renderSignals(sim, team) {
+  const totalLineupMinutes = sim.lineup_mix.rows.reduce((acc, r) => acc + Number(r.base_minutes || 0), 0);
+  const coreMinutes = sim.lineup_mix.rows.filter(r => !r.is_rest).reduce((acc, r) => acc + Number(r.base_minutes || 0), 0);
+  const coreCoverage = totalLineupMinutes > 0 ? coreMinutes / totalLineupMinutes : 0;
+  const absNetDelta = Math.abs(Number(sim.sim.net_rating || 0) - Number(sim.base.net_rating || 0));
+  const shotShift = Number(sim.constraints.total_zone_shift_pp || 0);
+  const lineupShift = Number(sim.constraints.total_lineup_shift_min || 0);
+  const warningsCount = Number((sim.warnings || []).length);
+
+  const signalLabel = coreCoverage >= 0.55 ? "Strong lineup signal" : coreCoverage >= 0.35 ? "Moderate lineup signal" : "Thin lineup signal";
+  const signalSub = `Top-lineup mixer covers ${pct(coreCoverage,1)} of tracked lineup minutes. Bigger changes beyond that become less reliable.`;
+  document.getElementById("confidenceMain").textContent = signalLabel;
+  document.getElementById("confidenceSub").textContent = signalSub;
+
+  const envelopeFlag = absNetDelta <= 2.5 ? "Inside historical envelope" : absNetDelta <= 5.0 ? "Stretching the profile" : "Outside normal team shape";
+  const envelopeSub = `NetRtg delta is ${fmt(absNetDelta,1)} points from baseline. Larger jumps should be read as directional, not literal.`;
+  document.getElementById("envelopeMain").textContent = envelopeFlag;
+  document.getElementById("envelopeSub").textContent = envelopeSub;
+
+  const shotMixImpact = Number(sim.impacts.find(x => x[0] === "Shot mix")?.[1] || 0);
+  const factorsImpact = ["eFG%","TOV%","ORB%","FTR"].reduce((acc, key) => acc + Number(sim.impacts.find(x => x[0] === key)?.[1] || 0), 0);
+  const lineupOff = Number(sim.impacts.find(x => x[0] === "Lineup offense mix")?.[1] || 0);
+  const lineupDef = Number(sim.impacts.find(x => x[0] === "Lineup defense mix")?.[1] || 0);
+  const outcomeDelta = Number(sim.sim.net_rating || 0) - Number(sim.base.net_rating || 0);
+
+  document.getElementById("causalShot").textContent = `${fmt(shotMixImpact,2)} ORtg`;
+  document.getElementById("causalShotSub").textContent = `Zone reallocation moves shot PPS from ${fmt(sim.base.shot_pps,3)} to ${fmt(sim.sim.shot_pps,3)}.`;
+  document.getElementById("causalFactors").textContent = `${fmt(factorsImpact,2)} ORtg`;
+  document.getElementById("causalFactorsSub").textContent = `Four-factor sliders push offensive efficiency after constraints are applied.`;
+  document.getElementById("causalLineups").textContent = `${fmt(lineupOff - lineupDef,2)} NetRtg`;
+  document.getElementById("causalLineupsSub").textContent = `Minutes reallocation changes offense by ${fmt(lineupOff,2)} and defense by ${fmt(-lineupDef,2)}.`;
+  document.getElementById("causalOutcome").textContent = `${fmt(outcomeDelta,2)} NetRtg`;
+  document.getElementById("causalOutcomeSub").textContent = `That is what feeds the simulated league ranking anchor.`;
+
+  let shotLevel = "high";
+  if (shotShift > 16) shotLevel = "low";
+  else if (shotShift > 10) shotLevel = "medium";
+  document.getElementById("shotConfidenceMain").textContent = shotLevel === "high" ? "High trust" : shotLevel === "medium" ? "Medium trust" : "Low trust";
+  document.getElementById("shotConfidenceSub").textContent = `Total shot-mix reallocation is ${fmt(shotShift,1)} percentage points against a cap of ${fmt(sim.constraints.max_total_zone_shift_pp,0)}.`;
+  setBadge(document.getElementById("shotBadge"), shotLevel.toUpperCase(), shotLevel);
+
+  let lineupLevel = "high";
+  if (coreCoverage < 0.35 || lineupShift > 12) lineupLevel = "low";
+  else if (coreCoverage < 0.55 || lineupShift > 8) lineupLevel = "medium";
+  document.getElementById("lineupConfidenceMain").textContent = lineupLevel === "high" ? "High trust" : lineupLevel === "medium" ? "Medium trust" : "Low trust";
+  document.getElementById("lineupConfidenceSub").textContent = `Lineup shift is ${fmt(lineupShift,1)} minutes with ${pct(coreCoverage,1)} top-lineup coverage.`;
+  setBadge(document.getElementById("lineupBadge"), lineupLevel.toUpperCase(), lineupLevel);
+
+  let outcomeLevel = "high";
+  if (absNetDelta > 5 || warningsCount >= 3) outcomeLevel = "low";
+  else if (absNetDelta > 2.5 || warningsCount >= 1 || shotLevel !== "high" || lineupLevel !== "high") outcomeLevel = "medium";
+  document.getElementById("outcomeConfidenceMain").textContent = outcomeLevel === "high" ? "High trust" : outcomeLevel === "medium" ? "Medium trust" : "Low trust";
+  document.getElementById("outcomeConfidenceSub").textContent = `${warningsCount} constraint alert(s). Read larger jumps as directional when confidence drops.`;
+  setBadge(document.getElementById("outcomeBadge"), outcomeLevel.toUpperCase(), outcomeLevel);
+}
+
+function renderWarnings(sim) {
+  if (!sim.warnings.length) {
+    warningBox.style.display = "none";
+    warningBox.innerHTML = "";
+    return;
+  }
+  warningBox.style.display = "block";
+  warningBox.innerHTML = `
+    <strong>Constraints applied</strong>
+    <ul>${sim.warnings.map(w => `<li>${w}</li>`).join("")}</ul>
+  `;
+}
+
+function leagueRankForNet(simNet, teamKey) {
+  const sorted = TEAMS.map(t => ({
+    team_key: t.team_key,
+    team_name: t.team_name,
+    net_rating: Number((t.baseline || {}).net_rating || 0),
+  })).sort((a,b) => b.net_rating - a.net_rating);
+
+  const baselineRank = Math.max(1, sorted.findIndex(t => t.team_key === teamKey) + 1);
+  const others = sorted.filter(t => t.team_key !== teamKey);
+  const simRank = 1 + others.filter(t => Number(t.net_rating) > Number(simNet)).length;
+  return {
+    simRank,
+    baselineRank,
+    totalTeams: sorted.length,
+    firstPlaceNet: sorted.length ? Number(sorted[0].net_rating || 0) : Number(simNet || 0),
+  };
+}
+
+function renderWaterfall(sim) {
+  const svg = document.getElementById("waterfallChart");
+  if (!svg) return;
+  const impacts = sim.impacts.map(([name, value]) => ({ name, value: Number(value || 0) }));
+  const bars = [];
+  let cumulative = 0;
+  for (const item of impacts) {
+    const start = cumulative;
+    cumulative += item.value;
+    bars.push({ ...item, start, end: cumulative });
+  }
+  const totalDelta = cumulative;
+  const values = [0, totalDelta, ...bars.flatMap(b => [b.start, b.end])];
+  const minVal = Math.min(...values, 0);
+  const maxVal = Math.max(...values, 0);
+  const width = 760;
+  const height = 280;
+  const margin = { top: 20, right: 18, bottom: 78, left: 42 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  const zeroY = margin.top + ((maxVal - 0) / Math.max(maxVal - minVal, 1e-9)) * innerH;
+  const scaleY = v => margin.top + ((maxVal - v) / Math.max(maxVal - minVal, 1e-9)) * innerH;
+  const step = innerW / Math.max(bars.length + 1, 1);
+  const barW = Math.min(72, step * 0.62);
+
+  let parts = [];
+  parts.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="#0b1220" rx="12"></rect>`);
+  parts.push(`<line x1="${margin.left}" y1="${zeroY.toFixed(1)}" x2="${(width-margin.right)}" y2="${zeroY.toFixed(1)}" stroke="#475569" stroke-width="1.2"></line>`);
+
+  const axisTicks = 4;
+  for (let i=0;i<=axisTicks;i++) {
+    const value = minVal + ((maxVal - minVal) * i / axisTicks);
+    const y = scaleY(value);
+    parts.push(`<line x1="${margin.left}" y1="${y.toFixed(1)}" x2="${(width-margin.right)}" y2="${y.toFixed(1)}" stroke="#162234" stroke-width="1"></line>`);
+    parts.push(`<text x="${margin.left - 8}" y="${(y+4).toFixed(1)}" text-anchor="end" font-size="11" fill="#94a3b8">${value.toFixed(1)}</text>`);
+  }
+
+  bars.forEach((bar, idx) => {
+    const x = margin.left + step * idx + (step - barW) / 2;
+    const y0 = scaleY(bar.start);
+    const y1 = scaleY(bar.end);
+    const rectY = Math.min(y0, y1);
+    const rectH = Math.max(2, Math.abs(y1 - y0));
+    const color = bar.value >= 0 ? '#22c55e' : '#ef4444';
+    const labelY = bar.value >= 0 ? rectY - 6 : rectY + rectH + 14;
+    const tip = `${bar.name}: ${bar.value >= 0 ? '+' : ''}${bar.value.toFixed(2)} impact<br>Cumulative: ${bar.end >= 0 ? '+' : ''}${bar.end.toFixed(2)}`;
+    parts.push(`<g class="wf-bar" data-tip="${tip.replace(/"/g, '&quot;')}">`);
+    parts.push(`<rect x="${x.toFixed(1)}" y="${rectY.toFixed(1)}" width="${barW.toFixed(1)}" height="${rectH.toFixed(1)}" rx="6" fill="${color}" opacity="0.92"></rect>`);
+    parts.push(`<text x="${(x + barW/2).toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${color}">${bar.value >= 0 ? '+' : ''}${bar.value.toFixed(2)}</text>`);
+    parts.push(`<text x="${(x + barW/2).toFixed(1)}" y="${(height - 42).toFixed(1)}" text-anchor="middle" font-size="11" fill="#cbd5e1">${bar.name}</text>`);
+    parts.push(`</g>`);
+    parts.push(`<line x1="${(x + barW).toFixed(1)}" y1="${y1.toFixed(1)}" x2="${(x + step).toFixed(1)}" y2="${y1.toFixed(1)}" stroke="#64748b" stroke-width="1" stroke-dasharray="4 3"></line>`);
+  });
+
+  const totalX = margin.left + step * bars.length + (step - barW) / 2;
+  const totalY = scaleY(totalDelta);
+  const totalRectY = Math.min(zeroY, totalY);
+  const totalRectH = Math.max(2, Math.abs(totalY - zeroY));
+  const totalColor = totalDelta >= 0 ? '#38bdf8' : '#f97316';
+  const totalTip = `Total delta: ${totalDelta >= 0 ? '+' : ''}${totalDelta.toFixed(2)}`;
+  parts.push(`<g class="wf-bar" data-tip="${totalTip.replace(/"/g, '&quot;')}">`);
+  parts.push(`<rect x="${totalX.toFixed(1)}" y="${totalRectY.toFixed(1)}" width="${barW.toFixed(1)}" height="${totalRectH.toFixed(1)}" rx="6" fill="${totalColor}"></rect>`);
+  parts.push(`<text x="${(totalX + barW/2).toFixed(1)}" y="${(totalDelta >= 0 ? totalRectY - 6 : totalRectY + totalRectH + 14).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="${totalColor}">${totalDelta >= 0 ? '+' : ''}${totalDelta.toFixed(2)}</text>`);
+  parts.push(`<text x="${(totalX + barW/2).toFixed(1)}" y="${(height - 42).toFixed(1)}" text-anchor="middle" font-size="11" fill="#cbd5e1">Total Δ</text>`);
+  parts.push(`</g>`);
+
+  svg.innerHTML = parts.join('');
+
+  svg.querySelectorAll('.wf-bar').forEach(el => {
+    el.addEventListener('mouseenter', event => showChartTooltip(event, el.dataset.tip || ''));
+    el.addEventListener('mousemove', moveChartTooltip);
+    el.addEventListener('mouseleave', hideChartTooltip);
+  });
+}
+
+function zoneColor(share, maxShare) {
+  const t = maxShare > 0 ? Math.max(0, Math.min(1, share / maxShare)) : 0;
+  const r = Math.round(30 + t * 30);
+  const g = Math.round(64 + t * 130);
+  const b = Math.round(90 + t * 165);
+  return `rgb(${r},${g},${b})`;
+}
+
+function renderHalfcourt(sim) {
+  const svg = document.getElementById("halfcourtChart");
+  const legend = document.getElementById("zoneLegend");
+  if (!svg || !legend) return;
+  const zones = sim.zones || [];
+  const shareMap = new Map(zones.map(z => [z.zone, Number(z.share || 0)]));
+  const ppsMap = new Map(zones.map(z => [z.zone, Number(z.pps || 0)]));
+  const maxShare = Math.max(...zones.map(z => Number(z.share || 0)), 0.0001);
+
+  const defs = [
+    { key: 'Restricted Area', label: 'Restricted Area', fill: zoneColor(shareMap.get('Restricted Area') || 0, maxShare), path: '<rect x="205" y="300" width="110" height="80" rx="18"/>' },
+    { key: 'Paint Non-RA', label: 'Paint Non-RA', fill: zoneColor(shareMap.get('Paint Non-RA') || 0, maxShare), path: '<path d="M175 220 L345 220 L345 300 L315 300 L315 380 L205 380 L205 300 L175 300 Z"/>' },
+    { key: 'Mid-Range', label: 'Mid-Range', fill: zoneColor(shareMap.get('Mid-Range') || 0, maxShare), path: '<path d="M90 370 Q110 230 190 170 L330 170 Q410 230 430 370 L375 370 Q360 255 300 215 L220 215 Q160 255 145 370 Z"/>' },
+    { key: 'Corner 3 Left', label: 'Corner 3 Left', fill: zoneColor(shareMap.get('Corner 3 Left') || 0, maxShare), path: '<rect x="30" y="70" width="60" height="300" rx="10"/>' },
+    { key: 'Corner 3 Right', label: 'Corner 3 Right', fill: zoneColor(shareMap.get('Corner 3 Right') || 0, maxShare), path: '<rect x="430" y="70" width="60" height="300" rx="10"/>' },
+    { key: 'Above the Break 3', label: 'Above the Break 3', fill: zoneColor(shareMap.get('Above the Break 3') || 0, maxShare), path: '<path d="M90 70 L430 70 L430 120 Q390 170 370 230 Q350 290 345 370 L175 370 Q170 290 150 230 Q130 170 90 120 Z"/>' },
+    { key: 'Backcourt', label: 'Backcourt', fill: zoneColor(shareMap.get('Backcourt') || 0, maxShare), path: '<rect x="30" y="10" width="460" height="50" rx="10"/>' },
+    { key: 'Unclassified', label: 'Unclassified', fill: zoneColor(shareMap.get('Unclassified') || 0, maxShare), path: '' },
+  ];
+
+  const courtLines = `
+    <rect x="30" y="10" width="460" height="360" rx="16" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+    <rect x="175" y="220" width="170" height="150" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <rect x="205" y="300" width="110" height="70" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <circle cx="260" cy="300" r="9" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <path d="M200 160 Q260 110 320 160" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <path d="M90 70 L90 370" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <path d="M430 70 L430 370" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <path d="M30 370 Q260 35 490 370" fill="none" stroke="#e2e8f0" stroke-width="2.5"/>
+    <circle cx="260" cy="390" r="7" fill="#f8fafc"/>
+  `;
+
+  const zoneShapes = defs.filter(d => d.path).map(d => {
+    const share = shareMap.get(d.key) || 0;
+    const pps = ppsMap.get(d.key) || 0;
+    const tip = `${d.label}<br>Sim share: ${pct(share,1)}<br>PPS: ${fmt(pps,3)}`;
+    const colored = d.path.replace('/>', ` fill="${d.fill}" opacity="0.88" stroke="#0f172a" stroke-width="1.5"/>`);
+    return `<g class="hc-zone" data-tip="${tip.replace(/"/g, '&quot;')}">${colored}</g>`;
+  }).join('');
+
+  const labels = defs.filter(d => d.path).map(d => {
+    const share = shareMap.get(d.key) || 0;
+    let x = 260, y = 200;
+    if (d.key === 'Restricted Area') { x = 260; y = 345; }
+    else if (d.key === 'Paint Non-RA') { x = 260; y = 258; }
+    else if (d.key === 'Mid-Range') { x = 260; y = 190; }
+    else if (d.key === 'Corner 3 Left') { x = 60; y = 220; }
+    else if (d.key === 'Corner 3 Right') { x = 460; y = 220; }
+    else if (d.key === 'Above the Break 3') { x = 260; y = 100; }
+    else if (d.key === 'Backcourt') { x = 260; y = 40; }
+    return `<text x="${x}" y="${y}" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">${(share*100).toFixed(1)}%</text>`;
+  }).join('');
+
+  svg.innerHTML = `<rect x="0" y="0" width="520" height="420" rx="16" fill="#0b1220"></rect>${zoneShapes}${courtLines}${labels}`;
+
+  svg.querySelectorAll('.hc-zone').forEach(el => {
+    el.addEventListener('mouseenter', event => showChartTooltip(event, el.dataset.tip || ''));
+    el.addEventListener('mousemove', moveChartTooltip);
+    el.addEventListener('mouseleave', hideChartTooltip);
+  });
+
+  legend.innerHTML = `<div class="zone-legend-note">Color intensity represents <strong>simulated shot share</strong>. PPS is shown separately so color is not confused with efficiency.</div>` + zones
+    .filter(z => ['Restricted Area','Paint Non-RA','Mid-Range','Corner 3 Left','Corner 3 Right','Above the Break 3','Backcourt','Unclassified'].includes(z.zone))
+    .map(z => `<div class="zone-legend-item"><span class="zone-legend-swatch" style="background:${zoneColor(Number(z.share || 0), maxShare)}"></span><span>${z.zone}: ${pct(z.share,1)} · PPS ${fmt(z.pps,3)}</span></div>`)
+    .join('');
+}
+
+function render(sim, team) {
+  document.getElementById("teamTitle").textContent = `${team.team_name} · Impact Lab`;
+
+  document.getElementById("offCard").textContent = fmt(sim.sim.off_rating, 1);
+  document.getElementById("defCard").textContent = fmt(sim.sim.def_rating, 1);
+  document.getElementById("netCard").textContent = fmt(sim.sim.net_rating, 1);
+  document.getElementById("ppsCard").textContent = fmt(sim.sim.shot_pps, 3);
+
+  const offDelta = sim.sim.off_rating - sim.base.off_rating;
+  const defDelta = sim.sim.def_rating - sim.base.def_rating;
+  const netDelta = sim.sim.net_rating - sim.base.net_rating;
+  const ppsDelta = sim.sim.shot_pps - sim.base.shot_pps;
+
+  document.getElementById("offDelta").innerHTML = `Δ <span class="${offDelta >= 0 ? 'good' : 'bad'}">${fmt(offDelta,1)}</span>`;
+  document.getElementById("defDelta").innerHTML = `Δ <span class="${defDelta <= 0 ? 'good' : 'bad'}">${fmt(defDelta,1)}</span>`;
+  document.getElementById("netDelta").innerHTML = `Δ <span class="${netDelta >= 0 ? 'good' : 'bad'}">${fmt(netDelta,1)}</span>`;
+  document.getElementById("ppsDelta").innerHTML = `Δ <span class="${ppsDelta >= 0 ? 'good' : 'bad'}">${fmt(ppsDelta,3)}</span>`;
+
+  const summaryRows = [
+    ["ORtg", fmt(sim.base.off_rating,1), fmt(sim.sim.off_rating,1), fmt(sim.sim.off_rating - sim.base.off_rating,1)],
+    ["DRtg", fmt(sim.base.def_rating,1), fmt(sim.sim.def_rating,1), fmt(sim.sim.def_rating - sim.base.def_rating,1)],
+    ["NetRtg", fmt(sim.base.net_rating,1), fmt(sim.sim.net_rating,1), fmt(sim.sim.net_rating - sim.base.net_rating,1)],
+    ["eFG%", pct(sim.base.efg_pct_off,1), pct(sim.sim.efg_pct_off,1), pct(sim.sim.efg_pct_off - sim.base.efg_pct_off,1)],
+    ["TOV%", pct(sim.base.tov_pct_off,1), pct(sim.sim.tov_pct_off,1), pct(sim.sim.tov_pct_off - sim.base.tov_pct_off,1)],
+    ["ORB%", pct(sim.base.orb_pct_off,1), pct(sim.sim.orb_pct_off,1), pct(sim.sim.orb_pct_off - sim.base.orb_pct_off,1)],
+    ["FTR", fmt(sim.base.ftr_off,3), fmt(sim.sim.ftr_off,3), fmt(sim.sim.ftr_off - sim.base.ftr_off,3)],
+    ["Shot PPS", fmt(sim.base.shot_pps,3), fmt(sim.sim.shot_pps,3), fmt(sim.sim.shot_pps - sim.base.shot_pps,3)],
+    ["Lineup mix shift", "0.0 min", `${fmt(sim.constraints.total_lineup_shift_min,1)} min`, `${fmt(sim.constraints.total_lineup_shift_min,1)} min`],
+  ];
+
+  document.getElementById("summaryRows").innerHTML = summaryRows.map(row => {
+    const deltaNum = Number(String(row[3]).replace(/[^\d.-]/g, ""));
+    const cls = Number.isNaN(deltaNum) ? "neutral" : (deltaNum >= 0 ? "good" : "bad");
+    return `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td class="${cls}">${row[3]}</td></tr>`;
+  }).join("");
+
+  const rank = leagueRankForNet(sim.sim.net_rating, team.team_key);
+  const rankDelta = rank.baselineRank - rank.simRank;
+  const beatsLeader = sim.sim.net_rating >= rank.firstPlaceNet;
+  const rankHeadline = beatsLeader
+    ? `${team.team_name} would move to 1st place with a simulated NetRtg of ${fmt(sim.sim.net_rating,1)}.`
+    : `${team.team_name} would rank #${rank.simRank} of ${rank.totalTeams} with a simulated NetRtg of ${fmt(sim.sim.net_rating,1)}.`;
+  let rankMoveText = `Baseline rank: #${rank.baselineRank} of ${rank.totalTeams}.`;
+  if (rankDelta > 0) rankMoveText += ` Up ${rankDelta} place${rankDelta === 1 ? '' : 's'}.`;
+  else if (rankDelta < 0) rankMoveText += ` Down ${Math.abs(rankDelta)} place${Math.abs(rankDelta) === 1 ? '' : 's'}.`;
+  else rankMoveText += ` No ranking change.`;
+  document.getElementById("rankHeadline").textContent = rankHeadline;
+  document.getElementById("rankSubline").textContent = rankMoveText;
+  document.getElementById("rankPill").textContent = `#${rank.simRank} / ${rank.totalTeams}`;
+
+  renderWaterfall(sim);
+
+  sim.zones.forEach(z => {
+    const labelEl = document.getElementById(`zoneLabel_${cssSafe(z.zone)}`);
+    if (labelEl) labelEl.textContent = `${(z.share*100).toFixed(1)}%`;
+  });
+  renderHalfcourt(sim);
+
+  document.getElementById("lineupRows").innerHTML = sim.lineup_mix.rows.map(r => {
+    const delta = Number(r.sim_minutes || 0) - Number(r.base_minutes || 0);
+    const cls = delta >= 0 ? "good" : "bad";
+    const labelEl = document.getElementById(`lineupLabel_${cssSafe(r.lineup_id)}`);
+    if (labelEl && !r.is_rest) labelEl.textContent = `${fmt(delta,1)} min`;
+    return `<tr class="${r.is_rest ? 'rest-row' : ''}"><td>${r.lineup_players}</td><td>${fmt(r.base_minutes,1)}</td><td class="${cls}">${fmt(r.sim_minutes,1)}</td><td>${fmt((r.shrunk_off_rating||0) - (r.shrunk_def_rating||0),1)}</td></tr>`;
+  }).join("");
+
+  renderSignals(sim, team);
+  renderWarnings(sim);
+}
+
+function updateSliderLabels() {
+  sliderLabels.efgDelta.textContent = `${Number(document.getElementById("efgDelta").value).toFixed(1)} pp`;
+  sliderLabels.tovDelta.textContent = `${Number(document.getElementById("tovDelta").value).toFixed(1)} pp`;
+  sliderLabels.orbDelta.textContent = `${Number(document.getElementById("orbDelta").value).toFixed(1)} pp`;
+  sliderLabels.ftrDelta.textContent = `${Number(document.getElementById("ftrDelta").value).toFixed(1)} pp`;
+}
+
+function update(flash=false) {
+  updateSliderLabels();
+  const team = currentTeam();
+  const sim = calcSimulation(team);
+  render(sim, team);
+  if (flash) flashSummaryCards();
+}
+
+
+presetAttack.addEventListener("click", () => {
+  resetControls();
+  applyAttackPreset();
+  update(true);
+});
+
+presetBalance.addEventListener("click", () => {
+  resetControls();
+  applyBalancedPreset();
+  update(true);
+});
+
+presetSpacing.addEventListener("click", () => {
+  resetControls();
+  applySpacingPreset();
+  update(true);
+});
+
+presetReset.addEventListener("click", () => {
+  resetControls();
+  update(true);
+});
+
+
+teamSelect.addEventListener("change", () => {
+  const team = currentTeam();
+  buildZoneControls(team);
+  buildLineupControls(team);
+  resetControls();
+  update();
+});
+
+sliderIds.forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener("input", () => update());
+  ["change","mouseup","touchend"].forEach(evt => el.addEventListener(evt, () => update(true)));
+});
+
+teamSelect.value = TEAMS[0].team_key;
+buildZoneControls(currentTeam());
+buildLineupControls(currentTeam());
+resetControls();
+update();
+</script>
+</body>
+</html>
