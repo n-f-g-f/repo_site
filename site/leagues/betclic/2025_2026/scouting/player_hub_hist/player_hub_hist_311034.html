@@ -169,18 +169,65 @@ body {
 .snap-val { font-size:19px; font-weight:700; color:#f0f4fa; line-height:1.1; }
 .snap-lbl { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
 
-/* ── delta cards ── */
-.delta-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; }
-.delta-card {
-  background:#0b1220;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 14px;
+/* ── insight cards / What Changed ── */
+.insight-card {
+  background:
+    linear-gradient(135deg, rgba(232,192,106,0.10), rgba(91,196,168,0.04)),
+    #0b1220;
+  border:1px solid rgba(232,192,106,0.24);
+  border-radius:16px;
+  padding:16px 18px;
+  min-height:104px;
+  position:relative;
+  overflow:hidden;
 }
-.delta-lbl { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
-.delta-val { font-size:14px; font-weight:600; color:#e2e8f0; line-height:1.4; }
+.insight-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 100% 0%, rgba(232,192,106,0.13), transparent 38%);
+  pointer-events:none;
+}
+.insight-lbl {
+  position:relative;
+  z-index:1;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:8px;
+}
+.insight-val {
+  position:relative;
+  z-index:1;
+  font-size:17px;
+  font-weight:700;
+  color:#f0f4fa;
+  line-height:1.35;
+}
+.insight-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:12px;
+}
+.insight-section {
+  border-color:rgba(232,192,106,0.18);
+  box-shadow:0 14px 42px rgba(0,0,0,0.20);
+}
+.insight-section .card-title { color:var(--accent); }
+.section-subtitle {
+  color:#8fa3bd;
+  font-size:13px;
+  margin:-6px 0 14px 0;
+  max-width:820px;
+  line-height:1.6;
+}
 
 /* ── chart section ── */
+.chart-card {
+  border-color:rgba(91,196,168,0.16);
+}
 .chart-header {
   display:flex; align-items:center; justify-content:space-between;
   flex-wrap:wrap; gap:10px; margin-bottom:14px;
@@ -216,7 +263,7 @@ body {
 }
 .chart-canvas-wrap { position:relative; overflow:auto; }
 #trend-chart {
-  width:100%; min-width:600px; height:auto;
+  width:100%; min-width:680px; height:auto;
   display:block;
 }
 .chart-tooltip {
@@ -303,17 +350,11 @@ body {
     </div>
   </div>
 
-  <!-- ═══ CHART ═══════════════════════════════════════════════════════ -->
-  <div class="card full-col">
-    <div class="chart-header">
-      <div class="card-title" style="margin-bottom:0">Career Trajectory</div>
-      <div class="metric-toggles" id="metricToggles"><button class="mtoggle" data-key="mpg" data-kind="number">MPG</button><button class="mtoggle" data-key="ppg" data-kind="number">PPG</button><button class="mtoggle" data-key="ts_pct" data-kind="pct">TS%</button><button class="mtoggle" data-key="usg_pct" data-kind="pct">USG%</button><button class="mtoggle" data-key="netrtg" data-kind="number">NetRtg</button><button class="mtoggle" data-key="on_off_net_diff_per40" data-kind="number">On-Off/40</button><button class="mtoggle" data-key="league_pct_scoring" data-kind="pct">Scoring Pctl</button><button class="mtoggle" data-key="league_pct_efficiency" data-kind="pct">Efficiency Pctl</button><button class="mtoggle" data-key="league_pct_creation" data-kind="pct">Creation Pctl</button><button class="mtoggle" data-key="league_pct_impact" data-kind="pct">Impact Pctl</button></div>
-    </div>
-    <div class="chart-legend" id="chartLegend"></div>
-    <div class="chart-canvas-wrap">
-      <svg id="trend-chart" viewBox="0 0 1100 300" role="img" aria-label="Career trend chart"></svg>
-      <div class="chart-tooltip" id="chartTooltip"></div>
-    </div>
+  <!-- ═══ WHAT CHANGED ════════════════════════════════════════════════ -->
+  <div class="card full-col insight-section">
+    <div class="card-title">What Changed</div>
+    <p class="section-subtitle">The fastest read of the player's evolution across the tracked seasons.</p>
+    <div class="insight-grid"><div class="insight-card"><div class="insight-lbl">Role Growth</div><div class="insight-val">MPG +3.5 · USG +10.4 pp</div></div><div class="insight-card"><div class="insight-lbl">Scoring Growth</div><div class="insight-val">PPG +8.9 · APG +1.3</div></div><div class="insight-card"><div class="insight-lbl">Efficiency Change</div><div class="insight-val">TS -1.1 pp · NetRtg +2.5</div></div><div class="insight-card"><div class="insight-lbl">Current League Standing</div><div class="insight-val">—</div></div></div>
   </div>
 
   <!-- ═══ TWO-COL: NARRATIVE + SNAPSHOT ════════════════════════════════ -->
@@ -331,10 +372,20 @@ body {
 
   </div>
 
-  <!-- ═══ WHAT CHANGED ════════════════════════════════════════════════ -->
-  <div class="card full-col">
-    <div class="card-title">What Changed</div>
-    <div class="delta-grid"><div class="delta-card"><div class="delta-lbl">Role Growth</div><div class="delta-val">MPG +3.5 · USG +10.4 pp</div></div><div class="delta-card"><div class="delta-lbl">Scoring Growth</div><div class="delta-val">PPG +8.9 · APG +1.3</div></div><div class="delta-card"><div class="delta-lbl">Efficiency Change</div><div class="delta-val">TS -1.1 pp · NetRtg +2.5</div></div><div class="delta-card"><div class="delta-lbl">Current League Standing</div><div class="delta-val">—</div></div></div>
+  <!-- ═══ CHART ═══════════════════════════════════════════════════════ -->
+  <div class="card full-col chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="card-title" style="margin-bottom:0">Career Trajectory</div>
+        <p class="section-subtitle" style="margin:8px 0 0 0">Compare advanced metrics, role indicators and league percentiles by season.</p>
+      </div>
+      <div class="metric-toggles" id="metricToggles"><button class="mtoggle" data-key="mpg" data-kind="number">MPG</button><button class="mtoggle" data-key="ppg" data-kind="number">PPG</button><button class="mtoggle" data-key="ts_pct" data-kind="pct">TS%</button><button class="mtoggle" data-key="usg_pct" data-kind="pct">USG%</button><button class="mtoggle" data-key="netrtg" data-kind="number">NetRtg</button><button class="mtoggle" data-key="on_off_net_diff_per40" data-kind="number">On-Off/40</button><button class="mtoggle" data-key="league_pct_scoring" data-kind="pct">Scoring Pctl</button><button class="mtoggle" data-key="league_pct_efficiency" data-kind="pct">Efficiency Pctl</button><button class="mtoggle" data-key="league_pct_creation" data-kind="pct">Creation Pctl</button><button class="mtoggle" data-key="league_pct_impact" data-kind="pct">Impact Pctl</button></div>
+    </div>
+    <div class="chart-legend" id="chartLegend"></div>
+    <div class="chart-canvas-wrap">
+      <svg id="trend-chart" viewBox="0 0 1100 360" role="img" aria-label="Career trend chart"></svg>
+      <div class="chart-tooltip" id="chartTooltip"></div>
+    </div>
   </div>
 
   <!-- ═══ SEASON TABLE ════════════════════════════════════════════════ -->
@@ -413,7 +464,7 @@ function drawChart() {
   svgEl.innerHTML = '';
   if (!ROWS.length || !activeKeys.size) return;
 
-  const W = 1100, H = 300;
+  const W = 1100, H = 360;
   const ml = 58, mr = 20, mt = 20, mb = 48;
   const PW = W - ml - mr, PH = H - mt - mb;
 
