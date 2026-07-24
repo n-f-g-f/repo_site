@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portuguese Basketball Analytics (PBA)</title>
+<meta name="description" content="Professional scouting and analytics platform for Portuguese basketball, organized by league and season.">
+    <meta name="keywords" content="Portuguese basketball analytics, PBA scouting, análise basquetebol português">
+    https://ptbballanalytics.com/
+    <meta property="og:title" content="Portuguese Basketball Analytics">
+    <meta property="og:description" content="Professional scouting and analytics platform for Portuguese basketball, organized by league and season.">
+    <meta property="og:url" content="https://ptbballanalytics.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Portuguese Basketball Analytics (PBA)">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Portuguese Basketball Analytics">
+    <meta name="twitter:description" content="Professional scouting and analytics platform for Portuguese basketball, organized by league and season.">
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#0f172a;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1180px;margin:0 auto;padding:56px 20px 72px;}
+
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;border-radius:28px;padding:56px 40px;text-align:center;margin-bottom:28px;box-shadow:0 20px 44px rgba(15,23,42,.18);}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;}
+.hero h1{margin:0 0 18px 0;font-size:46px;line-height:1.08;letter-spacing:-.01em;}
+.hero p.sub{margin:0 auto 26px auto;max-width:820px;color:rgba(255,255,255,.90);font-size:18px;line-height:1.6;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:999px;padding:14px 22px;font-size:15px;font-weight:800;letter-spacing:.02em;}
+.btn-primary{background:#fff;color:#0f172a;}
+.btn-primary:hover{background:#e2e8f0;}
+.btn-secondary{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);color:#fff;}
+.btn-secondary:hover{background:rgba(255,255,255,.18);}
+.btn-dark{background:#0f172a;color:#fff;}
+.btn-dark:hover{background:#111827;}
+.btn-ghost{background:#fff;border:1px solid #cbd5e1;color:#0f172a;}
+.btn-ghost:hover{background:#e2e8f0;}
+
+.credibility{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:22px 26px;text-align:center;color:#475569;font-size:14px;line-height:1.6;margin-bottom:36px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+.credibility strong{color:#0f172a;}
+
+.section{margin:44px 0;}
+.section-head{text-align:center;margin-bottom:28px;}
+.section-head h2{margin:0 0 10px 0;font-size:32px;letter-spacing:-.01em;}
+.section-head p{margin:0 auto;max-width:720px;color:#475569;font-size:15px;line-height:1.65;}
+
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+.card h3{margin:0 0 10px 0;font-size:20px;color:#0f172a;}
+.card p{margin:0;color:#475569;font-size:15px;line-height:1.65;}
+.card-label{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;}
+
+.org-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+.org-card p{margin:0 0 14px 0;color:#475569;font-size:15px;line-height:1.7;}
+.org-tree{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:18px;color:#0f172a;font-weight:800;}
+.org-node{background:#0f172a;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;}
+.org-arrow{color:#94a3b8;font-weight:900;}
+.org-branch{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.org-leaf{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:12px;padding:8px 14px;font-size:13px;font-weight:800;}
+
+.plan-card{background:#fff;border:1px solid #e2e8f0;border-radius:22px;padding:26px;text-align:left;box-shadow:0 1px 3px rgba(15,23,42,.05);display:flex;flex-direction:column;gap:12px;}
+.plan-card h3{margin:0;font-size:22px;color:#0f172a;}
+.plan-card p{margin:0;color:#475569;font-size:14px;line-height:1.6;}
+.plan-card-cta-row{margin-top:20px;text-align:center;}
+
+.faq{display:grid;gap:12px;}
+.faq-item{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 22px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+.faq-item h4{margin:0 0 6px 0;font-size:16px;color:#0f172a;}
+.faq-item p{margin:0;color:#475569;font-size:14px;line-height:1.65;}
+.faq-cta{margin-top:16px;text-align:center;color:#475569;font-size:14px;}
+
+.cta-final{background:linear-gradient(135deg,#0f172a 0%,#111827 100%);color:#fff;border-radius:28px;padding:48px 40px;text-align:center;margin-top:48px;box-shadow:0 20px 44px rgba(15,23,42,.18);}
+.cta-final h2{margin:0 0 14px 0;font-size:30px;letter-spacing:-.01em;}
+.cta-final p{margin:0 auto 24px auto;max-width:720px;color:rgba(255,255,255,.88);font-size:16px;line-height:1.65;}
+
+@media (max-width:980px){
+  .grid-3,.grid-4{grid-template-columns:1fr;}
+  .hero{padding:44px 24px;}
+  .hero h1{font-size:34px;}
+  .cta-final{padding:36px 24px;}
+  .section-head h2{font-size:26px;}
+}
+</style>
+<style>.pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-site-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-site-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;flex:0 0 auto;text-decoration:none;}.pba-site-brand-copy{min-width:0;}.pba-site-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-site-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-site-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-site-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-site-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-site-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-site-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-site-status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}.pba-site-footer{margin-top:36px;background:#0f172a;color:#e2e8f0;border-top:1px solid rgba(255,255,255,.06);}.pba-site-footer-inner{max-width:1380px;margin:0 auto;padding:28px 20px 36px;}.pba-site-footer-grid{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(4,minmax(0,1fr));gap:22px;}.pba-site-footer-brand h2{margin:0 0 8px 0;font-size:22px;color:#fff;}.pba-site-footer-brand p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;max-width:520px;}.pba-site-footer-col-title{font-size:12px;font-weight:800;color:#93c5fd;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}.pba-site-footer-links{display:flex;flex-direction:column;gap:8px;}.pba-site-footer-links a{color:#e2e8f0;text-decoration:none;font-size:14px;line-height:1.45;}.pba-site-footer-links a:hover{color:#93c5fd;}.pba-site-footer-meta{margin-top:22px;padding-top:16px;border-top:1px solid rgba(148,163,184,.18);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#94a3b8;font-size:12px;line-height:1.5;}@media (max-width:1080px){.pba-site-footer-grid{grid-template-columns:1fr 1fr;}}@media (max-width:760px){.pba-site-chrome-inner{padding:12px 16px;}.pba-site-footer-inner{padding:24px 16px 30px;}.pba-site-footer-grid{grid-template-columns:1fr;}.pba-site-nav{gap:8px;}}</style></head>
+<body><header class="pba-site-chrome-header" data-pba-site-chrome="1"><div class="pba-site-chrome-inner"><div class="pba-site-brand">index.html<div class="pba-site-brand-copy"><div class="pba-site-brand-name">Portuguese Basketball Analytics (PBA)</div><div class="pba-site-brand-sub">Professional basketball intelligence · Portugal</div></div></div><nav class="pba-site-nav" aria-label="Primary navigation">index.htmlabout.htmlaccess.htmlcontact.htmllogin.html" data-pba-logout-link="1" style="display:none">Logout</a></nav></div></header>
+<div class="wrap">
+
+  <section class="hero">
+    <div class="hero-eyebrow">Portuguese Basketball Analytics</div>
+    <h1>Portuguese basketball,<br>seen with the depth it deserves.</h1>
+    <p class="sub">An analytics and scouting platform built for everyone who takes Portuguese basketball seriously — coaches, analysts, staff, media and demanding fans. Structured by league and season, focused on real decisions.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="access.html">See plans →</a>
+      <a class="btn btn-secondary" href="contact.html">Contact us</a>
+    </div>
+  </section>
+
+  <div class="credibility">
+    Built on real play-by-play data from <strong>Betclic</strong> · <strong>Betclic Fem</strong> · <strong>Proliga</strong>
+  </div>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>What PBA does</h2>
+      <p>Three connected surfaces designed the way basketball is actually studied.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <span class="card-label">Analytics</span>
+        <h3>Deep league analytics</h3>
+        <p>Team and player advanced dashboards, on/off impact, lineup ratings, playmaking profile, four factors by quarter and matchup matrix. Data organized the way coaches actually read the game.</p>
+      </div>
+      <div class="card">
+        <span class="card-label">Scouting</span>
+        <h3>Full team scouting</h3>
+        <p>Team Hub as the central entry point, plus Opponent Game Plan, Opponent Shot Report, Visual Shot Dashboards, Game Script Profile and Rotation Timeline. Everything you need to prepare a real opponent, in one place.</p>
+      </div>
+      <div class="card">
+        <span class="card-label">Player evolution</span>
+        <h3>Career evolution, not just stats</h3>
+        <p>Player Hubs with advanced production and impact metrics, plus historical pages focused on what actually changed in each player's career: role, scoring, efficiency and league percentile evolution.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Organized by league and season</h2>
+      <p>The platform is structured the way you already think about basketball.</p>
+    </div>
+    <div class="org-card">
+      <p>Choose a league, then a season, then move through the three work areas. Your plan defines which leagues you can open. Historical access to every included league is always part of the deal.</p>
+      <div class="org-tree">
+        <span class="org-node">League</span>
+        <span class="org-arrow">→</span>
+        <span class="org-node">Season</span>
+        <span class="org-arrow">→</span>
+        <div class="org-branch">
+          <span class="org-leaf">Analytics</span>
+          <span class="org-leaf">General</span>
+          <span class="org-leaf">Scouting</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Built for the people who care about basketball data</h2>
+      <p>Four audiences, one platform.</p>
+    </div>
+    <div class="grid-4">
+      <div class="card">
+        <h3>Coaches</h3>
+        <p>Head coaches and assistant coaches preparing opponents and evaluating their own team.</p>
+      </div>
+      <div class="card">
+        <h3>Analysts &amp; scouts</h3>
+        <p>Analysts and scouts working across multiple teams and leagues, needing structured data instead of scattered pages.</p>
+      </div>
+      <div class="card">
+        <h3>Media</h3>
+        <p>Journalists, commentators and content creators who need reliable numbers, quick context and clear visuals to support their coverage of Portuguese basketball.</p>
+      </div>
+      <div class="card">
+        <h3>Advanced fans</h3>
+        <p>Fans who want to go beyond the box score — real advanced metrics, real historical context, real evolution of players and teams.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Simple access, four plans</h2>
+      <p>Pick the scope that fits your work. History of every included league is always included.</p>
+    </div>
+    <div class="grid-3">
+      <div class="plan-card">
+        <h3>One League</h3>
+        <p>For staff focused on a single competition. Full history included.</p>
+      </div>
+      <div class="plan-card">
+        <h3>Two Leagues</h3>
+        <p>For clubs operating across two competitions. Full history included.</p>
+      </div>
+      <div class="plan-card">
+        <h3>All Leagues</h3>
+        <p>Full platform, all leagues, all history. Available monthly or yearly.</p>
+      </div>
+    </div>
+    <div class="plan-card-cta-row">
+      <a class="btn btn-dark" href="access.html">See detailed plans →</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Common questions</h2>
+      <p>Short answers. The full FAQ lives on the Access page.</p>
+    </div>
+    <div class="faq">
+      <div class="faq-item">
+        <h4>Which leagues are included?</h4>
+        <p>Betclic (top men's league), Betclic Fem (top women's league) and Proliga (second men's league). Your plan defines which of these you can open.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Do plans include historical data?</h4>
+        <p>Yes. Access to a league always includes the full historical archive of that league.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How does access work?</h4>
+        <p>After activation, you log in and the platform opens the leagues included in your plan. Direct links to protected pages redirect to login when needed.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How do I get started?</h4>
+        <p>Contact us to choose a plan and activate your account. Activation is normally completed within 24 business hours.</p>
+      </div>
+    </div>
+    <div class="faq-cta">
+      <a class="btn btn-ghost" href="access.html">See all questions on the Access page →</a>
+    </div>
+  </section>
+
+  <section class="cta-final">
+    <h2>Ready to see Portuguese basketball with real depth?</h2>
+    <p>Choose a plan and start using the platform, or reach out with any question about access, coverage or how PBA fits your workflow.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="access.html">See plans →</a>
+      <a class="btn btn-secondary" href="contact.html">Contact us</a>
+    </div>
+  </section>
+
+</div>
+<footer class="pba-site-footer" data-pba-site-chrome="1"><div class="pba-site-footer-inner"><div class="pba-site-footer-grid"><div class="pba-site-footer-brand"><h2>Portuguese Basketball Analytics (PBA)</h2><p>Premium basketball analytics platform focused on Portuguese basketball. Public pages introduce the product, while league, season and report pages open only after login and access validation.</p></div><div><div class="pba-site-footer-col-title">Product</div><div class="pba-site-footer-links">About</a>Access &amp; Plans</a>Login</a></div></div><div><div class="pba-site-footer-col-title">Browse</div><div class="pba-site-footer-links">Home</a>Access &amp; Plans</a></div></div><div><div class="pba-site-footer-col-title">Legal</div><div class="pba-site-footer-links">Privacy Policy</a>Terms of Service</a>Cookies Policy</a></div></div><div><div class="pba-site-footer-col-title">Contact</div><div class="pba-site-footer-links">Contact</a>nuno_fg_freitas@hotmail.com</a></div></div></div><div class="pba-site-footer-meta"><div>Responsible entity: Nuno Freitas · Portugal</div><div>Contact: nuno_fg_freitas@hotmail.comnuno_fg_freitas@hotmail.com</a></div><div>For account activation, please contact us.</div></div></div><script>
+(function () {
+  var loginLink = document.querySelector('[data-pba-login-link="1"]');
+  var logoutLink = document.querySelector('[data-pba-logout-link="1"]');
+  function setAuthState(isAuthenticated) {
+    if (loginLink) { loginLink.style.display = isAuthenticated ? 'none' : ''; }
+    if (logoutLink) { logoutLink.style.display = isAuthenticated ? '' : 'none'; }
+  }
+  fetch('/api/session', { credentials: 'include' })
+    .then(function (response) {
+      if (!response.ok) { setAuthState(false); return null; }
+      return response.json();
+    })
+    .then(function (data) {
+      if (!data) { return; }
+      setAuthState(!!data.authenticated);
+    })
+    .catch(function () { setAuthState(false); });
+})();
+</script></footer></body>
+</html>
