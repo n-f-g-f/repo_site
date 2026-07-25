@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Player Comparison Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a; --panel: #111827; --panel-2: #1f2937; --text: #e5e7eb; --muted: #94a3b8;
+      --line: #334155; --accent: #38bdf8; --neg: #fca5a5; --good: #86efac;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1800px; margin: 0 auto; padding: 18px; }
+    .hero { display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; background: linear-gradient(180deg, rgba(17,24,39,0.96), rgba(15,23,42,0.96)); border:1px solid var(--line); border-radius:18px; padding:22px; margin-bottom:16px; box-shadow:0 18px 36px rgba(0,0,0,0.22); }
+    h1 { margin: 0 0 6px 0; font-size: 26px; }
+    .subtitle { color: var(--muted); margin-bottom: 12px; }
+    .hero-notes { display:flex; flex-wrap:wrap; gap:8px; }
+    .hero-note { background:#0b1220; border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:8px 10px; font-size:12px; }
+    .hero-logo-wrap { width:92px; height:92px; border-radius:18px; border:1px solid var(--line); background:#0b1220; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .hero-logo-wrap img { width:66px; height:66px; object-fit:contain; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+    .toolbar-reading { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; width:100%; }
+    .toolbar-reading-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .toolbar-reading-label { color:var(--muted); font-size:12px; margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+    .toolbar-reading-value { font-size:14px; font-weight:700; line-height:1.4; }
+    .control { display: flex; flex-direction: column; gap: 4px; min-width: 250px; }
+    .control label { font-size: 12px; color: var(--muted); }
+    .control select { background: #0b1220; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; width: 100%; }
+    .grid-players { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+    .player-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; min-height: 220px; }
+    .player-blurb { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 0 0 14px 0; }
+    .player-empty { display: flex; align-items: center; justify-content: center; min-height: 220px; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+    .player-header { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+    .player-avatar { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #0b1220; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); flex: 0 0 auto; }
+    .player-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .player-avatar-empty { color: var(--muted); font-weight: 700; }
+    .player-name { font-size: 20px; font-weight: 700; }
+    .player-link { color: inherit; text-decoration: none; }
+    .player-link:hover { text-decoration: underline; }
+    .player-meta { color: var(--muted); font-size: 13px; margin-top: 3px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+    .metric-card { background: #0b1220; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+    .metric-label { color: var(--muted); font-size: 11px; margin-bottom: 6px; }
+    .metric-value { font-size: 20px; font-weight: 700; }
+    .section-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 18px; }
+    .section-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-size: 18px; font-weight: 700; }
+    .table-wrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 14px; white-space: nowrap; text-align: center; }
+    thead th { background: var(--panel-2); }
+    tbody tr:hover { background: rgba(56, 189, 248, 0.06); }
+    tbody td.metric-name, thead th.metric-name { text-align: left; position: sticky; left: 0; background: inherit; z-index: 1; }
+    thead th.metric-name { z-index: 2; background: var(--panel-2); }
+    .best { color: var(--good); font-weight: 700; }
+    .worst { color: var(--neg); font-weight: 700; }
+    .hint { color: var(--muted); font-size: 12px; padding: 0 16px 14px 16px; }
+    .status { color: var(--muted); font-size: 12px; }
+    .radar-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px; }
+    .radar-card { background: #0b1220; border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+    .radar-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .radar-subtitle { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+    .radar-canvas-wrap { position: relative; width: 100%; height: 420px; }
+    .radar-canvas { width: 100%; height: 100%; display: block; }
+    .radar-empty { display: flex; align-items: center; justify-content: center; height: 420px; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+    .radar-legend { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 12px; }
+    .radar-legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text); }
+    .radar-legend-swatch { width: 12px; height: 12px; border-radius: 999px; flex: 0 0 auto; }
+    @media (max-width: 1250px) { .grid-players { grid-template-columns: 1fr; } .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .radar-grid { grid-template-columns: 1fr; } .toolbar-reading { grid-template-columns:1fr; } }
+    @media (max-width: 720px) { .summary-grid { grid-template-columns: 1fr; } .radar-canvas-wrap { height: 340px; } .radar-empty { height: 340px; } .hero { grid-template-columns:1fr; } }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2025-2026 </div></div></header>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Player Comparison Dashboard</h1>
+        <div class="subtitle">Compare 2 or 3 players across scoring profile, creation, team impact and on-off context without getting buried in one long table.</div>
+        <div class="hero-notes">
+          <span class="hero-note">2-player or 3-player read</span>
+          <span class="hero-note">Profile radar + impact radar</span>
+          <span class="hero-note">Advanced + on-off side by side</span>
+        </div>
+      </div>
+      <div class="hero-logo-wrap"><img src="../assets/logos/Betclic_logo.png" alt="Betclic logo" onerror="this.style.display='none'"></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="control"><label for="team-filter-a">Team A</label><select id="team-filter-a"><option value="">All teams</option></select></div>
+      <div class="control"><label for="player-a">Player A</label><select id="player-a"><option value="">Select player</option></select></div>
+      <div class="control"><label for="team-filter-b">Team B</label><select id="team-filter-b"><option value="">All teams</option></select></div>
+      <div class="control"><label for="player-b">Player B</label><select id="player-b"><option value="">Select player</option></select></div>
+      <div class="control"><label for="team-filter-c">Team C</label><select id="team-filter-c"><option value="">All teams</option></select></div>
+      <div class="control"><label for="player-c">Player C</label><select id="player-c"><option value="">Select player</option></select></div>
+      <div class="status" id="load-status"></div>
+      <div class="toolbar-reading" id="toolbar-reading"></div>
+    </div>
+
+    <div class="grid-players" id="player-cards"></div>
+
+    <div class="section-card">
+      <div class="section-head">Radar Comparison</div>
+      <div class="hint">Normalized per selected players only. Higher area is better visually, except DRtg is inverted so lower DRtg scores better on the radar.</div>
+      <div class="radar-grid">
+        <div class="radar-card">
+          <div class="radar-title">Profile Radar</div>
+          <div class="radar-subtitle">Volume · Creation · Efficiency</div>
+          <div id="profile-radar-root"></div>
+        </div>
+        <div class="radar-card">
+          <div class="radar-title">Impact Radar</div>
+          <div class="radar-subtitle">Team impact and on-off indicators</div>
+          <div id="impact-radar-root"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head">Advanced</div>
+      <div class="hint">Higher is highlighted in green except for TOV% and DRtg, where lower is better.</div>
+      <div class="table-wrap" id="advanced-table"></div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head">On-Off</div>
+      <div class="hint">Higher is highlighted in green except for TOV% and DRtg, where lower is better for none of these current on-off metrics.</div>
+      <div class="table-wrap" id="onoff-table"></div>
+    </div>
+  </div>
+
+  <script>
+    const DATA_URL = "data/players_comparison_data.json";
+    const ADV_METRICS = [{"key": "games", "label": "G", "kind": "int"}, {"key": "mpg", "label": "MPG", "kind": "number"}, {"key": "ppg", "label": "PPG", "kind": "number"}, {"key": "rpg", "label": "RPG", "kind": "number"}, {"key": "apg", "label": "APG", "kind": "number"}, {"key": "ts_pct", "label": "TS%", "kind": "pct"}, {"key": "efg_pct", "label": "eFG%", "kind": "pct"}, {"key": "ast_pct", "label": "AST%", "kind": "pct"}, {"key": "tov_pct", "label": "TOV%", "kind": "pct"}, {"key": "usg_pct", "label": "USG%", "kind": "pct"}, {"key": "ortg", "label": "ORtg", "kind": "number"}, {"key": "drtg", "label": "DRtg", "kind": "number"}, {"key": "netrtg", "label": "NetRtg", "kind": "number"}];
+    const ONOFF_METRICS = [{"key": "minutes_on", "label": "Min On", "kind": "number"}, {"key": "minutes_off", "label": "Min Off", "kind": "number"}, {"key": "on_court_pct", "label": "On Court %", "kind": "pct"}, {"key": "net_on_per40", "label": "Net On/40", "kind": "number"}, {"key": "net_off_per40", "label": "Net Off/40", "kind": "number"}, {"key": "on_off_net_diff_per40", "label": "On-Off Net/40", "kind": "number"}];
+    const SUMMARY_METRICS = [{"key": "mpg", "label": "MPG", "kind": "number"}, {"key": "ppg", "label": "PPG", "kind": "number"}, {"key": "usg_pct", "label": "USG%", "kind": "pct"}, {"key": "netrtg", "label": "NetRtg", "kind": "number"}, {"key": "on_off_net_diff_per40", "label": "On-Off Net/40", "kind": "number"}];
+    const PROFILE_RADAR_METRICS = [{"key": "ppg", "label": "PPG", "kind": "number"}, {"key": "rpg", "label": "RPG", "kind": "number"}, {"key": "apg", "label": "APG", "kind": "number"}, {"key": "ts_pct", "label": "TS%", "kind": "pct"}, {"key": "usg_pct", "label": "USG%", "kind": "pct"}, {"key": "ast_pct", "label": "AST%", "kind": "pct"}];
+    const IMPACT_RADAR_METRICS = [{"key": "netrtg", "label": "NetRtg", "kind": "number"}, {"key": "ortg", "label": "ORtg", "kind": "number"}, {"key": "drtg", "label": "DRtg", "kind": "number"}, {"key": "on_off_net_diff_per40", "label": "On-Off Net/40", "kind": "number"}, {"key": "on_court_pct", "label": "On Court %", "kind": "pct"}];
+    const LOWER_IS_BETTER = new Set(["tov_pct", "drtg"]);
+    const RADAR_COLORS = [
+      { stroke: "#38bdf8", fill: "rgba(56, 189, 248, 0.16)" },
+      { stroke: "#86efac", fill: "rgba(134, 239, 172, 0.16)" },
+      { stroke: "#fca5a5", fill: "rgba(252, 165, 165, 0.16)" },
+    ];
+    let PLAYERS = [];
+    let TEAM_KEYS = [];
+
+    function fmtValue(value, kind) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "—";
+      if (kind === "int") return String(Math.round(value));
+      if (kind === "pct") return (value * 100).toFixed(1) + "%";
+      return Number(value).toFixed(1);
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function setTeamOptions(id) {
+      const select = document.getElementById(id);
+      select.innerHTML = '<option value="">All teams</option>' + TEAM_KEYS.map(k => `<option value="${escapeHtml(k)}">${escapeHtml(k)}</option>`).join("");
+    }
+
+    function buildPlayerHubHref(player) {
+      return player?.player_hub_href || "";
+    }
+
+    function availablePlayersForSlot(teamFilterId) {
+      const team = document.getElementById(teamFilterId).value || "";
+      return PLAYERS.filter(p => !team || p.team_key === team);
+    }
+
+    function refreshOptions() {
+      [["team-filter-a","player-a"],["team-filter-b","player-b"],["team-filter-c","player-c"]].forEach(([teamId, playerId]) => {
+        const available = availablePlayersForSlot(teamId);
+        const ids = new Set(available.map(p => p.player_id));
+        const select = document.getElementById(playerId);
+        const current = select.value;
+        select.innerHTML = '<option value="">Select player</option>' + available.map(p => `<option value="${escapeHtml(p.player_id)}">${escapeHtml(p.player_label)}</option>`).join("");
+        if (ids.has(current)) select.value = current;
+      });
+    }
+
+    function currentSelection() {
+      const picked = [["team-filter-a","player-a"],["team-filter-b","player-b"],["team-filter-c","player-c"]]
+        .map(([teamId, playerId]) => {
+          const available = availablePlayersForSlot(teamId);
+          const byId = new Map(available.map(p => [p.player_id, p]));
+          const id = document.getElementById(playerId).value;
+          return id ? byId.get(id) : null;
+        })
+        .filter(Boolean);
+
+      const unique = [];
+      const seen = new Set();
+      picked.forEach(player => {
+        const key = `${player.team_key}__${player.player_id}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          unique.push(player);
+        }
+      });
+      return unique;
+    }
+
+    function renderToolbarReading(players) {
+      const root = document.getElementById("toolbar-reading");
+      if (!root) return;
+      if (!players.length) {
+        root.innerHTML = "";
+        return;
+      }
+      const names = players.map(p => `${escapeHtml(p.player_name)} · ${escapeHtml(p.team_key)}`).join(" vs ");
+      const highUsage = players
+        .filter(p => p.usg_pct !== null && p.usg_pct !== undefined && !Number.isNaN(p.usg_pct) && p.usg_pct >= 0.26)
+        .map(p => `${escapeHtml(p.player_name)} (${(p.usg_pct * 100).toFixed(1)}%)`);
+      const bestImpact = [...players]
+        .filter(p => p.on_off_net_diff_per40 !== null && p.on_off_net_diff_per40 !== undefined && !Number.isNaN(p.on_off_net_diff_per40))
+        .sort((a,b) => b.on_off_net_diff_per40 - a.on_off_net_diff_per40)[0] || null;
+
+      root.innerHTML = `
+        <div class="toolbar-reading-card">
+          <div class="toolbar-reading-label">Current comparison</div>
+          <div class="toolbar-reading-value">${names}</div>
+        </div>
+        <div class="toolbar-reading-card">
+          <div class="toolbar-reading-label">Usage pressure</div>
+          <div class="toolbar-reading-value">${highUsage.length ? highUsage.join(" · ") : "No selected player sits at a clearly high-usage threshold."}</div>
+        </div>
+        <div class="toolbar-reading-card">
+          <div class="toolbar-reading-label">Best on-off signal</div>
+          <div class="toolbar-reading-value">${bestImpact ? `${escapeHtml(bestImpact.player_name)} · ${bestImpact.on_off_net_diff_per40.toFixed(1)} On-Off Net/40` : "No on-off signal available in the current comparison."}</div>
+        </div>
+      `;
+    }
+
+    function renderCards(players) {
+      const root = document.getElementById("player-cards");
+      if (!players.length) {
+        root.innerHTML = '<div class="player-card"><div class="player-empty">Select players to compare.</div></div>';
+        return;
+      }
+
+      const cards = players.map(player => {
+        const avatar = player.photo_relpath
+          ? '<div class="player-avatar"><img src="../' + escapeHtml(player.photo_relpath) + '" alt="' + escapeHtml(player.player_name || '') + '"></div>'
+          : '<div class="player-avatar player-avatar-empty">?</div>';
+        const metrics = SUMMARY_METRICS.map(meta => `
+          <div class="metric-card">
+            <div class="metric-label">${meta.label}</div>
+            <div class="metric-value">${fmtValue(player[meta.key], meta.kind)}</div>
+          </div>
+        `).join("");
+        const hubHref = buildPlayerHubHref(player);
+        const nameHtml = hubHref
+          ? `<a class="player-link" href="${escapeHtml(hubHref)}">${escapeHtml(player.player_name)}</a>`
+          : escapeHtml(player.player_name);
+
+        return `
+          <div class="player-card">
+            <div class="player-header">
+              ${avatar}
+              <div>
+                <div class="player-name">${nameHtml}</div>
+                <div class="player-meta">${escapeHtml(player.team_key)} · ${escapeHtml(player.playing_position || "")}</div>
+              </div>
+            </div>
+            <div class="player-blurb">${escapeHtml(player.comparison_blurb || "")}</div>
+            <div class="summary-grid">${metrics}</div>
+          </div>
+        `;
+      });
+
+      while (cards.length < 3) {
+        cards.push('<div class="player-card"><div class="player-empty">Optional third slot. Leave it empty for a clean two-player read.</div></div>');
+      }
+      root.innerHTML = cards.join("");
+    }
+
+    function renderMetricTable(containerId, metrics, players) {
+      const root = document.getElementById(containerId);
+      if (!players.length) {
+        root.innerHTML = "";
+        return;
+      }
+
+      const head = ['<th class="metric-name">Metric</th>']
+        .concat(players.map(p => `<th>${escapeHtml(p.player_name)}<br><span style="color:var(--muted);font-size:12px;">${escapeHtml(p.team_key)}</span></th>`))
+        .join("");
+
+      const body = metrics.map(meta => {
+        const values = players.map(p => p[meta.key]);
+        const valid = values.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+        let best = null, worst = null;
+        if (valid.length >= 2) {
+          best = LOWER_IS_BETTER.has(meta.key) ? Math.min(...valid) : Math.max(...valid);
+          worst = LOWER_IS_BETTER.has(meta.key) ? Math.max(...valid) : Math.min(...valid);
+        }
+
+        const cells = players.map(p => {
+          const v = p[meta.key];
+          let cls = "";
+          if (v !== null && v !== undefined && !Number.isNaN(v) && valid.length >= 2) {
+            if (v === best && best !== worst) cls = "best";
+            else if (v === worst && best !== worst) cls = "worst";
+          }
+          return `<td class="${cls}">${fmtValue(v, meta.kind)}</td>`;
+        }).join("");
+
+        return `<tr><td class="metric-name">${meta.label}</td>${cells}</tr>`;
+      }).join("");
+
+      root.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function normalizeRadarMetrics(players, metrics) {
+      return metrics.map(meta => {
+        const rawValues = players.map(p => p[meta.key]).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+        const invert = LOWER_IS_BETTER.has(meta.key);
+
+        if (!rawValues.length) {
+          return {
+            key: meta.key,
+            label: meta.label,
+            values: players.map(() => 0.5),
+          };
+        }
+
+        let min = Math.min(...rawValues);
+        let max = Math.max(...rawValues);
+
+        if (min === max) {
+          return {
+            key: meta.key,
+            label: meta.label,
+            values: players.map(p => {
+              const v = p[meta.key];
+              return (v === null || v === undefined || Number.isNaN(v)) ? 0 : 0.5;
+            }),
+          };
+        }
+
+        return {
+          key: meta.key,
+          label: meta.label,
+          values: players.map(p => {
+            const v = p[meta.key];
+            if (v === null || v === undefined || Number.isNaN(v)) return 0;
+            let norm = (v - min) / (max - min);
+            if (invert) norm = 1 - norm;
+            return norm;
+          }),
+        };
+      });
+    }
+
+    function drawRadar(containerId, metrics, players) {
+      const root = document.getElementById(containerId);
+      if (!players.length) {
+        root.innerHTML = '<div class="radar-empty">Select players to compare.</div>';
+        return;
+      }
+
+      if (players.length === 1) {
+        root.innerHTML = '<div class="radar-empty">Select at least 2 players to draw the radar.</div>';
+        return;
+      }
+
+      const normalized = normalizeRadarMetrics(players, metrics);
+      const labels = normalized.map(m => m.label);
+
+      root.innerHTML = `
+        <div class="radar-canvas-wrap">
+          <canvas class="radar-canvas"></canvas>
+        </div>
+        <div class="radar-legend">
+          ${players.map((player, idx) => `
+            <div class="radar-legend-item">
+              <span class="radar-legend-swatch" style="background:${RADAR_COLORS[idx % RADAR_COLORS.length].stroke};"></span>
+              <span>${escapeHtml(player.player_name)} · ${escapeHtml(player.team_key)}</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      const canvas = root.querySelector("canvas");
+      const wrap = root.querySelector(".radar-canvas-wrap");
+      const dpr = window.devicePixelRatio || 1;
+      const width = Math.max(320, Math.floor(wrap.clientWidth));
+      const height = Math.max(320, Math.floor(wrap.clientHeight));
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      ctx.clearRect(0, 0, width, height);
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const labelPad = 56;
+      const radius = Math.max(70, Math.min(width, height) / 2 - labelPad);
+      const levels = 5;
+      const axisCount = labels.length;
+      const angleStep = (Math.PI * 2) / axisCount;
+      const startAngle = -Math.PI / 2;
+
+      function pointFor(value, axisIndex) {
+        const angle = startAngle + axisIndex * angleStep;
+        const r = radius * value;
+        return {
+          x: centerX + Math.cos(angle) * r,
+          y: centerY + Math.sin(angle) * r,
+        };
+      }
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.28)";
+      ctx.lineWidth = 1;
+
+      for (let level = 1; level <= levels; level += 1) {
+        const levelValue = level / levels;
+        ctx.beginPath();
+        for (let i = 0; i < axisCount; i += 1) {
+          const pt = pointFor(levelValue, i);
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < axisCount; i += 1) {
+        const outer = pointFor(1, i);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(outer.x, outer.y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i < axisCount; i += 1) {
+        const angle = startAngle + i * angleStep;
+        const x = centerX + Math.cos(angle) * (radius + 22);
+        const y = centerY + Math.sin(angle) * (radius + 22);
+        const label = labels[i];
+
+        if (Math.cos(angle) < -0.25) ctx.textAlign = "right";
+        else if (Math.cos(angle) > 0.25) ctx.textAlign = "left";
+        else ctx.textAlign = "center";
+
+        if (Math.sin(angle) < -0.25) ctx.textBaseline = "bottom";
+        else if (Math.sin(angle) > 0.25) ctx.textBaseline = "top";
+        else ctx.textBaseline = "middle";
+
+        ctx.fillText(label, x, y);
+      }
+
+      players.forEach((player, playerIdx) => {
+        const color = RADAR_COLORS[playerIdx % RADAR_COLORS.length];
+        const values = normalized.map(m => m.values[playerIdx]);
+
+        ctx.beginPath();
+        values.forEach((value, axisIndex) => {
+          const pt = pointFor(value, axisIndex);
+          if (axisIndex === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = color.fill;
+        ctx.strokeStyle = color.stroke;
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        values.forEach((value, axisIndex) => {
+          const pt = pointFor(value, axisIndex);
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = color.stroke;
+          ctx.fill();
+        });
+      });
+    }
+
+    function renderRadars(players) {
+      drawRadar("profile-radar-root", PROFILE_RADAR_METRICS, players);
+      drawRadar("impact-radar-root", IMPACT_RADAR_METRICS, players);
+    }
+
+    function refresh() {
+      refreshOptions();
+      const players = currentSelection();
+      renderToolbarReading(players);
+      renderCards(players);
+      renderRadars(players);
+      renderMetricTable("advanced-table", ADV_METRICS, players);
+      renderMetricTable("onoff-table", ONOFF_METRICS, players);
+    }
+
+    async function init() {
+      const response = await fetch(DATA_URL);
+      if (!response.ok) throw new Error(`Failed to load ${DATA_URL}`);
+      const data = await response.json();
+      PLAYERS = data.rows || [];
+      TEAM_KEYS = data.team_keys || [];
+      ["team-filter-a","team-filter-b","team-filter-c"].forEach(setTeamOptions);
+      document.getElementById("load-status").textContent = `${PLAYERS.length} players loaded`;
+
+      ["team-filter-a","team-filter-b","team-filter-c","player-a","player-b","player-c"].forEach(id => {
+        document.getElementById(id).addEventListener("change", refresh);
+      });
+
+      window.addEventListener("resize", refresh);
+
+      const defaults = [["team-filter-a","FCP"],["team-filter-b","SLB"]];
+      defaults.forEach(([teamId, teamValue]) => {
+        const teamSelect = document.getElementById(teamId);
+        if (TEAM_KEYS.includes(teamValue)) teamSelect.value = teamValue;
+      });
+      refresh();
+
+      function defaultPick(teamId, playerId) {
+        const team = document.getElementById(teamId).value || "";
+        const candidates = PLAYERS.filter(p => !team || p.team_key === team)
+          .sort((a,b) => (Number(b.mpg || 0) - Number(a.mpg || 0)) || (Number(b.ppg || 0) - Number(a.ppg || 0)));
+        if (candidates.length) document.getElementById(playerId).value = candidates[0].player_id;
+      }
+      if (!document.getElementById("player-a").value) defaultPick("team-filter-a", "player-a");
+      if (!document.getElementById("player-b").value) defaultPick("team-filter-b", "player-b");
+      refresh();
+    }
+
+    init().catch(err => {
+      document.getElementById("load-status").textContent = "Failed to load data";
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
