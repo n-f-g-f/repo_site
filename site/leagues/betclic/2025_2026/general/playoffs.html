@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Playoffs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{--bg:#0f172a;--panel:#111827;--panel-2:#1f2937;--panel-3:#0b1220;--text:#e5e7eb;--muted:#94a3b8;--line:#334155;--accent:#38bdf8;--gold:#e8c06a;--good:#4ade80;--bad:#fca5a5;}
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:1720px;margin:0 auto;padding:18px;}
+    h1{margin:0 0 6px 0;font-size:26px;}
+    .subtitle{color:var(--muted);margin-bottom:16px;font-size:13px;max-width:1000px;line-height:1.5;}
+    .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:16px;}
+    .back-link a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 15px;font-size:13px;font-weight:700;}
+    .back-link a:hover{border-color:var(--accent);}
+    .bracket{display:flex;gap:26px;overflow-x:auto;padding-bottom:16px;align-items:stretch;}
+    .round-col{display:flex;flex-direction:column;gap:18px;min-width:320px;justify-content:space-around;}
+    .round-head{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);text-align:center;padding:8px;background:var(--panel-3);border:1px solid var(--line);border-radius:10px;}
+    .series-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .15s;}
+    .series-card:hover{border-color:var(--accent);}
+    .series-card.open{border-color:var(--accent);}
+    .series-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;}
+    .series-row+.series-row{border-top:1px solid var(--line);}
+    .series-team{display:flex;align-items:center;gap:8px;min-width:0;}
+    .series-team .tname{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .team-key{font-size:11px;color:var(--muted);}
+    .series-wins{font-size:20px;font-weight:800;min-width:28px;text-align:center;}
+    .row-winner{background:rgba(232,192,106,0.08);}
+    .row-winner .series-wins{color:var(--gold);}
+    .row-winner .tname{color:#f4e3bd;}
+    .trophy{color:var(--gold);font-size:13px;}
+    .series-hint{font-size:11px;color:var(--muted);text-align:center;padding:4px 0 10px;}
+    .series-status{font-size:11px;color:var(--muted);text-align:center;padding:0 0 10px;}
+    .detail{border-top:1px dashed var(--line);padding:14px;display:none;}
+    .series-card.open .detail{display:block;}
+    .detail h4{margin:0 0 10px 0;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);}
+    .metric-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
+    .metric-table th,.metric-table td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;}
+    .metric-table th:first-child,.metric-table td:first-child{text-align:left;color:var(--muted);}
+    .metric-table thead th{color:var(--muted);font-weight:700;}
+    .delta{font-size:10px;display:block;margin-top:2px;}
+    .delta.up{color:var(--good);}
+    .delta.down{color:var(--bad);}
+    .delta.flat{color:var(--muted);}
+    .games-list{font-size:12px;color:var(--muted);}
+    .game-line{display:flex;justify-content:space-between;padding:3px 0;}
+    .game-line .g-score{color:var(--text);font-weight:600;}
+    .empty-state{padding:40px;text-align:center;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:14px;}
+    @media (max-width:720px){.wrap{padding:14px;}.round-col{min-width:280px;}}
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2025-2026 </div></div></header>
+  <div class="wrap">
+    <h1>Playoffs</h1>
+    <div class="subtitle">Postseason bracket built from played games. Click a series to see how each team performed in that series versus their regular season — same advanced metrics used across the platform (ratings, pace and four factors). Series results and format are derived from real game wins.</div>
+    <div class="toolbar">
+      <div class="back-link"><a href="team_standings.html">&larr; Standings</a></div>
+    </div>
+    <div id="bracket-root"></div>
+  </div>
+  <script>
+    const PAYLOAD = {"rounds":[{"phase":"PLAYOFF 1/4FINAL","label":"Quarterfinals","series":[{"team_a":"SLB","team_a_name":"SL Benfica","team_a_href":"../scouting/team_hub.html?team=SLB","team_b":"SCB","team_b_name":"Sporting Clube Braga","team_b_href":"../scouting/team_hub.html?team=SCB","wins_a":2,"wins_b":0,"winner":"SLB","series_metrics_a":{"off_rating":110.33223873230098,"def_rating":87.32151166406132,"net_rating":23.010727068239667,"pace":84.91,"efg_pct_off":0.5094209558823529,"orb_pct_off":0.32330827067669177,"tov_pct_off":0.1783024045615948,"ftr_off":0.5335477941176471,"efg_pct_def":0.4578485405184732,"orb_pct_def":0.25861195542046606,"tov_pct_def":0.23023628328262002,"ftr_def":0.25678709940804245,"games":2},"series_metrics_b":{"off_rating":87.32151166406132,"def_rating":110.33223873230098,"net_rating":-23.010727068239667,"pace":84.91,"efg_pct_off":0.4578485405184732,"orb_pct_off":0.25861195542046606,"tov_pct_off":0.23023628328262002,"ftr_off":0.25678709940804245,"efg_pct_def":0.5094209558823529,"orb_pct_def":0.32330827067669177,"tov_pct_def":0.1783024045615948,"ftr_def":0.5335477941176471,"games":2},"regular_a":{"off_rating":121.18877608323565,"def_rating":93.98975648119873,"net_rating":27.199019602036913,"pace":80.76545454545455,"efg_pct_off":0.5783631941954835,"orb_pct_off":0.38458955516651605,"tov_pct_off":0.18558074449246098,"ftr_off":0.4025379933776755,"efg_pct_def":0.45964338333963445,"orb_pct_def":0.27084376296831997,"tov_pct_def":0.20535377180441358,"ftr_def":0.3525352462933741,"games":22},"regular_b":{"off_rating":102.43966259137913,"def_rating":106.01899760112028,"net_rating":-3.579335009741153,"pace":77.90818181818183,"efg_pct_off":0.48605165247787685,"orb_pct_off":0.31433107080185,"tov_pct_off":0.19081066967809532,"ftr_off":0.33503090552922044,"efg_pct_def":0.5022193394020998,"orb_pct_def":0.3125873314722661,"tov_pct_def":0.17781536022390845,"ftr_def":0.32707939681844517,"games":22},"games":[{"game_no":1,"date":"2026-05-09","a_score":90,"b_score":72},{"game_no":2,"date":"2026-05-09","a_score":94,"b_score":79}]},{"team_a":"SCP","team_a_name":"Sporting Clube Portugal","team_a_href":"../scouting/team_hub.html?team=SCP","team_b":"ESG","team_b_name":"Esgueira Aveiro OLI","team_b_href":"../scouting/team_hub.html?team=ESG","wins_a":1,"wins_b":0,"winner":"SCP","series_metrics_a":{"off_rating":145.17847629195526,"def_rating":92.439293598234,"net_rating":52.73918269372126,"pace":73.78,"efg_pct_off":0.6357142857142857,"orb_pct_off":0.525,"tov_pct_off":0.15982951518380395,"ftr_off":0.45714285714285713,"efg_pct_def":0.5089285714285714,"orb_pct_def":0.19444444444444445,"tov_pct_def":0.22075055187637968,"ftr_def":0.30357142857142855,"games":1},"series_metrics_b":{"off_rating":92.439293598234,"def_rating":145.17847629195526,"net_rating":-52.73918269372126,"pace":73.78,"efg_pct_off":0.5089285714285714,"orb_pct_off":0.19444444444444445,"tov_pct_off":0.22075055187637968,"ftr_off":0.30357142857142855,"efg_pct_def":0.6357142857142857,"orb_pct_def":0.525,"tov_pct_def":0.15982951518380395,"ftr_def":0.45714285714285713,"games":1},"regular_a":{"off_rating":113.13642676303219,"def_rating":100.53471104805644,"net_rating":12.601715714975718,"pace":76.82272727272726,"efg_pct_off":0.5167222851601689,"orb_pct_off":0.3777323925358036,"tov_pct_off":0.18522823458855028,"ftr_off":0.35557680423159055,"efg_pct_def":0.493560292391575,"orb_pct_def":0.28509657436203234,"tov_pct_def":0.1880615619393925,"ftr_def":0.25447163877396944,"games":22},"regular_b":{"off_rating":105.86327441816621,"def_rating":112.94004470884289,"net_rating":-7.07677029067672,"pace":79.44717171717171,"efg_pct_off":0.5113808535122032,"orb_pct_off":0.27659715126185475,"tov_pct_off":0.17300374393559645,"ftr_off":0.3682249817591673,"efg_pct_def":0.5369083676615497,"orb_pct_def":0.3593629921867972,"tov_pct_def":0.18308571212806157,"ftr_def":0.29613427324166747,"games":22},"games":[{"game_no":1,"date":"2026-05-10","a_score":109,"b_score":67}]},{"team_a":"FCP","team_a_name":"Futebol Clube do Porto","team_a_href":"../scouting/team_hub.html?team=FCP","team_b":"IBC","team_b_name":"Imortal LUZiGÁS","team_b_href":"../scouting/team_hub.html?team=IBC","wins_a":1,"wins_b":0,"winner":"FCP","series_metrics_a":{"off_rating":115.18324607329842,"def_rating":84.87654320987654,"net_rating":30.306702863421876,"pace":77.08000000000001,"efg_pct_off":0.532258064516129,"orb_pct_off":0.36585365853658536,"tov_pct_off":0.18324607329842932,"ftr_off":0.5645161290322581,"efg_pct_def":0.35074626865671643,"orb_pct_def":0.3333333333333333,"tov_pct_def":0.18004115226337447,"ftr_def":0.43283582089552236,"games":1},"series_metrics_b":{"off_rating":84.87654320987654,"def_rating":115.18324607329842,"net_rating":-30.306702863421876,"pace":77.08000000000001,"efg_pct_off":0.35074626865671643,"orb_pct_off":0.3333333333333333,"tov_pct_off":0.18004115226337447,"ftr_off":0.43283582089552236,"efg_pct_def":0.532258064516129,"orb_pct_def":0.36585365853658536,"tov_pct_def":0.18324607329842932,"ftr_def":0.5645161290322581,"games":1},"regular_a":{"off_rating":111.39570181307613,"def_rating":103.07407162835187,"net_rating":8.32163018472424,"pace":79.90727272727271,"efg_pct_off":0.5478428376312705,"orb_pct_off":0.2938424018996781,"tov_pct_off":0.17489210371928943,"ftr_off":0.3405781763398488,"efg_pct_def":0.49687955341518114,"orb_pct_def":0.3069317536419744,"tov_pct_def":0.19414336161023266,"ftr_def":0.35495786430585696,"games":22},"regular_b":{"off_rating":104.65054307746254,"def_rating":104.90270231712601,"net_rating":-0.25215923966342757,"pace":79.30111111111113,"efg_pct_off":0.5023097531666608,"orb_pct_off":0.33743722194850345,"tov_pct_off":0.20127276343529507,"ftr_off":0.3856067248888513,"efg_pct_def":0.5050720915283903,"orb_pct_def":0.3086457588403666,"tov_pct_def":0.1926778028469614,"ftr_def":0.4304713958876439,"games":22},"games":[{"game_no":1,"date":"2026-05-10","a_score":88,"b_score":66}]},{"team_a":"ADO","team_a_name":"AD Ovarense","team_a_href":"../scouting/team_hub.html?team=ADO","team_b":"UDO","team_b_name":"UD Oliveirense","team_b_href":"../scouting/team_hub.html?team=UDO","wins_a":1,"wins_b":2,"winner":"UDO","series_metrics_a":{"off_rating":105.29899960637401,"def_rating":105.61654313523827,"net_rating":-0.3175435288642727,"pace":73.97333333333334,"efg_pct_off":0.44164380220718247,"orb_pct_off":0.3514422807901069,"tov_pct_off":0.11852710917218212,"ftr_off":0.22966282543747332,"efg_pct_def":0.5097547651500401,"orb_pct_def":0.2797616621146033,"tov_pct_def":0.18064674075141654,"ftr_def":0.33601339218104326,"games":3},"series_metrics_b":{"off_rating":105.61654313523827,"def_rating":105.29899960637401,"net_rating":0.3175435288642727,"pace":73.97333333333334,"efg_pct_off":0.5097547651500401,"orb_pct_off":0.2797616621146033,"tov_pct_off":0.18064674075141654,"ftr_off":0.33601339218104326,"efg_pct_def":0.44164380220718247,"orb_pct_def":0.3514422807901069,"tov_pct_def":0.11852710917218212,"ftr_def":0.22966282543747332,"games":3},"regular_a":{"off_rating":105.54959749005467,"def_rating":101.32723691651371,"net_rating":4.222360573540974,"pace":76.96555555555553,"efg_pct_off":0.5115113376939266,"orb_pct_off":0.31973557661871516,"tov_pct_off":0.18691838783986342,"ftr_off":0.3180852904156567,"efg_pct_def":0.48141893652140744,"orb_pct_def":0.27529474847323976,"tov_pct_def":0.17853782457633696,"ftr_def":0.38869363650060523,"games":22},"regular_b":{"off_rating":108.08092332736665,"def_rating":105.59100605545004,"net_rating":2.489917271916598,"pace":78.85454545454546,"efg_pct_off":0.5230776477209371,"orb_pct_off":0.29646660891759485,"tov_pct_off":0.1759291537172339,"ftr_off":0.3421988232148123,"efg_pct_def":0.5251579204233549,"orb_pct_def":0.2784866618145286,"tov_pct_def":0.19697977285379684,"ftr_def":0.4204900852234063,"games":22},"games":[{"game_no":1,"date":"2026-05-09","a_score":93,"b_score":79},{"game_no":2,"date":"2026-05-13","a_score":72,"b_score":90},{"game_no":3,"date":"2026-05-16","a_score":65,"b_score":69}]}]},{"phase":"PLAYOFF 1/2FINAL","label":"Semifinals","series":[{"team_a":"SLB","team_a_name":"SL Benfica","team_a_href":"../scouting/team_hub.html?team=SLB","team_b":"UDO","team_b_name":"UD Oliveirense","team_b_href":"../scouting/team_hub.html?team=UDO","wins_a":3,"wins_b":0,"winner":"SLB","series_metrics_a":{"off_rating":115.40226616134038,"def_rating":90.7251993271666,"net_rating":24.67706683417377,"pace":78.48,"efg_pct_off":0.5994227994227995,"orb_pct_off":0.337887413029728,"tov_pct_off":0.209774974010932,"ftr_off":0.34978354978354975,"efg_pct_def":0.4738164856585909,"orb_pct_def":0.2716212603943158,"tov_pct_def":0.2575703805439733,"ftr_def":0.3385129490392648,"games":3},"series_metrics_b":{"off_rating":90.7251993271666,"def_rating":115.40226616134038,"net_rating":-24.67706683417377,"pace":78.48,"efg_pct_off":0.4738164856585909,"orb_pct_off":0.2716212603943158,"tov_pct_off":0.2575703805439733,"ftr_off":0.3385129490392648,"efg_pct_def":0.5994227994227995,"orb_pct_def":0.337887413029728,"tov_pct_def":0.209774974010932,"ftr_def":0.34978354978354975,"games":3},"regular_a":{"off_rating":121.18877608323565,"def_rating":93.98975648119873,"net_rating":27.199019602036913,"pace":80.76545454545455,"efg_pct_off":0.5783631941954835,"orb_pct_off":0.38458955516651605,"tov_pct_off":0.18558074449246098,"ftr_off":0.4025379933776755,"efg_pct_def":0.45964338333963445,"orb_pct_def":0.27084376296831997,"tov_pct_def":0.20535377180441358,"ftr_def":0.3525352462933741,"games":22},"regular_b":{"off_rating":108.08092332736665,"def_rating":105.59100605545004,"net_rating":2.489917271916598,"pace":78.85454545454546,"efg_pct_off":0.5230776477209371,"orb_pct_off":0.29646660891759485,"tov_pct_off":0.1759291537172339,"ftr_off":0.3421988232148123,"efg_pct_def":0.5251579204233549,"orb_pct_def":0.2784866618145286,"tov_pct_def":0.19697977285379684,"ftr_def":0.4204900852234063,"games":22},"games":[{"game_no":1,"date":"2026-05-21","a_score":98,"b_score":76},{"game_no":2,"date":"2026-05-23","a_score":86,"b_score":61},{"game_no":3,"date":"2026-05-28","a_score":86,"b_score":78}]},{"team_a":"SCP","team_a_name":"Sporting Clube Portugal","team_a_href":"../scouting/team_hub.html?team=SCP","team_b":"FCP","team_b_name":"Futebol Clube do Porto","team_b_href":"../scouting/team_hub.html?team=FCP","wins_a":1,"wins_b":3,"winner":"FCP","series_metrics_a":{"off_rating":108.8783859552183,"def_rating":112.30765057169506,"net_rating":-3.429264616476747,"pace":74.005,"efg_pct_off":0.5054161691999204,"orb_pct_off":0.30801551389786685,"tov_pct_off":0.15205176931444034,"ftr_off":0.39701003352160535,"efg_pct_def":0.5324263267183298,"orb_pct_def":0.34633675487334026,"tov_pct_def":0.17428731917916096,"ftr_def":0.2451026446380043,"games":4},"series_metrics_b":{"off_rating":112.30765057169506,"def_rating":108.8783859552183,"net_rating":3.429264616476747,"pace":74.005,"efg_pct_off":0.5324263267183298,"orb_pct_off":0.34633675487334026,"tov_pct_off":0.17428731917916096,"ftr_off":0.2451026446380043,"efg_pct_def":0.5054161691999204,"orb_pct_def":0.30801551389786685,"tov_pct_def":0.15205176931444034,"ftr_def":0.39701003352160535,"games":4},"regular_a":{"off_rating":113.13642676303219,"def_rating":100.53471104805644,"net_rating":12.601715714975718,"pace":76.82272727272726,"efg_pct_off":0.5167222851601689,"orb_pct_off":0.3777323925358036,"tov_pct_off":0.18522823458855028,"ftr_off":0.35557680423159055,"efg_pct_def":0.493560292391575,"orb_pct_def":0.28509657436203234,"tov_pct_def":0.1880615619393925,"ftr_def":0.25447163877396944,"games":22},"regular_b":{"off_rating":111.39570181307613,"def_rating":103.07407162835187,"net_rating":8.32163018472424,"pace":79.90727272727271,"efg_pct_off":0.5478428376312705,"orb_pct_off":0.2938424018996781,"tov_pct_off":0.17489210371928943,"ftr_off":0.3405781763398488,"efg_pct_def":0.49687955341518114,"orb_pct_def":0.3069317536419744,"tov_pct_def":0.19414336161023266,"ftr_def":0.35495786430585696,"games":22},"games":[{"game_no":1,"date":"2026-05-23","a_score":70,"b_score":81},{"game_no":2,"date":"2026-05-25","a_score":88,"b_score":73},{"game_no":3,"date":"2026-05-29","a_score":76,"b_score":86},{"game_no":4,"date":"2026-05-31","a_score":86,"b_score":94}]}]},{"phase":"PLAYOFF FINAL","label":"Final","series":[{"team_a":"SLB","team_a_name":"SL Benfica","team_a_href":"../scouting/team_hub.html?team=SLB","team_b":"FCP","team_b_name":"Futebol Clube do Porto","team_b_href":"../scouting/team_hub.html?team=FCP","wins_a":1,"wins_b":3,"winner":"FCP","series_metrics_a":{"off_rating":98.6792775247671,"def_rating":106.4777054620599,"net_rating":-7.7984279372928,"pace":77.46055555555554,"efg_pct_off":0.485158188585608,"orb_pct_off":0.24084154727632584,"tov_pct_off":0.19406992092089026,"ftr_off":0.406724122651542,"efg_pct_def":0.5138309617684745,"orb_pct_def":0.33058292282430213,"tov_pct_def":0.1662200751774668,"ftr_def":0.27014442571926744,"games":4},"series_metrics_b":{"off_rating":106.4777054620599,"def_rating":98.6792775247671,"net_rating":7.7984279372928,"pace":77.46055555555554,"efg_pct_off":0.5138309617684745,"orb_pct_off":0.33058292282430213,"tov_pct_off":0.1662200751774668,"ftr_off":0.27014442571926744,"efg_pct_def":0.485158188585608,"orb_pct_def":0.24084154727632584,"tov_pct_def":0.19406992092089026,"ftr_def":0.406724122651542,"games":4},"regular_a":{"off_rating":121.18877608323565,"def_rating":93.98975648119873,"net_rating":27.199019602036913,"pace":80.76545454545455,"efg_pct_off":0.5783631941954835,"orb_pct_off":0.38458955516651605,"tov_pct_off":0.18558074449246098,"ftr_off":0.4025379933776755,"efg_pct_def":0.45964338333963445,"orb_pct_def":0.27084376296831997,"tov_pct_def":0.20535377180441358,"ftr_def":0.3525352462933741,"games":22},"regular_b":{"off_rating":111.39570181307613,"def_rating":103.07407162835187,"net_rating":8.32163018472424,"pace":79.90727272727271,"efg_pct_off":0.5478428376312705,"orb_pct_off":0.2938424018996781,"tov_pct_off":0.17489210371928943,"ftr_off":0.3405781763398488,"efg_pct_def":0.49687955341518114,"orb_pct_def":0.3069317536419744,"tov_pct_def":0.19414336161023266,"ftr_def":0.35495786430585696,"games":22},"games":[{"game_no":1,"date":"2026-06-07","a_score":89,"b_score":73},{"game_no":2,"date":"2026-06-09","a_score":98,"b_score":102},{"game_no":3,"date":"2026-06-12","a_score":63,"b_score":87},{"game_no":4,"date":"2026-06-14","a_score":71,"b_score":75}]}]}],"metrics":[{"key":"off_rating","label":"OffRtg","kind":"number","order":"desc"},{"key":"def_rating","label":"DefRtg","kind":"number","order":"asc"},{"key":"net_rating","label":"NetRtg","kind":"number","order":"desc"},{"key":"pace","label":"Pace","kind":"number","order":"desc"},{"key":"efg_pct_off","label":"eFG% Off","kind":"pct","order":"desc"},{"key":"orb_pct_off","label":"ORB% Off","kind":"pct","order":"desc"},{"key":"tov_pct_off","label":"TOV% Off","kind":"pct","order":"asc"},{"key":"ftr_off","label":"FTr Off","kind":"pct","order":"desc"},{"key":"efg_pct_def","label":"eFG% Def","kind":"pct","order":"asc"},{"key":"orb_pct_def","label":"ORB% Def","kind":"pct","order":"asc"},{"key":"tov_pct_def","label":"TOV% Def","kind":"pct","order":"desc"},{"key":"ftr_def","label":"FTr Def","kind":"pct","order":"asc"}]};
+    const METRICS = PAYLOAD.metrics || [];
+
+    function escapeHtml(t){return String(t ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
+    function fmtVal(v,kind){if(v===null||v===undefined||Number.isNaN(v))return '—';return kind==='pct'?(v*100).toFixed(1)+'%':Number(v).toFixed(1);}
+    function fmtDelta(cur,base,kind,order){
+      if(cur===null||cur===undefined||base===null||base===undefined||Number.isNaN(cur)||Number.isNaN(base))return '<span class="delta flat">—</span>';
+      let d=cur-base;
+      let shown=kind==='pct'?(d*100>=0?'+':'')+(d*100).toFixed(1)+' pp':(d>=0?'+':'')+d.toFixed(1);
+      let good = order==='asc' ? d<0 : d>0;
+      let cls = Math.abs(d)<1e-9 ? 'flat' : (good?'up':'down');
+      return '<span class="delta '+cls+'">'+escapeHtml(shown)+' vs reg</span>';
+    }
+    function metricTable(seriesM, regM){
+      const head='<thead><tr><th>Metric</th><th>Series</th><th>Regular</th></tr></thead>';
+      const body=METRICS.map(function(m){
+        const cur=seriesM?seriesM[m.key]:null;
+        const base=regM?regM[m.key]:null;
+        return '<tr><td>'+escapeHtml(m.label)+'</td><td>'+fmtVal(cur,m.kind)+fmtDelta(cur,base,m.kind,m.order)+'</td><td>'+fmtVal(base,m.kind)+'</td></tr>';
+      }).join('');
+      return '<table class="metric-table">'+head+'<tbody>'+body+'</tbody></table>';
+    }
+    function teamRow(name,key,href,wins,isWinner){
+      const label = href?('<a class="tname" style="color:inherit;text-decoration:none" href="'+escapeHtml(href)+'">'+escapeHtml(name)+'</a>'):('<span class="tname">'+escapeHtml(name)+'</span>');
+      const trophy = isWinner?' <span class="trophy">&#9733;</span>':'';
+      return '<div class="series-row '+(isWinner?'row-winner':'')+'"><div class="series-team">'+label+trophy+'<span class="team-key">'+escapeHtml(key)+'</span></div><div class="series-wins">'+wins+'</div></div>';
+    }
+    function gamesList(s){
+      return '<div class="games-list">'+(s.games||[]).map(function(g){
+        const sc=(g.a_score===null||g.b_score===null)?'—':(g.a_score+'–'+g.b_score);
+        return '<div class="game-line"><span>Game '+(g.game_no??'')+' '+escapeHtml(g.date)+'</span><span class="g-score">'+sc+'</span></div>';
+      }).join('')+'</div>';
+    }
+    function seriesCard(s,idx,ridx){
+      const aWin=s.winner&&s.winner===s.team_a;
+      const bWin=s.winner&&s.winner===s.team_b;
+      const status = s.winner?'':'<div class="series-status">Series in progress ('+s.wins_a+'–'+s.wins_b+')</div>';
+      const detail =
+        '<div class="detail">'+
+          '<h4>'+escapeHtml(s.team_a_name)+' — series vs regular season</h4>'+
+          metricTable(s.series_metrics_a,s.regular_a)+
+          '<h4>'+escapeHtml(s.team_b_name)+' — series vs regular season</h4>'+
+          metricTable(s.series_metrics_b,s.regular_b)+
+          '<h4>Games</h4>'+gamesList(s)+
+        '</div>';
+      return '<div class="series-card" data-r="'+ridx+'" data-s="'+idx+'">'+
+        teamRow(s.team_a_name,s.team_a,s.team_a_href,s.wins_a,aWin)+
+        teamRow(s.team_b_name,s.team_b,s.team_b_href,s.wins_b,bWin)+
+        '<div class="series-hint">Click for series analysis</div>'+
+        status+detail+
+        '</div>';
+    }
+    function render(){
+      const root=document.getElementById('bracket-root');
+      const rounds=PAYLOAD.rounds||[];
+      if(!rounds.length){root.innerHTML='<div class="empty-state">No playoff games available yet for this season.</div>';return;}
+      const cols=rounds.map(function(r,ridx){
+        const series=(r.series||[]).map(function(s,idx){return seriesCard(s,idx,ridx);}).join('');
+        return '<div class="round-col"><div class="round-head">'+escapeHtml(r.label)+'</div>'+series+'</div>';
+      }).join('');
+      root.innerHTML='<div class="bracket">'+cols+'</div>';
+      root.querySelectorAll('.series-card').forEach(function(card){
+        card.addEventListener('click',function(e){
+          if(e.target.closest('a'))return;
+          card.classList.toggle('open');
+        });
+      });
+    }
+    render();
+  </script>
+</body>
+</html>
