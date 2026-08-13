@@ -393,6 +393,7 @@
           <a class="quick-link" href="game_script_profile.html?team=${encodeURIComponent(team.team_key)}">Game Script</a>
           <a class="quick-link" href="rotation_timeline.html?team=${encodeURIComponent(team.team_key)}">Rotation Timeline</a>
           <a class="quick-link" href="visual-shot/visual_shot_dashboard_${encodeURIComponent(team.team_key)}.html">Visual Shot</a>
+          <a class="quick-link" href=duo_wowy.html?team=${encodeURIComponent(team.team_key)}Duo WOWY</a>
         </div>
       `;
       root.innerHTML = `<div class="identity-copy">${text || "No automatic identity summary available."}</div>${quickLinks}`;
