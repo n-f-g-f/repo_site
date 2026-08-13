@@ -29,6 +29,26 @@
     .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:18px; }
     .section-head { padding:14px 16px; border-bottom:1px solid var(--line); font-size:18px; font-weight:700; }
     .section-body { padding:16px; }
+    .quick-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .quick-link {
+      display:inline-flex;
+      align-items:center;
+      text-decoration:none;
+      background:#0b1220;
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:13px;
+      font-weight:700;
+      line-height:1;
+      transition:border-color .15s, color .15s;
+    }
+    .quick-link:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      text-decoration:none;
+    }
     .hero { display:grid; grid-template-columns: 320px 1fr; gap:18px; }
     .team-hero { display:flex; gap:14px; align-items:center; }
     .team-logo { width:72px; height:72px; border-radius:50%; object-fit:contain; background:white; flex:0 0 auto; }
