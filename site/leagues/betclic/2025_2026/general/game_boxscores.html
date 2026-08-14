@@ -205,7 +205,7 @@ async function loadGameData(gameCode) {
     }
     function buildRotationHref(teamKey, gameCode) {
       if (!teamKey || !gameCode) return '';
-      return `../rotation_timeline.html?team=${encodeURIComponent(teamKey)}&game=${encodeURIComponent(gameCode)}`;
+      return `../scouting/rotation_timeline.html?team=${encodeURIComponent(teamKey)}&game=${encodeURIComponent(gameCode)}`;
     }
     function safeFilenameComponent(value) {
       let text = String(value || '').trim();
