@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Playoffs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{--bg:#0f172a;--panel:#111827;--panel-2:#1f2937;--panel-3:#0b1220;--text:#e5e7eb;--muted:#94a3b8;--line:#334155;--accent:#38bdf8;--gold:#e8c06a;--good:#4ade80;--bad:#fca5a5;}
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:1720px;margin:0 auto;padding:18px;}
+    h1{margin:0 0 6px 0;font-size:26px;}
+    .subtitle{color:var(--muted);margin-bottom:16px;font-size:13px;max-width:1000px;line-height:1.5;}
+    .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:16px;}
+    .back-link a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 15px;font-size:13px;font-weight:700;}
+    .back-link a:hover{border-color:var(--accent);}
+    .bracket{display:flex;gap:26px;overflow-x:auto;padding-bottom:16px;align-items:stretch;}
+    .round-col{display:flex;flex-direction:column;gap:18px;min-width:320px;justify-content:space-around;}
+    .round-head{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);text-align:center;padding:8px;background:var(--panel-3);border:1px solid var(--line);border-radius:10px;}
+    .series-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .15s;}
+    .series-card:hover{border-color:var(--accent);}
+    .series-card.open{border-color:var(--accent);}
+    .series-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;}
+    .series-row+.series-row{border-top:1px solid var(--line);}
+    .series-team{display:flex;align-items:center;gap:8px;min-width:0;}
+    .series-team .tname{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .team-key{font-size:11px;color:var(--muted);}
+    .series-wins{font-size:20px;font-weight:800;min-width:28px;text-align:center;}
+    .row-winner{background:rgba(232,192,106,0.08);}
+    .row-winner .series-wins{color:var(--gold);}
+    .row-winner .tname{color:#f4e3bd;}
+    .trophy{color:var(--gold);font-size:13px;}
+    .series-hint{font-size:11px;color:var(--muted);text-align:center;padding:4px 0 10px;}
+    .series-status{font-size:11px;color:var(--muted);text-align:center;padding:0 0 10px;}
+    .detail{border-top:1px dashed var(--line);padding:14px;display:none;}
+    .series-card.open .detail{display:block;}
+    .detail h4{margin:0 0 10px 0;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);}
+    .metric-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
+    .metric-table th,.metric-table td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;}
+    .metric-table th:first-child,.metric-table td:first-child{text-align:left;color:var(--muted);}
+    .metric-table thead th{color:var(--muted);font-weight:700;}
+    .delta{font-size:10px;display:block;margin-top:2px;}
+    .delta.up{color:var(--good);}
+    .delta.down{color:var(--bad);}
+    .delta.flat{color:var(--muted);}
+    .games-list{font-size:12px;color:var(--muted);}
+    .game-line{display:flex;justify-content:space-between;padding:3px 0;}
+    .game-line .g-score{color:var(--text);font-weight:600;}
+    .empty-state{padding:40px;text-align:center;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:14px;}
+    @media (max-width:720px){.wrap{padding:14px;}.round-col{min-width:280px;}}
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div></header>
+  <div class="wrap">
+    <h1>Playoffs</h1>
+    <div class="subtitle">Postseason bracket built from played games. Click a series to see how each team performed in that series versus their regular season — same advanced metrics used across the platform (ratings, pace and four factors). Series results and format are derived from real game wins.</div>
+    <div class="toolbar">
+      <div class="back-link"><a href="team_standings.html">&larr; Standings</a></div>
+    </div>
+    <div id="bracket-root"></div>
+  </div>
+  <script>
+    const PAYLOAD = {"rounds":[],"metrics":[{"key":"off_rating","label":"OffRtg","kind":"number","order":"desc"},{"key":"def_rating","label":"DefRtg","kind":"number","order":"asc"},{"key":"net_rating","label":"NetRtg","kind":"number","order":"desc"},{"key":"pace","label":"Pace","kind":"number","order":"desc"},{"key":"efg_pct_off","label":"eFG% Off","kind":"pct","order":"desc"},{"key":"orb_pct_off","label":"ORB% Off","kind":"pct","order":"desc"},{"key":"tov_pct_off","label":"TOV% Off","kind":"pct","order":"asc"},{"key":"ftr_off","label":"FTr Off","kind":"pct","order":"desc"},{"key":"efg_pct_def","label":"eFG% Def","kind":"pct","order":"asc"},{"key":"orb_pct_def","label":"ORB% Def","kind":"pct","order":"asc"},{"key":"tov_pct_def","label":"TOV% Def","kind":"pct","order":"desc"},{"key":"ftr_def","label":"FTr Def","kind":"pct","order":"asc"}]};
+    const METRICS = PAYLOAD.metrics || [];
+
+    function escapeHtml(t){return String(t ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');}
+    function fmtVal(v,kind){if(v===null||v===undefined||Number.isNaN(v))return '—';return kind==='pct'?(v*100).toFixed(1)+'%':Number(v).toFixed(1);}
+    function fmtDelta(cur,base,kind,order){
+      if(cur===null||cur===undefined||base===null||base===undefined||Number.isNaN(cur)||Number.isNaN(base))return '<span class="delta flat">—</span>';
+      let d=cur-base;
+      let shown=kind==='pct'?(d*100>=0?'+':'')+(d*100).toFixed(1)+' pp':(d>=0?'+':'')+d.toFixed(1);
+      let good = order==='asc' ? d<0 : d>0;
+      let cls = Math.abs(d)<1e-9 ? 'flat' : (good?'up':'down');
+      return '<span class="delta '+cls+'">'+escapeHtml(shown)+' vs reg</span>';
+    }
+    function metricTable(seriesM, regM){
+      const head='<thead><tr><th>Metric</th><th>Series</th><th>Regular</th></tr></thead>';
+      const body=METRICS.map(function(m){
+        const cur=seriesM?seriesM[m.key]:null;
+        const base=regM?regM[m.key]:null;
+        return '<tr><td>'+escapeHtml(m.label)+'</td><td>'+fmtVal(cur,m.kind)+fmtDelta(cur,base,m.kind,m.order)+'</td><td>'+fmtVal(base,m.kind)+'</td></tr>';
+      }).join('');
+      return '<table class="metric-table">'+head+'<tbody>'+body+'</tbody></table>';
+    }
+    function teamRow(name,key,href,wins,isWinner){
+      const label = href?('<a class="tname" style="color:inherit;text-decoration:none" href="'+escapeHtml(href)+'">'+escapeHtml(name)+'</a>'):('<span class="tname">'+escapeHtml(name)+'</span>');
+      const trophy = isWinner?' <span class="trophy">&#9733;</span>':'';
+      return '<div class="series-row '+(isWinner?'row-winner':'')+'"><div class="series-team">'+label+trophy+'<span class="team-key">'+escapeHtml(key)+'</span></div><div class="series-wins">'+wins+'</div></div>';
+    }
+    function gamesList(s){
+      return '<div class="games-list">'+(s.games||[]).map(function(g){
+        const sc=(g.a_score===null||g.b_score===null)?'—':(g.a_score+'–'+g.b_score);
+        return '<div class="game-line"><span>Game '+(g.game_no??'')+' '+escapeHtml(g.date)+'</span><span class="g-score">'+sc+'</span></div>';
+      }).join('')+'</div>';
+    }
+    function seriesCard(s,idx,ridx){
+      const aWin=s.winner&&s.winner===s.team_a;
+      const bWin=s.winner&&s.winner===s.team_b;
+      const status = s.winner?'':'<div class="series-status">Series in progress ('+s.wins_a+'–'+s.wins_b+')</div>';
+      const detail =
+        '<div class="detail">'+
+          '<h4>'+escapeHtml(s.team_a_name)+' — series vs regular season</h4>'+
+          metricTable(s.series_metrics_a,s.regular_a)+
+          '<h4>'+escapeHtml(s.team_b_name)+' — series vs regular season</h4>'+
+          metricTable(s.series_metrics_b,s.regular_b)+
+          '<h4>Games</h4>'+gamesList(s)+
+        '</div>';
+      return '<div class="series-card" data-r="'+ridx+'" data-s="'+idx+'">'+
+        teamRow(s.team_a_name,s.team_a,s.team_a_href,s.wins_a,aWin)+
+        teamRow(s.team_b_name,s.team_b,s.team_b_href,s.wins_b,bWin)+
+        '<div class="series-hint">Click for series analysis</div>'+
+        status+detail+
+        '</div>';
+    }
+    function render(){
+      const root=document.getElementById('bracket-root');
+      const rounds=PAYLOAD.rounds||[];
+      if(!rounds.length){root.innerHTML='<div class="empty-state">No playoff games available yet for this season.</div>';return;}
+      const cols=rounds.map(function(r,ridx){
+        const series=(r.series||[]).map(function(s,idx){return seriesCard(s,idx,ridx);}).join('');
+        return '<div class="round-col"><div class="round-head">'+escapeHtml(r.label)+'</div>'+series+'</div>';
+      }).join('');
+      root.innerHTML='<div class="bracket">'+cols+'</div>';
+      root.querySelectorAll('.series-card').forEach(function(card){
+        card.addEventListener('click',function(e){
+          if(e.target.closest('a'))return;
+          card.classList.toggle('open');
+        });
+      });
+    }
+    render();
+  </script>
+</body>
+</html>
