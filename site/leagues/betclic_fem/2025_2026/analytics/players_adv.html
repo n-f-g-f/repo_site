@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>League Players Advanced Table</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #38bdf8;
+      --neg: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1800px; margin: 0 auto; padding: 18px; }
+    h1 { margin: 0 0 6px 0; font-size: 24px; }
+    .subtitle { color: var(--muted); margin-bottom: 12px; font-size: 13px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:end; margin-bottom:12px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .control { display:flex; flex-direction:column; gap:4px; min-width:140px; }
+    .control label { font-size:12px; color:var(--muted); }
+    .control select, .control input, .filter-head input { background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:7px 9px; font-size:12px; width:100%; }
+    .summary { color:var(--muted); font-size:12px; margin-left:auto; }
+    .card, .summary-card, .chart-card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+    .summary-card { padding:14px; margin-bottom:12px; }
+    .summary-grid { display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap:10px; }
+    .metric-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .metric-label { color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .metric-value { font-size:20px; font-weight:700; color:var(--text); }
+    .chart-card { padding:14px; margin-bottom:12px; }
+    .chart-title { font-size:18px; font-weight:700; margin-bottom:4px; }
+    .chart-subtitle { color:var(--muted); font-size:12px; margin-bottom:8px; }
+    .chart-wrap { position:relative; width:100%; overflow:auto; }
+    #players-scatter { width:100%; min-width:980px; height:auto; display:block; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:12px; }
+    .scatter-tooltip { position:absolute; pointer-events:none; opacity:0; transform:translate(-50%, calc(-100% - 12px)); background:rgba(15, 23, 42, 0.96); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.35; white-space:nowrap; box-shadow:0 10px 24px rgba(0,0,0,0.25); z-index:20; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; min-width:1550px; }
+    th, td { padding:9px 10px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; font-size:13px; background:var(--panel); }
+    thead th { position:sticky; top:0; background:var(--panel-2); z-index:5; font-weight:700; }
+    thead tr.filters-row th { top:38px; z-index:5; padding:6px; background:#162032; }
+    thead th.sortable { cursor:pointer; user-select:none; }
+    thead th.sortable:hover { color:var(--accent); }
+    thead th.sortable::after { content:" ↕"; color:var(--muted); font-weight:400; }
+    thead th.sorted-asc::after { content:" ↑"; color:var(--accent); }
+    thead th.sorted-desc::after { content:" ↓"; color:var(--accent); }
+    tbody tr:hover td { background: rgba(56, 189, 248, 0.08); }
+    .sticky-left { position:sticky; left:0; z-index:4; text-align:left; min-width:210px; }
+    thead .sticky-left { z-index:6; background:var(--panel-2); }
+    thead tr.filters-row .sticky-left { background:#162032; z-index:6; }
+    .player-col { min-width:210px; }
+    .player-link { color:inherit; text-decoration:none; }
+    .player-link:hover { text-decoration:underline; }
+    .player-cell { display:flex; align-items:center; gap:10px; }
+    .player-avatar { width:28px; height:28px; border-radius:50%; overflow:hidden; background:#0b1220; border:1px solid var(--line); flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; }
+    .player-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .player-avatar-empty { color:var(--muted); font-size:12px; font-weight:700; }
+    .player-name { font-weight:700; color:var(--text); line-height:1.1; }
+    .team-key-only { font-weight:700; color:var(--text); }
+    .neg { color:var(--neg); font-weight:700; }
+    .notes { margin-top:10px; color:var(--muted); font-size:12px; }
+    .axis-label { fill:var(--muted); font-size:14px; font-weight:700; }
+    .axis-tick { fill:var(--muted); font-size:11px; }
+    .grid-line { stroke:rgba(148,163,184,0.22); stroke-width:1; }
+    .avg-line { stroke:rgba(56,189,248,0.65); stroke-width:1.5; stroke-dasharray:6 6; }
+    .plot-frame { stroke:var(--line); fill:none; stroke-width:1.2; }
+    @media (max-width: 1300px) { .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 760px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic_Fem </div><div class="pba-context-brand-sub">2025-2026 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic_Fem </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Betclic_Fem · 2025-2026 </div></div></header>
+  <div class="wrap">
+    <h1>League Players Advanced Table</h1>
+    <div class="subtitle">Default sort: MPG</div>
+
+    <div class="toolbar">
+      <div class="control"><label for="team-filter">Team</label><select id="team-filter"><option value="">All teams</option></select></div>
+      <div class="control"><label for="position-filter">Position</label><select id="position-filter"><option value="">All positions</option></select></div>
+      <div class="control"><label for="min-games-filter">Min Games</label><input id="min-games-filter" type="number" min="0" step="1" placeholder="e.g. 5"></div>
+      <div class="control"><label for="min-mpg-filter">Min MPG</label><input id="min-mpg-filter" type="number" min="0" step="0.1" placeholder="e.g. 10"></div>
+      <div class="control"><label for="player-search">Player contains</label><input id="player-search" type="text" placeholder="Search player"></div>
+      <div class="summary" id="rows-summary"></div>
+    </div>
+
+    <div class="summary-card"><div class="summary-grid" id="summary-grid"></div></div>
+
+    <div class="chart-card">
+      <div class="chart-title">USG% vs eFG%</div>
+      <div class="chart-subtitle">X = Usage rate · Y = Effective field goal percentage</div>
+      <div class="chart-wrap"><svg id="players-scatter" viewBox="0 0 980 620" role="img" aria-label="Usage and eFG scatter plot"></svg><div id="scatter-tooltip" class="scatter-tooltip"></div></div>
+    </div>
+
+    <div class="card"><div class="table-wrap"><table class="players-table" id="players-table"><thead><tr><th class="sticky-left sortable" data-col="player_name" data-type="text">Player</th><th class="sortable" data-col="playing_position" data-type="text">Pos</th><th class="sortable" data-col="team_key" data-type="text">Team</th><th class="sortable" data-col="games" data-type="number">G</th><th class="sortable" data-col="mpg" data-type="number">MPG</th><th class="sortable" data-col="ppg" data-type="number">PPG</th><th class="sortable" data-col="rpg" data-type="number">RPG</th><th class="sortable" data-col="apg" data-type="number">APG</th><th class="sortable" data-col="ts_pct" data-type="number">TS%</th><th class="sortable" data-col="efg_pct" data-type="number">eFG%</th><th class="sortable" data-col="orb_pct" data-type="number">ORB%</th><th class="sortable" data-col="drb_pct" data-type="number">DRB%</th><th class="sortable" data-col="trb_pct" data-type="number">TRB%</th><th class="sortable" data-col="ast_pct" data-type="number">AST%</th><th class="sortable" data-col="tov_pct" data-type="number">TOV%</th><th class="sortable" data-col="stl_pct" data-type="number">STL%</th><th class="sortable" data-col="blk_pct" data-type="number">BLK%</th><th class="sortable" data-col="usg_pct" data-type="number">USG%</th><th class="sortable" data-col="ortg" data-type="number">ORtg</th><th class="sortable" data-col="drtg" data-type="number">DRtg</th><th class="sortable" data-col="netrtg" data-type="number">NetRtg</th></tr><tr class="filters-row"><th class="filter-head"><input class="col-filter" data-col="player_name" data-type="text" placeholder="Filter Player"></th><th class="filter-head"><input class="col-filter" data-col="playing_position" data-type="text" placeholder="Filter Pos"></th><th class="filter-head"><input class="col-filter" data-col="team_key" data-type="text" placeholder="Filter Team"></th><th class="filter-head"><input class="col-filter" data-col="games" data-type="number_min" placeholder="Min G"></th><th class="filter-head"><input class="col-filter" data-col="mpg" data-type="number_min" placeholder="Min MPG"></th><th class="filter-head"><input class="col-filter" data-col="ppg" data-type="number_min" placeholder="Min PPG"></th><th class="filter-head"><input class="col-filter" data-col="rpg" data-type="number_min" placeholder="Min RPG"></th><th class="filter-head"><input class="col-filter" data-col="apg" data-type="number_min" placeholder="Min APG"></th><th class="filter-head"><input class="col-filter" data-col="ts_pct" data-type="number_min" placeholder="Min TS%"></th><th class="filter-head"><input class="col-filter" data-col="efg_pct" data-type="number_min" placeholder="Min eFG%"></th><th class="filter-head"><input class="col-filter" data-col="orb_pct" data-type="number_min" placeholder="Min ORB%"></th><th class="filter-head"><input class="col-filter" data-col="drb_pct" data-type="number_min" placeholder="Min DRB%"></th><th class="filter-head"><input class="col-filter" data-col="trb_pct" data-type="number_min" placeholder="Min TRB%"></th><th class="filter-head"><input class="col-filter" data-col="ast_pct" data-type="number_min" placeholder="Min AST%"></th><th class="filter-head"><input class="col-filter" data-col="tov_pct" data-type="number_min" placeholder="Min TOV%"></th><th class="filter-head"><input class="col-filter" data-col="stl_pct" data-type="number_min" placeholder="Min STL%"></th><th class="filter-head"><input class="col-filter" data-col="blk_pct" data-type="number_min" placeholder="Min BLK%"></th><th class="filter-head"><input class="col-filter" data-col="usg_pct" data-type="number_min" placeholder="Min USG%"></th><th class="filter-head"><input class="col-filter" data-col="ortg" data-type="number_min" placeholder="Min ORtg"></th><th class="filter-head"><input class="col-filter" data-col="drtg" data-type="number_min" placeholder="Min DRtg"></th><th class="filter-head"><input class="col-filter" data-col="netrtg" data-type="number_min" placeholder="Min NetRtg"></th></tr></thead><tbody id="players-tbody"></tbody></table></div></div>
+    <div class="notes">Data loaded from external JSON to keep this page lightweight for deployment.</div>
+  </div>
+
+<script>
+const DATA_URL = "data/players_adv_data.json";
+const DISPLAY_COLUMNS = [["playing_position", "Pos", "text"], ["team_key", "Team", "text"], ["games", "G", "int"], ["mpg", "MPG", "number"], ["ppg", "PPG", "number"], ["rpg", "RPG", "number"], ["apg", "APG", "number"], ["ts_pct", "TS%", "pct"], ["efg_pct", "eFG%", "pct"], ["orb_pct", "ORB%", "pct"], ["drb_pct", "DRB%", "pct"], ["trb_pct", "TRB%", "pct"], ["ast_pct", "AST%", "pct"], ["tov_pct", "TOV%", "pct"], ["stl_pct", "STL%", "pct"], ["blk_pct", "BLK%", "pct"], ["usg_pct", "USG%", "pct"], ["ortg", "ORtg", "number"], ["drtg", "DRtg", "number"], ["netrtg", "NetRtg", "number"]];
+let DATASET = null;
+let CURRENT_ROWS = [];
+
+function fmtNumber(value) { return (value === null || value === undefined || Number.isNaN(value)) ? "" : Number(value).toFixed(1); }
+function fmtPct(value) { return (value === null || value === undefined || Number.isNaN(value)) ? "" : (Number(value) * 100).toFixed(1) + "%"; }
+function fmtInt(value) { return (value === null || value === undefined || Number.isNaN(value)) ? "" : String(Math.round(Number(value))); }
+function escapeHtml(text) { return String(text ?? "").replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+function setSelectOptions(selectId, values, firstLabel) {
+  const sel = document.getElementById(selectId);
+  sel.innerHTML = `<option value="">${firstLabel}</option>` + values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+}
+
+function playerCellHtml(row) {
+  const name = escapeHtml(row.player_name || "");
+  const href = row.player_hub_href || "";
+  const nameHtml = href ? `<a class="player-link" href="${escapeHtml(href)}"><div class="player-name">${name}</div></a>` : `<div class="player-name">${name}</div>`;
+  const avatar = row.photo_relpath
+    ? `<span class="player-avatar"><img src="../${escapeHtml(row.photo_relpath)}" alt="${name}"></span>`
+    : `<span class="player-avatar player-avatar-empty">?</span>`;
+  return `<div class="player-cell">${avatar}${nameHtml}</div>`;
+}
+
+function teamCellHtml(row) { return `<div class="team-key-only">${escapeHtml(row.team_key || "")}</div>`; }
+
+function buildTableRows(rows) {
+  const tbody = document.getElementById("players-tbody");
+  tbody.innerHTML = rows.map(row => {
+    let cells = `<td class="sticky-left player-col" data-col="player_name" data-sort="${escapeHtml(row.player_name || '')}" data-filter="${escapeHtml((row.player_name || '').toLowerCase())}">${playerCellHtml(row)}</td>`;
+    for (const [col, _label, kind] of DISPLAY_COLUMNS) {
+      const val = row[col];
+      if (col === "team_key") {
+        cells += `<td data-col="team_key" data-sort="${escapeHtml(row.team_key || '')}" data-filter="${escapeHtml((row.team_key || '').toLowerCase())}">${teamCellHtml(row)}</td>`;
+      } else if (col === "playing_position") {
+        const txt = row.playing_position || "";
+        cells += `<td data-col="playing_position" data-sort="${escapeHtml(txt)}" data-filter="${escapeHtml(txt.toLowerCase())}">${escapeHtml(txt)}</td>`;
+      } else {
+        let text = "";
+        if (kind === "pct") text = fmtPct(val); else if (kind === "int") text = fmtInt(val); else text = fmtNumber(val);
+        const sortVal = (val === null || val === undefined || Number.isNaN(val)) ? "" : Number(val).toFixed(10);
+        const cls = (col === "netrtg" && val !== null && val < 0) ? "neg" : "";
+        cells += `<td class="${cls}" data-col="${escapeHtml(col)}" data-sort="${escapeHtml(sortVal)}" data-filter="${escapeHtml(String(text).toLowerCase())}">${escapeHtml(text)}</td>`;
+      }
+    }
+    return `<tr>${cells}</tr>`;
+  }).join("");
+}
+
+function setSummary(rows) {
+  const root = document.getElementById("summary-grid");
+  if (!rows.length) { root.innerHTML = '<div class="metric-card"><div class="metric-label">Selection</div><div class="metric-value">No players</div></div>'; return; }
+  const avg = col => { const vals = rows.map(r => Number(r[col])).filter(v => !Number.isNaN(v)); return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null; };
+  const maxVal = col => { const vals = rows.map(r => Number(r[col])).filter(v => !Number.isNaN(v)); return vals.length ? Math.max(...vals) : null; };
+  const cards = [
+    ["Players", String(rows.length)],
+    ["Avg MPG", avg("mpg") == null ? "" : avg("mpg").toFixed(1)],
+    ["Avg PPG", avg("ppg") == null ? "" : avg("ppg").toFixed(1)],
+    ["Avg eFG%", avg("efg_pct") == null ? "" : (avg("efg_pct")*100).toFixed(1)+"%"],
+    ["Avg USG%", avg("usg_pct") == null ? "" : (avg("usg_pct")*100).toFixed(1)+"%"],
+    ["Best ORtg", maxVal("ortg") == null ? "" : maxVal("ortg").toFixed(1)],
+    ["Best NetRtg", maxVal("netrtg") == null ? "" : maxVal("netrtg").toFixed(1)],
+  ];
+  root.innerHTML = cards.map(c => `<div class="metric-card"><div class="metric-label">${c[0]}</div><div class="metric-value">${c[1]}</div></div>`).join("");
+}
+
+function applyFilters() {
+  const teamValue = (document.getElementById("team-filter").value || "").trim().toLowerCase();
+  const positionValue = (document.getElementById("position-filter").value || "").trim().toLowerCase();
+  const minGames = parseFloat(document.getElementById("min-games-filter").value || "");
+  const minMpg = parseFloat(document.getElementById("min-mpg-filter").value || "");
+  const playerValue = (document.getElementById("player-search").value || "").trim().toLowerCase();
+  const colFilters = Array.from(document.querySelectorAll('.col-filter'));
+  CURRENT_ROWS = DATASET.rows.filter(row => {
+    if (teamValue && (row.team_key || '').toLowerCase() !== teamValue) return false;
+    if (positionValue && (row.playing_position || '').toLowerCase() !== positionValue) return false;
+    if (!Number.isNaN(minGames) && ((row.games ?? -1) < minGames)) return false;
+    if (!Number.isNaN(minMpg) && ((row.mpg ?? -1) < minMpg)) return false;
+    if (playerValue && !(row.player_name || '').toLowerCase().includes(playerValue)) return false;
+    for (const input of colFilters) {
+      const col = input.dataset.col; const type = input.dataset.type; const raw = (input.value || '').trim(); if (!raw) continue;
+      const value = row[col];
+      if (type === 'text') { if (!String(value ?? '').toLowerCase().includes(raw.toLowerCase())) return false; }
+      else if (type === 'number_min') { const n = parseFloat(raw); if (!Number.isNaN(n) && (value === null || Number(value) < n)) return false; }
+    }
+    return true;
+  });
+  buildTableRows(CURRENT_ROWS);
+  document.getElementById('rows-summary').textContent = `${CURRENT_ROWS.length} / ${DATASET.rows.length} players`;
+  setSummary(CURRENT_ROWS);
+  sortTable(currentCol, currentDirection, false);
+  if (window.drawPlayersScatter) window.drawPlayersScatter(teamValue, positionValue, Number.isNaN(minGames) ? null : minGames, Number.isNaN(minMpg) ? null : minMpg, playerValue);
+}
+
+let currentCol = 'mpg';
+let currentDirection = 'desc';
+function sortTable(col, direction, rerender=true) {
+  currentCol = col; currentDirection = direction;
+  CURRENT_ROWS.sort((a,b) => {
+    const type = (col === 'player_name' || col === 'playing_position' || col === 'team_key') ? 'text' : 'number';
+    let cmp = 0;
+    if (type === 'number') { const av = a[col] == null ? Number.NEGATIVE_INFINITY : Number(a[col]); const bv = b[col] == null ? Number.NEGATIVE_INFINITY : Number(b[col]); cmp = av - bv; }
+    else { cmp = String(a[col] || '').localeCompare(String(b[col] || ''), undefined, {sensitivity:'base'}); }
+    return direction === 'asc' ? cmp : -cmp;
+  });
+  if (rerender) buildTableRows(CURRENT_ROWS);
+  document.querySelectorAll('thead tr:first-child th.sortable').forEach(th => th.classList.remove('sorted-asc','sorted-desc'));
+  const th = document.querySelector(`thead tr:first-child th[data-col="${col}"]`); if (th) th.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+}
+
+(function() {
+  const svg = document.getElementById('players-scatter');
+  const tooltip = document.getElementById('scatter-tooltip');
+  const width = 980, height = 620;
+  const margin = { top: 40, right: 40, bottom: 70, left: 80 };
+  const plotX = margin.left, plotY = margin.top, plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+  let allPoints = [];
+  function line(x1,y1,x2,y2,cls) { const el = document.createElementNS('http://www.w3.org/2000/svg', 'line'); el.setAttribute('x1',x1); el.setAttribute('y1',y1); el.setAttribute('x2',x2); el.setAttribute('y2',y2); el.setAttribute('class',cls); return el; }
+  function rect(x,y,w,h,cls) { const el = document.createElementNS('http://www.w3.org/2000/svg', 'rect'); el.setAttribute('x',x); el.setAttribute('y',y); el.setAttribute('width',w); el.setAttribute('height',h); el.setAttribute('class',cls); return el; }
+  function text(x,y,value,cls,anchor='middle',rotate=null) { const el = document.createElementNS('http://www.w3.org/2000/svg', 'text'); el.setAttribute('x',x); el.setAttribute('y',y); el.setAttribute('class',cls); el.setAttribute('text-anchor',anchor); if (rotate !== null) el.setAttribute('transform', 'rotate(' + rotate + ' ' + x + ' ' + y + ')'); el.textContent = value; return el; }
+  window.drawPlayersScatter = function(teamValue, positionValue, minGames, minMpg, playerValue) {
+    allPoints = DATASET.rows.filter(p => p.usg_pct !== null && p.efg_pct !== null);
+    if (!allPoints.length) return;
+    let points = allPoints.filter(p => {
+      if (teamValue && (p.team_key || '').toLowerCase() !== teamValue) return false;
+      if (positionValue && (p.playing_position || '').toLowerCase() !== positionValue) return false;
+      if (minGames !== null && ((p.games ?? -1) < minGames)) return false;
+      if (minMpg !== null && ((p.mpg ?? -1) < minMpg)) return false;
+      if (playerValue && !(p.player_name || '').toLowerCase().includes(playerValue)) return false;
+      return true;
+    });
+    svg.innerHTML = ''; if (!points.length) return;
+    const xVals = allPoints.map(p => p.usg_pct), yVals = allPoints.map(p => p.efg_pct);
+    const minX = Math.min(...xVals), maxX = Math.max(...xVals), minY = Math.min(...yVals), maxY = Math.max(...yVals);
+    const padX = Math.max(0.02, (maxX - minX) * 0.08), padY = Math.max(0.02, (maxY - minY) * 0.08);
+    const xMin = minX - padX, xMax = maxX + padX, yMin = minY - padY, yMax = maxY + padY;
+    const sx = v => plotX + ((v - xMin) / (xMax - xMin)) * plotW;
+    const sy = v => plotY + ((yMax - v) / (yMax - yMin)) * plotH;
+    const avgUsg = allPoints.reduce((a,b)=>a + b.usg_pct,0) / allPoints.length;
+    const avgEfg = allPoints.reduce((a,b)=>a + b.efg_pct,0) / allPoints.length;
+    const avgX = sx(avgUsg), avgY = sy(avgEfg), ticks = 5;
+    for (let i=0;i<=ticks;i++) { const xVal = xMin + ((xMax - xMin) * i / ticks); const yVal = yMin + ((yMax - yMin) * i / ticks); const gx = sx(xVal), gy = sy(yVal); svg.appendChild(line(gx, plotY, gx, plotY + plotH, 'grid-line')); svg.appendChild(line(plotX, gy, plotX + plotW, gy, 'grid-line')); svg.appendChild(text(gx, plotY + plotH + 24, (xVal * 100).toFixed(1) + '%', 'axis-tick')); svg.appendChild(text(plotX - 12, gy + 4, (yVal * 100).toFixed(1) + '%', 'axis-tick', 'end')); }
+    svg.appendChild(rect(plotX, plotY, plotW, plotH, 'plot-frame')); svg.appendChild(line(avgX, plotY, avgX, plotY + plotH, 'avg-line')); svg.appendChild(line(plotX, avgY, plotX + plotW, avgY, 'avg-line')); svg.appendChild(text(plotX + plotW / 2, height - 20, 'USG%', 'axis-label')); svg.appendChild(text(22, plotY + plotH / 2, 'eFG%', 'axis-label', 'middle', -90));
+    points.forEach(p => { const x = sx(p.usg_pct), y = sy(p.efg_pct); const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); hit.setAttribute('cx', x); hit.setAttribute('cy', y); hit.setAttribute('r', 16); hit.setAttribute('fill', 'transparent'); hit.style.cursor = 'pointer'; svg.appendChild(hit); if (p.photo_relpath) { const img = document.createElementNS('http://www.w3.org/2000/svg', 'image'); img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '../' + p.photo_relpath); img.setAttribute('x', x - 10); img.setAttribute('y', y - 10); img.setAttribute('width', 20); img.setAttribute('height', 20); img.setAttribute('preserveAspectRatio', 'xMidYMid slice'); img.style.pointerEvents = 'none'; svg.appendChild(img); const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); ring.setAttribute('cx', x); ring.setAttribute('cy', y); ring.setAttribute('r', 10.5); ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', '#e5e7eb'); ring.setAttribute('stroke-width', '1'); ring.style.pointerEvents = 'none'; svg.appendChild(ring); } else { const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', 7); c.setAttribute('fill', '#38bdf8'); c.setAttribute('stroke', '#e5e7eb'); c.setAttribute('stroke-width', '1.5'); svg.appendChild(c); } function showTooltip(evt) { const rect = svg.getBoundingClientRect(); tooltip.style.opacity = '1'; tooltip.style.left = (evt.clientX - rect.left) + 'px'; tooltip.style.top = (evt.clientY - rect.top) + 'px'; tooltip.innerHTML = '<strong>' + escapeHtml(p.player_name) + '</strong><br>' + escapeHtml(p.team_key) + (p.playing_position ? ' · ' + escapeHtml(p.playing_position) : '') + '<br>USG%: ' + (p.usg_pct * 100).toFixed(1) + '%<br>eFG%: ' + (p.efg_pct * 100).toFixed(1) + '%'; } function moveTooltip(evt) { const rect = svg.getBoundingClientRect(); tooltip.style.left = (evt.clientX - rect.left) + 'px'; tooltip.style.top = (evt.clientY - rect.top) + 'px'; } function hideTooltip() { tooltip.style.opacity = '0'; } hit.addEventListener('mouseenter', showTooltip); hit.addEventListener('mousemove', moveTooltip); hit.addEventListener('mouseleave', hideTooltip); });
+  };
+})();
+
+async function init() {
+  const response = await fetch(DATA_URL);
+  if (!response.ok) throw new Error(`Failed to load ${DATA_URL}`);
+  DATASET = await response.json();
+  setSelectOptions('team-filter', DATASET.team_keys, 'All teams');
+  setSelectOptions('position-filter', DATASET.positions, 'All positions');
+  document.querySelectorAll('thead tr:first-child th.sortable').forEach(th => th.addEventListener('click', () => { const col = th.dataset.col; const nextDirection = (currentCol === col && currentDirection === 'desc') ? 'asc' : 'desc'; sortTable(col, nextDirection); buildTableRows(CURRENT_ROWS); }));
+  [document.getElementById('team-filter'), document.getElementById('position-filter'), document.getElementById('min-games-filter'), document.getElementById('min-mpg-filter'), document.getElementById('player-search'), ...Array.from(document.querySelectorAll('.col-filter'))].forEach(el => { el.addEventListener('input', applyFilters); el.addEventListener('change', applyFilters); });
+  applyFilters();
+}
+init().catch(err => { document.getElementById('rows-summary').textContent = 'Failed to load data'; console.error(err); });
+</script>
+</body>
+</html>
