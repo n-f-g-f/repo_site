@@ -99,6 +99,19 @@ body {
 .stat-val {
   font-family:var(--serif); font-size:26px; color:#f0f4fa; line-height:1;
 }
+.hero-tag {
+  display:inline-block; background:var(--accent); color:white;
+  font-size:11px; font-weight:700; border-radius:999px; padding:2px 10px;
+}
+.career-bar {
+  display:flex; gap:20px; flex-wrap:wrap; padding-top:2px;
+  border-top:1px solid var(--border); margin-top:6px;
+}
+.career-bar .stat-item .stat-lbl { font-size:10px; }
+.career-title {
+  font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase;
+  letter-spacing:0.05em; align-self:center;
+}
 .stat-lbl {
   font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);
 }
@@ -156,18 +169,65 @@ body {
 .snap-val { font-size:19px; font-weight:700; color:#f0f4fa; line-height:1.1; }
 .snap-lbl { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
 
-/* ── delta cards ── */
-.delta-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; }
-.delta-card {
-  background:#0b1220;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 14px;
+/* ── insight cards / What Changed ── */
+.insight-card {
+  background:
+    linear-gradient(135deg, rgba(232,192,106,0.10), rgba(91,196,168,0.04)),
+    #0b1220;
+  border:1px solid rgba(232,192,106,0.24);
+  border-radius:16px;
+  padding:16px 18px;
+  min-height:104px;
+  position:relative;
+  overflow:hidden;
 }
-.delta-lbl { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
-.delta-val { font-size:14px; font-weight:600; color:#e2e8f0; line-height:1.4; }
+.insight-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 100% 0%, rgba(232,192,106,0.13), transparent 38%);
+  pointer-events:none;
+}
+.insight-lbl {
+  position:relative;
+  z-index:1;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:8px;
+}
+.insight-val {
+  position:relative;
+  z-index:1;
+  font-size:17px;
+  font-weight:700;
+  color:#f0f4fa;
+  line-height:1.35;
+}
+.insight-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:12px;
+}
+.insight-section {
+  border-color:rgba(232,192,106,0.18);
+  box-shadow:0 14px 42px rgba(0,0,0,0.20);
+}
+.insight-section .card-title { color:var(--accent); }
+.section-subtitle {
+  color:#8fa3bd;
+  font-size:13px;
+  margin:-6px 0 14px 0;
+  max-width:820px;
+  line-height:1.6;
+}
 
 /* ── chart section ── */
+.chart-card {
+  border-color:rgba(91,196,168,0.16);
+}
 .chart-header {
   display:flex; align-items:center; justify-content:space-between;
   flex-wrap:wrap; gap:10px; margin-bottom:14px;
@@ -203,7 +263,7 @@ body {
 }
 .chart-canvas-wrap { position:relative; overflow:auto; }
 #trend-chart {
-  width:100%; min-width:600px; height:auto;
+  width:100%; min-width:680px; height:auto;
   display:block;
 }
 .chart-tooltip {
@@ -270,35 +330,29 @@ body {
       <div class="hero-eyebrow">Career History</div>
       <h1 class="hero-name">I. Baptista</h1>
       <div class="hero-meta">
-        <span>P</span>
-        <span class="dot"></span>
-        <span>SC Coimbrões SANCHO PANZA</span>
-        <span class="dot"></span>
-        <span>1 seasons · 13 games</span>
+          <span>SC Coimbrões SANCHO PANZA - P</span>
+          <span class="dot"></span>
+          <span>1 seasons · 13 games</span>
+          <span class="dot"></span><span class="hero-tag">Rotation</span>
       </div>
       <div class="stat-bar">
         <div class="stat-item"><span class="stat-val">0.2</span><span class="stat-lbl">PPG</span></div>
         <div class="stat-item"><span class="stat-val">2.7</span><span class="stat-lbl">MPG</span></div>
         <div class="stat-item"><span class="stat-val">25.0%</span><span class="stat-lbl">TS%</span></div>
       </div>
+      <div class="career-bar"><span class="career-title">Career avg</span><div class="stat-item"><span class="stat-val">0.2</span><span class="stat-lbl">PPG</span></div><div class="stat-item"><span class="stat-val">0.4</span><span class="stat-lbl">RPG</span></div><div class="stat-item"><span class="stat-val">0.2</span><span class="stat-lbl">APG</span></div><div class="stat-item"><span class="stat-val">2.7</span><span class="stat-lbl">MPG</span></div><div class="stat-item"><span class="stat-val">25.0%</span><span class="stat-lbl">TS%</span></div></div>
       <div class="hero-links">
-        
+        <a class="btn btn-primary" href="../player_hubs/player_hub_SCC_SCC_I._BAPTISTA.html">Current Season Hub →</a>
         <a class="btn btn-ghost" href="../index.html">Site Home</a>
       </div>
     </div>
   </div>
 
-  <!-- ═══ CHART ═══════════════════════════════════════════════════════ -->
-  <div class="card full-col">
-    <div class="chart-header">
-      <div class="card-title" style="margin-bottom:0">Career Trajectory</div>
-      <div class="metric-toggles" id="metricToggles"><button class="mtoggle" data-key="mpg" data-kind="number">MPG</button><button class="mtoggle" data-key="ppg" data-kind="number">PPG</button><button class="mtoggle" data-key="ts_pct" data-kind="pct">TS%</button><button class="mtoggle" data-key="usg_pct" data-kind="pct">USG%</button><button class="mtoggle" data-key="netrtg" data-kind="number">NetRtg</button><button class="mtoggle" data-key="on_off_net_diff_per40" data-kind="number">On-Off/40</button><button class="mtoggle" data-key="league_pct_scoring" data-kind="pct">Scoring Pctl</button><button class="mtoggle" data-key="league_pct_efficiency" data-kind="pct">Efficiency Pctl</button><button class="mtoggle" data-key="league_pct_creation" data-kind="pct">Creation Pctl</button><button class="mtoggle" data-key="league_pct_impact" data-kind="pct">Impact Pctl</button></div>
-    </div>
-    <div class="chart-legend" id="chartLegend"></div>
-    <div class="chart-canvas-wrap">
-      <svg id="trend-chart" viewBox="0 0 1100 300" role="img" aria-label="Career trend chart"></svg>
-      <div class="chart-tooltip" id="chartTooltip"></div>
-    </div>
+  <!-- ═══ WHAT CHANGED ════════════════════════════════════════════════ -->
+  <div class="card full-col insight-section">
+    <div class="card-title">What Changed</div>
+    <p class="section-subtitle">The fastest read of the player's evolution across the tracked seasons.</p>
+    <div class="insight-grid"><div class="insight-card"><div class="insight-lbl">Role Growth</div><div class="insight-val">MPG +0.0 · USG +0.0 pp</div></div><div class="insight-card"><div class="insight-lbl">Scoring Growth</div><div class="insight-val">PPG +0.0 · APG +0.0</div></div><div class="insight-card"><div class="insight-lbl">Efficiency Change</div><div class="insight-val">TS +0.0 pp · NetRtg +0.0</div></div><div class="insight-card"><div class="insight-lbl">Current League Standing</div><div class="insight-val">—</div></div></div>
   </div>
 
   <!-- ═══ TWO-COL: NARRATIVE + SNAPSHOT ════════════════════════════════ -->
@@ -316,17 +370,27 @@ body {
 
   </div>
 
-  <!-- ═══ WHAT CHANGED ════════════════════════════════════════════════ -->
-  <div class="card full-col">
-    <div class="card-title">What Changed</div>
-    <div class="delta-grid"><div class="delta-card"><div class="delta-lbl">Role Growth</div><div class="delta-val">MPG +0.0 · USG +0.0 pp</div></div><div class="delta-card"><div class="delta-lbl">Scoring Growth</div><div class="delta-val">PPG +0.0 · APG +0.0</div></div><div class="delta-card"><div class="delta-lbl">Efficiency Change</div><div class="delta-val">TS +0.0 pp · NetRtg +0.0</div></div><div class="delta-card"><div class="delta-lbl">Current League Standing</div><div class="delta-val">—</div></div></div>
+  <!-- ═══ CHART ═══════════════════════════════════════════════════════ -->
+  <div class="card full-col chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="card-title" style="margin-bottom:0">Career Trajectory</div>
+        <p class="section-subtitle" style="margin:8px 0 0 0">Compare advanced metrics, role indicators and league percentiles by season.</p>
+      </div>
+      <div class="metric-toggles" id="metricToggles"><button class="mtoggle" data-key="mpg" data-kind="number">MPG</button><button class="mtoggle" data-key="ppg" data-kind="number">PPG</button><button class="mtoggle" data-key="ts_pct" data-kind="pct">TS%</button><button class="mtoggle" data-key="usg_pct" data-kind="pct">USG%</button><button class="mtoggle" data-key="netrtg" data-kind="number">NetRtg</button><button class="mtoggle" data-key="on_off_net_diff_per40" data-kind="number">On-Off/40</button><button class="mtoggle" data-key="league_pct_scoring" data-kind="pct">Scoring Pctl</button><button class="mtoggle" data-key="league_pct_efficiency" data-kind="pct">Efficiency Pctl</button><button class="mtoggle" data-key="league_pct_creation" data-kind="pct">Creation Pctl</button><button class="mtoggle" data-key="league_pct_impact" data-kind="pct">Impact Pctl</button></div>
+    </div>
+    <div class="chart-legend" id="chartLegend"></div>
+    <div class="chart-canvas-wrap">
+      <svg id="trend-chart" viewBox="0 0 1100 360" role="img" aria-label="Career trend chart"></svg>
+      <div class="chart-tooltip" id="chartTooltip"></div>
+    </div>
   </div>
 
   <!-- ═══ SEASON TABLE ════════════════════════════════════════════════ -->
   <div class="card full-col">
     <div class="card-title">Season by Season</div>
     <div class="table-wrap">
-      <table class="season-table"><thead><tr><th>Season</th><th>League</th><th>Team</th><th>G</th><th>MPG</th><th>PPG</th><th>APG</th><th>TS%</th><th>USG%</th><th>NetRtg</th><th>On-Off/40</th><th>Scoring Pctl</th><th>Efficiency Pctl</th><th>Creation Pctl</th><th>Δ PPG</th><th>Δ TS</th><th>Δ On-Off</th><th>Profile</th></tr></thead><tbody><tr class="latest-row"><td>2025_2026</td><td>Betclic_Fem</td><td>SCC</td><td>13</td><td>2.7</td><td>0.2</td><td>0.2</td><td>25.0%</td><td>6.6%</td><td>52.4</td><td>-34.0</td><td>12.5%</td><td>9.6%</td><td>72.0%</td><td>—</td><td>—</td><td>—</td><td>Rotation</td></tr></tbody></table>
+      <table class="season-table"><thead><tr><th>Season</th><th>League</th><th>Team</th><th>G</th><th>MPG</th><th>RPG</th><th>PPG</th><th>APG</th><th>TS%</th><th>USG%</th><th>NetRtg</th><th>On-Off/40</th><th>Scoring Pctl</th><th>Efficiency Pctl</th><th>Creation Pctl</th><th>Δ PPG</th><th>Δ TS</th><th>Δ On-Off</th><th>Profile</th></tr></thead><tbody><tr class="latest-row"><td>2025_2026</td><td>Betclic_Fem</td><td>SCC</td><td>13</td><td>2.7</td><td>0.4</td><td>0.2</td><td>0.2</td><td>25.0%</td><td>6.6%</td><td>52.4</td><td>-34.0</td><td>12.5%</td><td>9.6%</td><td>72.0%</td><td>—</td><td>—</td><td>—</td><td>Rotation</td></tr></tbody></table>
     </div>
   </div>
 
@@ -335,6 +399,7 @@ body {
 <script>
 const ROWS   = [{"season_key":"2025_2026","league_key":"Betclic_Fem","team_key":"SCC","mpg":2.664102564102564,"ppg":0.15384615384615385,"ts_pct":0.25,"usg_pct":0.0664253988778723,"netrtg":52.419479180865366,"on_off_net_diff_per40":-33.974117264783914,"league_pct_scoring":0.125,"league_pct_efficiency":0.09615384615384616,"league_pct_creation":0.719626168224299,"league_pct_impact":0.0660377358490566}];
 const MMETA  = [{"key":"mpg","label":"MPG","kind":"number"},{"key":"ppg","label":"PPG","kind":"number"},{"key":"ts_pct","label":"TS%","kind":"pct"},{"key":"usg_pct","label":"USG%","kind":"pct"},{"key":"netrtg","label":"NetRtg","kind":"number"},{"key":"on_off_net_diff_per40","label":"On-Off/40","kind":"number"},{"key":"league_pct_scoring","label":"Scoring Pctl","kind":"pct"},{"key":"league_pct_efficiency","label":"Efficiency Pctl","kind":"pct"},{"key":"league_pct_creation","label":"Creation Pctl","kind":"pct"},{"key":"league_pct_impact","label":"Impact Pctl","kind":"pct"}];
+const TRANSITIONS = [];
 
 // Colour palette per metric slot
 const PALETTE = [
@@ -397,7 +462,7 @@ function drawChart() {
   svgEl.innerHTML = '';
   if (!ROWS.length || !activeKeys.size) return;
 
-  const W = 1100, H = 300;
+  const W = 1100, H = 360;
   const ml = 58, mr = 20, mt = 20, mb = 48;
   const PW = W - ml - mr, PH = H - mt - mb;
 
@@ -448,6 +513,28 @@ function drawChart() {
     g.setAttribute('stroke-width', '1');
     svgEl.appendChild(g);
   }
+
+  
+  // --- Transition markers (team/league changes) ---
+  TRANSITIONS.forEach(tr => {
+    if (tr.season_idx >= 0 && tr.season_idx < N) {
+      const tx = xOf(tr.season_idx);
+      const tline = mk('line');
+      tline.setAttribute('x1', tx); tline.setAttribute('y1', mt);
+      tline.setAttribute('x2', tx); tline.setAttribute('y2', mt + PH);
+      tline.setAttribute('stroke', tr.league_change ? 'rgba(255,170,50,0.5)' : 'rgba(120,200,255,0.35)');
+      tline.setAttribute('stroke-dasharray', '6 4');
+      tline.setAttribute('stroke-width', '2');
+      svgEl.appendChild(tline);
+      const tlbl = mk('text');
+      tlbl.setAttribute('x', tx); tlbl.setAttribute('y', mt - 4);
+      tlbl.setAttribute('text-anchor', 'middle');
+      tlbl.setAttribute('fill', tr.league_change ? 'rgba(255,170,50,0.8)' : 'rgba(120,200,255,0.6)');
+      tlbl.setAttribute('font-size', '9');
+      tlbl.textContent = tr.league_change ? '◆ league' : '◆ team';
+      svgEl.appendChild(tlbl);
+    }
+  });
 
   // one series per active metric
   activeKeys.forEach(key => {
