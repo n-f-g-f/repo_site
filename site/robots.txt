@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /leagues/
+Disallow: /api/
+Disallow: /password_reset.html
+Disallow: /404.html
+
+Sitemap: https://ptbballanalytics.com/sitemap.xml
