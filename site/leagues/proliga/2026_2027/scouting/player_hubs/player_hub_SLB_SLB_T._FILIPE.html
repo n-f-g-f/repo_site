@@ -29,6 +29,8 @@
     .hero-logo { max-height: 68px; max-width: 132px; }
 }
 
+.sample-note { margin:0 0 16px 0; padding:10px 14px; border-radius:12px; border:1px solid #fcd34d; background:#fffbeb; color:#92400e; font-size:13px; }
+.sample-note strong { color:#b45309; }
 body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; color:#1f2937; }
 .container { max-width: 1720px; margin:0 auto; padding:24px; }
 .section-title { margin:28px 0 14px 0; font-size:22px; font-weight:700; color:#111827; }
@@ -51,6 +53,13 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
 .metric-card { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; }
 .metric-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; font-weight:700; }
 .metric-value { font-size:22px; font-weight:700; color:#111827; line-height:1.1; }
+.metric-value-row { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.pct-badge { font-size:11px; font-weight:700; border-radius:999px; padding:2px 7px; white-space:nowrap; cursor:help; }
+.pct-good { background:#dcfce7; color:#166534; }
+.pct-mid { background:#f3f4f6; color:#374151; }
+.pct-bad { background:#fee2e2; color:#991b1b; }
+.pct-style { background:#eef2ff; color:#4338ca; }
+.pct-note { margin:-6px 0 12px 0; font-size:12px; color:#6b7280; }
 .snapshot-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; }
 .snapshot-card { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; }
 .snapshot-label { font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px; font-weight:700; }
@@ -96,10 +105,92 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
 @media (max-width:1100px) { .league-relative-layout, .two-col { grid-template-columns:1fr; } .controls-row { grid-template-columns:1fr 1fr; } }
 @media (max-width:760px) { .player-overview { grid-template-columns:1fr; } .shot-chart-svg { width:100%; } .controls-row { grid-template-columns:1fr; } }
 </style>
-<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}}</style></head>
-<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Proliga </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Proliga </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a></nav><div class="pba-context-pill">Proliga · 2026-2027 </div></div></header>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}.pba-search{position:relative;flex:1 1 240px;max-width:360px;}.pba-search input{width:100%;box-sizing:border-box;border:1px solid rgba(148,163,184,.45);border-radius:999px;padding:9px 14px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;}.pba-search input:focus{border-color:#93c5fd;background:#fff;box-shadow:0 0 0 3px rgba(147,197,253,.35);}.pba-search-results{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:300px;max-height:420px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.18);z-index:60;padding:6px;}.pba-search-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;text-decoration:none;color:#0f172a;}.pba-search-item:hover,.pba-search-item-first{background:#eff6ff;}.pba-search-type{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 7px;}.pba-search-type-player{background:#e0f2fe;color:#0369a1;}.pba-search-type-team{background:#ede9fe;color:#6d28d9;}.pba-search-text{display:flex;flex-direction:column;min-width:0;}.pba-search-name{font-size:14px;font-weight:700;}.pba-search-meta{font-size:12px;color:#64748b;}.pba-search-empty{padding:10px;font-size:13px;color:#64748b;}.pba-context-freshness{max-width:1380px;margin:0 auto;padding:0 20px 10px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#475569;}.pba-context-freshness-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.15);flex:0 0 auto;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}.pba-context-freshness{padding:0 16px 10px;}}</style></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Proliga </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><div class="pba-search" role="search"><input id="pba-search-input" type="search" placeholder="Search player or team…" autocomplete="off" aria-label="Search player or team"><div id="pba-search-results" class="pba-search-results"></div></div><script>
+(function () {
+  var LEAGUES = [{"key": "betclic", "name": "Betclic"}, {"key": "betclic_fem", "name": "Betclic_Fem"}, {"key": "proliga", "name": "Proliga"}];
+  var box = document.getElementById("pba-search-input");
+  var out = document.getElementById("pba-search-results");
+  if (!box || !out) return;
+  var DATA = null, loading = null, timer = null, signedIn = true;
+  function norm(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function load() {
+    if (loading) return loading;
+    loading = fetch("/api/session", { credentials: "include" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (s) {
+        var acc = s && s.authenticated ? s.access : null;
+        signedIn = !!(s && s.authenticated);
+        var keys = LEAGUES.map(function (l) { return l.key; });
+        if (!(acc && acc.can_access_all)) {
+          var allowed = acc && Array.isArray(acc.allowed_leagues) ? acc.allowed_leagues.map(function (x) { return String(x).toLowerCase(); }) : [];
+          keys = keys.filter(function (k) { return allowed.indexOf(k) >= 0; });
+        }
+        return Promise.all(keys.map(function (k) {
+          return fetch("/leagues/" + k + "/search_index.json", { credentials: "include" })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (lists) {
+        DATA = [];
+        lists.forEach(function (l) { if (Array.isArray(l)) DATA = DATA.concat(l); });
+        DATA.forEach(function (e) {
+          e._name = norm(e.name);
+          e._all = norm([e.name, e.team, e.team_key, e.league_name].join(" "));
+        });
+        return DATA;
+      });
+    return loading;
+  }
+  function score(e, q) {
+    var s = 0;
+    if (e._name.indexOf(q) === 0) s -= 100;
+    else if (e._name.indexOf(" " + q) >= 0 || e._name.indexOf("." + q) >= 0) s -= 60;
+    if (e.current) s -= 20;
+    if (e.type === "team") s -= 5;
+    return s;
+  }
+  function render() {
+    var q = norm(box.value);
+    if (q.length < 2) { out.style.display = "none"; out.innerHTML = ""; return; }
+    load().then(function () {
+      var tokens = q.split(/\s+/);
+      var hits = DATA.filter(function (e) { return tokens.every(function (t) { return e._all.indexOf(t) >= 0; }); });
+      hits.sort(function (a, b) {
+        return (score(a, q) - score(b, q)) || String(b.season || "").localeCompare(String(a.season || "")) || String(a.name).localeCompare(String(b.name));
+      });
+      hits = hits.slice(0, 12);
+      if (!hits.length) {
+        out.innerHTML = '<div class="pba-search-empty">' + (signedIn ? "No players or teams found in the leagues of your plan." : "Sign in to search players and teams.") + "</div>";
+      } else {
+        out.innerHTML = hits.map(function (e, i) {
+          var meta = e.type === "team"
+            ? esc(e.league_name) + " · " + esc(e.season_label)
+            : esc(e.team || e.team_key) + " · " + esc(e.league_name) + " " + esc(e.season_label);
+          return '<a class="pba-search-item' + (i === 0 ? " pba-search-item-first" : "") + '" href="' + esc(e.href) + '">' +
+            '<span class="pba-search-type pba-search-type-' + esc(e.type) + '">' + (e.type === "team" ? "Team" : "Player") + "</span>" +
+            '<span class="pba-search-text"><span class="pba-search-name">' + esc(e.name) + "</span>" +
+            '<span class="pba-search-meta">' + meta + (e.current ? ' · <b>current</b>' : "") + "</span></span></a>";
+        }).join("");
+      }
+      out.style.display = "block";
+    });
+  }
+  box.addEventListener("focus", function () { load(); if (box.value) render(); });
+  box.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(render, 120); });
+  box.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { out.style.display = "none"; box.blur(); }
+    if (ev.key === "Enter") { var first = out.querySelector("a.pba-search-item"); if (first) window.location.href = first.getAttribute("href"); }
+  });
+  document.addEventListener("click", function (ev) { if (!ev.target.closest(".pba-search")) out.style.display = "none"; });
+})();
+</script><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Proliga </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a><a class="pba-context-nav-link" href="../../scouting/recruitment.html">Recruitment</a></nav><div class="pba-context-pill">Proliga · 2026-2027 </div></div><div class="pba-context-freshness"><span class="pba-context-freshness-dot"></span>Data through Round 3 · 18 Oct 2026 · 23 games</div></header>
 <div class="container">
 <div class="hero"><div class="hero-body"><div class="hero-copy"><h1>T. Filipe</h1><div class="sub"></div></div><div class="hero-logo-wrap"><div class="hero-logo-badge"><img class="hero-logo" src="../../assets/embedded/91e901e2d15a54bcace15263aceec2826941e413.png" alt="T. Filipe logo"></div></div></div></div>
+<div class="sample-note"><strong>Small sample · 3 games played</strong> — profile, role tags and trends are based on very few games and can change quickly.</div>
 <div class="hub-nav">
   <a href="../team_hub.html?team=SLB">Open team hub</a>
   <a href="../player_hub_hist/player_hub_hist_222661.html">Player History</a>
@@ -110,7 +201,7 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
     <div class="player-photo"><img src="../../assets/embedded/0450c316d5a673560c5d13f502839c7191036b4d.png" alt="T. Filipe"></div>
     <div class="player-headline">
       <h2>T. Filipe</h2>
-      <div class="player-sub">SL Benfica - F - 21 Yold - 2.02 cm</div>
+      <div class="player-sub">SL Benfica - F - 21 y/o - 2.02 m</div>
       <div class="role-badges"><span class="role-badge">Glass Cleaner</span><span class="role-badge">Turnover Risk</span><span class="role-badge">Positive Swing</span></div>
       <div class="player-summary">Primary profile: Glass Cleaner, Turnover Risk, Positive Swing. Most-used zone: Paint Non-RA. Production with TS% at 43.2% and USG% at 24.9%.</div>
     </div>
@@ -190,11 +281,11 @@ body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f5f7fa; 
 </section>
 <div class="two-col">
   <div>
-    <section class="block"><h2>Advanced profile</h2><div class="metric-grid"><div class="metric-card"><div class="metric-label">G</div><div class="metric-value">3</div></div><div class="metric-card"><div class="metric-label">MPG</div><div class="metric-value">30.9</div></div><div class="metric-card"><div class="metric-label">PPG</div><div class="metric-value">11.0</div></div><div class="metric-card"><div class="metric-label">RPG</div><div class="metric-value">7.0</div></div><div class="metric-card"><div class="metric-label">APG</div><div class="metric-value">1.3</div></div><div class="metric-card"><div class="metric-label">TS%</div><div class="metric-value">43.2%</div></div><div class="metric-card"><div class="metric-label">eFG%</div><div class="metric-value">35.9%</div></div><div class="metric-card"><div class="metric-label">AST%</div><div class="metric-value">10.1%</div></div><div class="metric-card"><div class="metric-label">TOV%</div><div class="metric-value">22.4%</div></div><div class="metric-card"><div class="metric-label">USG%</div><div class="metric-value">24.9%</div></div><div class="metric-card"><div class="metric-label">ORtg</div><div class="metric-value">66.6</div></div><div class="metric-card"><div class="metric-label">DRtg</div><div class="metric-value">88.9</div></div><div class="metric-card"><div class="metric-label">NetRtg</div><div class="metric-value">-22.3</div></div></div></section>
-    <section class="block"><h2>Shot profile</h2><div class="metric-grid"><div class="metric-card"><div class="metric-label">Shot Att</div><div class="metric-value">32</div></div><div class="metric-card"><div class="metric-label">FG%</div><div class="metric-value">31.2%</div></div><div class="metric-card"><div class="metric-label">2PA</div><div class="metric-value">19</div></div><div class="metric-card"><div class="metric-label">2PT%</div><div class="metric-value">36.8%</div></div><div class="metric-card"><div class="metric-label">3PA</div><div class="metric-value">13</div></div><div class="metric-card"><div class="metric-label">3PT%</div><div class="metric-value">23.1%</div></div><div class="metric-card"><div class="metric-label">Pts/Shot</div><div class="metric-value">0.7</div></div><div class="metric-card"><div class="metric-label">3PA Rate</div><div class="metric-value">40.6%</div></div></div></section>
+    <section class="block"><h2>Advanced profile</h2><div class="pct-note">Percentile vs 99 league players with ≥10 MPG and ≥3 games. Green = top quarter, red = bottom quarter, purple = role metric (style, not good or bad).</div><div class="metric-grid"><div class="metric-card"><div class="metric-label">G</div><div class="metric-value-row"><span class="metric-value">3</span></div></div><div class="metric-card"><div class="metric-label">MPG</div><div class="metric-value-row"><span class="metric-value">30.9</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P80</span></div></div><div class="metric-card"><div class="metric-label">PPG</div><div class="metric-value-row"><span class="metric-value">11.0</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P68</span></div></div><div class="metric-card"><div class="metric-label">RPG</div><div class="metric-value-row"><span class="metric-value">7.0</span><span class="pct-badge pct-good" title="League percentile (higher = better)">P82</span></div></div><div class="metric-card"><div class="metric-label">APG</div><div class="metric-value-row"><span class="metric-value">1.3</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P41</span></div></div><div class="metric-card"><div class="metric-label">TS%</div><div class="metric-value-row"><span class="metric-value">43.2%</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P30</span></div></div><div class="metric-card"><div class="metric-label">eFG%</div><div class="metric-value-row"><span class="metric-value">35.9%</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P28</span></div></div><div class="metric-card"><div class="metric-label">AST%</div><div class="metric-value-row"><span class="metric-value">10.1%</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P39</span></div></div><div class="metric-card"><div class="metric-label">TOV%</div><div class="metric-value-row"><span class="metric-value">22.4%</span><span class="pct-badge pct-mid" title="League percentile (higher = better) · lower raw value is better, already inverted">P31</span></div></div><div class="metric-card"><div class="metric-label">USG%</div><div class="metric-value-row"><span class="metric-value">24.9%</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P82</span></div></div><div class="metric-card"><div class="metric-label">ORtg</div><div class="metric-value-row"><span class="metric-value">66.6</span><span class="pct-badge pct-bad" title="League percentile (higher = better)">P20</span></div></div><div class="metric-card"><div class="metric-label">DRtg</div><div class="metric-value-row"><span class="metric-value">88.9</span><span class="pct-badge pct-good" title="League percentile (higher = better) · lower raw value is better, already inverted">P84</span></div></div><div class="metric-card"><div class="metric-label">NetRtg</div><div class="metric-value-row"><span class="metric-value">-22.3</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P34</span></div></div></div></section>
+    <section class="block"><h2>Shot profile</h2><div class="pct-note">Percentile vs 99 league players with ≥10 MPG and ≥3 games. Green = top quarter, red = bottom quarter, purple = role metric (style, not good or bad).</div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Shot Att</div><div class="metric-value-row"><span class="metric-value">32</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P75</span></div></div><div class="metric-card"><div class="metric-label">FG%</div><div class="metric-value-row"><span class="metric-value">31.2%</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P28</span></div></div><div class="metric-card"><div class="metric-label">2PA</div><div class="metric-value-row"><span class="metric-value">19</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P74</span></div></div><div class="metric-card"><div class="metric-label">2PT%</div><div class="metric-value-row"><span class="metric-value">36.8%</span><span class="pct-badge pct-bad" title="League percentile (higher = better)">P21</span></div></div><div class="metric-card"><div class="metric-label">3PA</div><div class="metric-value-row"><span class="metric-value">13</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P69</span></div></div><div class="metric-card"><div class="metric-label">3PT%</div><div class="metric-value-row"><span class="metric-value">23.1%</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P38</span></div></div><div class="metric-card"><div class="metric-label">Pts/Shot</div><div class="metric-value-row"><span class="metric-value">0.7</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P28</span></div></div><div class="metric-card"><div class="metric-label">3PA Rate</div><div class="metric-value-row"><span class="metric-value">40.6%</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P48</span></div></div></div></section>
   </div>
   <div>
-    <section class="block"><h2>On/Off impact</h2><div class="metric-grid"><div class="metric-card"><div class="metric-label">Min On</div><div class="metric-value">92.8</div></div><div class="metric-card"><div class="metric-label">Min Off</div><div class="metric-value">27.2</div></div><div class="metric-card"><div class="metric-label">On Court %</div><div class="metric-value">77.3%</div></div><div class="metric-card"><div class="metric-label">Net On/40</div><div class="metric-value">0.9</div></div><div class="metric-card"><div class="metric-label">Net Off/40</div><div class="metric-value">-26.5</div></div><div class="metric-card"><div class="metric-label">On-Off Net/40</div><div class="metric-value">27.3</div></div></div></section>
+    <section class="block"><h2>On/Off impact</h2><div class="pct-note">Percentile vs 99 league players with ≥10 MPG and ≥3 games. Green = top quarter, red = bottom quarter, purple = role metric (style, not good or bad).</div><div class="metric-grid"><div class="metric-card"><div class="metric-label">Min On</div><div class="metric-value-row"><span class="metric-value">92.8</span></div></div><div class="metric-card"><div class="metric-label">Min Off</div><div class="metric-value-row"><span class="metric-value">27.2</span></div></div><div class="metric-card"><div class="metric-label">On Court %</div><div class="metric-value-row"><span class="metric-value">77.3%</span><span class="pct-badge pct-style" title="League rank for a role/tendency metric (not good or bad)">P80</span></div></div><div class="metric-card"><div class="metric-label">Net On/40</div><div class="metric-value-row"><span class="metric-value">0.9</span><span class="pct-badge pct-mid" title="League percentile (higher = better)">P56</span></div></div><div class="metric-card"><div class="metric-label">Net Off/40</div><div class="metric-value-row"><span class="metric-value">-26.5</span></div></div><div class="metric-card"><div class="metric-label">On-Off Net/40</div><div class="metric-value-row"><span class="metric-value">27.3</span><span class="pct-badge pct-good" title="League percentile (higher = better)">P90</span></div></div></div></section>
     <section class="block"><h2>Zone profile</h2><div class="table-wrap"><table class="summary-table"><thead><tr><th>Zone</th><th>Att</th><th>FG%</th><th>Zone Share</th></tr></thead><tbody><tr><td>Paint Non-RA</td><td>13</td><td>46.2%</td><td>40.6%</td></tr><tr><td>Above the Break 3</td><td>9</td><td>22.2%</td><td>28.1%</td></tr><tr><td>Mid-Range</td><td>5</td><td>20.0%</td><td>15.6%</td></tr><tr><td>Corner 3 Left</td><td>2</td><td>50.0%</td><td>6.2%</td></tr><tr><td>Corner 3 Right</td><td>2</td><td>0.0%</td><td>6.2%</td></tr><tr><td>Restricted Area</td><td>1</td><td>0.0%</td><td>3.1%</td></tr></tbody></table></div></section>
   </div>
 </div>
