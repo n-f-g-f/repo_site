@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Player Hubs</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f7fa;color:#111827;}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 20px 40px;}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#111827 100%);color:white;padding:28px;border-radius:20px;margin-bottom:24px;}
+.hero h1{margin:0 0 8px 0;font-size:38px;}
+.hero .sub{color:rgba(255,255,255,.88);font-size:16px;line-height:1.5;max-width:900px;}
+.controls{display:grid;grid-template-columns:260px minmax(280px,1fr) 180px;gap:14px;align-items:end;background:white;border:1px solid #e5e7eb;border-radius:18px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:18px;}
+.control{display:flex;flex-direction:column;gap:6px;}
+.control label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;}
+.control select,.control input{height:44px;border:1px solid #d1d5db;border-radius:12px;background:white;padding:0 12px;font-size:15px;color:#111827;}
+.results-meta{color:#4b5563;font-size:14px;font-weight:700;align-self:center;}
+.player-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.player-card{display:block;text-decoration:none;background:white;border-radius:18px;border:1px solid #e5e7eb;box-shadow:0 1px 3px rgba(0,0,0,0.08);padding:16px;color:#111827;}
+.player-card:hover{background:#f8fafc;border-color:#c7d2fe;}
+.player-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.player-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;}
+.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;box-shadow:0 0 0 2px rgba(17,24,39,0.06);}
+.status-dot.active{background:#16a34a;}
+.status-dot.inactive{background:#dc2626;}
+.player-name{font-size:18px;font-weight:700;margin-bottom:6px;line-height:1.25;}
+.player-sub{color:#4b5563;font-size:14px;display:flex;align-items:center;gap:8px;}
+.empty{background:white;border:1px dashed #cbd5e1;border-radius:18px;padding:20px;color:#6b7280;font-style:italic;}
+@media (max-width:980px){.controls,.player-grid{grid-template-columns:1fr;}}
+</style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}.pba-search{position:relative;flex:1 1 240px;max-width:360px;}.pba-search input{width:100%;box-sizing:border-box;border:1px solid rgba(148,163,184,.45);border-radius:999px;padding:9px 14px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;}.pba-search input:focus{border-color:#93c5fd;background:#fff;box-shadow:0 0 0 3px rgba(147,197,253,.35);}.pba-search-results{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:300px;max-height:420px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.18);z-index:60;padding:6px;}.pba-search-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;text-decoration:none;color:#0f172a;}.pba-search-item:hover,.pba-search-item-first{background:#eff6ff;}.pba-search-type{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 7px;}.pba-search-type-player{background:#e0f2fe;color:#0369a1;}.pba-search-type-team{background:#ede9fe;color:#6d28d9;}.pba-search-text{display:flex;flex-direction:column;min-width:0;}.pba-search-name{font-size:14px;font-weight:700;}.pba-search-meta{font-size:12px;color:#64748b;}.pba-search-empty{padding:10px;font-size:13px;color:#64748b;}.pba-context-freshness{max-width:1380px;margin:0 auto;padding:0 20px 10px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#475569;}.pba-context-freshness-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.15);flex:0 0 auto;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}.pba-context-freshness{padding:0 16px 10px;}}</style><script src="/pba-glossary.js" defer></script></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic_Fem </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><div class="pba-search" role="search"><input id="pba-search-input" type="search" placeholder="Search player or team…" autocomplete="off" aria-label="Search player or team"><div id="pba-search-results" class="pba-search-results"></div></div><script>
+(function () {
+  var LEAGUES = [{"key": "betclic", "name": "Betclic"}, {"key": "betclic_fem", "name": "Betclic_Fem"}, {"key": "proliga", "name": "Proliga"}];
+  var box = document.getElementById("pba-search-input");
+  var out = document.getElementById("pba-search-results");
+  if (!box || !out) return;
+  var DATA = null, loading = null, timer = null, signedIn = true;
+  function norm(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function load() {
+    if (loading) return loading;
+    loading = fetch("/api/session", { credentials: "include" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (s) {
+        var acc = s && s.authenticated ? s.access : null;
+        signedIn = !!(s && s.authenticated);
+        var keys = LEAGUES.map(function (l) { return l.key; });
+        if (!(acc && acc.can_access_all)) {
+          var allowed = acc && Array.isArray(acc.allowed_leagues) ? acc.allowed_leagues.map(function (x) { return String(x).toLowerCase(); }) : [];
+          keys = keys.filter(function (k) { return allowed.indexOf(k) >= 0; });
+        }
+        return Promise.all(keys.map(function (k) {
+          return fetch("/leagues/" + k + "/search_index.json", { credentials: "include" })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (lists) {
+        DATA = [];
+        lists.forEach(function (l) { if (Array.isArray(l)) DATA = DATA.concat(l); });
+        DATA.forEach(function (e) {
+          e._name = norm(e.name);
+          e._all = norm([e.name, e.team, e.team_key, e.league_name].join(" "));
+        });
+        return DATA;
+      });
+    return loading;
+  }
+  function score(e, q) {
+    var s = 0;
+    if (e._name.indexOf(q) === 0) s -= 100;
+    else if (e._name.indexOf(" " + q) >= 0 || e._name.indexOf("." + q) >= 0) s -= 60;
+    if (e.current) s -= 20;
+    if (e.type === "team") s -= 5;
+    return s;
+  }
+  function render() {
+    var q = norm(box.value);
+    if (q.length < 2) { out.style.display = "none"; out.innerHTML = ""; return; }
+    load().then(function () {
+      var tokens = q.split(/\s+/);
+      var hits = DATA.filter(function (e) { return tokens.every(function (t) { return e._all.indexOf(t) >= 0; }); });
+      hits.sort(function (a, b) {
+        return (score(a, q) - score(b, q)) || String(b.season || "").localeCompare(String(a.season || "")) || String(a.name).localeCompare(String(b.name));
+      });
+      hits = hits.slice(0, 12);
+      if (!hits.length) {
+        out.innerHTML = '<div class="pba-search-empty">' + (signedIn ? "No players or teams found in the leagues of your plan." : "Sign in to search players and teams.") + "</div>";
+      } else {
+        out.innerHTML = hits.map(function (e, i) {
+          var meta = e.type === "team"
+            ? esc(e.league_name) + " · " + esc(e.season_label)
+            : esc(e.team || e.team_key) + " · " + esc(e.league_name) + " " + esc(e.season_label);
+          return '<a class="pba-search-item' + (i === 0 ? " pba-search-item-first" : "") + '" hr' + 'ef="' + esc(e.href) + '">' +
+            '<span class="pba-search-type pba-search-type-' + esc(e.type) + '">' + (e.type === "team" ? "Team" : "Player") + "</span>" +
+            '<span class="pba-search-text"><span class="pba-search-name">' + esc(e.name) + "</span>" +
+            '<span class="pba-search-meta">' + meta + (e.current ? ' · <b>current</b>' : "") + "</span></span></a>";
+        }).join("");
+      }
+      out.style.display = "block";
+    });
+  }
+  box.addEventListener("focus", function () { load(); if (box.value) render(); });
+  box.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(render, 120); });
+  box.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { out.style.display = "none"; box.blur(); }
+    if (ev.key === "Enter") { var first = out.querySelector("a.pba-search-item"); if (first) window.location.href = first.getAttribute("href"); }
+  });
+  document.addEventListener("click", function (ev) { if (!ev.target.closest(".pba-search")) out.style.display = "none"; });
+})();
+</script><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../../index.html">Betclic_Fem </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../index.html">Overview</a><a class="pba-context-nav-link" href="../../analytics/index.html">Analytics</a><a class="pba-context-nav-link" href="../../general/index.html">General</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../../scouting/index.html">Scouting</a><a class="pba-context-nav-link" href="../../scouting/recruitment.html">Recruitment</a><a class="pba-context-nav-link" href="../../glossary.html">Glossary</a></nav><div class="pba-context-pill">Betclic_Fem · 2026-2027 </div></div><div class="pba-context-freshness"><span class="pba-context-freshness-dot"></span>Data through Round 3 · 18 Oct 2026 · 17 games</div></header>
+<div class="wrap">
+  <div class="hero">
+    <h1>Player Hubs</h1>
+    <div class="sub">Open any player page directly. Filter by team or search by player name instead of scrolling through the whole league.</div>
+  </div>
+
+  <div class="controls">
+    <div class="control">
+      <label for="teamFilter">Team</label>
+      <select id="teamFilter">
+        <option value="">All teams</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="nameFilter">Search player</label>
+      <input id="nameFilter" type="text" placeholder="Type Silva, Lindsey, Maria...">
+    </div>
+    <div class="results-meta" id="resultsMeta">Showing 0 players</div>
+  </div>
+
+  <div id="playerResults" class="player-grid"></div>
+</div>
+
+<script>
+const TEAM_OPTIONS = ["ADS", "ANR", "BCB", "CAB", "EFF", "ESA", "ESG", "QUI", "SCC", "SCP", "SLB", "UNI"];
+const PLAYER_ROWS = [{"href": "player_hub_ADS_ADS_A._BLAUENFELDT.html", "player_name": "A. Blauenfeldt", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_A._CAVADAS.html", "player_name": "A. Cavadas", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_B._RESSURREICAO.html", "player_name": "B. Ressurreicao", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_C._ANACLETO.html", "player_name": "C. Anacleto", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_E._TURRUBIATES.html", "player_name": "E. Turrubiates", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_H._IDOWU.html", "player_name": "H. Idowu", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_J._ARIEIRO.html", "player_name": "J. Arieiro", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_J._SOUZA.html", "player_name": "J. Souza", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_L._VARELA.html", "player_name": "L. Varela", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_M._COSTA.html", "player_name": "M. Costa", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_M._LEITAO.html", "player_name": "M. Leitao", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_M._SMITH.html", "player_name": "M. Smith", "team_key": "ADS", "active": 1}, {"href": "player_hub_ADS_ADS_V._TOSTE.html", "player_name": "V. Toste", "team_key": "ADS", "active": 1}, {"href": "player_hub_ANR_ANR_C._BOIKO.html", "player_name": "C. Boiko", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_C._MOREIRA.html", "player_name": "C. Moreira", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_C._NEVES.html", "player_name": "C. Neves", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_J._BARBARA.html", "player_name": "J. Barbara", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_L._SANTOS.html", "player_name": "L. Santos", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_M._MONTEIRO.html", "player_name": "M. Monteiro", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_M._PORTO.html", "player_name": "M. Porto", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_R._PECHINCHA.html", "player_name": "R. Pechincha", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_T._LANGAN.html", "player_name": "T. Langan", "team_key": "ANR", "active": 1}, {"href": "player_hub_ANR_ANR_V._MATOLA.html", "player_name": "V. Matola", "team_key": "ANR", "active": 1}, {"href": "player_hub_BCB_BCB_A._BOMPASTOR.html", "player_name": "A. Bompastor", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_A._DURAES.html", "player_name": "A. Duraes", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_C._FERREIRA.html", "player_name": "C. Ferreira", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_C._REIS.html", "player_name": "C. Reis", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_F._TEIXEIRA.html", "player_name": "F. Teixeira", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_I._BARROS.html", "player_name": "I. Barros", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_I._LAMEIRA.html", "player_name": "I. Lameira", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_M._RODRIGUES.html", "player_name": "M. Rodrigues", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_M._TEIXEIRA.html", "player_name": "M. Teixeira", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_R._TAYLOR.html", "player_name": "R. Taylor", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_S._HARRIS.html", "player_name": "S. Harris", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_T._PAIXAO.html", "player_name": "T. Paixao", "team_key": "BCB", "active": 1}, {"href": "player_hub_BCB_BCB_V._SENGO.html", "player_name": "V. Sengo", "team_key": "BCB", "active": 1}, {"href": "player_hub_CAB_CAB_A._VIVEIROS.html", "player_name": "A. Viveiros", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_C._BERNARDECO.html", "player_name": "C. Bernardeco", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_C._GONCALVES.html", "player_name": "C. Goncalves", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_C._OLIVEIRA.html", "player_name": "C. Oliveira", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_C._PIRES.html", "player_name": "C. Pires", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_H._JOAQUIM.html", "player_name": "H. Joaquim", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_I._FERREIRA.html", "player_name": "I. Ferreira", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_I._SERRAO.html", "player_name": "I. Serrao", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_M._CARDOSO.html", "player_name": "M. Cardoso", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_M._GONCALVES.html", "player_name": "M. Goncalves", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_M._IVANOVIC.html", "player_name": "M. Ivanovic", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_P._OKO_OBOH.html", "player_name": "P. Oko Oboh", "team_key": "CAB", "active": 1}, {"href": "player_hub_CAB_CAB_R._HENRIQUES.html", "player_name": "R. Henriques", "team_key": "CAB", "active": 1}, {"href": "player_hub_EFF_EFF_A._HAGER.html", "player_name": "A. Hager", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_A._MARTINS.html", "player_name": "A. Martins", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_B._SHOUP_HILL.html", "player_name": "B. Shoup Hill", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_B._SOUSA.html", "player_name": "B. Sousa", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_C._FREITAS.html", "player_name": "C. Freitas", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_C._MARQUES.html", "player_name": "C. Marques", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_I._FREITAS.html", "player_name": "I. Freitas", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_K._GARDNER.html", "player_name": "K. Gardner", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_L._SILVA.html", "player_name": "L. Silva", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_M._AVILA.html", "player_name": "M. Avila", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_M._LOPES.html", "player_name": "M. Lopes", "team_key": "EFF", "active": 1}, {"href": "player_hub_EFF_EFF_N._SA.html", "player_name": "N. Sa", "team_key": "EFF", "active": 1}, {"href": "player_hub_ESA_ESA_B._MONTEIRO.html", "player_name": "B. Monteiro", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_C._GONCALVES.html", "player_name": "C. Goncalves", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_D._RAMOS.html", "player_name": "D. Ramos", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_F._FREITAS.html", "player_name": "F. Freitas", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_I._CAPELA.html", "player_name": "I. Capela", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_I._PEREZ.html", "player_name": "I. Perez", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_L._CASINHA.html", "player_name": "L. Casinha", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_L._VIEIRA.html", "player_name": "L. Vieira", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_M._ROSEIRO.html", "player_name": "M. Roseiro", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_S._CABRITA.html", "player_name": "S. Cabrita", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_S._NEVERSON.html", "player_name": "S. Neverson", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_S._OLSEN.html", "player_name": "S. Olsen", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESA_ESA_T._CABRITA.html", "player_name": "T. Cabrita", "team_key": "ESA", "active": 1}, {"href": "player_hub_ESG_ESG_A._MARQUES.html", "player_name": "A. Marques", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_B._SOUZA.html", "player_name": "B. Souza", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_D._BROWN.html", "player_name": "D. Brown", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_D._FERREIRA.html", "player_name": "D. Ferreira", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_F._MORAIS.html", "player_name": "F. Morais", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_G._RAIMUNDO.html", "player_name": "G. Raimundo", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_H._DJALO.html", "player_name": "H. Djalo", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_J._SILVA.html", "player_name": "J. Silva", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_L._RODRIGUES.html", "player_name": "L. Rodrigues", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_M._ANDORINHO.html", "player_name": "M. Andorinho", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_M._BENTO.html", "player_name": "M. Bento", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_M._BROWN.html", "player_name": "M. Brown", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_M._SOARES.html", "player_name": "M. Soares", "team_key": "ESG", "active": 1}, {"href": "player_hub_ESG_ESG_S._MARQUES.html", "player_name": "S. Marques", "team_key": "ESG", "active": 1}, {"href": "player_hub_QUI_QUI_A._DIZEKO.html", "player_name": "A. Dizeko", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_C._COSTA.html", "player_name": "C. Costa", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_C._FALE.html", "player_name": "C. Fale", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_F._MARTINHO.html", "player_name": "F. Martinho", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_F._THIAO.html", "player_name": "F. Thiao", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_I._SOUSA.html", "player_name": "I. Sousa", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_J._VAZ.html", "player_name": "J. Vaz", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_K._COULIBALY.html", "player_name": "K. Coulibaly", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_L._ANUNCIACAO.html", "player_name": "L. Anunciacao", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_L._PAISANA.html", "player_name": "L. Paisana", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_M._SCHLEUSNER.html", "player_name": "M. Schleusner", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_R._CHAINHO.html", "player_name": "R. Chainho", "team_key": "QUI", "active": 1}, {"href": "player_hub_QUI_QUI_S._ALBUQUERQUE.html", "player_name": "S. Albuquerque", "team_key": "QUI", "active": 1}, {"href": "player_hub_SCC_SCC_A._CRISTOVAO.html", "player_name": "A. Cristovao", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_A._STATON.html", "player_name": "A. Staton", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_D._BAPTISTA.html", "player_name": "D. Baptista", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_E._SILVA.html", "player_name": "E. Silva", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_I._AZEVEDO.html", "player_name": "I. Azevedo", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_I._SANTOS.html", "player_name": "I. Santos", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_M._PEREIRA.html", "player_name": "M. Pereira", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_M._SILVA.html", "player_name": "M. Silva", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_R._CRISTOVAO.html", "player_name": "R. Cristovao", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_R._REIS.html", "player_name": "R. Reis", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_T._REYNOLDS.html", "player_name": "T. Reynolds", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCC_SCC_Z._CARTER.html", "player_name": "Z. Carter", "team_key": "SCC", "active": 1}, {"href": "player_hub_SCP_SCP_A._URBANO.html", "player_name": "A. Urbano", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_A._VICENTE.html", "player_name": "A. Vicente", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_C._GONCALVES.html", "player_name": "C. Goncalves", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_D._ROUSE.html", "player_name": "D. Rouse", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_E._DUARTE.html", "player_name": "E. Duarte", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_E._FERREIRA.html", "player_name": "E. Ferreira", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_G._ELLIOTT.html", "player_name": "G. Elliott", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_I._COELHO.html", "player_name": "I. Coelho", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_I._RAMOS.html", "player_name": "I. Ramos", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_L._SERRANHO.html", "player_name": "L. Serranho", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_M._COSTA.html", "player_name": "M. Costa", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_M._LOPES.html", "player_name": "M. Lopes", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_S._COSTA.html", "player_name": "S. Costa", "team_key": "SCP", "active": 1}, {"href": "player_hub_SCP_SCP_S._RIJAL.html", "player_name": "S. Rijal", "team_key": "SCP", "active": 1}, {"href": "player_hub_SLB_SLB_A._BARRETO.html", "player_name": "A. Barreto", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_I._DIAS.html", "player_name": "I. Dias", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_I._FAUSTINO.html", "player_name": "I. Faustino", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_J._FILIPE.html", "player_name": "J. Filipe", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_J._SOEIRO.html", "player_name": "J. Soeiro", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_M._FERNANDES.html", "player_name": "M. Fernandes", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_M._MARTINS.html", "player_name": "M. Martins", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_M._NETO.html", "player_name": "M. Neto", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_M._PALMA.html", "player_name": "M. Palma", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_M._UMABANO.html", "player_name": "M. Umabano", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_M._VALENZUELA.html", "player_name": "M. Valenzuela", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_S._BIASU.html", "player_name": "S. Biasu", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_S._NUNN.html", "player_name": "S. Nunn", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_S._POLLEROS.html", "player_name": "S. Polleros", "team_key": "SLB", "active": 1}, {"href": "player_hub_SLB_SLB_S._TE_BIASU.html", "player_name": "S. Te Biasu", "team_key": "SLB", "active": 1}, {"href": "player_hub_UNI_UNI_A._AFONSO.html", "player_name": "A. Afonso", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_A._SILVA.html", "player_name": "A. Silva", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_A._STOJANOVSKA.html", "player_name": "A. Stojanovska", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_C._ALMEIDA.html", "player_name": "C. Almeida", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_C._THOMPSON.html", "player_name": "C. Thompson", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_I._BOTELHO.html", "player_name": "I. Botelho", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_I._PIMENTEL.html", "player_name": "I. Pimentel", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_J._MEDEIROS.html", "player_name": "J. Medeiros", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_M._CARVALHO.html", "player_name": "M. Carvalho", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_M._PEREIRA.html", "player_name": "M. Pereira", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_R._RODRIGUES.html", "player_name": "R. Rodrigues", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_S._COUTINHO.html", "player_name": "S. Coutinho", "team_key": "UNI", "active": 1}, {"href": "player_hub_UNI_UNI_S._FERREIRA.html", "player_name": "S. Ferreira", "team_key": "UNI", "active": 1}];
+
+const teamFilter = document.getElementById("teamFilter");
+const nameFilter = document.getElementById("nameFilter");
+const resultsMeta = document.getElementById("resultsMeta");
+const playerResults = document.getElementById("playerResults");
+
+function escapeHtml(text) {
+  return String(text ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+}
+
+function normalizeText(text) {
+  return String(text || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function renderPlayers() {
+  const teamValue = teamFilter.value || "";
+  const query = normalizeText(nameFilter.value || "");
+
+  const filtered = PLAYER_ROWS.filter(row => {
+    if (teamValue && row.team_key !== teamValue) return false;
+    if (query) {
+      const hay = normalizeText((row.player_name || "") + " " + (row.href || ""));
+      if (!hay.includes(query)) return false;
+    }
+    return true;
+  });
+
+  resultsMeta.textContent = `Showing ${filtered.length} of ${PLAYER_ROWS.length} players`;
+
+  if (!filtered.length) {
+    playerResults.innerHTML = '<div class="empty">No players match the current filters.</div>';
+    return;
+  }
+
+  playerResults.innerHTML = filtered.map(row => `
+    <a class="player-card" href="${escapeHtml(row.href)}">
+      <div class="player-card-head">
+        <div class="player-label">Player Hub</div>
+        <span class="status-dot ${Number(row.active) === 0 ? "inactive" : "active"}" title="${Number(row.active) === 0 ? "Inactive roster status" : "Active roster status"}"></span>
+      </div>
+      <div class="player-name">${escapeHtml(row.player_name)}</div>
+      <div class="player-sub">${escapeHtml(row.team_key)}</div>
+    </a>
+  `).join("");
+}
+
+TEAM_OPTIONS.forEach(team => {
+  const opt = document.createElement("option");
+  opt.value = team;
+  opt.textContent = team;
+  teamFilter.appendChild(opt);
+});
+
+teamFilter.addEventListener("change", renderPlayers);
+nameFilter.addEventListener("input", renderPlayers);
+renderPlayers();
+</script>
+</body>
+</html>

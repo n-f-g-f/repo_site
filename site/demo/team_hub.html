@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Team Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #38bdf8;
+      --good: #4ade80;
+      --bad: #fca5a5;
+    }
+    * { box-sizing: border-box; }
+    #role-map-chart { width:100%; height:auto; display:block; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1760px; margin: 0 auto; padding: 24px; }
+    h1 { margin: 0 0 8px 0; font-size: 28px; }
+    .subtitle { color: var(--muted); margin-bottom: 18px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:end; margin-bottom:18px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:12px; }
+    .control { display:flex; flex-direction:column; gap:4px; min-width:220px; }
+    .control label { font-size:12px; color:var(--muted); }
+    .control select { background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; }
+    .status { color:var(--muted); font-size:12px; margin-left:auto; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:18px; }
+    .section-head { padding:14px 16px; border-bottom:1px solid var(--line); font-size:18px; font-weight:700; }
+    .section-body { padding:16px; }
+    .quick-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .quick-link {
+      display:inline-flex;
+      align-items:center;
+      text-decoration:none;
+      background:#0b1220;
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:13px;
+      font-weight:700;
+      line-height:1;
+      transition:border-color .15s, color .15s;
+    }
+    .quick-link:hover {
+      border-color:var(--accent);
+      color:var(--accent);
+      text-decoration:none;
+    }
+    .hero { display:grid; grid-template-columns: 320px 1fr; gap:18px; }
+    .team-hero { display:flex; gap:14px; align-items:center; }
+    .team-logo { width:72px; height:72px; border-radius:50%; object-fit:contain; background:white; flex:0 0 auto; }
+    .team-name { font-size:28px; font-weight:700; }
+    .team-meta { color:var(--muted); font-size:13px; margin-top:6px; }
+    .summary-grid { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:12px; }
+    .metric-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .metric-label { color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .metric-value { font-size:22px; font-weight:700; }
+    .metric-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+    .two-col { display:grid; grid-template-columns: 1.2fr 1fr; gap:18px; }
+    .three-col { display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:18px; }
+    .chart-wrap { position:relative; width:100%; overflow:auto; }
+    #trend-chart { width:100%; min-width:980px; height:auto; display:block; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:12px; }
+    .tooltip { position:absolute; pointer-events:none; opacity:0; transform:translate(-50%, calc(-100% - 12px)); background:rgba(15,23,42,0.96); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.35; white-space:nowrap; z-index:20; }
+    .legend { display:flex; flex-wrap:wrap; gap:14px; margin-top:10px; color:var(--muted); font-size:12px; }
+    .legend-item { display:flex; align-items:center; gap:6px; }
+    .legend-swatch { width:14px; height:3px; border-radius:999px; }
+    table { width:100%; border-collapse:collapse; min-width:760px; }
+    th, td { padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px; text-align:right; white-space:nowrap; }
+    th:first-child, td:first-child { text-align:left; }
+    thead th { background:var(--panel-2); position:sticky; top:0; z-index:1; }
+    .table-wrap { overflow:auto; }
+    .good { color:var(--good); font-weight:700; }
+    .bad { color:var(--bad); font-weight:700; }
+    .link-groups { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:16px; }
+    .link-group { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .link-group h4 { margin:0 0 10px 0; font-size:14px; }
+    .link-list { display:flex; flex-direction:column; gap:8px; }
+    .link-list a { color:var(--accent); text-decoration:none; }
+    .link-list a:hover { text-decoration:underline; }
+    .empty { color:var(--muted); font-size:13px; }
+    .opp-cell { display:flex; flex-direction:column; gap:2px; }
+    .opp-main { font-weight:700; }
+    .opp-sub { font-size:12px; color:var(--muted); }
+    .axis-label { fill:var(--muted); font-size:14px; font-weight:700; }
+    .axis-tick { fill:var(--muted); font-size:11px; }
+    .grid-line { stroke:rgba(148,163,184,0.22); stroke-width:1; }
+    .plot-frame { stroke:var(--line); fill:none; stroke-width:1.2; }
+    .series-a { stroke:#38bdf8; fill:none; stroke-width:2.5; }
+    .series-b { stroke:#f59e0b; fill:none; stroke-width:2.5; }
+    .point-a { fill:#38bdf8; }
+    .point-b { fill:#f59e0b; }
+    .trend-player-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; }
+    .trend-player-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .trend-player-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:10px; }
+    .trend-player-name a { color:#38bdf8; text-decoration:none; font-weight:700; }
+    .trend-player-meta { color:var(--muted); font-size:12px; margin-top:4px; }
+    .trend-label-chip { display:inline-flex; align-items:center; padding:5px 9px; border-radius:999px; font-size:11px; font-weight:700; }
+    .trend-label-chip.good { background:rgba(74,222,128,0.18); color:#bbf7d0; }
+    .trend-label-chip.bad { background:rgba(248,113,113,0.18); color:#fecaca; }
+    .trend-label-chip.neutral { background:rgba(148,163,184,0.18); color:#e5e7eb; }
+    .trend-label-chip.warn { background:rgba(245,158,11,0.18); color:#fde68a; }
+    .trend-score-bar { margin-top:10px; height:8px; background:#1f2937; border-radius:999px; overflow:hidden; }
+    .trend-score-fill { display:block; height:100%; border-radius:999px; }
+    .trend-score-fill.good { background:#4ade80; }
+    .trend-score-fill.bad { background:#f87171; }
+    .trend-score-fill.neutral { background:#94a3b8; }
+    .trend-score-fill.warn { background:#f59e0b; }
+    .trend-mini-table { width:100%; border-collapse:collapse; margin-top:10px; min-width:0; }
+    .trend-mini-table th, .trend-mini-table td { padding:6px 0; border-bottom:1px solid rgba(148,163,184,0.12); font-size:12px; text-align:right; white-space:nowrap; }
+    .trend-mini-table th:first-child, .trend-mini-table td:first-child { text-align:left; }
+    .role-cluster-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+    .role-cluster-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .role-cluster-title { font-size:14px; font-weight:700; margin:0 0 8px 0; }
+    .role-cluster-copy { color:var(--muted); font-size:12px; line-height:1.45; margin-bottom:10px; }
+    .role-cluster-list { display:flex; flex-direction:column; gap:8px; }
+    .role-cluster-item { display:flex; justify-content:space-between; gap:12px; align-items:center; font-size:13px; }
+    .role-cluster-item a { color:var(--accent); text-decoration:none; font-weight:700; }
+    .role-cluster-item a:hover { text-decoration:underline; }
+    .role-chip { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+    .role-chip.guard { background:rgba(56,189,248,0.18); color:#bae6fd; }
+    .role-chip.wing { background:rgba(168,85,247,0.18); color:#e9d5ff; }
+    .role-chip.big { background:rgba(74,222,128,0.18); color:#bbf7d0; }
+    .role-chip.hybrid { background:rgba(245,158,11,0.18); color:#fde68a; }
+    @media (max-width: 1300px) {
+      .hero, .two-col, .three-col { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .link-groups { grid-template-columns:1fr; }
+    }
+    @media (max-width: 720px) {
+      .summary-grid { grid-template-columns:1fr; }
+    }
+  </style>
+<style>.pba-demo-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;background:linear-gradient(90deg,#1d4ed8,#0f172a);color:#fff;padding:10px 16px;font:600 13px/1.4 Arial,Helvetica,sans-serif;}.pba-demo-tag{background:#fbbf24;color:#0f172a;border-radius:999px;padding:3px 9px;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.05em;}.pba-demo-cta{background:#fff;color:#0f172a !important;border-radius:999px;padding:6px 12px;font-weight:800;text-decoration:none !important;}</style><script src="/pba-glossary.js" defer></script><style>.pba-site-chrome-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-site-chrome-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-site-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-site-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;flex:0 0 auto;text-decoration:none;}.pba-site-brand-copy{min-width:0;}.pba-site-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-site-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-site-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-site-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-site-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-site-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-site-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-site-status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}.pba-site-footer{margin-top:36px;background:#0f172a;color:#e2e8f0;border-top:1px solid rgba(255,255,255,.06);}.pba-site-footer-inner{max-width:1380px;margin:0 auto;padding:28px 20px 36px;}.pba-site-footer-grid{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(4,minmax(0,1fr));gap:22px;}.pba-site-footer-brand h2{margin:0 0 8px 0;font-size:22px;color:#fff;}.pba-site-footer-brand p{margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;max-width:520px;}.pba-site-footer-col-title{font-size:12px;font-weight:800;color:#93c5fd;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}.pba-site-footer-links{display:flex;flex-direction:column;gap:8px;}.pba-site-footer-links a{color:#e2e8f0;text-decoration:none;font-size:14px;line-height:1.45;}.pba-site-footer-links a:hover{color:#93c5fd;}.pba-site-footer-meta{margin-top:22px;padding-top:16px;border-top:1px solid rgba(148,163,184,.18);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#94a3b8;font-size:12px;line-height:1.5;}@media (max-width:1080px){.pba-site-footer-grid{grid-template-columns:1fr 1fr;}}@media (max-width:760px){.pba-site-chrome-inner{padding:12px 16px;}.pba-site-footer-inner{padding:24px 16px 30px;}.pba-site-footer-grid{grid-template-columns:1fr;}.pba-site-nav{gap:8px;}}</style></head>
+<body><header class="pba-site-chrome-header" data-pba-site-chrome="1"><div class="pba-site-chrome-inner"><div class="pba-site-brand"><a class="pba-site-brand-mark" href="../index.html" aria-label="Portuguese Basketball Analytics (PBA) home">PBA</a><div class="pba-site-brand-copy"><div class="pba-site-brand-name">Portuguese Basketball Analytics (PBA)</div><div class="pba-site-brand-sub">Professional basketball intelligence · Portugal</div></div></div><nav class="pba-site-nav" aria-label="Primary navigation"><a class="pba-site-nav-link" href="/leagues/" data-pba-platform-link="1" style="display:none">Platform</a><a class="pba-site-nav-link pba-site-nav-link-active" href="../index.html">Home</a><a class="pba-site-nav-link" href="../about.html">About</a><a class="pba-site-nav-link" href="../access.html">Access</a><a class="pba-site-nav-link" href="../contact.html">Contact</a><a class="pba-site-nav-link" href="../login.html" data-pba-login-link="1">Login</a><button type="button" class="pba-site-nav-link" data-pba-logout-btn="1" style="display:none">Logout</button></nav></div><script>(function(){var sUrl='/api/session';var loUrl='/api/logout';var home='/';function show(el,on){if(el){el.style.display=on?'':'none';}}function setState(auth){var login=document.querySelector('[data-pba-login-link="1"]');var plat=document.querySelector('[data-pba-platform-link="1"]');var lo=document.querySelector('[data-pba-logout-btn="1"]');show(login,!auth);show(plat,auth);show(lo,auth);}fetch(sUrl,{credentials:'include'}).then(function(r){return r.ok?r.json():null;}).then(function(d){setState(!!(d&&d.authenticated));}).catch(function(){setState(false);});var btn=document.querySelector('[data-pba-logout-btn="1"]');if(btn){btn.addEventListener('click',function(){fetch(loUrl,{method:'POST',credentials:'include'}).then(function(r){if(!r.ok){return fetch(loUrl,{method:'GET',credentials:'include'});}return r;}).then(function(){window.location.href=home;}).catch(function(){window.location.href=home;});});}})();</script></header><div class="pba-demo-banner"><span class="pba-demo-tag">Demo</span><span>You are viewing a free sample of PBA · Futebol Clube do Porto · Betclic 2025-2026. Other teams, players and tools are available with a plan.</span><a class="pba-demo-cta" href="/access.html?from=demo">See plans →</a></div>
+  <div class="wrap">
+    <h1>Team Hub</h1>
+    <div class="subtitle">Single-team scouting and analytics hub, now preferring the canonical context layer.</div>
+
+    <div class="toolbar">
+      <div class="control">
+        <label for="team-filter">Team</label>
+        <select id="team-filter"></select>
+      </div>
+      <div class="control">
+        <label for="trend-metric">Trend</label>
+        <select id="trend-metric">
+          <option value="ratings">OffRtg / DefRtg</option>
+          <option value="score">Points For / Against</option>
+          <option value="shooting">eFG% / Opp eFG%</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="lineups-min-minutes">Lineups Min Minutes</label>
+        <input id="lineups-min-minutes" type="number" min="0" step="1" value="20">
+      </div>
+      <div class="status" id="team-status"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-body">
+        <div class="hero">
+          <div id="team-hero"></div>
+          <div class="summary-grid" id="summary-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Team Identity</div>
+        <div class="section-body" id="identity-panel"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">What to Watch</div>
+        <div class="section-body" id="watch-panel"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Priority Notes</div>
+      <div class="section-body" id="priority-notes-panel"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Trending Players</div>
+      <div class="section-body" id="trending-players-panel"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Player Role Map</div>
+        <div class="section-body">
+          <div class="chart-wrap">
+            <svg id="role-map-chart" viewBox="0 0 980 560" role="img" aria-label="Player role map"></svg>
+            <div id="role-map-tooltip" class="tooltip"></div>
+          </div>
+          <div class="legend" id="role-map-legend"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-head">Role Clusters</div>
+        <div class="section-body" id="role-clusters-panel"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Recent Form</div>
+      <div class="section-body">
+        <div class="summary-grid" id="recent-grid"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Team Trend</div>
+      <div class="section-body">
+        <div class="chart-wrap">
+          <svg id="trend-chart" viewBox="0 0 1180 560" role="img" aria-label="Team trend chart"></svg>
+          <div id="trend-tooltip" class="tooltip"></div>
+        </div>
+        <div class="legend" id="trend-legend"></div>
+      </div>
+    </div>
+
+    <div class="three-col">
+      <div class="card">
+        <div class="section-head">Recent Games</div>
+        <div class="section-body table-wrap" id="games-table"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Best Lineups</div>
+        <div class="section-body table-wrap" id="best-lineups-table"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Worst Lineups</div>
+        <div class="section-body table-wrap" id="worst-lineups-table"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-head">Featured Players</div>
+        <div class="section-body table-wrap" id="players-table"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Reports & Packs</div>
+        <div class="section-body" id="links-panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TEAMS = [{"team_key": "FCP", "team_name": "Futebol Clube do Porto", "logo_src": "assets/logos/FCP.png", "links": []}];
+    const GAMES = [{"game_code": "2746740", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SC Vasco da Gama", "opp_team_key": "VGA", "score": 95.0, "opp_score": 73.0, "point_diff": 22.0, "result": "W", "home_away": "Home", "off_rating": 114.62355212355213, "def_rating": 89.59253804614629, "net_rating": 25.031014077405842, "pace": 82.18, "efg_pct_off": 0.4675324675324675, "orb_pct_off": 0.4583333333333333, "tov_pct_off": 0.19305019305019305, "ftr_off": 0.35064935064935066, "efg_pct_def": 0.46923076923076923, "orb_pct_def": 0.125, "tov_pct_def": 0.1718213058419244, "ftr_def": 0.26153846153846155, "round": 1, "game_date": "2025-10-04"}, {"game_code": "2746747", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "UD Oliveirense", "opp_team_key": "UDO", "score": 93.0, "opp_score": 104.0, "point_diff": -11.0, "result": "L", "home_away": "Away", "off_rating": 120.09297520661157, "def_rating": 132.58541560428355, "net_rating": -12.492440397671984, "pace": 77.94, "efg_pct_off": 0.6779661016949152, "orb_pct_off": 0.3, "tov_pct_off": 0.2066115702479339, "ftr_off": 0.4406779661016949, "efg_pct_def": 0.7, "orb_pct_def": 0.2608695652173913, "tov_pct_def": 0.16573176950535443, "ftr_def": 0.43333333333333335, "round": 2, "game_date": "2025-10-11"}, {"game_code": "2746753", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Portugal", "opp_team_key": "SCP", "score": 76.0, "opp_score": 82.0, "point_diff": -6.0, "result": "L", "home_away": "Home", "off_rating": 97.98865394533264, "def_rating": 102.91164658634537, "net_rating": -4.922992641012726, "pace": 78.62, "efg_pct_off": 0.48360655737704916, "orb_pct_off": 0.39473684210526316, "tov_pct_off": 0.27075812274368233, "ftr_off": 0.39344262295081966, "efg_pct_def": 0.47183098591549294, "orb_pct_def": 0.3488372093023256, "tov_pct_def": 0.1757028112449799, "ftr_def": 0.30985915492957744, "round": 3, "game_date": "2025-10-18"}, {"game_code": "2746760", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Imortal LUZiGÁS", "opp_team_key": "IBC", "score": 93.0, "opp_score": 92.0, "point_diff": 1.0, "result": "W", "home_away": "Away", "off_rating": 119.16965658636596, "def_rating": 120.48192771084338, "net_rating": -1.3122711244774194, "pace": 77.2, "efg_pct_off": 0.7232142857142857, "orb_pct_off": 0.13636363636363635, "tov_pct_off": 0.23065094823167603, "ftr_off": 0.2857142857142857, "efg_pct_def": 0.6230769230769231, "orb_pct_def": 0.2647058823529412, "tov_pct_def": 0.1571503404924044, "ftr_def": 0.2923076923076923, "round": 4, "game_date": "2025-11-01"}, {"game_code": "2746766", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Vitória Sport Clube", "opp_team_key": "VSC", "score": 105.0, "opp_score": 85.0, "point_diff": 20.0, "result": "W", "home_away": "Home", "off_rating": 123.35526315789474, "def_rating": 105.35448686167574, "net_rating": 18.000776296219, "pace": 82.9, "efg_pct_off": 0.6338028169014085, "orb_pct_off": 0.1891891891891892, "tov_pct_off": 0.12922932330827067, "ftr_off": 0.323943661971831, "efg_pct_def": 0.5378787878787878, "orb_pct_def": 0.40540540540540543, "tov_pct_def": 0.24789291026276647, "ftr_def": 0.3333333333333333, "round": 5, "game_date": "2025-11-08"}, {"game_code": "2746773", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 80.0, "opp_score": 109.0, "point_diff": -29.0, "result": "L", "home_away": "Away", "off_rating": 94.56264775413712, "def_rating": 125.8660508083141, "net_rating": -31.303403054176982, "pace": 85.6, "efg_pct_off": 0.4649122807017544, "orb_pct_off": 0.30952380952380953, "tov_pct_off": 0.2718676122931442, "ftr_off": 0.7017543859649122, "efg_pct_def": 0.52, "orb_pct_def": 0.46808510638297873, "tov_pct_def": 0.18475750577367206, "ftr_def": 0.5333333333333333, "round": 6, "game_date": "2025-11-15"}, {"game_code": "2746779", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Queluz O NOSSO PREGO", "opp_team_key": "CAQ", "score": 103.0, "opp_score": 97.0, "point_diff": 6.0, "result": "W", "home_away": "Away", "off_rating": 122.61904761904762, "def_rating": 115.64139246542679, "net_rating": 6.97765515362083, "pace": 83.94, "efg_pct_off": 0.6384615384615384, "orb_pct_off": 0.22580645161290322, "tov_pct_off": 0.17857142857142858, "ftr_off": 0.38461538461538464, "efg_pct_def": 0.5428571428571428, "orb_pct_def": 0.3076923076923077, "tov_pct_def": 0.16690510252742013, "ftr_def": 0.38571428571428573, "round": 7, "game_date": "2025-12-06"}, {"game_code": "2746784", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "AD Ovarense", "opp_team_key": "ADO", "score": 74.0, "opp_score": 62.0, "point_diff": 12.0, "result": "W", "home_away": "Home", "off_rating": 92.73182957393485, "def_rating": 78.88040712468194, "net_rating": 13.851422449252908, "pace": 79.19999999999999, "efg_pct_off": 0.44029850746268656, "orb_pct_off": 0.3, "tov_pct_off": 0.2005012531328321, "ftr_off": 0.29850746268656714, "efg_pct_def": 0.41044776119402987, "orb_pct_def": 0.2391304347826087, "tov_pct_def": 0.20356234096692113, "ftr_def": 0.22388059701492538, "round": 8, "game_date": "2026-01-06"}, {"game_code": "2746789", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Galitos BARREIRO", "opp_team_key": "GFC", "score": 103.0, "opp_score": 78.0, "point_diff": 25.0, "result": "W", "home_away": "Away", "off_rating": 127.28620860108748, "def_rating": 96.96668324216809, "net_rating": 30.319525358919392, "pace": 80.68, "efg_pct_off": 0.6428571428571429, "orb_pct_off": 0.42424242424242425, "tov_pct_off": 0.21008403361344538, "ftr_off": 0.2571428571428571, "efg_pct_def": 0.3958333333333333, "orb_pct_def": 0.2708333333333333, "tov_pct_def": 0.12431626056688215, "ftr_def": 0.3611111111111111, "round": 9, "game_date": "2025-12-27"}, {"game_code": "2746795", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Braga", "opp_team_key": "SCB", "score": 98.0, "opp_score": 79.0, "point_diff": 19.0, "result": "W", "home_away": "Home", "off_rating": 129.7669491525424, "def_rating": 107.5122482308111, "net_rating": 22.2547009217313, "pace": 74.5, "efg_pct_off": 0.553030303030303, "orb_pct_off": 0.3611111111111111, "tov_pct_off": 0.10593220338983052, "ftr_off": 0.5, "efg_pct_def": 0.5, "orb_pct_def": 0.475, "tov_pct_def": 0.23135547087642894, "ftr_def": 0.25, "round": 10, "game_date": "2026-01-03"}, {"game_code": "2746800", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Esgueira Aveiro OLI", "opp_team_key": "ESG", "score": 67.0, "opp_score": 76.0, "point_diff": -9.0, "result": "L", "home_away": "Away", "off_rating": 87.46736292428199, "def_rating": 99.58071278825996, "net_rating": -12.113349863977973, "pace": 76.46, "efg_pct_off": 0.4117647058823529, "orb_pct_off": 0.36363636363636365, "tov_pct_off": 0.2349869451697128, "ftr_off": 0.22058823529411764, "efg_pct_def": 0.4264705882352941, "orb_pct_def": 0.2916666666666667, "tov_pct_def": 0.1310272536687631, "ftr_def": 0.4117647058823529, "round": 11, "game_date": "2026-01-10"}, {"game_code": "2746805", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SC Vasco da Gama", "opp_team_key": "VGA", "score": 101.0, "opp_score": 103.0, "point_diff": -2.0, "result": "L", "home_away": "Away", "off_rating": 118.87947269303203, "def_rating": 122.61904761904762, "net_rating": -3.7395749260155924, "pace": 84.47999999999999, "efg_pct_off": 0.6266666666666667, "orb_pct_off": 0.3333333333333333, "tov_pct_off": 0.20009416195856874, "ftr_off": 0.12, "efg_pct_def": 0.5915492957746479, "orb_pct_def": 0.39473684210526316, "tov_pct_def": 0.20238095238095238, "ftr_def": 0.352112676056338, "round": 12, "game_date": "2026-01-24"}, {"game_code": "2746812", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "UD Oliveirense", "opp_team_key": "UDO", "score": 85.0, "opp_score": 62.0, "point_diff": 23.0, "result": "W", "home_away": "Home", "off_rating": 107.26905603230692, "def_rating": 80.14477766287487, "net_rating": 27.124278369432048, "pace": 78.3, "efg_pct_off": 0.4797297297297297, "orb_pct_off": 0.32608695652173914, "tov_pct_off": 0.13881877839475013, "ftr_off": 0.28378378378378377, "efg_pct_def": 0.42857142857142855, "orb_pct_def": 0.25, "tov_pct_def": 0.2843846949327818, "ftr_def": 0.3392857142857143, "round": 13, "game_date": "2026-02-01"}, {"game_code": "2746818", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Portugal", "opp_team_key": "SCP", "score": 82.0, "opp_score": 76.0, "point_diff": 6.0, "result": "W", "home_away": "Away", "off_rating": 102.91164658634537, "def_rating": 89.49599623174753, "net_rating": 13.415650354597844, "pace": 82.30000000000001, "efg_pct_off": 0.546875, "orb_pct_off": 0.18421052631578946, "tov_pct_off": 0.16315261044176704, "ftr_off": 0.34375, "efg_pct_def": 0.5, "orb_pct_def": 0.2631578947368421, "tov_pct_def": 0.27084314649081487, "ftr_def": 0.28125, "round": 14, "game_date": "2026-02-07"}, {"game_code": "2746825", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Imortal LUZiGÁS", "opp_team_key": "IBC", "score": 99.0, "opp_score": 88.0, "point_diff": 11.0, "result": "W", "home_away": "Home", "off_rating": 121.86115214180207, "def_rating": 108.05500982318273, "net_rating": 13.806142318619337, "pace": 81.34, "efg_pct_off": 0.6071428571428571, "orb_pct_off": 0.25, "tov_pct_off": 0.13540128015755787, "ftr_off": 0.3, "efg_pct_def": 0.5307692307692308, "orb_pct_def": 0.3333333333333333, "tov_pct_def": 0.2087426326129666, "ftr_def": 0.4, "round": 15, "game_date": "2026-02-14"}, {"game_code": "2746831", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Vitória Sport Clube", "opp_team_key": "VSC", "score": 114.0, "opp_score": 69.0, "point_diff": 45.0, "result": "W", "home_away": "Away", "off_rating": 134.624468587624, "def_rating": 83.25289575289577, "net_rating": 51.37157283472823, "pace": 83.78, "efg_pct_off": 0.6139240506329114, "orb_pct_off": 0.24390243902439024, "tov_pct_off": 0.07085498346717052, "ftr_off": 0.27848101265822783, "efg_pct_def": 0.40476190476190477, "orb_pct_def": 0.22727272727272727, "tov_pct_def": 0.2171814671814672, "ftr_def": 0.42857142857142855, "round": 16, "game_date": "2026-03-14"}, {"game_code": "2746838", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 88.0, "opp_score": 72.0, "point_diff": 16.0, "result": "W", "home_away": "Home", "off_rating": 115.30398322851154, "def_rating": 96.10250934329952, "net_rating": 19.201473885212025, "pace": 75.62, "efg_pct_off": 0.4794520547945205, "orb_pct_off": 0.4, "tov_pct_off": 0.11792452830188681, "ftr_off": 0.3835616438356164, "efg_pct_def": 0.4672131147540984, "orb_pct_def": 0.37142857142857144, "tov_pct_def": 0.25360384410037373, "ftr_def": 0.29508196721311475, "round": 17, "game_date": "2026-03-21"}, {"game_code": "2746844", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Queluz O NOSSO PREGO", "opp_team_key": "CAQ", "score": 99.0, "opp_score": 94.0, "point_diff": 5.0, "result": "W", "home_away": "Home", "off_rating": 119.39218523878436, "def_rating": 111.48007590132829, "net_rating": 7.912109337456073, "pace": 83.62, "efg_pct_off": 0.6384615384615384, "orb_pct_off": 0.13793103448275862, "tov_pct_off": 0.1688374336710082, "ftr_off": 0.27692307692307694, "efg_pct_def": 0.5378787878787878, "orb_pct_def": 0.1, "tov_pct_def": 0.11859582542694498, "ftr_def": 0.42424242424242425, "round": 18, "game_date": "2026-03-29"}, {"game_code": "2746850", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "AD Ovarense", "opp_team_key": "ADO", "score": 60.0, "opp_score": 83.0, "point_diff": -23.0, "result": "L", "home_away": "Away", "off_rating": 83.2870627429206, "def_rating": 114.95844875346259, "net_rating": -31.671386010541994, "pace": 72.12, "efg_pct_off": 0.4076923076923077, "orb_pct_off": 0.24444444444444444, "tov_pct_off": 0.15269294836202107, "ftr_off": 0.24615384615384617, "efg_pct_def": 0.4782608695652174, "orb_pct_def": 0.4583333333333333, "tov_pct_def": 0.16620498614958448, "ftr_def": 0.43478260869565216, "round": 19, "game_date": "2026-04-04"}, {"game_code": "2746855", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Galitos BARREIRO", "opp_team_key": "GFC", "score": 82.0, "opp_score": 74.0, "point_diff": 8.0, "result": "W", "home_away": "Home", "off_rating": 109.33333333333333, "def_rating": 95.01797637390858, "net_rating": 14.315356959424747, "pace": 76.44, "efg_pct_off": 0.5, "orb_pct_off": 0.3333333333333333, "tov_pct_off": 0.16, "ftr_off": 0.3787878787878788, "efg_pct_def": 0.4117647058823529, "orb_pct_def": 0.32558139534883723, "tov_pct_def": 0.15408320493066258, "ftr_def": 0.39705882352941174, "round": 20, "game_date": "2026-04-11"}, {"game_code": "2746861", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Braga", "opp_team_key": "SCB", "score": 82.0, "opp_score": 68.0, "point_diff": 14.0, "result": "W", "home_away": "Away", "off_rating": 106.16261004660798, "def_rating": 85.68548387096774, "net_rating": 20.477126175640237, "pace": 78.3, "efg_pct_off": 0.5, "orb_pct_off": 0.23255813953488372, "tov_pct_off": 0.1035732780942517, "ftr_off": 0.3, "efg_pct_def": 0.4375, "orb_pct_def": 0.23809523809523808, "tov_pct_def": 0.21421370967741934, "ftr_def": 0.296875, "round": 21, "game_date": "2026-04-18"}, {"game_code": "2746866", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Esgueira Aveiro OLI", "opp_team_key": "ESG", "score": 85.0, "opp_score": 86.0, "point_diff": -1.0, "result": "L", "home_away": "Home", "off_rating": 102.01632261161787, "def_rating": 105.44384502206965, "net_rating": -3.427522410451786, "pace": 82.44, "efg_pct_off": 0.5151515151515151, "orb_pct_off": 0.3157894736842105, "tov_pct_off": 0.20403264522323575, "ftr_off": 0.42424242424242425, "efg_pct_def": 0.5454545454545454, "orb_pct_def": 0.3333333333333333, "tov_pct_def": 0.22069641981363414, "ftr_def": 0.36363636363636365, "round": 22, "game_date": "2026-04-25"}, {"game_code": "2845607", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Imortal LUZiGÁS", "opp_team_key": "IBC", "score": 88.0, "opp_score": 66.0, "point_diff": 22.0, "result": "W", "home_away": "Home", "off_rating": 115.18324607329842, "def_rating": 84.87654320987654, "net_rating": 30.306702863421876, "pace": 77.08000000000001, "efg_pct_off": 0.532258064516129, "orb_pct_off": 0.36585365853658536, "tov_pct_off": 0.18324607329842932, "ftr_off": 0.5645161290322581, "efg_pct_def": 0.35074626865671643, "orb_pct_def": 0.3333333333333333, "tov_pct_def": 0.18004115226337447, "ftr_def": 0.43283582089552236, "round": 1, "game_date": "2026-05-10"}, {"game_code": "2850665", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Portugal", "opp_team_key": "SCP", "score": 81.0, "opp_score": 70.0, "point_diff": 11.0, "result": "W", "home_away": "Away", "off_rating": 108.63733905579397, "def_rating": 96.63169519602431, "net_rating": 12.005643859769663, "pace": 73.5, "efg_pct_off": 0.5153846153846153, "orb_pct_off": 0.2926829268292683, "tov_pct_off": 0.1475321888412017, "ftr_off": 0.36923076923076925, "efg_pct_def": 0.4672131147540984, "orb_pct_def": 0.2857142857142857, "tov_pct_def": 0.16565433462175594, "ftr_def": 0.4262295081967213, "round": 1, "game_date": "2026-05-23"}, {"game_code": "2850667", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Portugal", "opp_team_key": "SCP", "score": 73.0, "opp_score": 88.0, "point_diff": -15.0, "result": "L", "home_away": "Away", "off_rating": 95.1511991657977, "def_rating": 116.46373742721016, "net_rating": -21.312538261412456, "pace": 76.14, "efg_pct_off": 0.48507462686567165, "orb_pct_off": 0.21428571428571427, "tov_pct_off": 0.1694473409801877, "ftr_off": 0.19402985074626866, "efg_pct_def": 0.5634920634920635, "orb_pct_def": 0.35294117647058826, "tov_pct_def": 0.18528321863419797, "ftr_def": 0.38095238095238093, "round": 2, "game_date": "2026-05-25"}, {"game_code": "2850669", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Portugal", "opp_team_key": "SCP", "score": 86.0, "opp_score": 76.0, "point_diff": 10.0, "result": "W", "home_away": "Home", "off_rating": 115.96548004314995, "def_rating": 101.49572649572652, "net_rating": 14.469753547423437, "pace": 74.52, "efg_pct_off": 0.5588235294117647, "orb_pct_off": 0.5, "tov_pct_off": 0.2562028047464941, "ftr_off": 0.20588235294117646, "efg_pct_def": 0.48360655737704916, "orb_pct_def": 0.3076923076923077, "tov_pct_def": 0.18696581196581197, "ftr_def": 0.4426229508196721, "round": 3, "game_date": "2026-05-29"}, {"game_code": "2850671", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "Sporting Clube Portugal", "opp_team_key": "SCP", "score": 94.0, "opp_score": 86.0, "point_diff": 8.0, "result": "W", "home_away": "Home", "off_rating": 129.4765840220386, "def_rating": 120.92238470191225, "net_rating": 8.554199320126344, "pace": 71.86, "efg_pct_off": 0.5704225352112676, "orb_pct_off": 0.3783783783783784, "tov_pct_off": 0.12396694214876033, "ftr_off": 0.2112676056338028, "efg_pct_def": 0.5073529411764706, "orb_pct_def": 0.2857142857142857, "tov_pct_def": 0.0703037120359955, "ftr_def": 0.3382352941176471, "round": 4, "game_date": "2026-05-31"}, {"game_code": "2854087", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 73.0, "opp_score": 89.0, "point_diff": -16.0, "result": "L", "home_away": "Away", "off_rating": 92.92260692464357, "def_rating": 106.91975012013455, "net_rating": -13.997143195490978, "pace": 80.9, "efg_pct_off": 0.35714285714285715, "orb_pct_off": 0.4, "tov_pct_off": 0.10183299389002036, "ftr_off": 0.2857142857142857, "efg_pct_def": 0.5887096774193549, "orb_pct_def": 0.2727272727272727, "tov_pct_def": 0.2522825564632388, "ftr_def": 0.3387096774193548, "round": 1, "game_date": "2026-06-07"}, {"game_code": "2854088", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 102.0, "opp_score": 98.0, "point_diff": 4.0, "result": "W", "home_away": "Away", "off_rating": 114.29852084267145, "def_rating": 109.76702508960574, "net_rating": 4.5314957530657125, "pace": 79.34222222222222, "efg_pct_off": 0.5602409638554217, "orb_pct_off": 0.3, "tov_pct_off": 0.1344688480502017, "ftr_off": 0.25301204819277107, "efg_pct_def": 0.4928571428571429, "orb_pct_def": 0.27906976744186046, "tov_pct_def": 0.16801075268817203, "ftr_def": 0.5285714285714286, "round": 2, "game_date": "2026-06-09"}, {"game_code": "2854089", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 87.0, "opp_score": 63.0, "point_diff": 24.0, "result": "W", "home_away": "Home", "off_rating": 112.5776397515528, "def_rating": 79.74683544303798, "net_rating": 32.830804308514814, "pace": 78.14, "efg_pct_off": 0.6610169491525424, "orb_pct_off": 0.2413793103448276, "tov_pct_off": 0.2587991718426501, "ftr_off": 0.2033898305084746, "efg_pct_def": 0.3769230769230769, "orb_pct_def": 0.2553191489361702, "tov_pct_def": 0.189873417721519, "ftr_def": 0.38461538461538464, "round": 3, "game_date": "2026-06-12"}, {"game_code": "2854090", "team_key": "FCP", "team_name": "Futebol Clube do Porto", "opponent_name": "SL Benfica", "opp_team_key": "SLB", "score": 75.0, "opp_score": 71.0, "point_diff": 4.0, "result": "W", "home_away": "Home", "off_rating": 106.1120543293718, "def_rating": 98.28349944629015, "net_rating": 7.828554883081651, "pace": 71.46000000000001, "efg_pct_off": 0.47692307692307695, "orb_pct_off": 0.38095238095238093, "tov_pct_off": 0.1697792869269949, "ftr_off": 0.3384615384615385, "efg_pct_def": 0.48214285714285715, "orb_pct_def": 0.15625, "tov_pct_def": 0.16611295681063123, "ftr_def": 0.375, "round": 4, "game_date": "2026-06-14"}];
+    const LINEUPS = [{"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Queiroz | R. Beran JR | W. Washpun", "minutes": 65.38333333333333, "pace": 77.6344634208514, "off_rating": 104.32648051549556, "def_rating": 101.26377187297473, "net_rating": 3.062708642520832, "games": 11}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Queiroz | R. Beran JR | W. Washpun", "minutes": 43.48333333333333, "pace": 79.60751245688003, "off_rating": 129.17238225880203, "def_rating": 94.62616822429906, "net_rating": 34.54621403450297, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | M. Queiroz | R. Beran JR | T. Omlid | W. Washpun", "minutes": 36.3, "pace": 74.35812672176309, "off_rating": 96.49122807017545, "def_rating": 90.14423076923077, "net_rating": 6.346997300944679, "games": 9}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | R. Beran JR | T. Omlid | W. Washpun", "minutes": 24.1, "pace": 73.0622406639004, "off_rating": 105.28673835125448, "def_rating": 87.55760368663594, "net_rating": 17.72913466461854, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Riley | V. Voytso | W. Washpun", "minutes": 23.716666666666665, "pace": 88.20801124385102, "off_rating": 123.43260188087774, "def_rating": 106.42270351008214, "net_rating": 17.009898370795597, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | M. Queiroz | T. Omlid | V. Voytso | W. Washpun", "minutes": 22.5, "pace": 74.06222222222222, "off_rating": 106.07521697203472, "def_rating": 107.55258126195028, "net_rating": -1.4773642899155561, "games": 6}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Davis | J. Dunn | J. Riley | V. Voytso", "minutes": 17.049999999999997, "pace": 85.95894428152494, "off_rating": 97.16386554621849, "def_rating": 122.15909090909089, "net_rating": -24.995225362872404, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Queiroz | R. Beran JR | T. Omlid", "minutes": 16.983333333333334, "pace": 73.43670264965652, "off_rating": 123.21660181582361, "def_rating": 101.5228426395939, "net_rating": 21.693759176229705, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Maria | M. Queiroz | V. Voytso", "minutes": 16.966666666666665, "pace": 67.23772102161101, "off_rating": 86.32596685082873, "def_rating": 117.52136752136752, "net_rating": -31.19540067053879, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Queiroz | V. Voytso | W. Washpun", "minutes": 16.666666666666668, "pace": 65.95199999999998, "off_rating": 123.31838565022422, "def_rating": 67.3758865248227, "net_rating": 55.94249912540151, "games": 7}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | M. Maria | V. Voytso", "minutes": 16.366666666666667, "pace": 73.85743380855396, "off_rating": 166.44474034620507, "def_rating": 105.26315789473684, "net_rating": 61.18158245146823, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | R. Beran JR | T. Omlid", "minutes": 16.333333333333332, "pace": 83.70612244897961, "off_rating": 92.90540540540539, "def_rating": 109.62241169305724, "net_rating": -16.717006287651856, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | M. Maria | T. Omlid | V. Voytso", "minutes": 16.216666666666665, "pace": 80.85508735868449, "off_rating": 143.1980906921241, "def_rating": 78.02746566791511, "net_rating": 65.170625024209, "games": 7}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | M. Maria | R. Beran JR | T. Omlid", "minutes": 15.75, "pace": 82.9968253968254, "off_rating": 98.44868735083531, "def_rating": 84.79899497487438, "net_rating": 13.649692375960939, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | M. Maria | R. Beran JR", "minutes": 15.716666666666667, "pace": 82.46023329798516, "off_rating": 102.17113665389527, "def_rating": 116.48745519713262, "net_rating": -14.316318543237344, "games": 6}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | T. Omlid | V. Voytso | W. Washpun", "minutes": 13.716666666666667, "pace": 78.44471445929526, "off_rating": 167.4641148325359, "def_rating": 125.34818941504177, "net_rating": 42.115925417494125, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | T. Omlid | V. Voytso | W. Washpun", "minutes": 13.45, "pace": 76.72862453531599, "off_rating": 135.56618819776716, "def_rating": 94.26847662141779, "net_rating": 41.29771157634937, "games": 7}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | M. Maria | V. Voytso | W. Washpun", "minutes": 13.083333333333332, "pace": 79.73503184713375, "off_rating": 122.95081967213115, "def_rating": 122.43285939968405, "net_rating": 0.5179602724470982, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Maria | V. Voytso | W. Washpun", "minutes": 13.0, "pace": 80.24615384615383, "off_rating": 110.78286558345643, "def_rating": 115.62998405103669, "net_rating": -4.847118467580259, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | R. Beran JR | T. Omlid | W. Washpun", "minutes": 12.816666666666666, "pace": 79.33420026007803, "off_rating": 62.111801242236034, "def_rating": 43.859649122807014, "net_rating": 18.25215211942902, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | M. Maria | T. Omlid | V. Voytso | W. Washpun", "minutes": 12.766666666666666, "pace": 80.02088772845953, "off_rating": 115.91962905718702, "def_rating": 107.14285714285714, "net_rating": 8.776771914329885, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | V. Voytso | W. Washpun", "minutes": 12.666666666666666, "pace": 85.89473684210526, "off_rating": 90.49773755656109, "def_rating": 93.2568149210904, "net_rating": -2.759077364529304, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | M. Queiroz | R. Beran JR", "minutes": 12.283333333333333, "pace": 62.71913161465399, "off_rating": 76.37474541751527, "def_rating": 63.55932203389831, "net_rating": 12.81542338361696, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Queiroz | R. Beran JR | T. Omlid | W. Washpun", "minutes": 12.283333333333333, "pace": 69.36227951153325, "off_rating": 110.90573012939002, "def_rating": 133.58778625954199, "net_rating": -22.682056130151963, "games": 6}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Maria | M. Queiroz | R. Beran JR", "minutes": 11.883333333333333, "pace": 84.62272089761571, "off_rating": 68.10897435897436, "def_rating": 154.02843601895734, "net_rating": -85.91946165998297, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Queiroz | T. Omlid | V. Voytso", "minutes": 11.85, "pace": 75.67932489451478, "off_rating": 123.76237623762376, "def_rating": 77.1103896103896, "net_rating": 46.65198662723415, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | J. Guerreiro | M. Maria | V. Voytso", "minutes": 11.683333333333334, "pace": 76.41654778887303, "off_rating": 139.80263157894737, "def_rating": 83.66141732283464, "net_rating": 56.14121425611273, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Maria | M. Queiroz | T. Omlid | V. Voytso", "minutes": 11.466666666666667, "pace": 77.44186046511628, "off_rating": 161.29032258064515, "def_rating": 67.93478260869566, "net_rating": 93.3555399719495, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Queiroz | V. Voytso | W. Washpun", "minutes": 11.283333333333333, "pace": 69.27031019202363, "off_rating": 102.880658436214, "def_rating": 137.47454175152748, "net_rating": -34.59388331531348, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | R. Beran JR | T. Omlid | W. Washpun", "minutes": 11.25, "pace": 83.12888888888888, "off_rating": 71.54882154882155, "def_rating": 86.95652173913044, "net_rating": -15.407700190308887, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Davis | J. Dunn | V. Voytso | W. Washpun", "minutes": 11.183333333333334, "pace": 89.91952309985096, "off_rating": 93.60374414976599, "def_rating": 121.75324675324674, "net_rating": -28.149502603480755, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | V. Voytso | W. Washpun", "minutes": 10.866666666666667, "pace": 77.8159509202454, "off_rating": 106.00706713780919, "def_rating": 173.11608961303463, "net_rating": -67.10902247522544, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Riley | M. Filipovity | W. Washpun", "minutes": 10.583333333333332, "pace": 84.13228346456692, "off_rating": 73.52941176470588, "def_rating": 162.5659050966608, "net_rating": -89.03649333195492, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Queiroz | R. Beran JR | T. Omlid | W. Washpun", "minutes": 9.9, "pace": 78.94949494949493, "off_rating": 85.0, "def_rating": 104.82180293501048, "net_rating": -19.82180293501048, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | M. Maria | V. Voytso", "minutes": 8.9, "pace": 74.6067415730337, "off_rating": 93.75, "def_rating": 122.09302325581395, "net_rating": -28.343023255813947, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | J. Dunn | R. Beran JR", "minutes": 8.683333333333334, "pace": 89.64299424184262, "off_rating": 95.96928982725528, "def_rating": 105.08849557522124, "net_rating": -9.119205747965964, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | T. Omlid | V. Voytso | W. Washpun", "minutes": 8.633333333333333, "pace": 76.35521235521236, "off_rating": 166.24040920716112, "def_rating": 69.28406466512702, "net_rating": 96.9563445420341, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Riley | M. Queiroz | V. Voytso | W. Washpun", "minutes": 8.633333333333333, "pace": 72.18532818532819, "off_rating": 128.8659793814433, "def_rating": 140.66496163682865, "net_rating": -11.79898225538534, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | T. Omlid | V. Voytso | W. Washpun", "minutes": 8.4, "pace": 70.0, "off_rating": 127.8772378516624, "def_rating": 87.20930232558139, "net_rating": 40.66793552608101, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | V. Voytso | W. Washpun", "minutes": 8.316666666666666, "pace": 91.86372745490982, "off_rating": 131.57894736842107, "def_rating": 88.54166666666667, "net_rating": 43.0372807017544, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | J. Riley | W. Washpun", "minutes": 8.2, "pace": 84.1951219512195, "off_rating": 127.93176972281451, "def_rating": 114.21319796954315, "net_rating": 13.718571753271362, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Davis | J. Dunn | M. Maria | W. Washpun", "minutes": 8.016666666666666, "pace": 71.95010395010395, "off_rating": 132.68156424581005, "def_rating": 130.85399449035813, "net_rating": 1.8275697554519184, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | M. Maria | R. Beran JR | T. Omlid | W. Washpun", "minutes": 7.8999999999999995, "pace": 70.27848101265822, "off_rating": 121.95121951219514, "def_rating": 69.23076923076923, "net_rating": 52.72045028142591, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | M. Maria | V. Voytso", "minutes": 7.833333333333334, "pace": 94.0595744680851, "off_rating": 118.02575107296136, "def_rating": 131.86813186813185, "net_rating": -13.842380795170499, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Davis | J. Riley | M. Maria | V. Voytso", "minutes": 7.783333333333333, "pace": 75.54603854389721, "off_rating": 153.6312849162011, "def_rating": 152.51989389920422, "net_rating": 1.1113910169968904, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Maria | M. Queiroz | V. Voytso | W. Washpun", "minutes": 7.699999999999999, "pace": 76.25974025974027, "off_rating": 134.6153846153846, "def_rating": 87.20930232558139, "net_rating": 47.40608228980322, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | J. Guerreiro | M. Maria", "minutes": 7.683333333333333, "pace": 73.71800433839479, "off_rating": 184.6153846153846, "def_rating": 58.746736292428196, "net_rating": 125.86864832295642, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | M. Maria | R. Beran JR", "minutes": 7.65, "pace": 82.718954248366, "off_rating": 85.71428571428571, "def_rating": 107.70975056689342, "net_rating": -21.99546485260771, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Riley | M. Filipovity | V. Voytso | W. Washpun", "minutes": 7.633333333333333, "pace": 81.95633187772927, "off_rating": 163.43825665859563, "def_rating": 88.07588075880759, "net_rating": 75.36237589978805, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | T. Omlid | W. Washpun", "minutes": 7.533333333333333, "pace": 80.17699115044248, "off_rating": 85.7843137254902, "def_rating": 72.04610951008647, "net_rating": 13.738204215403726, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Davis | J. Riley | V. Voytso | W. Washpun", "minutes": 7.466666666666667, "pace": 71.57142857142857, "off_rating": 143.9393939393939, "def_rating": 96.15384615384616, "net_rating": 47.78554778554775, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | R. Beran JR | T. Omlid | W. Washpun", "minutes": 7.116666666666667, "pace": 68.9086651053864, "off_rating": 128.86597938144328, "def_rating": 85.40372670807454, "net_rating": 43.46225267336874, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | T. Omlid | V. Voytso", "minutes": 7.1, "pace": 67.1549295774648, "off_rating": 138.88888888888889, "def_rating": 128.6764705882353, "net_rating": 10.212418300653582, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | T. Omlid | V. Voytso", "minutes": 7.033333333333333, "pace": 73.25118483412321, "off_rating": 90.9090909090909, "def_rating": 149.05149051490517, "net_rating": -58.14239960581426, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Queiroz | T. Omlid | V. Voytso", "minutes": 7.016666666666667, "pace": 70.23277909738718, "off_rating": 126.26262626262627, "def_rating": 70.53291536050156, "net_rating": 55.72971090212471, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | T. Omlid | W. Washpun", "minutes": 6.683333333333334, "pace": 91.69077306733166, "off_rating": 120.55837563451777, "def_rating": 47.04301075268817, "net_rating": 73.51536488182961, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | M. Maria | V. Voytso | W. Washpun", "minutes": 6.683333333333334, "pace": 87.6209476309227, "off_rating": 185.6763925729443, "def_rating": 112.67605633802818, "net_rating": 73.00033623491613, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Maria | M. Queiroz | T. Omlid | V. Voytso", "minutes": 6.666666666666666, "pace": 78.84, "off_rating": 179.0633608815427, "def_rating": 51.02040816326531, "net_rating": 128.0429527182774, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Queiroz | T. Omlid | V. Voytso | W. Washpun", "minutes": 6.6, "pace": 87.03030303030303, "off_rating": 176.5799256505576, "def_rating": 100.22271714922049, "net_rating": 76.35720850133713, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | R. Beran JR | W. Washpun", "minutes": 6.55, "pace": 80.0, "off_rating": 135.13513513513513, "def_rating": 69.87577639751554, "net_rating": 65.25935873761959, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | J. Dunn | W. Washpun", "minutes": 6.483333333333333, "pace": 84.15424164524421, "off_rating": 78.36990595611285, "def_rating": 130.85399449035813, "net_rating": -52.48408853424529, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | J. Guerreiro | V. Voytso | W. Washpun", "minutes": 6.333333333333333, "pace": 84.12631578947368, "off_rating": 161.53846153846155, "def_rating": 73.31378299120234, "net_rating": 88.2246785472592, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | J. Guerreiro | M. Maria | W. Washpun", "minutes": 6.25, "pace": 82.04799999999999, "off_rating": 70.53291536050156, "def_rating": 124.22360248447204, "net_rating": -53.69068712397048, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | M. Maria | R. Beran JR", "minutes": 6.083333333333333, "pace": 59.83561643835617, "off_rating": 75.10729613733905, "def_rating": 157.65765765765767, "net_rating": -82.55036152031862, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Queiroz | V. Voytso | W. Washpun", "minutes": 5.966666666666666, "pace": 72.1340782122905, "off_rating": 96.15384615384616, "def_rating": 109.12698412698411, "net_rating": -12.973137973137952, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | V. Voytso | W. Washpun", "minutes": 5.933333333333334, "pace": 66.87640449438202, "off_rating": 109.48905109489051, "def_rating": 78.82882882882883, "net_rating": 30.66022226606168, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Guerreiro | M. Maria | W. Washpun", "minutes": 5.85, "pace": 78.49572649572652, "off_rating": 169.64285714285717, "def_rating": 102.04081632653062, "net_rating": 67.60204081632655, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Riley | M. Filipovity | M. Queiroz | V. Voytso | W. Washpun", "minutes": 5.766666666666667, "pace": 73.10982658959537, "off_rating": 160.0, "def_rating": 153.42960288808663, "net_rating": 6.5703971119133655, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | J. Guerreiro | M. Maria | R. Beran JR", "minutes": 5.566666666666666, "pace": 65.82035928143712, "off_rating": 188.88888888888889, "def_rating": 42.91845493562232, "net_rating": 145.97043395326656, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Guerreiro | J. Riley | M. Maria | W. Washpun", "minutes": 5.566666666666666, "pace": 82.92215568862275, "off_rating": 125.0, "def_rating": 42.08754208754208, "net_rating": 82.91245791245791, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | J. Dunn | M. Maria", "minutes": 5.516666666666667, "pace": 74.10271903323262, "off_rating": 148.6013986013986, "def_rating": 155.55555555555557, "net_rating": -6.954156954156957, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | R. Beran JR | T. Omlid", "minutes": 5.483333333333333, "pace": 83.30699088145897, "off_rating": 98.36065573770493, "def_rating": 84.58646616541353, "net_rating": 13.774189572291405, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Maria | M. Queiroz | R. Beran JR", "minutes": 5.466666666666667, "pace": 74.6341463414634, "off_rating": 95.05703422053232, "def_rating": 101.21457489878543, "net_rating": -6.157540678253113, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | M. Maria | T. Omlid | V. Voytso", "minutes": 5.25, "pace": 69.18095238095236, "off_rating": 206.1855670103093, "def_rating": 86.53846153846155, "net_rating": 119.64710547184777, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "M. Filipovity | M. Maria | M. Queiroz | V. Voytso | W. Washpun", "minutes": 5.233333333333333, "pace": 75.05732484076434, "off_rating": 40.48582995951418, "def_rating": 30.737704918032787, "net_rating": 9.74812504148139, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Filipovity | M. Maria | W. Washpun", "minutes": 5.2333333333333325, "pace": 66.95541401273886, "off_rating": 93.89671361502347, "def_rating": 66.66666666666666, "net_rating": 27.230046948356815, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | J. Dunn | V. Voytso", "minutes": 5.116666666666666, "pace": 69.4201954397394, "off_rating": 123.87387387387389, "def_rating": 157.65765765765767, "net_rating": -33.783783783783775, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Guerreiro | M. Maria | S. Silva | V. Voytso | Y. Carrera", "minutes": 5.116666666666666, "pace": 81.61563517915309, "off_rating": 101.10294117647061, "def_rating": 170.0, "net_rating": -68.89705882352939, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Queiroz | R. Beran JR | W. Washpun", "minutes": 5.1, "pace": 88.3137254901961, "off_rating": 133.19672131147541, "def_rating": 164.57680250783696, "net_rating": -31.380081196361544, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Riley | M. Queiroz | V. Voytso | W. Washpun", "minutes": 5.05, "pace": 78.73267326732673, "off_rating": 70.8502024291498, "def_rating": 90.0, "net_rating": -19.149797570850197, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Maria | M. Queiroz | V. Voytso", "minutes": 5.0, "pace": 72.32, "off_rating": 62.5, "def_rating": 138.88888888888889, "net_rating": -76.38888888888889, "games": 5}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Guerreiro | J. Riley | M. Maria", "minutes": 4.883333333333334, "pace": 80.92832764505117, "off_rating": 139.48497854077254, "def_rating": 67.04980842911877, "net_rating": 72.43517011165378, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | M. Maria | V. Voytso", "minutes": 4.85, "pace": 78.02061855670104, "off_rating": 122.76785714285714, "def_rating": 100.4016064257028, "net_rating": 22.366250717154344, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | R. Beran JR | W. Washpun", "minutes": 4.833333333333333, "pace": 88.71724137931034, "off_rating": 36.36363636363637, "def_rating": 114.9425287356322, "net_rating": -78.57889237199583, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | J. Dunn | J. Riley", "minutes": 4.816666666666666, "pace": 82.87889273356403, "off_rating": 110.4417670682731, "def_rating": 80.0, "net_rating": 30.441767068273094, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | M. Maria | R. Beran JR | T. Omlid", "minutes": 4.766666666666667, "pace": 78.7132867132867, "off_rating": 50.607287449392715, "def_rating": 101.35135135135135, "net_rating": -50.74406390195864, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Riley | M. Queiroz | W. Washpun", "minutes": 4.583333333333333, "pace": 78.89454545454545, "off_rating": 139.48497854077254, "def_rating": 57.077625570776256, "net_rating": 82.40735296999628, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | T. Omlid | V. Voytso | W. Washpun", "minutes": 4.583333333333333, "pace": 75.05454545454546, "off_rating": 50.0, "def_rating": 32.608695652173914, "net_rating": 17.391304347826086, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Maria | M. Queiroz | T. Omlid", "minutes": 4.566666666666666, "pace": 81.63503649635037, "off_rating": 159.81735159817353, "def_rating": 60.72874493927125, "net_rating": 99.08860665890228, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | T. Omlid | V. Voytso", "minutes": 4.5, "pace": 69.51111111111112, "off_rating": 194.06392694063928, "def_rating": 72.67441860465115, "net_rating": 121.38950833598813, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Maria | M. Queiroz | V. Voytso", "minutes": 4.483333333333333, "pace": 90.11152416356877, "off_rating": 121.45748987854252, "def_rating": 135.65891472868216, "net_rating": -14.201424850139645, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Riley | M. Filipovity | M. Queiroz | W. Washpun", "minutes": 4.45, "pace": 45.84269662921348, "off_rating": 40.98360655737705, "def_rating": 169.17293233082705, "net_rating": -128.18932577345, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | M. Maria | T. Omlid | W. Washpun", "minutes": 4.266666666666667, "pace": 83.24999999999999, "off_rating": 106.63507109004739, "def_rating": 32.18884120171674, "net_rating": 74.44622988833065, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | M. Maria | M. Queiroz | T. Omlid", "minutes": 4.25, "pace": 74.72941176470587, "off_rating": 134.40860215053766, "def_rating": 59.241706161137444, "net_rating": 75.16689598940022, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Queiroz | R. Beran JR | T. Omlid", "minutes": 4.05, "pace": 75.06172839506173, "off_rating": 72.67441860465115, "def_rating": 72.11538461538461, "net_rating": 0.5590339892665384, "games": 4}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Maria | R. Beran JR | T. Omlid", "minutes": 4.016666666666667, "pace": 81.65975103734439, "off_rating": 127.31481481481481, "def_rating": 77.31958762886599, "net_rating": 49.99522718594882, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | J. Riley | M. Maria", "minutes": 4.0, "pace": 84.2, "off_rating": 69.44444444444444, "def_rating": 158.53658536585365, "net_rating": -89.09214092140921, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | M. Queiroz | W. Washpun", "minutes": 3.933333333333333, "pace": 77.28813559322035, "off_rating": 144.23076923076923, "def_rating": 58.139534883720934, "net_rating": 86.0912343470483, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | M. Maria | M. Queiroz", "minutes": 3.8833333333333333, "pace": 74.78111587982832, "off_rating": 133.13609467455623, "def_rating": 51.54639175257733, "net_rating": 81.5897029219789, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | M. Maria | T. Omlid | W. Washpun", "minutes": 3.833333333333333, "pace": 88.0695652173913, "off_rating": 67.56756756756758, "def_rating": 100.0, "net_rating": -32.43243243243242, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Guerreiro | V. Voytso | W. Washpun", "minutes": 3.75, "pace": 78.72, "off_rating": 128.8659793814433, "def_rating": 57.14285714285714, "net_rating": 71.72312223858617, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Queiroz | T. Omlid | W. Washpun", "minutes": 3.6666666666666665, "pace": 58.03636363636364, "off_rating": 122.95081967213115, "def_rating": 138.88888888888889, "net_rating": -15.93806921675774, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | R. Beran JR | W. Washpun", "minutes": 3.6500000000000004, "pace": 92.49315068493149, "off_rating": 100.0, "def_rating": 90.0900900900901, "net_rating": 9.9099099099099, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | V. Voytso | W. Washpun", "minutes": 3.6333333333333333, "pace": 81.90825688073393, "off_rating": 134.40860215053763, "def_rating": 67.20430107526883, "net_rating": 67.2043010752688, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | J. Dunn | R. Beran JR", "minutes": 3.6333333333333333, "pace": 83.6697247706422, "off_rating": 68.02721088435374, "def_rating": 85.83690987124464, "net_rating": -17.809698986890908, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | J. Dunn | V. Voytso", "minutes": 3.6, "pace": 75.77777777777779, "off_rating": 141.75257731958763, "def_rating": 102.04081632653062, "net_rating": 39.71176099305701, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | M. Maria | W. Washpun", "minutes": 3.6, "pace": 61.55555555555555, "off_rating": 112.9032258064516, "def_rating": 81.9672131147541, "net_rating": 30.9360126916975, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | M. Maria | M. Queiroz", "minutes": 3.5666666666666664, "pace": 87.02803738317758, "off_rating": 115.74074074074075, "def_rating": 29.069767441860467, "net_rating": 86.67097329888028, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | V. Voytso | W. Washpun", "minutes": 3.533333333333333, "pace": 71.54716981132076, "off_rating": 51.02040816326531, "def_rating": 118.34319526627219, "net_rating": -67.32278710300687, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | T. Omlid | V. Voytso | W. Washpun", "minutes": 3.5166666666666666, "pace": 66.19905213270142, "off_rating": 116.66666666666667, "def_rating": 177.3049645390071, "net_rating": -60.63829787234043, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Maria | M. Queiroz | R. Beran JR | T. Omlid", "minutes": 3.4499999999999997, "pace": 79.76811594202898, "off_rating": 62.5, "def_rating": 138.88888888888889, "net_rating": -76.38888888888889, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | J. Guerreiro | V. Voytso", "minutes": 3.4, "pace": 82.82352941176471, "off_rating": 101.74418604651163, "def_rating": 111.11111111111111, "net_rating": -9.366925064599485, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | R. Beran JR | T. Omlid | W. Washpun", "minutes": 3.3833333333333333, "pace": 81.33990147783251, "off_rating": 87.20930232558139, "def_rating": 145.3488372093023, "net_rating": -58.13953488372091, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | R. Beran JR | T. Omlid | W. Washpun", "minutes": 3.3666666666666663, "pace": 89.10891089108912, "off_rating": 75.0, "def_rating": 85.71428571428571, "net_rating": -10.714285714285708, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Guerreiro | R. Beran JR | T. Omlid | W. Washpun", "minutes": 3.316666666666667, "pace": 77.6683417085427, "off_rating": 159.88372093023256, "def_rating": 133.33333333333331, "net_rating": 26.55038759689924, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | M. Maria | R. Beran JR | T. Omlid", "minutes": 3.2, "pace": 80.49999999999999, "off_rating": 100.0, "def_rating": 85.03401360544218, "net_rating": 14.965986394557817, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | M. Queiroz | T. Omlid | W. Washpun", "minutes": 3.1999999999999997, "pace": 71.5, "off_rating": 33.33333333333333, "def_rating": 91.91176470588236, "net_rating": -58.57843137254903, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Guerreiro | M. Maria | T. Omlid", "minutes": 3.183333333333333, "pace": 50.261780104712045, "off_rating": 200.0, "def_rating": 75.0, "net_rating": 125.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Guerreiro | S. Silva | Y. Carrera", "minutes": 3.1666666666666665, "pace": 63.15789473684211, "off_rating": 40.0, "def_rating": 240.0, "net_rating": -200.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Riley | M. Maria | M. Queiroz | V. Voytso", "minutes": 3.15, "pace": 86.60317460317461, "off_rating": 147.92899408284023, "def_rating": 87.20930232558139, "net_rating": 60.71969175725884, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | M. Maria | R. Beran JR | T. Omlid | W. Washpun", "minutes": 3.1166666666666667, "pace": 79.05882352941177, "off_rating": 187.0748299319728, "def_rating": 77.63975155279503, "net_rating": 109.43507837917777, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | R. Beran JR | T. Omlid | W. Washpun", "minutes": 3.05, "pace": 77.11475409836066, "off_rating": 116.66666666666667, "def_rating": 86.80555555555556, "net_rating": 29.861111111111114, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | S. Silva | Y. Carrera", "minutes": 2.9833333333333334, "pace": 79.64245810055864, "off_rating": 66.66666666666666, "def_rating": 17.006802721088434, "net_rating": 49.65986394557822, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | M. Maria | R. Beran JR", "minutes": 2.9, "pace": 75.86206896551724, "off_rating": 160.0, "def_rating": 83.33333333333334, "net_rating": 76.66666666666666, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | M. Maria | R. Beran JR | T. Omlid", "minutes": 2.9, "pace": 92.41379310344828, "off_rating": 65.44502617801048, "def_rating": 104.16666666666667, "net_rating": -38.72164048865619, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Riley | M. Filipovity | M. Maria", "minutes": 2.85, "pace": 70.17543859649122, "off_rating": 40.0, "def_rating": 100.0, "net_rating": -60.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Maria | R. Beran JR | V. Voytso | Y. Carrera", "minutes": 2.8499999999999996, "pace": 81.68421052631581, "off_rating": 119.04761904761905, "def_rating": 121.52777777777779, "net_rating": -2.4801587301587347, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | M. Maria | V. Voytso", "minutes": 2.833333333333333, "pace": 83.85882352941177, "off_rating": 133.33333333333331, "def_rating": 136.05442176870747, "net_rating": -2.7210884353741562, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | T. Omlid | V. Voytso", "minutes": 2.6999999999999997, "pace": 97.77777777777779, "off_rating": 51.02040816326531, "def_rating": 163.9344262295082, "net_rating": -112.9140180662429, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Guerreiro | T. Omlid | V. Voytso | W. Washpun", "minutes": 2.6666666666666665, "pace": 75.0, "off_rating": 80.0, "def_rating": 160.0, "net_rating": -80.0, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | M. Maria | W. Washpun", "minutes": 2.65, "pace": 96.30188679245283, "off_rating": 187.0748299319728, "def_rating": 159.88372093023256, "net_rating": 27.191109001740244, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Riley | V. Voytso | W. Washpun", "minutes": 2.6, "pace": 80.30769230769229, "off_rating": 100.0, "def_rating": 165.44117647058826, "net_rating": -65.44117647058826, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | M. Maria | S. Silva | Y. Carrera", "minutes": 2.533333333333333, "pace": 92.84210526315789, "off_rating": 138.88888888888889, "def_rating": 100.0, "net_rating": 38.888888888888886, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | M. Queiroz | V. Voytso", "minutes": 2.5166666666666666, "pace": 101.40397350993378, "off_rating": 58.139534883720934, "def_rating": 85.03401360544218, "net_rating": -26.89447872172125, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | J. Guerreiro | M. Maria", "minutes": 2.5, "pace": 87.03999999999999, "off_rating": 40.0, "def_rating": 102.04081632653062, "net_rating": -62.04081632653062, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | R. Beran JR | S. Silva | Y. Carrera", "minutes": 2.466666666666667, "pace": 86.27027027027027, "off_rating": 20.491803278688526, "def_rating": 121.52777777777779, "net_rating": -101.03597449908926, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | M. Maria | R. Beran JR | T. Omlid", "minutes": 2.4166666666666665, "pace": 79.77931034482759, "off_rating": 172.41379310344828, "def_rating": 100.0, "net_rating": 72.41379310344828, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | M. Maria | M. Queiroz | W. Washpun", "minutes": 2.4166666666666665, "pace": 81.7655172413793, "off_rating": 20.491803278688526, "def_rating": 120.0, "net_rating": -99.50819672131148, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | M. Maria | M. Queiroz | V. Voytso | W. Washpun", "minutes": 2.4166666666666665, "pace": 88.05517241379312, "off_rating": 51.02040816326531, "def_rating": 168.0672268907563, "net_rating": -117.046818727491, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | T. Omlid | W. Washpun", "minutes": 2.4, "pace": 73.99999999999999, "off_rating": 150.0, "def_rating": 143.44262295081967, "net_rating": 6.557377049180332, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | J. Guerreiro | R. Beran JR", "minutes": 2.3833333333333333, "pace": 82.90909090909089, "off_rating": 100.0, "def_rating": 81.9672131147541, "net_rating": 18.032786885245898, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | M. Maria | T. Omlid", "minutes": 2.3666666666666667, "pace": 107.83098591549295, "off_rating": 83.33333333333334, "def_rating": 192.30769230769232, "net_rating": -108.97435897435898, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Maria | R. Beran JR | W. Washpun", "minutes": 2.35, "pace": 79.31914893617021, "off_rating": 125.0, "def_rating": 150.37593984962405, "net_rating": -25.375939849624046, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Riley | M. Filipovity | M. Queiroz | W. Washpun", "minutes": 2.316666666666667, "pace": 85.29496402877696, "off_rating": 231.95876288659795, "def_rating": 233.33333333333334, "net_rating": -1.3745704467353903, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | M. Maria | T. Omlid | V. Voytso", "minutes": 2.3166666666666664, "pace": 66.99280575539568, "off_rating": 243.05555555555557, "def_rating": 81.9672131147541, "net_rating": 161.08834244080145, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Guerreiro | M. Maria | V. Voytso", "minutes": 2.3, "pace": 67.47826086956522, "off_rating": 175.0, "def_rating": 159.5744680851064, "net_rating": 15.425531914893611, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | R. Beran JR | T. Omlid | V. Voytso | W. Washpun", "minutes": 2.3, "pace": 92.5217391304348, "off_rating": 86.20689655172413, "def_rating": 100.0, "net_rating": -13.793103448275872, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | M. Maria | M. Queiroz | T. Omlid", "minutes": 2.283333333333333, "pace": 86.54014598540145, "off_rating": 100.0, "def_rating": 61.47540983606557, "net_rating": 38.52459016393443, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | T. Omlid | W. Washpun", "minutes": 2.1833333333333336, "pace": 77.31297709923662, "off_rating": 150.0, "def_rating": 112.61261261261262, "net_rating": 37.38738738738738, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | J. Guerreiro | M. Queiroz", "minutes": 2.1166666666666667, "pace": 66.14173228346456, "off_rating": 66.66666666666666, "def_rating": 50.0, "net_rating": 16.666666666666657, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Filipovity | M. Maria | V. Voytso", "minutes": 2.1166666666666667, "pace": 85.03937007874016, "off_rating": 120.0, "def_rating": 125.0, "net_rating": -5.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Dunn | J. Guerreiro | M. Maria", "minutes": 2.083333333333333, "pace": 70.27200000000002, "off_rating": 154.63917525773198, "def_rating": 116.27906976744187, "net_rating": 38.36010549029011, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | J. Guerreiro | M. Queiroz | W. Washpun", "minutes": 2.05, "pace": 104.97560975609757, "off_rating": 104.16666666666667, "def_rating": 100.0, "net_rating": 4.166666666666671, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Maria | R. Beran JR | Y. Carrera", "minutes": 2.033333333333333, "pace": 107.01639344262294, "off_rating": 120.0, "def_rating": 102.04081632653062, "net_rating": 17.959183673469383, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Filipovity | M. Queiroz | V. Voytso | W. Washpun", "minutes": 2.033333333333333, "pace": 97.18032786885244, "off_rating": 80.0, "def_rating": 81.9672131147541, "net_rating": -1.9672131147541023, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | R. Beran JR | V. Voytso | W. Washpun", "minutes": 1.9833333333333332, "pace": 85.10924369747899, "off_rating": 0.0, "def_rating": 180.1801801801802, "net_rating": -180.1801801801802, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | M. Maria | V. Voytso | W. Washpun", "minutes": 1.9666666666666666, "pace": 138.71186440677968, "off_rating": 33.33333333333333, "def_rating": 117.80104712041886, "net_rating": -84.46771378708553, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | T. Omlid | W. Washpun", "minutes": 1.9333333333333333, "pace": 59.586206896551715, "off_rating": 69.44444444444444, "def_rating": 69.44444444444444, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | M. Queiroz | T. Omlid", "minutes": 1.9333333333333331, "pace": 80.27586206896552, "off_rating": 51.54639175257733, "def_rating": 154.63917525773198, "net_rating": -103.09278350515464, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | T. Omlid | W. Washpun", "minutes": 1.9166666666666667, "pace": 91.4086956521739, "off_rating": 21.008403361344538, "def_rating": 50.0, "net_rating": -28.991596638655462, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | M. Maria | M. Queiroz | R. Beran JR | W. Washpun", "minutes": 1.8833333333333335, "pace": 95.57522123893804, "off_rating": 0.0, "def_rating": 120.0, "net_rating": -120.0, "games": 3}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Guerreiro | J. Riley | W. Washpun", "minutes": 1.8833333333333333, "pace": 74.33628318584071, "off_rating": 0.0, "def_rating": 125.0, "net_rating": -125.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | M. Maria | T. Omlid | V. Voytso", "minutes": 1.8666666666666667, "pace": 80.57142857142856, "off_rating": 164.83516483516485, "def_rating": 51.54639175257733, "net_rating": 113.28877308258751, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | M. Maria | R. Beran JR", "minutes": 1.8666666666666667, "pace": 95.14285714285712, "off_rating": 51.54639175257733, "def_rating": 60.0, "net_rating": -8.453608247422672, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | J. Dunn | M. Queiroz | W. Washpun", "minutes": 1.8666666666666667, "pace": 77.14285714285714, "off_rating": 58.139534883720934, "def_rating": 132.9787234042553, "net_rating": -74.83918852053438, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Guerreiro | J. Riley | V. Voytso", "minutes": 1.7666666666666666, "pace": 85.1320754716981, "off_rating": 192.3076923076923, "def_rating": 103.09278350515466, "net_rating": 89.21490880253764, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Riley | M. Filipovity | M. Maria | V. Voytso", "minutes": 1.75, "pace": 80.0, "off_rating": 50.0, "def_rating": 66.66666666666666, "net_rating": -16.666666666666657, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Davis | M. Maria | R. Beran JR | W. Washpun", "minutes": 1.75, "pace": 98.74285714285715, "off_rating": 25.773195876288664, "def_rating": 105.0420168067227, "net_rating": -79.26882093043403, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | M. Maria | M. Queiroz | T. Omlid", "minutes": 1.75, "pace": 57.142857142857146, "off_rating": 150.0, "def_rating": 266.66666666666663, "net_rating": -116.66666666666663, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | M. Maria | V. Voytso | W. Washpun", "minutes": 1.7333333333333334, "pace": 76.6153846153846, "off_rating": 132.9787234042553, "def_rating": 34.72222222222222, "net_rating": 98.25650118203308, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | V. Voytso | Y. Carrera", "minutes": 1.7333333333333334, "pace": 84.46153846153847, "off_rating": 100.0, "def_rating": 115.74074074074075, "net_rating": -15.740740740740748, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | R. Beran JR | T. Omlid | V. Voytso | W. Washpun", "minutes": 1.7166666666666666, "pace": 108.58252427184468, "off_rating": 100.0, "def_rating": 37.59398496240601, "net_rating": 62.40601503759399, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | T. Omlid | V. Voytso", "minutes": 1.6666666666666665, "pace": 77.28, "off_rating": 174.41860465116278, "def_rating": 0.0, "net_rating": 174.41860465116278, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | R. Beran JR | W. Washpun", "minutes": 1.6333333333333333, "pace": 109.71428571428572, "off_rating": 115.74074074074075, "def_rating": 64.65517241379311, "net_rating": 51.08556832694764, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | M. Maria | R. Beran JR | V. Voytso | W. Washpun", "minutes": 1.6166666666666667, "pace": 61.855670103092784, "off_rating": 0.0, "def_rating": 166.66666666666669, "net_rating": -166.66666666666669, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Guerreiro | M. Maria | M. Queiroz | T. Omlid", "minutes": 1.5833333333333333, "pace": 74.27368421052631, "off_rating": 0.0, "def_rating": 104.16666666666667, "net_rating": -104.16666666666667, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Queiroz | T. Omlid | W. Washpun", "minutes": 1.5666666666666667, "pace": 112.85106382978724, "off_rating": 141.1290322580645, "def_rating": 103.09278350515466, "net_rating": 38.036248752909856, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | M. Maria | R. Beran JR", "minutes": 1.55, "pace": 77.41935483870968, "off_rating": 66.66666666666666, "def_rating": 0.0, "net_rating": 66.66666666666666, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Riley | M. Maria | V. Voytso", "minutes": 1.4833333333333334, "pace": 79.28089887640449, "off_rating": 69.44444444444444, "def_rating": 100.0, "net_rating": -30.555555555555557, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Maria | M. Queiroz | R. Beran JR", "minutes": 1.4666666666666666, "pace": 80.18181818181819, "off_rating": 200.0, "def_rating": 34.72222222222222, "net_rating": 165.27777777777777, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | J. Dunn | J. Guerreiro", "minutes": 1.4000000000000001, "pace": 77.7142857142857, "off_rating": 100.0, "def_rating": 145.3488372093023, "net_rating": -45.3488372093023, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | W. Washpun | Y. Carrera", "minutes": 1.3666666666666667, "pace": 84.29268292682926, "off_rating": 69.44444444444444, "def_rating": 34.72222222222222, "net_rating": 34.72222222222222, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | J. Guerreiro | M. Maria | R. Beran JR", "minutes": 1.3666666666666667, "pace": 132.8780487804878, "off_rating": 106.38297872340425, "def_rating": 244.36090225563908, "net_rating": -137.97792353223483, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | J. Guerreiro | M. Maria", "minutes": 1.35, "pace": 40.888888888888886, "off_rating": 212.7659574468085, "def_rating": 0.0, "net_rating": 212.7659574468085, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | J. Dunn | R. Beran JR | W. Washpun", "minutes": 1.3499999999999999, "pace": 74.07407407407408, "off_rating": 150.0, "def_rating": 166.66666666666669, "net_rating": -16.666666666666686, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | R. Beran JR | V. Voytso | W. Washpun", "minutes": 1.3333333333333333, "pace": 73.2, "off_rating": 173.61111111111111, "def_rating": 100.0, "net_rating": 73.61111111111111, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Guerreiro | J. Riley | M. Maria", "minutes": 1.3166666666666667, "pace": 75.9493670886076, "off_rating": 100.0, "def_rating": 150.0, "net_rating": -50.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | M. Maria | T. Omlid", "minutes": 1.2333333333333334, "pace": 48.648648648648646, "off_rating": 100.0, "def_rating": 200.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Davis | J. Dunn | M. Queiroz | W. Washpun", "minutes": 1.2166666666666668, "pace": 105.86301369863011, "off_rating": 66.66666666666666, "def_rating": 58.139534883720934, "net_rating": 8.527131782945723, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | M. Maria | T. Omlid | Y. Carrera", "minutes": 1.2166666666666666, "pace": 82.19178082191782, "off_rating": 100.0, "def_rating": 0.0, "net_rating": 100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | M. Maria | W. Washpun", "minutes": 1.2, "pace": 100.0, "off_rating": 66.66666666666666, "def_rating": 0.0, "net_rating": 66.66666666666666, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | J. Guerreiro | M. Maria | M. Queiroz", "minutes": 1.1833333333333333, "pace": 106.8169014084507, "off_rating": 69.44444444444444, "def_rating": 145.3488372093023, "net_rating": -75.90439276485786, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | J. Guerreiro | M. Maria | V. Voytso", "minutes": 1.1833333333333333, "pace": 91.94366197183098, "off_rating": 0.0, "def_rating": 122.95081967213115, "net_rating": -122.95081967213115, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | M. Maria | R. Beran JR | V. Voytso | W. Washpun", "minutes": 1.1333333333333333, "pace": 88.23529411764706, "off_rating": 0.0, "def_rating": 100.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | R. Beran JR | T. Omlid", "minutes": 1.1, "pace": 70.54545454545453, "off_rating": 159.5744680851064, "def_rating": 150.0, "net_rating": 9.574468085106389, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Guerreiro | M. Maria | R. Beran JR | V. Voytso", "minutes": 1.0833333333333335, "pace": 50.95384615384614, "off_rating": 340.90909090909093, "def_rating": 212.7659574468085, "net_rating": 128.14313346228244, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "M. Maria | M. Queiroz | R. Beran JR | T. Omlid | W. Washpun", "minutes": 1.0833333333333335, "pace": 36.92307692307692, "off_rating": 200.0, "def_rating": 200.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | J. Guerreiro | M. Queiroz | T. Omlid", "minutes": 1.0833333333333333, "pace": 71.63076923076923, "off_rating": 150.0, "def_rating": 106.38297872340425, "net_rating": 43.61702127659575, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | M. Maria | T. Omlid", "minutes": 1.0833333333333333, "pace": 73.84615384615385, "off_rating": 0.0, "def_rating": 150.0, "net_rating": -150.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Maria | M. Queiroz | R. Beran JR | W. Washpun", "minutes": 1.0666666666666667, "pace": 72.75, "off_rating": 0.0, "def_rating": 106.38297872340425, "net_rating": -106.38297872340425, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | M. Maria | T. Omlid | V. Voytso", "minutes": 1.0333333333333334, "pace": 94.4516129032258, "off_rating": 100.0, "def_rating": 0.0, "net_rating": 100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | J. Guerreiro | T. Omlid | W. Washpun", "minutes": 1.0333333333333334, "pace": 83.61290322580645, "off_rating": 200.0, "def_rating": 129.3103448275862, "net_rating": 70.68965517241381, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Filipovity | M. Maria | M. Queiroz | V. Voytso", "minutes": 1.0333333333333334, "pace": 58.06451612903225, "off_rating": 0.0, "def_rating": 100.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Davis | J. Dunn | M. Maria | V. Voytso", "minutes": 0.9833333333333334, "pace": 61.01694915254237, "off_rating": 200.0, "def_rating": 100.0, "net_rating": 100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Guerreiro | M. Maria | W. Washpun", "minutes": 0.9833333333333334, "pace": 61.01694915254237, "off_rating": 300.0, "def_rating": 300.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Maria | R. Beran JR | V. Voytso | W. Washpun", "minutes": 0.9666666666666667, "pace": 59.586206896551715, "off_rating": 300.0, "def_rating": 159.5744680851064, "net_rating": 140.4255319148936, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Filipovity | V. Voytso | W. Washpun", "minutes": 0.9666666666666667, "pace": 160.55172413793102, "off_rating": 0.0, "def_rating": 128.8659793814433, "net_rating": -128.8659793814433, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Dunn | V. Voytso | W. Washpun", "minutes": 0.9333333333333333, "pace": 125.99999999999999, "off_rating": 100.0, "def_rating": 104.16666666666667, "net_rating": -4.166666666666671, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | M. Maria | R. Beran JR | V. Voytso", "minutes": 0.9166666666666666, "pace": 116.07272727272728, "off_rating": 245.9016393442623, "def_rating": 138.88888888888889, "net_rating": 107.0127504553734, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | M. Maria | T. Omlid | V. Voytso", "minutes": 0.9, "pace": 86.22222222222221, "off_rating": 53.191489361702125, "def_rating": 0.0, "net_rating": 53.191489361702125, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | R. Beran JR | T. Omlid | V. Voytso", "minutes": 0.8833333333333333, "pace": 90.56603773584906, "off_rating": 0.0, "def_rating": 100.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Guerreiro | J. Riley | M. Maria | V. Voytso | Y. Carrera", "minutes": 0.8333333333333334, "pace": 69.11999999999999, "off_rating": 0.0, "def_rating": 53.191489361702125, "net_rating": -53.191489361702125, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | M. Maria | S. Silva | V. Voytso", "minutes": 0.8333333333333333, "pace": 72.0, "off_rating": 0.0, "def_rating": 200.0, "net_rating": -200.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | M. Maria | R. Beran JR | T. Omlid | V. Voytso", "minutes": 0.8166666666666667, "pace": 70.53061224489795, "off_rating": 53.191489361702125, "def_rating": 0.0, "net_rating": 53.191489361702125, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Davis | J. Dunn | J. Guerreiro | R. Beran JR", "minutes": 0.8166666666666667, "pace": 73.46938775510205, "off_rating": 100.0, "def_rating": 300.0, "net_rating": -200.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | J. Dunn | M. Maria", "minutes": 0.8, "pace": 75.0, "off_rating": 100.0, "def_rating": 200.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Guerreiro | J. Riley | W. Washpun", "minutes": 0.7999999999999999, "pace": 50.00000000000001, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | R. Beran JR | T. Omlid | W. Washpun", "minutes": 0.7666666666666667, "pace": 78.26086956521739, "off_rating": 150.0, "def_rating": 200.0, "net_rating": -50.0, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | J. Dunn | T. Omlid", "minutes": 0.75, "pace": 183.46666666666667, "off_rating": 75.0, "def_rating": 34.72222222222222, "net_rating": 40.27777777777778, "games": 2}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | M. Queiroz | T. Omlid", "minutes": 0.7, "pace": 57.142857142857146, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | M. Maria | V. Voytso", "minutes": 0.6833333333333333, "pace": 84.29268292682926, "off_rating": 106.38297872340425, "def_rating": 200.0, "net_rating": -93.61702127659575, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Guerreiro | T. Omlid | W. Washpun", "minutes": 0.6666666666666666, "pace": 90.0, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Guerreiro | J. Riley | M. Maria | M. Queiroz", "minutes": 0.6666666666666666, "pace": 90.0, "off_rating": 100.0, "def_rating": 200.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | M. Maria | M. Queiroz | T. Omlid", "minutes": 0.65, "pace": 92.3076923076923, "off_rating": 200.0, "def_rating": 250.0, "net_rating": -50.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "M. Queiroz | R. Beran JR | T. Omlid | V. Voytso | W. Washpun", "minutes": 0.6333333333333333, "pace": 55.57894736842106, "off_rating": 227.27272727272728, "def_rating": 113.63636363636364, "net_rating": 113.63636363636364, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | T. Omlid | V. Voytso | W. Washpun", "minutes": 0.6, "pace": 129.33333333333334, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | R. Beran JR | V. Voytso", "minutes": 0.6, "pace": 100.0, "off_rating": 0.0, "def_rating": 100.0, "net_rating": -100.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Davis | J. Dunn | M. Queiroz", "minutes": 0.6, "pace": 62.66666666666666, "off_rating": 0.0, "def_rating": 227.27272727272728, "net_rating": -227.27272727272728, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | M. Maria | M. Queiroz | T. Omlid | V. Voytso", "minutes": 0.5833333333333333, "pace": 64.45714285714286, "off_rating": 113.63636363636364, "def_rating": 200.0, "net_rating": -86.36363636363636, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Dunn | J. Guerreiro | T. Omlid | Y. Carrera", "minutes": 0.5666666666666667, "pace": 35.294117647058826, "off_rating": 200.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Davis | J. Riley | V. Voytso", "minutes": 0.5166666666666667, "pace": 77.41935483870967, "off_rating": 0.0, "def_rating": 0.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | M. Maria | M. Queiroz | V. Voytso | W. Washpun", "minutes": 0.5166666666666666, "pace": 72.77419354838709, "off_rating": 200.0, "def_rating": 113.63636363636364, "net_rating": 86.36363636363636, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "G. Delgado | J. Dunn | J. Riley | M. Maria | Y. Carrera", "minutes": 0.5, "pace": 110.39999999999999, "off_rating": 159.5744680851064, "def_rating": 113.63636363636364, "net_rating": 45.93810444874275, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | R. Beran JR | W. Washpun", "minutes": 0.4166666666666667, "pace": 138.23999999999998, "off_rating": 0.0, "def_rating": 227.27272727272728, "net_rating": -227.27272727272728, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Guerreiro | R. Beran JR | T. Omlid", "minutes": 0.41666666666666663, "pace": 159.35999999999999, "off_rating": 69.44444444444444, "def_rating": 53.191489361702125, "net_rating": 16.252955082742318, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Dunn | J. Riley | M. Maria | V. Voytso | Y. Carrera", "minutes": 0.4, "pace": 93.99999999999999, "off_rating": 200.0, "def_rating": 227.27272727272728, "net_rating": -27.27272727272728, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | J. Riley | M. Maria | W. Washpun", "minutes": 0.36666666666666664, "pace": 54.54545454545455, "off_rating": null, "def_rating": 0.0, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | G. Delgado | J. Dunn | J. Guerreiro | W. Washpun", "minutes": 0.35, "pace": 57.142857142857146, "off_rating": 0.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Riley | M. Maria | M. Queiroz | V. Voytso | W. Washpun", "minutes": 0.35, "pace": 57.142857142857146, "off_rating": 200.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | M. Maria | M. Queiroz | R. Beran JR | T. Omlid", "minutes": 0.31666666666666665, "pace": 63.15789473684211, "off_rating": 0.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | G. Delgado | M. Maria | R. Beran JR | T. Omlid", "minutes": 0.3, "pace": 133.33333333333334, "off_rating": null, "def_rating": 0.0, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | M. Maria | M. Queiroz", "minutes": 0.25, "pace": 185.6, "off_rating": 138.88888888888889, "def_rating": 227.27272727272728, "net_rating": -88.3838383838384, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | J. Guerreiro | M. Maria | M. Queiroz | T. Omlid", "minutes": 0.21666666666666667, "pace": 0.0, "off_rating": null, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | J. Dunn | R. Beran JR | T. Omlid", "minutes": 0.21666666666666665, "pace": 369.2307692307693, "off_rating": 100.0, "def_rating": 100.0, "net_rating": 0.0, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Davis | J. Dunn | R. Beran JR | V. Voytso | W. Washpun", "minutes": 0.16666666666666666, "pace": 105.60000000000001, "off_rating": null, "def_rating": 113.63636363636364, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "A. Toupane | J. Dunn | J. Guerreiro | V. Voytso | W. Washpun", "minutes": 0.15, "pace": 192.0, "off_rating": null, "def_rating": 138.88888888888889, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | R. Beran JR | T. Omlid | W. Washpun", "minutes": 0.11666666666666667, "pace": 322.2857142857142, "off_rating": 0.0, "def_rating": 227.27272727272728, "net_rating": -227.27272727272728, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Allen Williams | C. Hudson | G. Delgado | J. Dunn | M. Maria", "minutes": 0.11666666666666667, "pace": 171.42857142857142, "off_rating": 0.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Maria | M. Queiroz | T. Omlid", "minutes": 0.1, "pace": 176.0, "off_rating": 227.27272727272728, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "C. Hudson | J. Dunn | M. Maria | T. Omlid | V. Voytso", "minutes": 0.1, "pace": 200.0, "off_rating": 0.0, "def_rating": null, "net_rating": null, "games": 1}, {"team_key": "FCP", "team_name": "Futebol Clube do Porto", "lineup_players": "J. Guerreiro | M. Queiroz | T. Omlid | V. Voytso | W. Washpun", "minutes": 0.05, "pace": 400.0, "off_rating": null, "def_rating": 0.0, "net_rating": null, "games": 1}];
+    const PLAYERS = [{"team_key": "FCP", "player_id": "FCP_C._HUDSON", "global_player_id": "", "player_name": "C. Hudson", "position": "F", "games": 23, "mpg": 26.40869565217391, "ppg": 16.565217391304348, "rpg": 6.391304347826087, "apg": 1.8695652173913044, "ts_pct": 0.5409472966833258, "efg_pct": 0.512779552715655, "usg_pct": 0.2884904196993289, "ast_pct": 0.12865201845207241, "tov_pct": 0.10655571341587172, "ortg": 100.30233512959036, "drtg": 16.961999423390207, "netrtg": 83.34033570620015, "minutes_on": 607.35, "on_court_pct": 0.6565945945945946, "net_on_per40": 5.005351115501767, "net_off_per40": 14.103573115063753, "on_off_net_diff_per40": -9.098221999561986, "recent_games": 5, "recent_ppg": 19.6, "delta_ppg": 3.0347826086956537, "delta_ts_pct": -0.024723107892765328, "delta_apg": -0.26956521739130435, "delta_rpg": 0.20869565217391273, "delta_mpg": 1.7413043478260875, "delta_three_rate": 0.07190334545187466, "season_ppg": 16.565217391304348, "season_apg": 1.8695652173913044, "season_rpg": 6.391304347826087, "season_ts_pct": 0.5409472966833258, "season_three_rate": 0.3993610223642173, "season_mpg": 26.40869565217391, "last3_games": 3, "last3_ppg": 22.0, "last3_apg": 1.6666666666666667, "last3_rpg": 5.333333333333333, "last3_ts_pct": 0.5083179297597042, "last3_three_rate": 0.5263157894736842, "last3_mpg": 30.344444444444445, "last5_games": 5, "last5_ppg": 19.6, "last5_apg": 1.6, "last5_rpg": 6.6, "last5_ts_pct": 0.5162241887905604, "last5_three_rate": 0.47126436781609193, "last5_mpg": 28.15, "form_label": "Volume Up, Efficiency Down", "trend_score": 5.7443745172662934, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_J._DUNN", "global_player_id": "", "player_name": "J. Dunn", "position": "G", "games": 29, "mpg": 23.41551724137931, "ppg": 10.931034482758621, "rpg": 2.586206896551724, "apg": 1.3793103448275863, "ts_pct": 0.5872980583963243, "efg_pct": 0.5688259109311741, "usg_pct": 0.1980758772522319, "ast_pct": 0.09492648932467684, "tov_pct": 0.11769321302471558, "ortg": 108.42689804993552, "drtg": 7.9005615878421995, "netrtg": 100.52633646209331, "minutes_on": 679.05, "on_court_pct": 0.5828755364806867, "net_on_per40": 6.538546498785067, "net_off_per40": 4.856466714682583, "on_off_net_diff_per40": 1.6820797841024842, "recent_games": 5, "recent_ppg": 5.8, "delta_ppg": -5.131034482758621, "delta_ts_pct": -0.038886560665613246, "delta_apg": -0.5793103448275863, "delta_rpg": -1.986206896551724, "delta_mpg": -6.795517241379308, "delta_three_rate": 0.030364372469635637, "season_ppg": 10.931034482758621, "season_apg": 1.3793103448275863, "season_rpg": 2.586206896551724, "season_ts_pct": 0.5872980583963243, "season_three_rate": 0.6234817813765182, "season_mpg": 23.41551724137931, "last3_games": 3, "last3_ppg": 6.0, "last3_apg": 0.6666666666666666, "last3_rpg": 0.3333333333333333, "last3_ts_pct": 0.75, "last3_three_rate": 0.6666666666666666, "last3_mpg": 12.722222222222221, "last5_games": 5, "last5_ppg": 5.8, "last5_apg": 0.8, "last5_rpg": 0.6, "last5_ts_pct": 0.5484114977307111, "last5_three_rate": 0.6538461538461539, "last5_mpg": 16.62, "form_label": "Cold Spell", "trend_score": -10.9725302830025, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_C._ALLEN_WILLIAMS", "global_player_id": "", "player_name": "C. Allen Williams", "position": "G", "games": 21, "mpg": 22.384920634920633, "ppg": 12.142857142857142, "rpg": 2.142857142857143, "apg": 3.238095238095238, "ts_pct": 0.6063344112611756, "efg_pct": 0.5876288659793815, "usg_pct": 0.22887008363407924, "ast_pct": 0.2531624928152924, "tov_pct": 0.13207858675912168, "ortg": 116.94923643152131, "drtg": 8.162185108302399, "netrtg": 108.78705132321892, "minutes_on": 470.06666666666666, "on_court_pct": 0.5562919132149902, "net_on_per40": 4.5950928946248695, "net_off_per40": 9.921763869132292, "on_off_net_diff_per40": -5.326670974507422, "recent_games": 5, "recent_ppg": 14.6, "delta_ppg": 2.4571428571428573, "delta_ts_pct": -0.060254219759081074, "delta_apg": 0.36190476190476195, "delta_rpg": -0.5428571428571427, "delta_mpg": 3.0684126984127005, "delta_three_rate": 0.007149983372131685, "season_ppg": 12.142857142857142, "season_apg": 3.238095238095238, "season_rpg": 2.142857142857143, "season_ts_pct": 0.6063344112611756, "season_three_rate": 0.5412371134020618, "season_mpg": 22.384920634920633, "last3_games": 3, "last3_ppg": 18.0, "last3_apg": 3.0, "last3_rpg": 1.3333333333333333, "last3_ts_pct": 0.6716417910447761, "last3_three_rate": 0.5263157894736842, "last3_mpg": 24.388888888888886, "last5_games": 5, "last5_ppg": 14.6, "last5_apg": 3.6, "last5_rpg": 1.6, "last5_ts_pct": 0.5460801915020945, "last5_three_rate": 0.5483870967741935, "last5_mpg": 25.453333333333333, "form_label": "Stable", "trend_score": 4.160033480138292, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_W._WASHPUN", "global_player_id": "", "player_name": "W. Washpun", "position": "G", "games": 28, "mpg": 26.410119047619048, "ppg": 7.75, "rpg": 2.857142857142857, "apg": 4.357142857142857, "ts_pct": 0.4973414008067473, "efg_pct": 0.47512437810945274, "usg_pct": 0.16016939945645517, "ast_pct": 0.24622723034541158, "tov_pct": 0.1834106902230873, "ortg": 103.87647931440452, "drtg": 11.470965697611065, "netrtg": 92.40551361679346, "minutes_on": 739.5166666666667, "on_court_pct": 0.6573481481481481, "net_on_per40": 6.382547159180547, "net_off_per40": 5.603355095334848, "on_off_net_diff_per40": 0.7791920638456986, "recent_games": 5, "recent_ppg": 5.6, "delta_ppg": -2.1500000000000004, "delta_ts_pct": -0.08264945767878523, "delta_apg": -0.35714285714285676, "delta_rpg": 0.7428571428571429, "delta_mpg": -3.033452380952383, "delta_three_rate": -0.05783582089552236, "season_ppg": 7.75, "season_apg": 4.357142857142857, "season_rpg": 2.857142857142857, "season_ts_pct": 0.4973414008067473, "season_three_rate": 0.43283582089552236, "season_mpg": 26.410119047619048, "last3_games": 3, "last3_ppg": 8.0, "last3_apg": 4.333333333333333, "last3_rpg": 4.0, "last3_ts_pct": 0.4846526655896607, "last3_three_rate": 0.43478260869565216, "last3_mpg": 26.483333333333334, "last5_games": 5, "last5_ppg": 5.6, "last5_apg": 4.0, "last5_rpg": 3.6, "last5_ts_pct": 0.4146919431279621, "last5_three_rate": 0.375, "last5_mpg": 23.376666666666665, "form_label": "Role Shrinking", "trend_score": -5.505064240865116, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_J._DAVIS", "global_player_id": "", "player_name": "J. Davis", "position": "C", "games": 18, "mpg": 23.625925925925927, "ppg": 12.0, "rpg": 5.777777777777778, "apg": 0.7777777777777778, "ts_pct": 0.620404411764706, "efg_pct": 0.594488188976378, "usg_pct": 0.22392839934511244, "ast_pct": 0.0569911906919541, "tov_pct": 0.19437245464642725, "ortg": 90.3525202580122, "drtg": 11.94815360721819, "netrtg": 78.40436665079402, "minutes_on": 425.2833333333333, "on_court_pct": 0.5906712962962962, "net_on_per40": 4.4205823568601375, "net_off_per40": 6.107560934230619, "on_off_net_diff_per40": -1.686978577370482, "recent_games": 5, "recent_ppg": 8.0, "delta_ppg": -4.0, "delta_ts_pct": -0.047666725624957995, "delta_apg": -0.37777777777777777, "delta_rpg": -2.5777777777777775, "delta_mpg": -4.429259259259261, "delta_three_rate": 0.05599300087489063, "season_ppg": 12.0, "season_apg": 0.7777777777777778, "season_rpg": 5.777777777777778, "season_ts_pct": 0.620404411764706, "season_three_rate": 0.05511811023622047, "season_mpg": 23.625925925925927, "last3_games": 3, "last3_ppg": 8.666666666666666, "last3_apg": 0.3333333333333333, "last3_rpg": 2.0, "last3_ts_pct": 0.6238003838771593, "last3_three_rate": 0.0625, "last3_mpg": 17.783333333333335, "last5_games": 5, "last5_ppg": 8.0, "last5_apg": 0.4, "last5_rpg": 3.2, "last5_ts_pct": 0.572737686139748, "last5_three_rate": 0.1111111111111111, "last5_mpg": 19.196666666666665, "form_label": "Cold Spell", "trend_score": -8.698812146990827, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_T._OMLID", "global_player_id": "", "player_name": "T. Omlid", "position": "F", "games": 23, "mpg": 21.047101449275363, "ppg": 8.73913043478261, "rpg": 6.217391304347826, "apg": 1.565217391304348, "ts_pct": 0.5219152471956793, "efg_pct": 0.52046783625731, "usg_pct": 0.19461532905077056, "ast_pct": 0.1237720121512333, "tov_pct": 0.0940910801656003, "ortg": 105.95747321511621, "drtg": 23.345192840450533, "netrtg": 82.61228037466567, "minutes_on": 484.06666666666666, "on_court_pct": 0.5233153153153153, "net_on_per40": 15.700316760776758, "net_off_per40": -3.0843664953129775, "on_off_net_diff_per40": 18.784683256089735, "recent_games": 5, "recent_ppg": 7.2, "delta_ppg": -1.5391304347826091, "delta_ts_pct": -0.008802362361015614, "delta_apg": -0.5652173913043479, "delta_rpg": -0.21739130434782616, "delta_mpg": -1.977101449275363, "delta_three_rate": 0.1259137426900585, "season_ppg": 8.73913043478261, "season_apg": 1.565217391304348, "season_rpg": 6.217391304347826, "season_ts_pct": 0.5219152471956793, "season_three_rate": 0.4678362573099415, "season_mpg": 21.047101449275363, "last3_games": 3, "last3_ppg": 8.0, "last3_apg": 1.3333333333333333, "last3_rpg": 7.0, "last3_ts_pct": 0.6072874493927125, "last3_three_rate": 0.6111111111111112, "last3_mpg": 21.722222222222218, "last5_games": 5, "last5_ppg": 7.2, "last5_apg": 1.0, "last5_rpg": 6.0, "last5_ts_pct": 0.5131128848346637, "last5_three_rate": 0.59375, "last5_mpg": 19.07, "form_label": "Stable", "trend_score": -1.9262352117927763, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_M._MARIA", "global_player_id": "", "player_name": "M. Maria", "position": "G", "games": 31, "mpg": 15.775268817204301, "ppg": 6.193548387096774, "rpg": 2.4838709677419355, "apg": 5.258064516129032, "ts_pct": 0.516795865633075, "efg_pct": 0.4567901234567901, "usg_pct": 0.21525401465876087, "ast_pct": 0.4953754271741279, "tov_pct": 0.22522522522522523, "ortg": 106.20345207412461, "drtg": 13.840535515409455, "netrtg": 92.36291655871516, "minutes_on": 489.0, "on_court_pct": 0.3927710843373494, "net_on_per40": 9.243353783231086, "net_off_per40": 4.8148148148148096, "on_off_net_diff_per40": 4.428538968416277, "recent_games": 5, "recent_ppg": 5.6, "delta_ppg": -0.5935483870967744, "delta_ts_pct": 0.01755527940509294, "delta_apg": -0.8580645161290317, "delta_rpg": -0.6838709677419355, "delta_mpg": -5.008602150537634, "delta_three_rate": 0.18981481481481488, "season_ppg": 6.193548387096774, "season_apg": 5.258064516129032, "season_rpg": 2.4838709677419355, "season_ts_pct": 0.516795865633075, "season_three_rate": 0.5185185185185185, "season_mpg": 15.775268817204301, "last3_games": 3, "last3_ppg": 4.333333333333333, "last3_apg": 3.0, "last3_rpg": 1.0, "last3_ts_pct": 0.45391061452513964, "last3_three_rate": 0.7692307692307693, "last3_mpg": 9.427777777777779, "last5_games": 5, "last5_ppg": 5.6, "last5_apg": 4.4, "last5_rpg": 1.8, "last5_ts_pct": 0.5343511450381679, "last5_three_rate": 0.7083333333333334, "last5_mpg": 10.766666666666667, "form_label": "More Aggressive From Three", "trend_score": -1.0100950386027387, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_R._BERAN_JR", "global_player_id": "", "player_name": "R. Beran JR", "position": "F", "games": 22, "mpg": 21.53712121212121, "ppg": 8.318181818181818, "rpg": 3.909090909090909, "apg": 0.8181818181818182, "ts_pct": 0.5200045464878381, "efg_pct": 0.48757763975155277, "usg_pct": 0.18546746382800908, "ast_pct": 0.05966273240661236, "tov_pct": 0.1156011258544431, "ortg": 98.19841843341386, "drtg": 11.910127921728579, "netrtg": 86.28829051168529, "minutes_on": 473.8333333333333, "on_court_pct": 0.5354048964218455, "net_on_per40": 0.8441786844882131, "net_off_per40": 21.013376570733683, "on_off_net_diff_per40": -20.16919788624547, "recent_games": 5, "recent_ppg": 6.6, "delta_ppg": -1.7181818181818187, "delta_ts_pct": 0.020624549187129082, "delta_apg": -0.4181818181818182, "delta_rpg": 0.09090909090909083, "delta_mpg": -2.173787878787877, "delta_three_rate": 0.00851161720726945, "season_ppg": 8.318181818181818, "season_apg": 0.8181818181818182, "season_rpg": 3.909090909090909, "season_ts_pct": 0.5200045464878381, "season_three_rate": 0.6211180124223602, "season_mpg": 21.53712121212121, "last3_games": 3, "last3_ppg": 3.6666666666666665, "last3_apg": 0.3333333333333333, "last3_rpg": 2.6666666666666665, "last3_ts_pct": 0.6979695431472082, "last3_three_rate": 0.42857142857142855, "last3_mpg": 16.750000000000004, "last5_games": 5, "last5_ppg": 6.6, "last5_apg": 0.4, "last5_rpg": 4.0, "last5_ts_pct": 0.5406290956749672, "last5_three_rate": 0.6296296296296297, "last5_mpg": 19.363333333333333, "form_label": "Stable", "trend_score": -3.7522279807695416, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_V._VOYTSO", "global_player_id": "", "player_name": "V. Voytso", "position": "F", "games": 30, "mpg": 18.890555555555558, "ppg": 6.033333333333333, "rpg": 2.9, "apg": 1.1333333333333333, "ts_pct": 0.6260376314333149, "efg_pct": 0.6082089552238806, "usg_pct": 0.13425410091217654, "ast_pct": 0.08779212543019715, "tov_pct": 0.16708919105784742, "ortg": 111.43584011398077, "drtg": 9.057073151811778, "netrtg": 102.378766962169, "minutes_on": 566.7833333333333, "on_court_pct": 0.4703596127247579, "net_on_per40": 10.938924339106649, "net_off_per40": 2.193612409578776, "on_off_net_diff_per40": 8.745311929527873, "recent_games": 5, "recent_ppg": 4.4, "delta_ppg": -1.6333333333333329, "delta_ts_pct": -0.1427335892540531, "delta_apg": 0.06666666666666665, "delta_rpg": -0.6999999999999997, "delta_mpg": 1.3861111111111057, "delta_three_rate": -0.11513859275053306, "season_ppg": 6.033333333333333, "season_apg": 1.1333333333333333, "season_rpg": 2.9, "season_ts_pct": 0.6260376314333149, "season_three_rate": 0.6865671641791045, "season_mpg": 18.890555555555558, "last3_games": 3, "last3_ppg": 5.0, "last3_apg": 2.0, "last3_rpg": 3.0, "last3_ts_pct": 0.625, "last3_three_rate": 0.5833333333333334, "last3_mpg": 23.883333333333336, "last5_games": 5, "last5_ppg": 4.4, "last5_apg": 1.2, "last5_rpg": 2.2, "last5_ts_pct": 0.4833040421792618, "last5_three_rate": 0.5714285714285714, "last5_mpg": 20.276666666666664, "form_label": "Stable", "trend_score": -6.801436514047049, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_G._DELGADO", "global_player_id": "", "player_name": "G. Delgado", "position": "C", "games": 20, "mpg": 16.465, "ppg": 8.6, "rpg": 4.55, "apg": 0.7, "ts_pct": 0.6644004944375773, "efg_pct": 0.6354166666666666, "usg_pct": 0.19878188527926963, "ast_pct": 0.0670144131861441, "tov_pct": 0.13383297644539616, "ortg": 106.62118722213287, "drtg": 13.76577512219509, "netrtg": 92.85541209993778, "minutes_on": 329.31666666666666, "on_court_pct": 0.40908902691511384, "net_on_per40": 11.417581861430236, "net_off_per40": 1.5977015521530546, "on_off_net_diff_per40": 9.819880309277181, "recent_games": 5, "recent_ppg": 6.2, "delta_ppg": -2.3999999999999995, "delta_ts_pct": -0.060817939920443376, "delta_apg": -0.29999999999999993, "delta_rpg": -0.34999999999999964, "delta_mpg": -3.048333333333332, "delta_three_rate": -0.07291666666666666, "season_ppg": 8.6, "season_apg": 0.7, "season_rpg": 4.55, "season_ts_pct": 0.6644004944375773, "season_three_rate": 0.13541666666666666, "season_mpg": 16.465, "last3_games": 3, "last3_ppg": 3.0, "last3_apg": 0.0, "last3_rpg": 5.0, "last3_ts_pct": 0.4105839416058394, "last3_three_rate": 0.14285714285714285, "last3_mpg": 13.655555555555557, "last5_games": 5, "last5_ppg": 6.2, "last5_apg": 0.4, "last5_rpg": 4.2, "last5_ts_pct": 0.6035825545171339, "last5_three_rate": 0.0625, "last5_mpg": 13.416666666666668, "form_label": "Role Shrinking", "trend_score": -7.915963891423974, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_M._QUEIROZ", "global_player_id": "", "player_name": "M. Queiroz", "position": "C", "games": 19, "mpg": 24.586842105263155, "ppg": 7.631578947368421, "rpg": 5.842105263157895, "apg": 2.473684210526316, "ts_pct": 0.5238439306358381, "efg_pct": 0.5, "usg_pct": 0.15636189782065918, "ast_pct": 0.15647655985694875, "tov_pct": 0.15299877600979192, "ortg": 98.03069376799664, "drtg": 10.71434843815889, "netrtg": 87.31634532983774, "minutes_on": 467.1666666666667, "on_court_pct": 0.6106753812636165, "net_on_per40": 5.565465572600772, "net_off_per40": 7.52098489087858, "on_off_net_diff_per40": -1.9555193182778083, "recent_games": 5, "recent_ppg": 9.0, "delta_ppg": 1.3684210526315788, "delta_ts_pct": 0.11608780997849644, "delta_apg": 0.12631578947368416, "delta_rpg": 0.757894736842105, "delta_mpg": 1.946491228070176, "delta_three_rate": -0.0012315270935960576, "season_ppg": 7.631578947368421, "season_apg": 2.473684210526316, "season_rpg": 5.842105263157895, "season_ts_pct": 0.5238439306358381, "season_three_rate": 0.03571428571428571, "season_mpg": 24.586842105263155, "last3_games": 3, "last3_ppg": 10.0, "last3_apg": 2.6666666666666665, "last3_rpg": 6.666666666666667, "last3_ts_pct": 0.6147540983606558, "last3_three_rate": 0.05, "last3_mpg": 28.505555555555556, "last5_games": 5, "last5_ppg": 9.0, "last5_apg": 2.6, "last5_rpg": 6.6, "last5_ts_pct": 0.6399317406143346, "last5_three_rate": 0.034482758620689655, "last5_mpg": 26.53333333333333, "form_label": "Quietly Trending Up", "trend_score": 6.007827256267251, "player_hub_href": "player_hub.html"}, {"team_key": "FCP", "player_id": "FCP_J._RILEY", "global_player_id": "", "player_name": "J. Riley", "position": "G", "games": 6, "mpg": 25.619444444444444, "ppg": 17.5, "rpg": 2.1666666666666665, "apg": 2.8333333333333335, "ts_pct": 0.6325301204819277, "efg_pct": 0.5763888888888888, "usg_pct": 0.2703136736763946, "ast_pct": 0.19852179117259233, "tov_pct": 0.13541666666666666, "ortg": 111.2956703549826, "drtg": 8.07033885863452, "netrtg": 103.22533149634809, "minutes_on": 153.73333333333332, "on_court_pct": 0.6405555555555555, "net_on_per40": 0.7805724197745008, "net_off_per40": -2.78207109737248, "on_off_net_diff_per40": 3.562643517146981, "recent_games": 5, "recent_ppg": 17.8, "delta_ppg": 0.3000000000000007, "delta_ts_pct": 0.048314432761646375, "delta_apg": 0.3666666666666667, "delta_rpg": -0.3666666666666665, "delta_mpg": 0.3105555555555526, "delta_three_rate": 0.01754385964912286, "season_ppg": 17.5, "season_apg": 2.8333333333333335, "season_rpg": 2.1666666666666665, "season_ts_pct": 0.6325301204819277, "season_three_rate": 0.6666666666666666, "season_mpg": 25.619444444444444, "last3_games": 3, "last3_ppg": 10.666666666666666, "last3_apg": 4.0, "last3_rpg": 1.3333333333333333, "last3_ts_pct": 0.5633802816901409, "last3_three_rate": 0.6666666666666666, "last3_mpg": 22.344444444444445, "last5_games": 5, "last5_ppg": 17.8, "last5_apg": 3.2, "last5_rpg": 1.8, "last5_ts_pct": 0.6808445532435741, "last5_three_rate": 0.6842105263157895, "last5_mpg": 25.929999999999996, "form_label": "Stable", "trend_score": -0.5212372394514799, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_J._GUERREIRO", "global_player_id": "", "player_name": "J. Guerreiro", "position": "F", "games": 31, "mpg": 4.939784946236559, "ppg": 2.161290322580645, "rpg": 1.0, "apg": 0.03225806451612903, "ts_pct": 0.6487219209914795, "efg_pct": 0.6326530612244898, "usg_pct": 0.18242778379396904, "ast_pct": 0.010506257704936428, "tov_pct": 0.20111386138613863, "ortg": 104.03680813222867, "drtg": 8.760184708063885, "netrtg": 95.27662342416478, "minutes_on": 153.01666666666668, "on_court_pct": 0.12290495314591701, "net_on_per40": 12.02483389608976, "net_off_per40": 5.787634121399904, "on_off_net_diff_per40": 6.237199774689856, "recent_games": 5, "recent_ppg": 0.8, "delta_ppg": -1.361290322580645, "delta_ts_pct": 0.3512780790085205, "delta_apg": -0.03225806451612903, "delta_rpg": -0.6, "delta_mpg": -3.323118279569892, "delta_three_rate": -0.3469387755102041, "season_ppg": 2.161290322580645, "season_apg": 0.03225806451612903, "season_rpg": 1.0, "season_ts_pct": 0.6487219209914795, "season_three_rate": 0.3469387755102041, "season_mpg": 4.939784946236559, "last3_games": 3, "last3_ppg": 0.0, "last3_apg": 0.0, "last3_rpg": 0.3333333333333333, "last3_ts_pct": null, "last3_three_rate": null, "last3_mpg": 0.45, "last5_games": 5, "last5_ppg": 0.8, "last5_apg": 0.0, "last5_rpg": 0.4, "last5_ts_pct": 1.0, "last5_three_rate": 0.0, "last5_mpg": 1.6166666666666667, "form_label": "Stable", "trend_score": 1.6789205497046025, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_A._TOUPANE", "global_player_id": "", "player_name": "A. Toupane", "position": "F", "games": 4, "mpg": 22.495833333333334, "ppg": 13.0, "rpg": 3.0, "apg": 2.25, "ts_pct": 0.6585612968591691, "efg_pct": 0.640625, "usg_pct": 0.2579700734069378, "ast_pct": 0.17318099819603128, "tov_pct": 0.2477134146341463, "ortg": 89.91990113748258, "drtg": 12.926547783878826, "netrtg": 76.99335335360375, "minutes_on": 89.98333333333333, "on_court_pct": 0.5623958333333333, "net_on_per40": -1.7781070568623818, "net_off_per40": 10.28326588907403, "on_off_net_diff_per40": -12.061372945936412, "recent_games": 4, "recent_ppg": 13.0, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 13.0, "season_apg": 2.25, "season_rpg": 3.0, "season_ts_pct": 0.6585612968591691, "season_three_rate": 0.28125, "season_mpg": 22.495833333333334, "last3_games": 3, "last3_ppg": 17.333333333333332, "last3_apg": 3.0, "last3_rpg": 3.6666666666666665, "last3_ts_pct": 0.6756756756756757, "last3_three_rate": 0.2903225806451613, "last3_mpg": 29.58888888888889, "last5_games": 4, "last5_ppg": 13.0, "last5_apg": 2.25, "last5_rpg": 3.0, "last5_ts_pct": 0.6585612968591691, "last5_three_rate": 0.28125, "last5_mpg": 22.495833333333334, "form_label": "Stable", "trend_score": 1.5166666666666662, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_M._FILIPOVITY", "global_player_id": "", "player_name": "M. Filipovity", "position": "F", "games": 2, "mpg": 25.983333333333334, "ppg": 8.5, "rpg": 3.0, "apg": 0.5, "ts_pct": 0.43995859213250516, "efg_pct": 0.4166666666666667, "usg_pct": 0.16801801932381155, "ast_pct": 0.029587257754327138, "tov_pct": 0.0, "ortg": 101.1960253466075, "drtg": 8.416687048139666, "netrtg": 92.77933829846783, "minutes_on": 51.96666666666667, "on_court_pct": 0.6495833333333334, "net_on_per40": -20.01282873636947, "net_off_per40": 12.841854934601656, "on_off_net_diff_per40": -32.85468367097113, "recent_games": 2, "recent_ppg": 8.5, "delta_ppg": 0.0, "delta_ts_pct": 0.0, "delta_apg": 0.0, "delta_rpg": 0.0, "delta_mpg": 0.0, "delta_three_rate": 0.0, "season_ppg": 8.5, "season_apg": 0.5, "season_rpg": 3.0, "season_ts_pct": 0.43995859213250516, "season_three_rate": 0.6111111111111112, "season_mpg": 25.983333333333334, "last3_games": 2, "last3_ppg": 8.5, "last3_apg": 0.5, "last3_rpg": 3.0, "last3_ts_pct": 0.43995859213250516, "last3_three_rate": 0.6111111111111112, "last3_mpg": 25.983333333333334, "last5_games": 2, "last5_ppg": 8.5, "last5_apg": 0.5, "last5_rpg": 3.0, "last5_ts_pct": 0.43995859213250516, "last5_three_rate": 0.6111111111111112, "last5_mpg": 25.983333333333334, "form_label": "Small Sample", "trend_score": 0.0, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_Y._CARRERA", "global_player_id": "", "player_name": "Y. Carrera", "position": "C", "games": 31, "mpg": 0.8956989247311827, "ppg": 0.45161290322580644, "rpg": 0.22580645161290322, "apg": 0.03225806451612903, "ts_pct": 0.4781420765027322, "efg_pct": 0.4166666666666667, "usg_pct": 0.2512631737629302, "ast_pct": 0.05370088606462007, "tov_pct": 0.12019230769230768, "ortg": 87.81472048180328, "drtg": 4.2769320968977045, "netrtg": 83.53778838490557, "minutes_on": 27.766666666666666, "on_court_pct": 0.022302543507362785, "net_on_per40": -18.727490996398558, "net_off_per40": 7.130925322452555, "on_off_net_diff_per40": -25.858416318851113, "recent_games": 5, "recent_ppg": 0.8, "delta_ppg": 0.3483870967741936, "delta_ts_pct": 0.021857923497267784, "delta_apg": -0.03225806451612903, "delta_rpg": 0.1741935483870968, "delta_mpg": -0.5390322580645162, "delta_three_rate": -0.08333333333333333, "season_ppg": 0.45161290322580644, "season_apg": 0.03225806451612903, "season_rpg": 0.22580645161290322, "season_ts_pct": 0.4781420765027322, "season_three_rate": 0.08333333333333333, "season_mpg": 0.8956989247311827, "last3_games": 3, "last3_ppg": 0.0, "last3_apg": 0.0, "last3_rpg": 0.0, "last3_ts_pct": null, "last3_three_rate": null, "last3_mpg": 0.0, "last5_games": 5, "last5_ppg": 0.8, "last5_apg": 0.0, "last5_rpg": 0.4, "last5_ts_pct": 0.5, "last5_three_rate": 0.0, "last5_mpg": 0.35666666666666663, "form_label": "Stable", "trend_score": -0.12138833068922901, "player_hub_href": "/access.html?from=demo"}, {"team_key": "FCP", "player_id": "FCP_S._SILVA", "global_player_id": "", "player_name": "S. Silva", "position": "F", "games": 16, "mpg": 1.0697916666666667, "ppg": 0.5, "rpg": 0.0625, "apg": 0.0625, "ts_pct": 0.5714285714285714, "efg_pct": 0.5714285714285714, "usg_pct": 0.197014653375292, "ast_pct": 0.0884797062575987, "tov_pct": 0.125, "ortg": 123.46721094942953, "drtg": 4.070525173827277e-05, "netrtg": 123.4671702441778, "minutes_on": 17.1, "on_court_pct": 0.026718750000000003, "net_on_per40": -44.44444444444444, "net_off_per40": 6.421576497030017, "on_off_net_diff_per40": -50.86602094147446, "recent_games": 5, "recent_ppg": 0.0, "delta_ppg": -0.5, "delta_ts_pct": -0.5714285714285714, "delta_apg": -0.0625, "delta_rpg": -0.0625, "delta_mpg": 0.19020833333333353, "delta_three_rate": 0.1428571428571429, "season_ppg": 0.5, "season_apg": 0.0625, "season_rpg": 0.0625, "season_ts_pct": 0.5714285714285714, "season_three_rate": 0.8571428571428571, "season_mpg": 1.0697916666666667, "last3_games": 3, "last3_ppg": 0.0, "last3_apg": 0.0, "last3_rpg": 0.0, "last3_ts_pct": 0.0, "last3_three_rate": 1.0, "last3_mpg": 0.8222222222222223, "last5_games": 5, "last5_ppg": 0.0, "last5_apg": 0.0, "last5_rpg": 0.0, "last5_ts_pct": 0.0, "last5_three_rate": 1.0, "last5_mpg": 1.2600000000000002, "form_label": "Stable", "trend_score": -13.075797619047618, "player_hub_href": "/access.html?from=demo"}];
+    const ALERTS = [{"entity_type": "player", "team_key": "FCP", "player_id": "FCP_J._DUNN", "player_name": "J. Dunn", "lineup_id": "", "lineup_players": "", "alert_family": "momentum", "alert_code": "player_cold_spell", "severity": "high", "sample_bucket": "Low", "headline": "J. Dunn is in a cold spell", "detail": "Last-5 scoring is down by -5.1 PPG with TS change of -0.039.", "metric_name": "trend_score", "metric_value": -10.9725302830025, "baseline_name": "form_label", "baseline_value": null, "delta_name": "delta_ppg", "delta_value": -5.131034482758621, "sort_score": 86.9725302830025}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_J._DAVIS", "player_name": "J. Davis", "lineup_id": "", "lineup_players": "", "alert_family": "momentum", "alert_code": "player_cold_spell", "severity": "high", "sample_bucket": "Low", "headline": "J. Davis is in a cold spell", "detail": "Last-5 scoring is down by -4.0 PPG with TS change of -0.048.", "metric_name": "trend_score", "metric_value": -8.698812146990827, "baseline_name": "form_label", "baseline_value": null, "delta_name": "delta_ppg", "delta_value": -4.0, "sort_score": 84.69881214699083}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_R._BERAN_JR", "player_name": "", "lineup_id": "", "lineup_players": "", "alert_family": "onoff", "alert_code": "negative_onoff", "severity": "high", "sample_bucket": "High", "headline": "is dragging team performance", "detail": "Team Net On/40 is 0.8 versus 21.0 off court (-20.2).", "metric_name": "on_off_net_diff_per40", "metric_value": -20.16919788624547, "baseline_name": "net_off_per40", "baseline_value": 21.013376570733683, "delta_name": "net_on_minus_off", "delta_value": -20.16919788624547, "sort_score": 86.16919788624547}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_T._OMLID", "player_name": "", "lineup_id": "", "lineup_players": "", "alert_family": "onoff", "alert_code": "positive_onoff", "severity": "high", "sample_bucket": "High", "headline": "is lifting team performance", "detail": "Team Net On/40 is 15.7 versus -3.1 off court (+18.8).", "metric_name": "on_off_net_diff_per40", "metric_value": 18.784683256089735, "baseline_name": "net_off_per40", "baseline_value": -3.0843664953129775, "delta_name": "net_on_minus_off", "delta_value": 18.784683256089735, "sort_score": 84.78468325608974}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_M._QUEIROZ", "player_name": "M. Queiroz", "lineup_id": "", "lineup_players": "", "alert_family": "momentum", "alert_code": "player_trending_up", "severity": "medium", "sample_bucket": "Low", "headline": "M. Queiroz is trending up", "detail": "Recent production is improving: PPG +1.4, TS +0.116. Minutes are also up by +1.9.", "metric_name": "trend_score", "metric_value": 6.007827256267251, "baseline_name": "form_label", "baseline_value": null, "delta_name": "delta_ppg", "delta_value": 1.3684210526315788, "sort_score": 70.00782725626725}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_G._DELGADO", "player_name": "G. Delgado", "lineup_id": "", "lineup_players": "", "alert_family": "momentum", "alert_code": "player_trending_down", "severity": "medium", "sample_bucket": "Low", "headline": "G. Delgado is trending down", "detail": "Role Shrinking. Recent deltas: PPG -2.4, TS -0.061, MPG -3.0.", "metric_name": "trend_score", "metric_value": -7.915963891423974, "baseline_name": "form_label", "baseline_value": null, "delta_name": "delta_ppg", "delta_value": -2.3999999999999995, "sort_score": 67.91596389142397}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_C._HUDSON", "player_name": "C. Hudson", "lineup_id": "", "lineup_players": "", "alert_family": "momentum", "alert_code": "player_trending_down", "severity": "medium", "sample_bucket": "Low", "headline": "C. Hudson is trending down", "detail": "Volume Up, Efficiency Down. Recent deltas: PPG +3.0, TS -0.025, MPG +1.7.", "metric_name": "trend_score", "metric_value": 5.7443745172662934, "baseline_name": "form_label", "baseline_value": null, "delta_name": "delta_ppg", "delta_value": 3.0347826086956537, "sort_score": 65.7443745172663}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_W._WASHPUN", "player_name": "W. Washpun", "lineup_id": "", "lineup_players": "", "alert_family": "momentum", "alert_code": "player_trending_down", "severity": "medium", "sample_bucket": "Low", "headline": "W. Washpun is trending down", "detail": "Role Shrinking. Recent deltas: PPG -2.2, TS -0.083, MPG -3.0.", "metric_name": "trend_score", "metric_value": -5.505064240865116, "baseline_name": "form_label", "baseline_value": null, "delta_name": "delta_ppg", "delta_value": -2.1500000000000004, "sort_score": 65.50506424086511}, {"entity_type": "player", "team_key": "FCP", "player_id": "FCP_C._HUDSON", "player_name": "", "lineup_id": "", "lineup_players": "", "alert_family": "onoff", "alert_code": "boxscore_vs_impact_warning", "severity": "medium", "sample_bucket": "High", "headline": "scores, but the team read is weak", "detail": "Boxscore profile gives 16.6 PPG, but on-off swing is only -9.1.", "metric_name": "ppg", "metric_value": 16.565217391304348, "baseline_name": "on_off_net_diff_per40", "baseline_value": -9.098221999561986, "delta_name": "minutes_on", "delta_value": 607.35, "sort_score": 61.098221999561986}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_C._HUDSON | FCP_J._DUNN | FCP_M._QUEIROZ | FCP_R._BERAN_JR | FCP_W._WASHPUN", "lineup_players": "C. Hudson | J. Dunn | M. Queiroz | R. Beran JR | W. Washpun", "alert_family": "lineup_signal", "alert_code": "strong_lineup", "severity": "medium", "sample_bucket": "Low", "headline": "A lineup is giving real positive minutes", "detail": "C. Hudson | J. Dunn | M. Queiroz | R. Beran JR | W. Washpun has 43.5 minutes and a +34.5 NetRtg (Off 129.2 / Def 94.6).", "metric_name": "net_rating", "metric_value": 34.54621403450297, "baseline_name": "minutes", "baseline_value": 43.48333333333333, "delta_name": "games", "delta_value": 5.0, "sort_score": 91.44510292339186}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_C._ALLEN_WILLIAMS | FCP_C._HUDSON | FCP_M._MARIA | FCP_M._QUEIROZ | FCP_V._VOYTSO", "lineup_players": "C. Allen Williams | C. Hudson | M. Maria | M. Queiroz | V. Voytso", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Low", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "C. Allen Williams | C. Hudson | M. Maria | M. Queiroz | V. Voytso is at -31.2 NetRtg in only 17.0 minutes across 5 games.", "metric_name": "net_rating", "metric_value": -31.19540067053879, "baseline_name": "minutes", "baseline_value": 16.966666666666665, "delta_name": "games", "delta_value": 5.0, "sort_score": 38.0}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_C._ALLEN_WILLIAMS | FCP_C._HUDSON | FCP_M._QUEIROZ | FCP_V._VOYTSO | FCP_W._WASHPUN", "lineup_players": "C. Allen Williams | C. Hudson | M. Queiroz | V. Voytso | W. Washpun", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Medium", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "C. Allen Williams | C. Hudson | M. Queiroz | V. Voytso | W. Washpun is at +55.9 NetRtg in only 16.7 minutes across 7 games.", "metric_name": "net_rating", "metric_value": 55.94249912540151, "baseline_name": "minutes", "baseline_value": 16.666666666666668, "delta_name": "games", "delta_value": 7.0, "sort_score": 38.0}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_C._HUDSON | FCP_G._DELGADO | FCP_J._DUNN | FCP_M._MARIA | FCP_V._VOYTSO", "lineup_players": "C. Hudson | G. Delgado | J. Dunn | M. Maria | V. Voytso", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Low", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "C. Hudson | G. Delgado | J. Dunn | M. Maria | V. Voytso is at +61.2 NetRtg in only 16.4 minutes across 5 games.", "metric_name": "net_rating", "metric_value": 61.18158245146823, "baseline_name": "minutes", "baseline_value": 16.366666666666667, "delta_name": "games", "delta_value": 5.0, "sort_score": 38.0}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_G._DELGADO | FCP_J._DUNN | FCP_M._MARIA | FCP_T._OMLID | FCP_V._VOYTSO", "lineup_players": "G. Delgado | J. Dunn | M. Maria | T. Omlid | V. Voytso", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Medium", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "G. Delgado | J. Dunn | M. Maria | T. Omlid | V. Voytso is at +65.2 NetRtg in only 16.2 minutes across 7 games.", "metric_name": "net_rating", "metric_value": 65.170625024209, "baseline_name": "minutes", "baseline_value": 16.216666666666665, "delta_name": "games", "delta_value": 7.0, "sort_score": 38.0}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_J._DAVIS | FCP_J._DUNN | FCP_T._OMLID | FCP_V._VOYTSO | FCP_W._WASHPUN", "lineup_players": "J. Davis | J. Dunn | T. Omlid | V. Voytso | W. Washpun", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Low", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "J. Davis | J. Dunn | T. Omlid | V. Voytso | W. Washpun is at +42.1 NetRtg in only 13.7 minutes across 4 games.", "metric_name": "net_rating", "metric_value": 42.115925417494125, "baseline_name": "minutes", "baseline_value": 13.716666666666667, "delta_name": "games", "delta_value": 4.0, "sort_score": 38.0}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_C._HUDSON | FCP_G._DELGADO | FCP_T._OMLID | FCP_V._VOYTSO | FCP_W._WASHPUN", "lineup_players": "C. Hudson | G. Delgado | T. Omlid | V. Voytso | W. Washpun", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Medium", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "C. Hudson | G. Delgado | T. Omlid | V. Voytso | W. Washpun is at +41.3 NetRtg in only 13.4 minutes across 7 games.", "metric_name": "net_rating", "metric_value": 41.29771157634937, "baseline_name": "minutes", "baseline_value": 13.45, "delta_name": "games", "delta_value": 7.0, "sort_score": 38.0}, {"entity_type": "lineup", "team_key": "FCP", "player_id": "", "player_name": "", "lineup_id": "FCP_C._ALLEN_WILLIAMS | FCP_M._QUEIROZ | FCP_R._BERAN_JR | FCP_T._OMLID | FCP_W._WASHPUN", "lineup_players": "C. Allen Williams | M. Queiroz | R. Beran JR | T. Omlid | W. Washpun", "alert_family": "sample_risk", "alert_code": "fragile_lineup_signal", "severity": "low", "sample_bucket": "Medium", "headline": "There is a lineup signal, but the sample is too small to trust yet", "detail": "C. Allen Williams | M. Queiroz | R. Beran JR | T. Omlid | W. Washpun is at -22.7 NetRtg in only 12.3 minutes across 6 games.", "metric_name": "net_rating", "metric_value": -22.682056130151963, "baseline_name": "minutes", "baseline_value": 12.283333333333333, "delta_name": "games", "delta_value": 6.0, "sort_score": 30.682056130151963}];
+    const RECENT_GAMES_TO_SHOW = 8;
+    const LINEUPS_MIN_MINUTES = 20.0;
+    const TOP_PLAYERS_COUNT = 8;
+    const TOP_LINEUPS_COUNT = 5;
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function fmtNumber(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "—";
+      return Number(value).toFixed(1);
+    }
+
+    function fmtPct(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "—";
+      return (Number(value) * 100).toFixed(1) + "%";
+    }
+
+    function avg(values) {
+      const clean = values.filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      if (!clean.length) return null;
+      return clean.reduce((a, b) => a + b, 0) / clean.length;
+    }
+
+    function parseDate(value) {
+      if (value === null || value === undefined) return null;
+      const raw = String(value).trim();
+      if (!raw) return null;
+      const ts = Date.parse(raw);
+      return Number.isNaN(ts) ? null : ts;
+    }
+
+    function gameSortKey(game) {
+      const dateTs = parseDate(game.game_date);
+      const roundNum = (game.round === null || game.round === undefined || Number.isNaN(Number(game.round))) ? Number.NEGATIVE_INFINITY : Number(game.round);
+      const codeNum = Number(game.game_code);
+      const gameCodeVal = Number.isNaN(codeNum) ? String(game.game_code || "") : codeNum;
+      return { dateTs, roundNum, gameCodeVal };
+    }
+
+    function sortGamesChronologically(rows, descending=false) {
+      const sorted = [...rows].sort((a,b) => {
+        const ka = gameSortKey(a);
+        const kb = gameSortKey(b);
+        if (ka.dateTs !== null && kb.dateTs !== null && ka.dateTs !== kb.dateTs) return ka.dateTs - kb.dateTs;
+        if (ka.dateTs !== null && kb.dateTs === null) return -1;
+        if (ka.dateTs === null && kb.dateTs !== null) return 1;
+        if (ka.roundNum !== kb.roundNum) return ka.roundNum - kb.roundNum;
+        if (typeof ka.gameCodeVal === "number" && typeof kb.gameCodeVal === "number") return ka.gameCodeVal - kb.gameCodeVal;
+        return String(ka.gameCodeVal).localeCompare(String(kb.gameCodeVal));
+      });
+      return descending ? sorted.reverse() : sorted;
+    }
+
+    function currentTeamKey() {
+      return document.getElementById("team-filter").value || "";
+    }
+
+    function currentTeam() {
+      const teamKey = currentTeamKey();
+      return TEAMS.find(t => t.team_key === teamKey) || TEAMS[0] || null;
+    }
+
+    function teamGames(teamKey) {
+      return GAMES.filter(g => g.team_key === teamKey);
+    }
+
+    function recentGames(teamKey, n) {
+      return sortGamesChronologically(teamGames(teamKey)).slice(-n);
+    }
+
+    function currentLineupsMinMinutes() {
+      const el = document.getElementById("lineups-min-minutes");
+      if (!el) return LINEUPS_MIN_MINUTES;
+      const value = Number(el.value);
+      return Number.isFinite(value) && value >= 0 ? value : LINEUPS_MIN_MINUTES;
+    }
+
+    function teamLineups(teamKey) {
+      const minMinutes = currentLineupsMinMinutes();
+      return LINEUPS.filter(l => l.team_key === teamKey && l.minutes !== null && l.minutes >= minMinutes);
+    }
+
+    function teamPlayers(teamKey) {
+      return PLAYERS.filter(p => p.team_key === teamKey);
+    }
+
+    function inferTeamIdentityText(team, games, players, lineups) {
+      const off = avg(games.map(g => g.off_rating));
+      const defv = avg(games.map(g => g.def_rating));
+      const pace = avg(games.map(g => g.pace));
+      const efg = avg(games.map(g => g.efg_pct_off));
+      const oppEfg = avg(games.map(g => g.efg_pct_def));
+
+      const tags = [];
+      if (pace !== null) {
+        if (pace >= 74) tags.push("plays fast");
+        else if (pace <= 70) tags.push("prefers a slower tempo");
+      }
+      if (off !== null && off >= 112) tags.push("scores efficiently");
+      if (defv !== null && defv <= 108) tags.push("defends at a strong level");
+      if (efg !== null && efg >= 0.53) tags.push("creates quality shots");
+      if (oppEfg !== null && oppEfg <= 0.50) tags.push("limits opponent shot quality");
+
+      const corePlayers = players.slice(0, 3).map(p => p.player_name).filter(Boolean);
+      const bestLineup = lineups[0]?.lineup_players || "";
+      const pieces = [];
+      if (tags.length) pieces.push(escapeHtml(team.team_name) + " " + tags.join(", ") + ".");
+      if (corePlayers.length) pieces.push("The rotation is mostly defined by " + escapeHtml(corePlayers.join(", ")) + ".");
+      if (bestLineup) pieces.push("Most effective lineup sample: " + escapeHtml(bestLineup) + ".");
+      return pieces.join(" ");
+    }
+
+    function buildWatchItems(teamKey, games, players, lineups) {
+      const items = [];
+      const recent5 = recentGames(teamKey, 5);
+      const net5 = avg(recent5.map(g => g.net_rating));
+      const seasonNet = avg(games.map(g => g.net_rating));
+      if (net5 !== null && seasonNet !== null) {
+        const diff = net5 - seasonNet;
+        if (diff >= 3) items.push("Recent form is trending up: last 5 net rating sits " + fmtNumber(diff) + " points above season level.");
+        else if (diff <= -3) items.push("Recent form is trending down: last 5 net rating sits " + fmtNumber(Math.abs(diff)) + " points below season level.");
+      }
+
+      const topScorer = [...players]
+        .filter(p => p.ppg !== null && p.ppg !== undefined && !Number.isNaN(Number(p.ppg)))
+        .sort((a,b) => Number(b.ppg) - Number(a.ppg))[0];
+      if (topScorer) items.push(escapeHtml(topScorer.player_name) + " leads the team scoring at " + fmtNumber(topScorer.ppg) + " PPG.");
+
+      const swing = [...players]
+        .filter(p => p.on_off_net_diff_per40 !== null && p.on_off_net_diff_per40 !== undefined && !Number.isNaN(Number(p.on_off_net_diff_per40)))
+        .sort((a,b) => Math.abs(Number(b.on_off_net_diff_per40)) - Math.abs(Number(a.on_off_net_diff_per40)))[0];
+      if (swing) items.push(escapeHtml(swing.player_name) + " has the biggest on/off swing (" + fmtNumber(swing.on_off_net_diff_per40) + " net/40).");
+
+      const bestLineup = lineups[0];
+      if (bestLineup && bestLineup.lineup_players) {
+        items.push("Best lineup sample: " + escapeHtml(bestLineup.lineup_players) + " (" + fmtNumber(bestLineup.net_rating) + " net rating).");
+      }
+
+      return items.slice(0,4);
+    }
+
+    function renderIdentity(team, games, players, lineups) {
+      const root = document.getElementById("identity-panel");
+      if (!root || !team) return;
+      const text = inferTeamIdentityText(team, games, players, lineups);
+      const quickLinks = `
+        <div class="quick-links">
+          <a class="quick-link" href="game_script_profile.html?team=${encodeURIComponent(team.team_key)}">Game Script</a>
+          <a class="quick-link" href="rotation_timeline.html?team=${encodeURIComponent(team.team_key)}">Rotation Timeline</a>
+          <a class="quick-link" href="visual-shot/visual_shot_dashboard_${encodeURIComponent(team.team_key)}.html">Visual Shot</a>
+          <a class="quick-link" href="duo_wowy.html?team=${encodeURIComponent(team.team_key)}">Duo WOWY</a>
+        </div>
+      `;
+      root.innerHTML = `<div class="identity-copy">${text || "No automatic identity summary available."}</div>${quickLinks}`;
+    }
+
+    function renderWatch(teamKey, games, players, lineups) {
+      const root = document.getElementById("watch-panel");
+      if (!root) return;
+      const items = buildWatchItems(teamKey, games, players, lineups);
+      if (!items.length) {
+        root.innerHTML = '<div class="empty">No automatic watch items available.</div>';
+        return;
+      }
+      root.innerHTML = `<ul class="watch-list">${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
+    function buildPlayerHubHref(teamKey, playerId) {
+      if (!teamKey || !playerId) return "#";
+      return `player_hubs/player_hub_${encodeURIComponent(teamKey)}_${encodeURIComponent(playerId)}.html`;
+    }
+
+    function renderPriorityNotes(teamKey) {
+      const root = document.getElementById("priority-notes-panel");
+      if (!root) return;
+
+      const notes = ALERTS
+        .filter(a => a.team_key === teamKey)
+        .sort((a,b) => (Number(b.sort_score ?? -Infinity) - Number(a.sort_score ?? -Infinity)))
+        .slice(0, 5);
+
+      if (!notes.length) {
+        root.innerHTML = '<div class="empty">No coach alerts available for this team yet.</div>';
+        return;
+      }
+
+      root.innerHTML = `<div class="priority-notes-grid">${notes.map(note => {
+        const severity = String(note.severity || "low").toLowerCase();
+        const family = String(note.alert_family || "").replaceAll("_", " ");
+        const sample = String(note.sample_bucket || "").trim();
+        const titleHtml = (note.entity_type === "player" && note.player_id)
+          ? `<a href="${buildPlayerHubHref(note.team_key, note.player_id)}" style="color:var(--accent);text-decoration:none;">${escapeHtml(note.headline || "")}</a>`
+          : `${escapeHtml(note.headline || "")}`;
+        return `
+          <div class="priority-note">
+            <div class="priority-note-top">
+              <div class="priority-note-headline">${titleHtml}</div>
+              <span class="priority-chip ${severity}">${escapeHtml(severity)}</span>
+            </div>
+            <div class="priority-note-detail">${escapeHtml(note.detail || "")}</div>
+            <div class="priority-note-meta">
+              <span class="priority-chip family">${escapeHtml(family || "alert")}</span>
+              ${sample ? `<span class="priority-chip sample">${escapeHtml(sample)}</span>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function renderTrendingPlayers(teamKey) {
+      const root = document.getElementById("trending-players-panel");
+      if (!root) return;
+      const players = teamPlayers(teamKey)
+        .filter(p => p.trend_score !== null && p.trend_score !== undefined && !Number.isNaN(Number(p.trend_score)))
+        .sort((a,b) => Number(b.trend_score) - Number(a.trend_score))
+        .slice(0, 4);
+
+      if (!players.length) {
+        root.innerHTML = '<div class="empty">No player momentum layer available.</div>';
+        return;
+      }
+
+      function fmtPctValue(v) { return (v === null || v === undefined || Number.isNaN(Number(v))) ? "—" : (Number(v) * 100).toFixed(1) + "%"; }
+      function toneMeta(label) {
+        const good = new Set(["Heater", "Quietly Trending Up", "Playmaking Spike", "Glass Surge", "More Aggressive From Three"]);
+        const bad = new Set(["Cold Spell", "Role Shrinking", "Volume Up, Efficiency Down"]);
+        if (good.has(label)) return { chip:"good", bar:"good" };
+        if (bad.has(label)) return { chip:"bad", bar:"bad" };
+        if (label === "Stable") return { chip:"neutral", bar:"neutral" };
+        return { chip:"warn", bar:"warn" };
+      }
+
+      root.innerHTML = `<div class="trend-player-grid">${players.map(p => {
+        const label = p.form_label || "Stable";
+        const tone = toneMeta(label);
+        const href = p.player_hub_href || "#";
+        const score = (p.trend_score === null || p.trend_score === undefined || Number.isNaN(Number(p.trend_score))) ? 50 : Math.max(0, Math.min(100, 50 + Number(p.trend_score) * 5));
+        const ppgDelta = (p.delta_ppg === null || p.delta_ppg === undefined || Number.isNaN(Number(p.delta_ppg))) ? "—" : ((Number(p.delta_ppg) >= 0 ? "+" : "") + fmtNumber(p.delta_ppg));
+        const tsDelta = (p.delta_ts_pct === null || p.delta_ts_pct === undefined || Number.isNaN(Number(p.delta_ts_pct))) ? "—" : ((Number(p.delta_ts_pct) >= 0 ? "+" : "") + (Number(p.delta_ts_pct) * 100).toFixed(1) + " pp");
+        const threeDelta = (p.delta_three_rate === null || p.delta_three_rate === undefined || Number.isNaN(Number(p.delta_three_rate))) ? "—" : ((Number(p.delta_three_rate) >= 0 ? "+" : "") + (Number(p.delta_three_rate) * 100).toFixed(1) + " pp");
+        return `<div class="trend-player-card">
+          <div class="trend-player-top">
+            <div>
+              <div class="trend-player-name"><a href="${href}">${escapeHtml(p.player_name)}</a></div>
+              <div class="trend-player-meta">${escapeHtml(p.position || "—")} · score ${fmtNumber(p.trend_score || 0)}</div>
+            </div>
+            <span class="trend-label-chip ${tone.chip}">${escapeHtml(label)}</span>
+          </div>
+          <div class="trend-score-bar"><span class="trend-score-fill ${tone.bar}" style="width:${score.toFixed(1)}%"></span></div>
+          <table class="trend-mini-table">
+            <thead><tr><th>Metric</th><th>Season</th><th>L3</th><th>L5</th></tr></thead>
+            <tbody>
+              <tr><td>PPG</td><td>${fmtNumber(p.season_ppg)}</td><td>${fmtNumber(p.last3_ppg)}</td><td>${fmtNumber(p.last5_ppg)}</td></tr>
+              <tr><td>TS%</td><td>${fmtPctValue(p.season_ts_pct)}</td><td>${fmtPctValue(p.last3_ts_pct)}</td><td>${fmtPctValue(p.last5_ts_pct)}</td></tr>
+              <tr><td>APG</td><td>${fmtNumber(p.season_apg)}</td><td>${fmtNumber(p.last3_apg)}</td><td>${fmtNumber(p.last5_apg)}</td></tr>
+              <tr><td>3PA Rate</td><td>${fmtPctValue(p.season_three_rate)}</td><td>${fmtPctValue(p.last3_three_rate)}</td><td>${fmtPctValue(p.last5_three_rate)}</td></tr>
+            </tbody>
+          </table>
+          <div class="trend-player-meta" style="margin-top:10px;">Δ PPG ${ppgDelta} · Δ TS ${tsDelta} · Δ 3PA rate ${threeDelta}</div>
+        </div>`;
+      }).join("")}</div>`;
+    }
+
+    function positionBucket(position) {
+      const pos = String(position || "").trim().toUpperCase();
+      if (pos === "G") return "guard";
+      if (pos === "F") return "wing";
+      if (pos === "C") return "big";
+      return "unknown";
+    }
+
+    function positionColor(bucket) {
+      const palette = {
+        guard: "#38bdf8",
+        wing: "#a855f7",
+        big: "#4ade80",
+        unknown: "#94a3b8",
+      };
+      return palette[bucket] || "#94a3b8";
+    }
+
+    function clamp01(v) {
+      const n = Number(v);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(1, n));
+    }
+
+    function roleScoreCreator(player) {
+      const ast = player.ast_pct === null || player.ast_pct === undefined ? 0 : Number(player.ast_pct);
+      const usg = player.usg_pct === null || player.usg_pct === undefined ? 0 : Number(player.usg_pct);
+      return clamp01(ast * 2.6 + usg * 1.5);
+    }
+
+    function roleScoreImpact(player) {
+      const ts = player.ts_pct === null || player.ts_pct === undefined ? 0 : Number(player.ts_pct);
+      const swing = player.on_off_net_diff_per40 === null || player.on_off_net_diff_per40 === undefined ? 0 : Number(player.on_off_net_diff_per40);
+      return clamp01(((ts - 0.45) / 0.20) * 0.6 + ((swing + 8) / 20) * 0.4);
+    }
+
+    function playerRoleLabel(player) {
+      const ast = player.ast_pct === null || player.ast_pct === undefined ? 0 : Number(player.ast_pct);
+      const usg = player.usg_pct === null || player.usg_pct === undefined ? 0 : Number(player.usg_pct);
+      const ts = player.ts_pct === null || player.ts_pct === undefined ? 0 : Number(player.ts_pct);
+      const rpg = player.rpg === null || player.rpg === undefined ? 0 : Number(player.rpg);
+      const threeRate = player.season_three_rate === null || player.season_three_rate === undefined ? 0 : Number(player.season_three_rate);
+      const swing = player.on_off_net_diff_per40 === null || player.on_off_net_diff_per40 === undefined ? 0 : Number(player.on_off_net_diff_per40);
+      const posBucket = positionBucket(player.position);
+
+      if (ast >= 0.20 && usg >= 0.22) return "Primary Creator";
+      if (threeRate >= 0.38 && ts >= 0.52) return "Spacing Piece";
+      if ((rpg >= 5.5 && (posBucket === "big" || posBucket === "hybrid")) || (posBucket === "big" && usg < 0.22)) return "Rebound / Interior";
+      if (ts >= 0.56 && usg >= 0.18 && ast < 0.16) return "Finisher";
+      if (swing >= 4.0) return "Positive Swing";
+      return "Connector";
+    }
+
+    function buildRoleClusters(players) {
+      const clusters = [
+        { key: "Primary Creator", title: "Primary creators", copy: "Higher creation load from usage plus playmaking." },
+        { key: "Finisher", title: "Finishers", copy: "More about converting possessions than initiating them." },
+        { key: "Spacing Piece", title: "Spacing pieces", copy: "Players who stretch the floor through three-point tendency and acceptable efficiency." },
+        { key: "Rebound / Interior", title: "Rebound / interior presence", copy: "Bigger profiles and glass work around the interior." },
+        { key: "Positive Swing", title: "Positive swing", copy: "Players whose on/off profile gives the team a stronger push." },
+      ];
+
+      return clusters.map(cluster => {
+        let ranked = [...players]
+          .filter(p => playerRoleLabel(p) === cluster.key)
+          .sort((a, b) => {
+            if (cluster.key === "Primary Creator") return roleScoreCreator(b) - roleScoreCreator(a);
+            if (cluster.key === "Spacing Piece") return ((Number(b.season_three_rate || 0) + Number(b.ts_pct || 0)) - (Number(a.season_three_rate || 0) + Number(a.ts_pct || 0)));
+            if (cluster.key === "Rebound / Interior") return ((Number(b.rpg || 0) + Number(b.mpg || 0) * 0.1) - (Number(a.rpg || 0) + Number(a.mpg || 0) * 0.1));
+            if (cluster.key === "Positive Swing") return Number(b.on_off_net_diff_per40 || 0) - Number(a.on_off_net_diff_per40 || 0);
+            return roleScoreImpact(b) - roleScoreImpact(a);
+          })
+          .slice(0, 3);
+        return { ...cluster, players: ranked };
+      });
+    }
+
+    function renderRoleClusters(teamKey) {
+      const root = document.getElementById("role-clusters-panel");
+      if (!root) return;
+      const players = teamPlayers(teamKey)
+        .filter(p => p.mpg !== null && p.mpg !== undefined && Number(p.mpg) >= 8)
+        .sort((a,b) => Number(b.mpg || 0) - Number(a.mpg || 0));
+      if (!players.length) {
+        root.innerHTML = '<div class="empty">No player roles available.</div>';
+        return;
+      }
+
+      const clusters = buildRoleClusters(players);
+      root.innerHTML = `<div class="role-cluster-grid">${clusters.map(cluster => {
+        const listHtml = cluster.players.length
+          ? `<div class="role-cluster-list">${cluster.players.map(p => `
+              <div class="role-cluster-item">
+                <a href="${p.player_hub_href || &#x27;#&#x27;}">${escapeHtml(p.player_name)}</a>
+                <span class="role-chip ${positionBucket(p.position)}">${escapeHtml(p.position || "—")}</span>
+              </div>
+            `).join("")}</div>`
+          : `<div class="empty">No clear matches.</div>`;
+        return `
+          <div class="role-cluster-card">
+            <div class="role-cluster-title">${escapeHtml(cluster.title)}</div>
+            <div class="role-cluster-copy">${escapeHtml(cluster.copy)}</div>
+            ${listHtml}
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function renderRoleMap(teamKey) {
+      const svg = document.getElementById("role-map-chart");
+      const tooltip = document.getElementById("role-map-tooltip");
+      const legend = document.getElementById("role-map-legend");
+      if (!svg || !tooltip || !legend) return;
+
+      const players = teamPlayers(teamKey)
+        .filter(p => p.mpg !== null && p.mpg !== undefined && Number(p.mpg) >= 8)
+        .sort((a,b) => Number(b.mpg || 0) - Number(a.mpg || 0));
+
+      if (!players.length) {
+        svg.innerHTML = "";
+        legend.innerHTML = "";
+        return;
+      }
+
+      const width = 980, height = 560;
+      const margin = { top: 28, right: 22, bottom: 54, left: 58 };
+      const plotX = margin.left, plotY = margin.top, plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+      const sx = (x) => plotX + x * plotW;
+      const sy = (y) => plotY + plotH - y * plotH;
+      const NS = "http://www.w3.org/2000/svg";
+
+      function line(x1, y1, x2, y2, cls) {
+        const e = document.createElementNS(NS, "line");
+        e.setAttribute("x1", x1); e.setAttribute("y1", y1); e.setAttribute("x2", x2); e.setAttribute("y2", y2); e.setAttribute("class", cls);
+        return e;
+      }
+      function textNode(x, y, val, cls, anchor="middle") {
+        const e = document.createElementNS(NS, "text");
+        e.setAttribute("x", x); e.setAttribute("y", y); e.setAttribute("class", cls); e.setAttribute("text-anchor", anchor);
+        e.textContent = val;
+        return e;
+      }
+
+      svg.innerHTML = "";
+
+      [0, 0.25, 0.5, 0.75, 1].forEach(v => {
+        const gx = sx(v), gy = sy(v);
+        svg.appendChild(line(gx, plotY, gx, plotY + plotH, "grid-line"));
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+      });
+
+      svg.appendChild(line(sx(0.5), plotY, sx(0.5), plotY + plotH, "series-b"));
+      svg.appendChild(line(plotX, sy(0.5), plotX + plotW, sy(0.5), "series-b"));
+
+      const frame = document.createElementNS(NS, "rect");
+      frame.setAttribute("x", plotX);
+      frame.setAttribute("y", plotY);
+      frame.setAttribute("width", plotW);
+      frame.setAttribute("height", plotH);
+      frame.setAttribute("class", "plot-frame");
+      svg.appendChild(frame);
+
+      svg.appendChild(textNode(plotX + plotW / 2, height - 12, "Creation load (usage + playmaking)", "axis-label"));
+      const yLabel = textNode(18, plotY + plotH / 2, "Efficiency / impact", "axis-label");
+      yLabel.setAttribute("transform", `rotate(-90 18 ${plotY + plotH / 2})`);
+      svg.appendChild(yLabel);
+
+      const cornerLabels = [
+        [plotX + 8, plotY + 18, "High impact / low creation", "start"],
+        [plotX + plotW - 8, plotY + 18, "Primary creators", "end"],
+        [plotX + 8, plotY + plotH - 8, "Low-volume connectors", "start"],
+        [plotX + plotW - 8, plotY + plotH - 8, "High-usage / lower impact", "end"],
+      ];
+      cornerLabels.forEach(([x,y,val,anchor]) => svg.appendChild(textNode(x,y,val,"axis-tick",anchor)));
+
+      players.forEach(player => {
+        const x = roleScoreCreator(player);
+        const y = roleScoreImpact(player);
+        const bucket = positionBucket(player.position);
+        const radius = 7 + Math.max(0, Math.min(16, Number(player.mpg || 0) * 0.35));
+
+        const dot = document.createElementNS(NS, "circle");
+        dot.setAttribute("cx", sx(x));
+        dot.setAttribute("cy", sy(y));
+        dot.setAttribute("r", radius);
+        dot.setAttribute("fill", positionColor(bucket));
+        dot.setAttribute("fill-opacity", "0.80");
+        dot.setAttribute("stroke", "#e5e7eb");
+        dot.setAttribute("stroke-width", "1.2");
+        dot.style.cursor = "pointer";
+        dot.addEventListener("mouseenter", (evt) => {
+          const box = svg.getBoundingClientRect();
+          tooltip.style.opacity = "1";
+          tooltip.style.left = (evt.clientX - box.left) + "px";
+          tooltip.style.top = (evt.clientY - box.top) + "px";
+          tooltip.innerHTML = `<strong>${escapeHtml(player.player_name)}</strong><br>${escapeHtml(playerRoleLabel(player))} · ${escapeHtml(player.position || "—")}<br>USG ${fmtPct(player.usg_pct)} · AST ${fmtPct(player.ast_pct)}<br>TS ${fmtPct(player.ts_pct)} · On/Off ${fmtNumber(player.on_off_net_diff_per40)}`;
+        });
+        dot.addEventListener("mousemove", (evt) => {
+          const box = svg.getBoundingClientRect();
+          tooltip.style.left = (evt.clientX - box.left) + "px";
+          tooltip.style.top = (evt.clientY - box.top) + "px";
+        });
+        dot.addEventListener("mouseleave", () => { tooltip.style.opacity = "0"; });
+        dot.addEventListener("click", () => {
+          if (player.player_hub_href) window.location.href = player.player_hub_href;
+        });
+        svg.appendChild(dot);
+
+        const label = document.createElementNS(NS, "text");
+        label.setAttribute("x", sx(x));
+        label.setAttribute("y", sy(y) - radius - 6);
+        label.setAttribute("class", "axis-tick");
+        label.setAttribute("text-anchor", "middle");
+        label.textContent = player.player_name;
+        svg.appendChild(label);
+      });
+
+      const buckets = [
+        ["guard", "Guards"],
+        ["wing", "Wings"],
+        ["big", "Bigs"],
+      ];
+      legend.innerHTML = buckets.map(([bucket, label]) => `
+        <div class="legend-item">
+          <span class="legend-swatch" style="background:${positionColor(bucket)}"></span>
+          <span>${escapeHtml(label)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderHero(team, games) {
+      const root = document.getElementById("team-hero");
+      if (!team || !root) return;
+      const rounds = games.map(g => g.round).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+      const dates = games.map(g => g.game_date).filter(Boolean).sort();
+      const rangeText = `Rounds: ${rounds.length ? Math.min(...rounds) : "—"} to ${rounds.length ? Math.max(...rounds) : "—"} · Dates: ${dates[0] || "—"} to ${dates[dates.length - 1] || "—"}`;
+      root.innerHTML = `
+        <div class="team-hero">
+          ${team.logo_src ? `<img class="team-logo" src="${team.logo_src}" alt="${escapeHtml(team.team_key)} logo">` : ""}
+          <div>
+            <div class="team-name">${escapeHtml(team.team_name)}</div>
+            <div class="team-meta">${escapeHtml(team.team_key)} · ${games.length} games · ${escapeHtml(rangeText)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSummary(games) {
+      const root = document.getElementById("summary-grid");
+      if (!root) return;
+      const wins = games.filter(g => g.result === "W").length;
+      const losses = games.filter(g => g.result === "L").length;
+      const metrics = [
+        ["Record", `${wins}-${losses}`, "Season"],
+        ["OffRtg", fmtNumber(avg(games.map(g => g.off_rating))), "Season"],
+        ["DefRtg", fmtNumber(avg(games.map(g => g.def_rating))), "Season"],
+        ["NetRtg", fmtNumber(avg(games.map(g => g.net_rating))), "Season"],
+        ["Pace", fmtNumber(avg(games.map(g => g.pace))), "Season"],
+        ["eFG%", fmtPct(avg(games.map(g => g.efg_pct_off))), "Offense"],
+        ["Opp eFG%", fmtPct(avg(games.map(g => g.efg_pct_def))), "Defense"],
+        ["TOV%", fmtPct(avg(games.map(g => g.tov_pct_off))), "Offense"],
+        ["ORB%", fmtPct(avg(games.map(g => g.orb_pct_off))), "Offense"],
+        ["FTr", fmtPct(avg(games.map(g => g.ftr_off))), "Offense"],
+      ];
+      root.innerHTML = metrics.map(([label,value,sub]) => `
+        <div class="metric-card">
+          <div class="metric-label">${escapeHtml(label)}</div>
+          <div class="metric-value">${escapeHtml(value)}</div>
+          <div class="metric-sub">${escapeHtml(sub)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderRecentForm(teamKey) {
+      const root = document.getElementById("recent-grid");
+      if (!root) return;
+      const last3 = recentGames(teamKey, 3);
+      const last5 = recentGames(teamKey, 5);
+      const groups = [
+        ["Last 3", last3],
+        ["Last 5", last5],
+      ];
+      root.innerHTML = groups.map(([label, rows]) => {
+        const wins = rows.filter(g => g.result === "W").length;
+        const losses = rows.filter(g => g.result === "L").length;
+        return `
+          <div class="metric-card">
+            <div class="metric-label">${label}</div>
+            <div class="metric-value">${wins}-${losses}</div>
+            <div class="metric-sub">NetRtg ${fmtNumber(avg(rows.map(g => g.net_rating)))} · Pace ${fmtNumber(avg(rows.map(g => g.pace)))}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">${label} Off/Def</div>
+            <div class="metric-value">${fmtNumber(avg(rows.map(g => g.off_rating)))} / ${fmtNumber(avg(rows.map(g => g.def_rating)))}</div>
+            <div class="metric-sub">Points ${fmtNumber(avg(rows.map(g => g.score)))} / ${fmtNumber(avg(rows.map(g => g.opp_score)))}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function buildGamesTable(rows) {
+      if (!rows.length) return '<div class="empty">No recent games.</div>';
+      const body = rows.map(g => `
+        <tr>
+          <td>
+            <div class="opp-cell">
+              <div class="opp-main">${escapeHtml(g.opponent_name)}</div>
+              <div class="opp-sub">${escapeHtml(g.home_away)} · ${escapeHtml(g.result)} · R${g.round ?? "—"} · ${escapeHtml(g.game_date || "")}</div>
+            </div>
+          </td>
+          <td>${fmtNumber(g.score)}</td>
+          <td>${fmtNumber(g.opp_score)}</td>
+          <td class="${g.net_rating !== null && g.net_rating < 0 ? 'bad' : 'good'}">${fmtNumber(g.net_rating)}</td>
+          <td>${fmtNumber(g.off_rating)}</td>
+          <td>${fmtNumber(g.def_rating)}</td>
+          <td>${fmtNumber(g.pace)}</td>
+        </tr>
+      `).join("");
+      return `<table><thead><tr><th>Opponent</th><th>PF</th><th>PA</th><th>NetRtg</th><th>OffRtg</th><th>DefRtg</th><th>Pace</th></tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function buildLineupsTable(rows) {
+      if (!rows.length) return '<div class="empty">No lineups for the current filters.</div>';
+      const body = rows.map(l => `
+        <tr>
+          <td>${escapeHtml(l.lineup_players)}</td>
+          <td>${fmtNumber(l.minutes)}</td>
+          <td>${fmtNumber(l.net_rating)}</td>
+          <td>${fmtNumber(l.off_rating)}</td>
+          <td>${fmtNumber(l.def_rating)}</td>
+          <td>${fmtNumber(l.pace)}</td>
+        </tr>
+      `).join("");
+      return `<table><thead><tr><th>Lineup</th><th>Min</th><th>NetRtg</th><th>OffRtg</th><th>DefRtg</th><th>Pace</th></tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function buildPlayersTable(rows) {
+      if (!rows.length) return '<div class="empty">No players found.</div>';
+      const body = rows.map(p => {
+        const href = String(p.player_hub_href || "").trim();
+        const playerNameHtml = href
+          ? `<a href="${escapeHtml(href)}" style="color:var(--accent); text-decoration:none; font-weight:700;">${escapeHtml(p.player_name)}</a>`
+          : `<span style="font-weight:700;">${escapeHtml(p.player_name)}</span>`;
+        return `
+        <tr>
+          <td>${playerNameHtml}<div class="opp-sub">${escapeHtml(p.position || "")}</div></td>
+          <td>${fmtNumber(p.mpg)}</td>
+          <td>${fmtNumber(p.ppg)}</td>
+          <td>${fmtPct(p.ts_pct)}</td>
+          <td>${fmtNumber(p.ortg)}</td>
+          <td>${fmtNumber(p.netrtg)}</td>
+          <td>${fmtNumber(p.on_off_net_diff_per40)}</td>
+        </tr>
+      `;
+      }).join("");
+      return `<table><thead><tr><th>Player</th><th>MPG</th><th>PPG</th><th>TS%</th><th>ORtg</th><th>NetRtg</th><th>On-Off Net/40</th></tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function renderLinks(team) {
+      const root = document.getElementById("links-panel");
+      if (!root || !team) return;
+      const links = (team.links || []).filter(item => {
+        const category = String(item.category || "");
+        const kind = String(item.kind || "").toLowerCase();
+        if (kind === "xlsx" && (category === "Opponent Game Plan Packs" || category === "Opponent Shot Reports" || category === "Opponent Shooting Packs")) {
+          return false;
+        }
+        return true;
+      });
+
+      if (!links.length) {
+        root.innerHTML = '<div class="empty">No linked reports found for this team yet.</div>';
+        return;
+      }
+
+      const htmlLinks = links.filter(item => String(item.kind || "").toLowerCase() === "html");
+      const excelLinks = links.filter(item => String(item.kind || "").toLowerCase() === "xlsx");
+
+      function buildGroup(title, items, showExcelHint) {
+        if (!items.length) return "";
+        return `
+          <div class="link-group">
+            <h4>${escapeHtml(title)}</h4>
+            <div class="link-list">
+              ${items.map(item => {
+                const hint = showExcelHint ? ' <span class="link-kind">(download excel file)</span>' : '';
+                return `<a href="${escapeHtml(item.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.label)}${hint}</a>`;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      root.innerHTML = `
+        <div class="hint" style="padding:0 0 12px 0;">Excel links will download the file.</div>
+        <div class="link-groups">
+          ${buildGroup("HTML Reports", htmlLinks, false)}
+          ${buildGroup("Excel Packs", excelLinks, true)}
+        </div>
+      `;
+    }
+
+    function renderTrend(teamKey) {
+      const svg = document.getElementById("trend-chart");
+      const tooltip = document.getElementById("trend-tooltip");
+      const legend = document.getElementById("trend-legend");
+      if (!svg || !tooltip || !legend) return;
+
+      const games = sortGamesChronologically(teamGames(teamKey));
+      const metricGroup = document.getElementById("trend-metric").value;
+      let series = [];
+      let yLabel = "";
+
+      if (metricGroup === "score") {
+        series = [
+          { key: "score", label: "PointsFor", lineClass: "series-a", pointClass: "point-a", color: "#38bdf8", pct: false },
+          { key: "opp_score", label: "PointsAgainst", lineClass: "series-b", pointClass: "point-b", color: "#f59e0b", pct: false },
+        ];
+        yLabel = "Points";
+      } else if (metricGroup === "shooting") {
+        series = [
+          { key: "efg_pct_off", label: "eFG%", lineClass: "series-a", pointClass: "point-a", color: "#38bdf8", pct: true },
+          { key: "efg_pct_def", label: "Opp eFG%", lineClass: "series-b", pointClass: "point-b", color: "#f59e0b", pct: true },
+        ];
+        yLabel = "eFG%";
+      } else {
+        series = [
+          { key: "off_rating", label: "OffRtg", lineClass: "series-a", pointClass: "point-a", color: "#38bdf8", pct: false },
+          { key: "def_rating", label: "DefRtg", lineClass: "series-b", pointClass: "point-b", color: "#f59e0b", pct: false },
+        ];
+        yLabel = "Rating";
+      }
+
+      const values = [];
+      series.forEach(s => games.forEach(g => {
+        const v = g[s.key];
+        if (v !== null && v !== undefined && !Number.isNaN(v)) values.push(v);
+      }));
+      if (!values.length) {
+        svg.innerHTML = "";
+        legend.innerHTML = "";
+        return;
+      }
+
+      const width = 1180, height = 560;
+      const margin = { top: 30, right: 30, bottom: 120, left: 70 };
+      const plotX = margin.left, plotY = margin.top;
+      const plotW = width - margin.left - margin.right, plotH = height - margin.top - margin.bottom;
+
+      let yMin = Math.min(...values), yMax = Math.max(...values);
+      const pad = Math.max(metricGroup === "shooting" ? 0.01 : 1.0, (yMax - yMin) * 0.1);
+      yMin -= pad; yMax += pad;
+
+      function sx(index) { return games.length <= 1 ? plotX + plotW / 2 : plotX + (index / (games.length - 1)) * plotW; }
+      function sy(v) { return plotY + plotH - ((v - yMin) / (yMax - yMin)) * plotH; }
+      function line(x1,y1,x2,y2,cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        el.setAttribute("x1", x1); el.setAttribute("y1", y1); el.setAttribute("x2", x2); el.setAttribute("y2", y2); el.setAttribute("class", cls); return el;
+      }
+      function rect(x,y,w,h,cls) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("width", w); el.setAttribute("height", h); el.setAttribute("class", cls); return el;
+      }
+      function text(x,y,val,cls,anchor="middle",rotate=null) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        el.setAttribute("x", x); el.setAttribute("y", y); el.setAttribute("class", cls); el.setAttribute("text-anchor", anchor);
+        if (rotate !== null) el.setAttribute("transform", "rotate(" + rotate + " " + x + " " + y + ")");
+        el.textContent = val; return el;
+      }
+
+      svg.innerHTML = "";
+      legend.innerHTML = "";
+
+      for (let i=0; i<=5; i++) {
+        const yVal = yMin + ((yMax - yMin) * i / 5);
+        const gy = sy(yVal);
+        svg.appendChild(line(plotX, gy, plotX + plotW, gy, "grid-line"));
+        svg.appendChild(text(plotX - 10, gy + 4, metricGroup === "shooting" ? (yVal*100).toFixed(1) + "%" : yVal.toFixed(1), "axis-tick", "end"));
+      }
+
+      games.forEach((g, idx) => {
+        const x = sx(idx);
+        svg.appendChild(line(x, plotY, x, plotY + plotH, "grid-line"));
+        svg.appendChild(text(x, plotY + plotH + 18, g.game_date || "", "axis-tick"));
+        svg.appendChild(text(x, plotY + plotH + 40, "R" + String(g.round ?? "—"), "axis-tick"));
+      });
+
+      svg.appendChild(rect(plotX, plotY, plotW, plotH, "plot-frame"));
+      svg.appendChild(text(plotX + plotW/2, height - 12, "Games by date", "axis-label"));
+      svg.appendChild(text(18, plotY + plotH/2, yLabel, "axis-label", "middle", -90));
+
+      series.forEach(s => {
+        let d = "";
+        games.forEach((g, idx) => {
+          const v = g[s.key];
+          if (v === null || v === undefined || Number.isNaN(v)) return;
+          const x = sx(idx), y = sy(v);
+          d += (d ? " L " : "M ") + x + " " + y;
+        });
+        if (d) {
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", d);
+          path.setAttribute("class", s.lineClass);
+          svg.appendChild(path);
+        }
+        games.forEach((g, idx) => {
+          const v = g[s.key];
+          if (v === null || v === undefined || Number.isNaN(v)) return;
+          const cx = sx(idx), cy = sy(v);
+          const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          dot.setAttribute("cx", cx); dot.setAttribute("cy", cy); dot.setAttribute("r", 4.5); dot.setAttribute("class", s.pointClass); svg.appendChild(dot);
+
+          const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          hit.setAttribute("cx", cx); hit.setAttribute("cy", cy); hit.setAttribute("r", 12); hit.setAttribute("fill", "transparent"); hit.style.cursor = "pointer"; svg.appendChild(hit);
+          hit.addEventListener("mouseenter", evt => {
+            const rect = svg.getBoundingClientRect();
+            tooltip.style.opacity = "1";
+            tooltip.style.left = (evt.clientX - rect.left) + "px";
+            tooltip.style.top = (evt.clientY - rect.top) + "px";
+            tooltip.innerHTML = `<strong>${escapeHtml(g.opponent_name)}</strong><br>${escapeHtml(g.home_away)} · ${escapeHtml(g.result)} · R${g.round ?? "—"}<br>${escapeHtml(g.game_date || "")}<br>${escapeHtml(s.label)}: ${s.pct ? fmtPct(v) : fmtNumber(v)}`;
+          });
+          hit.addEventListener("mousemove", evt => {
+            const rect = svg.getBoundingClientRect();
+            tooltip.style.left = (evt.clientX - rect.left) + "px";
+            tooltip.style.top = (evt.clientY - rect.top) + "px";
+          });
+          hit.addEventListener("mouseleave", () => tooltip.style.opacity = "0");
+        });
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `<span class="legend-swatch" style="background:${s.color}"></span><span>${escapeHtml(s.label)}</span>`;
+        legend.appendChild(item);
+      });
+    }
+
+    function refresh() {
+      const team = currentTeam();
+      if (!team) return;
+      const games = teamGames(team.team_key);
+      const players = teamPlayers(team.team_key).sort((a,b) => (b.mpg ?? -Infinity) - (a.mpg ?? -Infinity)).slice(0, TOP_PLAYERS_COUNT);
+      const lineups = teamLineups(team.team_key).sort((a,b) => (b.net_rating ?? -Infinity) - (a.net_rating ?? -Infinity));
+      const bestLineups = lineups.slice(0, TOP_LINEUPS_COUNT);
+      const worstLineups = [...lineups].sort((a,b) => (a.net_rating ?? Infinity) - (b.net_rating ?? Infinity)).slice(0, TOP_LINEUPS_COUNT);
+      const gamesDesc = sortGamesChronologically(games, true).slice(0, RECENT_GAMES_TO_SHOW);
+
+      const status = document.getElementById("team-status");
+      if (status) status.textContent = `${games.length} games · ${players.length} key players · ${lineups.length} lineups (min ${currentLineupsMinMinutes()} min)`;
+
+      renderHero(team, games);
+      renderSummary(games);
+      renderIdentity(team, games, players, lineups);
+      renderWatch(team.team_key, games, players, lineups);
+      renderPriorityNotes(team.team_key);
+      renderTrendingPlayers(team.team_key);
+      renderRoleMap(team.team_key);
+      renderRoleClusters(team.team_key);
+      renderRecentForm(team.team_key);
+      renderTrend(team.team_key);
+      document.getElementById("games-table").innerHTML = buildGamesTable(gamesDesc);
+      document.getElementById("best-lineups-table").innerHTML = buildLineupsTable(bestLineups);
+      document.getElementById("worst-lineups-table").innerHTML = buildLineupsTable(worstLineups);
+      document.getElementById("players-table").innerHTML = buildPlayersTable(players);
+      renderLinks(team);
+    }
+
+    const select = document.getElementById("team-filter");
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedTeam = (urlParams.get("team") || "").trim().toUpperCase();
+    const teamKeys = new Set(TEAMS.map(t => String(t.team_key || "").trim().toUpperCase()));
+
+    TEAMS.sort((a,b) => String(a.team_key).localeCompare(String(b.team_key))).forEach((team, idx) => {
+      const opt = document.createElement("option");
+      opt.value = team.team_key;
+      opt.textContent = `${team.team_key} · ${team.team_name}`;
+      if ((requestedTeam && String(team.team_key).toUpperCase() === requestedTeam) || (!requestedTeam && idx === 0)) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+
+    if (requestedTeam && teamKeys.has(requestedTeam)) {
+      select.value = requestedTeam;
+    }
+
+    select.addEventListener("change", () => {
+      const next = (select.value || "").trim();
+      const nextUrl = new URL(window.location.href);
+      if (next) {
+        nextUrl.searchParams.set("team", next);
+      } else {
+        nextUrl.searchParams.delete("team");
+      }
+      window.history.replaceState({}, "", nextUrl.toString());
+      refresh();
+    });
+    document.getElementById("trend-metric").addEventListener("change", refresh);
+    document.getElementById("lineups-min-minutes").addEventListener("input", refresh);
+    refresh();
+  </script>
+<script>
+(function(){
+  var ALLOWED = ["/demo", "/demo/", "/demo/index", "/demo/team_hub", "/demo/player_hub"];
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest ? ev.target.closest("a[href]") : null;
+    if (!a) return;
+    var raw = a.getAttribute("href") || "";
+    if (!raw || raw.charAt(0) === "#" || /^(mailto:|tel:|javascript:)/i.test(raw)) return;
+    var url;
+    try { url = new URL(raw, window.location.href); } catch (e) { return; }
+    if (url.origin !== window.location.origin) return;
+    var p = url.pathname.replace(/\.html$/, "").replace(/\/index$/, "/");
+    var inDemo = p.indexOf("/demo") === 0;
+    var blocked = p.indexOf("/leagues") === 0 || (inDemo && ALLOWED.indexOf(p) < 0);
+    if (blocked) { ev.preventDefault(); window.location.href = "/access.html?from=demo"; }
+  }, true);
+})();
+</script><footer class="pba-site-footer" data-pba-site-chrome="1"><div class="pba-site-footer-inner"><div class="pba-site-footer-grid"><div class="pba-site-footer-brand"><h2>Portuguese Basketball Analytics (PBA)</h2><p>Premium basketball analytics platform focused on Portuguese basketball. Public pages introduce the product, while league, season and report pages open only after login and access validation.</p></div><div><div class="pba-site-footer-col-title">Product</div><div class="pba-site-footer-links">About</a>Access &amp; Plans</a>Login</a></div></div><div><div class="pba-site-footer-col-title">Browse</div><div class="pba-site-footer-links">Home</a>Access &amp; Plans</a></div></div><div><div class="pba-site-footer-col-title">Legal</div><div class="pba-site-footer-links">Privacy Policy</a>Terms of Service</a>Cookies Policy</a></div></div><div><div class="pba-site-footer-col-title">Contact</div><div class="pba-site-footer-links">Contact</a>nuno_fg_freitas@hotmail.com</a></div></div></div><div class="pba-site-footer-meta"><div>Responsible entity: Nuno Freitas · Portugal</div><div>Contact: nuno_fg_freitas@hotmail.comnuno_fg_freitas@hotmail.com</a></div><div>For account activation, please contact us.</div></div></div><script>
+(function () {
+  var loginLink = document.querySelector('[data-pba-login-link="1"]');
+  var logoutLink = document.querySelector('[data-pba-logout-link="1"]');
+  function setAuthState(isAuthenticated) {
+    if (loginLink) { loginLink.style.display = isAuthenticated ? 'none' : ''; }
+    if (logoutLink) { logoutLink.style.display = isAuthenticated ? '' : 'none'; }
+  }
+  fetch('/api/session', { credentials: 'include' })
+    .then(function (response) {
+      if (!response.ok) { setAuthState(false); return null; }
+      return response.json();
+    })
+    .then(function (data) {
+      if (!data) { return; }
+      setAuthState(!!data.authenticated);
+    })
+    .catch(function () { setAuthState(false); });
+})();
+</script></footer></body>
+</html>
