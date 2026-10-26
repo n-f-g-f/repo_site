@@ -620,7 +620,7 @@
         const listHtml = cluster.players.length
           ? `<div class="role-cluster-list">${cluster.players.map(p => `
               <div class="role-cluster-item">
-                <a href="${p.player_hub_href || &#x27;#&#x27;}">${escapeHtml(p.player_name)}</a>
+                <a href="${p.player_hub_href || '#'}">${escapeHtml(p.player_name)}</a>
                 <span class="role-chip ${positionBucket(p.position)}">${escapeHtml(p.position || "—")}</span>
               </div>
             `).join("")}</div>`
