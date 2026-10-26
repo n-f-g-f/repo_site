@@ -134,7 +134,7 @@
   });
   document.addEventListener("click", function (ev) { if (!ev.target.closest(".pba-search")) out.style.display = "none"; });
 })();
-</script><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a><a class="pba-context-nav-link" href="../scouting/recruitment.html">Recruitment</a><a class="pba-context-nav-link" href="../glossary.html">Glossary</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div><div class="pba-context-freshness"><span class="pba-context-freshness-dot"></span>Data through Round 3 · 18 Oct 2026 · 17 games</div></header>
+</script><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a><a class="pba-context-nav-link" href="../scouting/recruitment.html">Recruitment</a><a class="pba-context-nav-link" href="../glossary.html">Glossary</a></nav><div class="pba-context-pill">Betclic · 2026-2027 </div></div><div class="pba-context-freshness"><span class="pba-context-freshness-dot"></span>Data through Round 3 · 18 Oct 2026 · 23 games</div></header>
   <div class="wrap">
     <h1>Player League Leaders</h1>
     <div class="subtitle">Explore leaders by profile, then jump straight into the Player Hubs worth opening next.</div>
@@ -147,6 +147,10 @@
       <div class="control">
         <label for="regular-filter">Regular Stats</label>
         <select id="regular-filter"></select>
+      </div>
+      <div class="control">
+        <label for="shooting-filter">Shooting</label>
+        <select id="shooting-filter"></select>
       </div>
       <div class="control">
         <label for="advanced-filter">Advanced Stats</label>
@@ -244,6 +248,7 @@
         group: document.getElementById('group-filter').value || '',
         regular: document.getElementById('regular-filter').value || '',
         advanced: document.getElementById('advanced-filter').value || '',
+        shooting: document.getElementById('shooting-filter').value || '',
         impact: document.getElementById('impact-filter').value || '',
         team: document.getElementById('team-filter').value || '',
         position: document.getElementById('position-filter').value || '',
@@ -279,7 +284,7 @@
       const group = currentGroup(state);
       if (!group) return;
 
-      const categorySelectKey = state.group === 'advanced' ? state.advanced : (state.group === 'impact' ? state.impact : state.regular);
+      const categorySelectKey = state.group === 'advanced' ? state.advanced : (state.group === 'impact' ? state.impact : (state.group === 'shooting' ? state.shooting : state.regular));
       const categories = (group.categories || []).map(cat => {
         const filtered_rows = (cat.rows || [])
           .filter(row => passesFilters(row, state))
@@ -303,6 +308,7 @@
     function syncCategoryVisibility(groupKey) {
       document.getElementById('regular-filter').parentElement.style.display = groupKey === 'regular' ? 'flex' : 'none';
       document.getElementById('advanced-filter').parentElement.style.display = groupKey === 'advanced' ? 'flex' : 'none';
+      document.getElementById('shooting-filter').parentElement.style.display = groupKey === 'shooting' ? 'flex' : 'none';
       document.getElementById('impact-filter').parentElement.style.display = groupKey === 'impact' ? 'flex' : 'none';
     }
 
@@ -319,14 +325,16 @@
       const regular = groups.find(g => g.key === 'regular')?.categories || [];
       const advanced = groups.find(g => g.key === 'advanced')?.categories || [];
       const impact = groups.find(g => g.key === 'impact')?.categories || [];
+      const shooting = groups.find(g => g.key === 'shooting')?.categories || [];
       populateSelect('regular-filter', regular.map(c => ({ value: c.key, label: c.title })), 'All regular stats');
       populateSelect('advanced-filter', advanced.map(c => ({ value: c.key, label: c.title })), 'All advanced stats');
       populateSelect('impact-filter', impact.map(c => ({ value: c.key, label: c.title })), 'All per40 / on-off');
+      populateSelect('shooting-filter', shooting.map(c => ({ value: c.key, label: c.title })), 'All shooting stats');
 
       document.getElementById('group-filter').value = 'regular';
       syncCategoryVisibility('regular');
 
-      ['group-filter','regular-filter','advanced-filter','impact-filter','team-filter','position-filter','minutes-filter'].forEach(id => {
+      ['group-filter','regular-filter','shooting-filter','advanced-filter','impact-filter','team-filter','position-filter','minutes-filter'].forEach(id => {
         document.getElementById(id).addEventListener('change', () => {
           if (id === 'group-filter') syncCategoryVisibility(document.getElementById('group-filter').value || 'regular');
           render();
