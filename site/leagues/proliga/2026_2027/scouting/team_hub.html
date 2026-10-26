@@ -89,6 +89,14 @@
     th.sortable::after { content:" 95"; color:var(--muted); font-weight:400; }
     th.sorted-asc::after { content:" 91"; color:var(--accent); }
     th.sorted-desc::after { content:" 93"; color:var(--accent); }
+    .lx-bar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+    .lx-modes { display:flex; gap:6px; flex-wrap:wrap; }
+    .lx-mode, .lx-chip { background:#0b1220; border:1px solid var(--line); color:var(--text); border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer; }
+    .lx-mode:hover, .lx-chip:hover { border-color:var(--accent); }
+    .lx-on { background:var(--accent) !important; border-color:var(--accent) !important; color:#0f172a !important; }
+    .lx-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+    .lx-chip span { margin-left:6px; font-weight:400; opacity:.75; }
+    .lx-cards { grid-template-columns:repeat(3, minmax(0,1fr)); }
     .opp-cell { display:flex; flex-direction:column; gap:2px; }
     .opp-main { font-weight:700; }
     .opp-sub { font-size:12px; color:var(--muted); }
@@ -327,6 +335,11 @@
         <div class="section-head">Worst Lineups</div>
         <div class="section-body table-wrap" id="worst-lineups-table"></div>
       </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">Lineup Explorer</div>
+      <div class="section-body" id="lineup-explorer"></div>
     </div>
 
     <div class="two-col">
@@ -1153,7 +1166,7 @@
     }
 
     // ── Sortable tables (Recent Games, Best/Worst Lineups, Featured Players) ──
-    const SORTABLE_TABLE_IDS = ["games-table", "best-lineups-table", "worst-lineups-table", "players-table"];
+    const SORTABLE_TABLE_IDS = ["games-table", "best-lineups-table", "worst-lineups-table", "players-table", "lineup-explorer-table"];
     const TABLE_SORT_STATE = {};
 
     function cellSortValue(cell) {
@@ -1216,6 +1229,84 @@
       });
     });
 
+    // ── Lineup Explorer: lineups that include / exclude chosen players ──
+    const LX_STATE = { team: null, picked: [], mode: "with" };
+    function lxSplit(s) {
+      return String(s || "").split(/\s*[|,;\/]\s*|\s+-\s+/).map(x => x.trim()).filter(Boolean);
+    }
+    function lxAgg(rows) {
+      let min = 0, off = 0, def = 0, net = 0, wOff = 0, wDef = 0, wNet = 0;
+      rows.forEach(l => {
+        const m = Number(l.minutes || 0);
+        if (!(m > 0)) return;
+        min += m;
+        if (l.off_rating != null) { off += l.off_rating * m; wOff += m; }
+        if (l.def_rating != null) { def += l.def_rating * m; wDef += m; }
+        if (l.net_rating != null) { net += l.net_rating * m; wNet += m; }
+      });
+      return { min, n: rows.length, off: wOff ? off / wOff : null, def: wDef ? def / wDef : null, net: wNet ? net / wNet : null };
+    }
+    function renderLineupExplorer(teamKey) {
+      const root = document.getElementById("lineup-explorer");
+      if (!root) return;
+      const all = LINEUPS.filter(l => l.team_key === teamKey && l.minutes != null);
+      if (LX_STATE.team !== teamKey) { LX_STATE.team = teamKey; LX_STATE.picked = []; }
+      if (!all.length) { root.innerHTML = '<div class="empty">No lineup data for this team.</div>'; return; }
+      const mins = {};
+      all.forEach(l => lxSplit(l.lineup_players).forEach(p => { mins[p] = (mins[p] || 0) + Number(l.minutes || 0); }));
+      const names = Object.keys(mins).sort((a, b) => mins[b] - mins[a]);
+      const picked = LX_STATE.picked.filter(p => mins[p] != null);
+      LX_STATE.picked = picked;
+      const has = l => { const set = lxSplit(l.lineup_players); return picked.every(p => set.includes(p)); };
+      const hasAny = l => { const set = lxSplit(l.lineup_players); return picked.some(p => set.includes(p)); };
+      let match, rest, label, restLabel;
+      if (!picked.length) {
+        match = all; rest = []; label = "All lineups"; restLabel = "";
+      } else if (LX_STATE.mode === "with") {
+        match = all.filter(has); rest = all.filter(l => !has(l));
+        label = picked.length > 1 ? "Together on court" : "On court"; restLabel = picked.length > 1 ? "Not all together" : "Off court";
+      } else {
+        match = all.filter(l => !hasAny(l)); rest = all.filter(hasAny);
+        label = picked.length > 1 ? "None of them on court" : "Off court"; restLabel = picked.length > 1 ? "At least one on court" : "On court";
+      }
+      const a = lxAgg(match), b = lxAgg(rest);
+      const card = (title, s, cls) => '<div class="metric-card"><div class="metric-label">' + escapeHtml(title) + '</div>' +
+        '<div class="metric-value ' + (cls || "") + '">' + (s.net == null ? "—" : (s.net > 0 ? "+" : "") + fmtNumber(s.net)) + '</div>' +
+        '<div class="metric-sub">NetRtg · ' + fmtNumber(s.min) + ' min · ' + s.n + ' lineups<br>OffRtg ' + fmtNumber(s.off) + ' · DefRtg ' + fmtNumber(s.def) + '</div></div>';
+      let cards = card(label, a, a.net != null ? (a.net >= 0 ? "good" : "bad") : "");
+      if (picked.length) {
+        cards += card(restLabel, b, b.net != null ? (b.net >= 0 ? "good" : "bad") : "");
+        const diff = (a.net != null && b.net != null) ? a.net - b.net : null;
+        cards += '<div class="metric-card"><div class="metric-label">Difference</div><div class="metric-value ' + (diff == null ? "" : (diff >= 0 ? "good" : "bad")) + '">' +
+          (diff == null ? "—" : (diff > 0 ? "+" : "") + fmtNumber(diff)) + '</div><div class="metric-sub">NetRtg ' + escapeHtml(label.toLowerCase()) + ' vs ' + escapeHtml(restLabel.toLowerCase()) + '</div></div>';
+      }
+      const minMinutes = currentLineupsMinMinutes();
+      const shown = match.filter(l => Number(l.minutes || 0) >= minMinutes).sort((x, y) => Number(y.minutes || 0) - Number(x.minutes || 0)).slice(0, 15);
+      const chips = names.map(n => '<button type="button" class="lx-chip' + (picked.includes(n) ? " lx-on" : "") + '" data-lx="' + escapeHtml(n) + '">' +
+        escapeHtml(n) + '<span>' + fmtNumber(mins[n]) + "'</span></button>").join("");
+      root.innerHTML =
+        '<div class="lx-bar"><div class="lx-modes">' +
+          '<button type="button" class="lx-mode' + (LX_STATE.mode === "with" ? " lx-on" : "") + '" data-mode="with">With selected</button>' +
+          '<button type="button" class="lx-mode' + (LX_STATE.mode === "without" ? " lx-on" : "") + '" data-mode="without">Without selected</button>' +
+          (picked.length ? '<button type="button" class="lx-mode" data-mode="clear">Clear</button>' : '') +
+        '</div><div class="opp-sub">Pick one or more players (minutes played in lineup data).</div></div>' +
+        '<div class="lx-chips">' + chips + '</div>' +
+        '<div class="summary-grid lx-cards">' + cards + '</div>' +
+        '<div class="opp-sub" style="margin:10px 0 6px">Ratings are minute-weighted across lineups. Table shows up to 15 matching lineups with at least ' + fmtNumber(minMinutes) + ' minutes (Lineups Min Minutes filter).</div>' +
+        '<div class="table-wrap" id="lineup-explorer-table">' + buildLineupsTable(shown) + '</div>';
+      root.querySelectorAll("[data-lx]").forEach(btn => btn.addEventListener("click", () => {
+        const n = btn.getAttribute("data-lx");
+        LX_STATE.picked = LX_STATE.picked.includes(n) ? LX_STATE.picked.filter(x => x !== n) : LX_STATE.picked.concat([n]);
+        renderLineupExplorer(teamKey);
+      }));
+      root.querySelectorAll("[data-mode]").forEach(btn => btn.addEventListener("click", () => {
+        const m = btn.getAttribute("data-mode");
+        if (m === "clear") LX_STATE.picked = []; else LX_STATE.mode = m;
+        renderLineupExplorer(teamKey);
+      }));
+      applyTableSort("lineup-explorer-table");
+    }
+
     function refresh() {
       const team = currentTeam();
       if (!team) return;
@@ -1254,6 +1345,7 @@
       document.getElementById("worst-lineups-table").innerHTML = buildLineupsTable(worstLineups);
       document.getElementById("players-table").innerHTML = buildPlayersTable(players);
       SORTABLE_TABLE_IDS.forEach(applyTableSort);
+      renderLineupExplorer(team.team_key);
       renderLinks(team);
     }
 
