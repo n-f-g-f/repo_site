@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Game Center</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root { --bg:#0f172a; --panel:#111827; --panel-2:#1f2937; --text:#e5e7eb; --muted:#94a3b8; --line:#334155; --accent:#38bdf8; --good:#4ade80; --bad:#fca5a5; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:1800px; margin:0 auto; padding:18px; }
+    h1 { margin:0 0 6px 0; font-size:24px; }
+    .subtitle { color:var(--muted); margin-bottom:14px; font-size:13px; }
+    .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:end; margin-bottom:14px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .control { display:flex; flex-direction:column; gap:4px; min-width:240px; }
+    .control label { font-size:12px; color:var(--muted); }
+    .control select { background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; }
+    .status { margin-left:auto; color:var(--muted); font-size:12px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:16px; }
+    .section-head { padding:14px 16px; border-bottom:1px solid var(--line); font-size:18px; font-weight:700; }
+    .section-body { padding:16px; }
+    .empty-state { background:var(--panel); border:1px dashed var(--line); border-radius:16px; padding:28px; color:var(--muted); text-align:center; }
+    .game-header { display:grid; grid-template-columns:1fr auto 1fr; gap:18px; align-items:center; }
+    .team-side { display:flex; flex-direction:column; gap:4px; }
+    .team-side.right { align-items:flex-end; text-align:right; }
+    .team-name { font-size:26px; font-weight:700; }
+    .team-link { color:inherit; text-decoration:none; }
+    .team-link:hover { text-decoration:underline; }
+    .team-key { color:var(--muted); font-size:13px; }
+    .scoreline { display:flex; align-items:center; gap:12px; font-size:42px; font-weight:700; justify-content:center; }
+    .dash { color:var(--muted); }
+    .game-meta { margin-top:14px; color:var(--muted); font-size:13px; text-align:center; }
+    .period-strip { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; justify-content:center; }
+    .period-pill { background:#0b1220; border:1px solid var(--line); border-radius:999px; padding:8px 12px; font-size:12px; }
+    .summary-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+    .team-summary-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .team-summary-title { font-size:18px; font-weight:700; margin-bottom:12px; }
+    .metrics-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; }
+    .metric-card { background:rgba(255,255,255,0.02); border:1px solid var(--line); border-radius:12px; padding:10px; }
+    .metric-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+    .metric-value { font-size:20px; font-weight:700; }
+    .factors-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; }
+    .factor-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:12px; }
+    .factor-title { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:10px; }
+    .factor-row { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; }
+    .factor-side { font-size:18px; font-weight:700; }
+    .factor-side.right { text-align:right; }
+    .factor-bar { position:relative; height:10px; background:#111827; border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+    .factor-fill.left { position:absolute; left:0; top:0; bottom:0; background:rgba(56,189,248,0.7); }
+    .factor-fill.right { position:absolute; right:0; top:0; bottom:0; background:rgba(245,158,11,0.7); }
+    .factor-team-labels { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px; font-size:11px; color:var(--muted); }
+    .factor-team-labels div:last-child { text-align:right; }
+    .tables-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; min-width:1060px; }
+    th, td { padding:10px 10px; border-bottom:1px solid var(--line); white-space:nowrap; font-size:12px; text-align:right; }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align:left; }
+    thead th { position:sticky; top:0; z-index:1; background:var(--panel-2); }
+    .player-link { color:inherit; text-decoration:none; font-weight:700; }
+    .player-link:hover { text-decoration:underline; }
+    .player-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+    .starter-pill { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; border-radius:999px; background:#0b1220; border:1px solid var(--line); font-size:10px; font-weight:700; }
+    .leaders-grid { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:10px; }
+    .leader-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .leader-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+    .leader-player { font-size:14px; font-weight:700; }
+    .leader-value { font-size:13px; color:var(--muted); margin-top:4px; }
+    .hero-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
+    .hero-action { display:inline-flex; align-items:center; padding:8px 12px; border-radius:999px; background:#0b1220; border:1px solid var(--line); color:var(--text); text-decoration:none; font-size:12px; font-weight:700; }
+    .hero-action:hover { border-color:var(--accent); color:var(--accent); }
+    .quick-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; }
+    .quick-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .quick-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px; }
+    .quick-title { font-size:18px; font-weight:700; line-height:1.2; }
+    .quick-sub { font-size:12px; color:var(--muted); margin-top:6px; line-height:1.45; }
+    .performers-grid { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:10px; }
+    .performer-card { background:#0b1220; border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .performer-rank { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px; }
+    .performer-name { font-size:14px; font-weight:700; }
+    .performer-meta { font-size:12px; color:var(--muted); margin-top:4px; }
+    .performer-score { font-size:18px; font-weight:700; margin-top:8px; }
+    .flow-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+    .flow-card { background:#0b1220; border:1px solid var(--line); border-radius:14px; padding:14px; }
+    .flow-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .flow-team { font-size:16px; font-weight:700; }
+    .flow-time { font-size:12px; color:var(--muted); margin-top:4px; }
+    .flow-net { font-size:20px; font-weight:700; }
+    .flow-net.good { color:var(--good); }
+    .flow-net.bad { color:var(--bad); }
+    .flow-lineup { font-size:13px; line-height:1.45; margin-top:10px; }
+    .flow-score { font-size:12px; color:var(--muted); margin-top:8px; }
+    .delta-good { color:var(--good); }
+    .delta-bad { color:var(--bad); }
+    .sf-tip { display:none; position:absolute; pointer-events:none; background:rgba(15,23,42,0.96); border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:12px; line-height:1.45; white-space:nowrap; z-index:5; }
+    @media (max-width: 1200px) { .summary-grid,.tables-grid,.leaders-grid,.metrics-grid,.factors-grid,.quick-grid,.performers-grid,.flow-grid { grid-template-columns:1fr; } .game-header { grid-template-columns:1fr; text-align:center; } .team-side,.team-side.right { align-items:center; text-align:center; } }
+  </style>
+<style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}.pba-search{position:relative;flex:1 1 240px;max-width:360px;}.pba-search input{width:100%;box-sizing:border-box;border:1px solid rgba(148,163,184,.45);border-radius:999px;padding:9px 14px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;}.pba-search input:focus{border-color:#93c5fd;background:#fff;box-shadow:0 0 0 3px rgba(147,197,253,.35);}.pba-search-results{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:300px;max-height:420px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.18);z-index:60;padding:6px;}.pba-search-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;text-decoration:none;color:#0f172a;}.pba-search-item:hover,.pba-search-item-first{background:#eff6ff;}.pba-search-type{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 7px;}.pba-search-type-player{background:#e0f2fe;color:#0369a1;}.pba-search-type-team{background:#ede9fe;color:#6d28d9;}.pba-search-text{display:flex;flex-direction:column;min-width:0;}.pba-search-name{font-size:14px;font-weight:700;}.pba-search-meta{font-size:12px;color:#64748b;}.pba-search-empty{padding:10px;font-size:13px;color:#64748b;}.pba-myteam{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}.pba-myteam-link{display:inline-flex;align-items:center;text-decoration:none;background:#fef3c7;border:1px solid #fcd34d;color:#92400e;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;}.pba-myteam-link:hover{background:#fde68a;}.pba-myteam-sub{font-size:12px;font-weight:700;color:#1d4ed8;text-decoration:none;}.pba-myteam-sub:hover{text-decoration:underline;}.pba-myteam-btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;}.pba-myteam-btn:hover{border-color:#f59e0b;background:#fffbeb;}.pba-context-freshness{max-width:1380px;margin:0 auto;padding:0 20px 10px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#475569;}.pba-context-freshness-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.15);flex:0 0 auto;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}.pba-context-freshness{padding:0 16px 10px;}}</style><script src="/pba-glossary.js" defer></script></head>
+<body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Proliga </div><div class="pba-context-brand-sub">2026-2027 · Context overview</div></div></div><div class="pba-search" role="search"><input id="pba-search-input" type="search" placeholder="Search player or team…" autocomplete="off" aria-label="Search player or team"><div id="pba-search-results" class="pba-search-results"></div></div><script>
+(function () {
+  var LEAGUES = [{"key": "betclic", "name": "Betclic"}, {"key": "betclic_fem", "name": "Betclic_Fem"}, {"key": "proliga", "name": "Proliga"}];
+  var box = document.getElementById("pba-search-input");
+  var out = document.getElementById("pba-search-results");
+  if (!box || !out) return;
+  var DATA = null, loading = null, timer = null, signedIn = true;
+  function norm(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function load() {
+    if (loading) return loading;
+    loading = fetch("/api/session", { credentials: "include" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (s) {
+        var acc = s && s.authenticated ? s.access : null;
+        signedIn = !!(s && s.authenticated);
+        var keys = LEAGUES.map(function (l) { return l.key; });
+        if (!(acc && acc.can_access_all)) {
+          var allowed = acc && Array.isArray(acc.allowed_leagues) ? acc.allowed_leagues.map(function (x) { return String(x).toLowerCase(); }) : [];
+          keys = keys.filter(function (k) { return allowed.indexOf(k) >= 0; });
+        }
+        return Promise.all(keys.map(function (k) {
+          return fetch("/leagues/" + k + "/search_index.json", { credentials: "include" })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (lists) {
+        DATA = [];
+        lists.forEach(function (l) { if (Array.isArray(l)) DATA = DATA.concat(l); });
+        DATA.forEach(function (e) {
+          e._name = norm(e.name);
+          e._all = norm([e.name, e.team, e.team_key, e.league_name].join(" "));
+        });
+        return DATA;
+      });
+    return loading;
+  }
+  function score(e, q) {
+    var s = 0;
+    if (e._name.indexOf(q) === 0) s -= 100;
+    else if (e._name.indexOf(" " + q) >= 0 || e._name.indexOf("." + q) >= 0) s -= 60;
+    if (e.current) s -= 20;
+    if (e.type === "team") s -= 5;
+    return s;
+  }
+  function render() {
+    var q = norm(box.value);
+    if (q.length < 2) { out.style.display = "none"; out.innerHTML = ""; return; }
+    load().then(function () {
+      var tokens = q.split(/\s+/);
+      var hits = DATA.filter(function (e) { return tokens.every(function (t) { return e._all.indexOf(t) >= 0; }); });
+      hits.sort(function (a, b) {
+        return (score(a, q) - score(b, q)) || String(b.season || "").localeCompare(String(a.season || "")) || String(a.name).localeCompare(String(b.name));
+      });
+      hits = hits.slice(0, 12);
+      if (!hits.length) {
+        out.innerHTML = '<div class="pba-search-empty">' + (signedIn ? "No players or teams found in the leagues of your plan." : "Sign in to search players and teams.") + "</div>";
+      } else {
+        out.innerHTML = hits.map(function (e, i) {
+          var meta = e.type === "team"
+            ? esc(e.league_name) + " · " + esc(e.season_label)
+            : esc(e.team || e.team_key) + " · " + esc(e.league_name) + " " + esc(e.season_label);
+          return '<a class="pba-search-item' + (i === 0 ? " pba-search-item-first" : "") + '" hr' + 'ef="' + esc(e.href) + '">' +
+            '<span class="pba-search-type pba-search-type-' + esc(e.type) + '">' + (e.type === "team" ? "Team" : "Player") + "</span>" +
+            '<span class="pba-search-text"><span class="pba-search-name">' + esc(e.name) + "</span>" +
+            '<span class="pba-search-meta">' + meta + (e.current ? ' · <b>current</b>' : "") + "</span></span></a>";
+        }).join("");
+      }
+      out.style.display = "block";
+    });
+  }
+  box.addEventListener("focus", function () { load(); if (box.value) render(); });
+  box.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(render, 120); });
+  box.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { out.style.display = "none"; box.blur(); }
+    if (ev.key === "Enter") { var first = out.querySelector("a.pba-search-item"); if (first) window.location.href = first.getAttribute("href"); }
+  });
+  document.addEventListener("click", function (ev) { if (!ev.target.closest(".pba-search")) out.style.display = "none"; });
+})();
+</script><div class="pba-myteam" id="pba-myteam" style="display:none"></div><script>
+(function () {
+  var box = document.getElementById("pba-myteam");
+  if (!box) return;
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  var parts = window.location.pathname.split("/").filter(Boolean);
+  var pageLeague = parts[0] === "leagues" ? String(parts[1] || "").toLowerCase() : "";
+  var pageTeam = (new URLSearchParams(window.location.search).get("team") || "").toUpperCase();
+  if (!/^[A-Z0-9]{2,6}$/.test(pageTeam) || parts.indexOf("scouting") < 0) pageTeam = "";
+  function save(body) {
+    return fetch("/api/preferences", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+  Promise.all([
+    fetch("/api/session", { credentials: "include" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+    fetch("/current_seasons.json", { credentials: "include" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
+  ]).then(function (res) {
+    var s = res[0], seasons = res[1] || {};
+    if (!s || !s.authenticated) return;
+    var u = s.user || {}, fl = String(u.favorite_league_key || "").toLowerCase(), ft = String(u.favorite_team_key || "").toUpperCase();
+    var html = "";
+    if (fl && ft && seasons[fl]) {
+      var base = "/leagues/" + fl + "/" + seasons[fl] + "/scouting/";
+      html += '<a class="pba-myteam-link" hr' + 'ef="' + esc(base + "team_hub.html?team=" + ft) + '" title="Open my team">\u2605 My team: ' + esc(ft) + '</a>' +
+              '<a class="pba-myteam-sub" hr' + 'ef="' + esc(base + "next_opponent.html?team=" + ft) + '">Next opponent</a>';
+    }
+    if (pageTeam && pageLeague) {
+      if (pageTeam === ft && pageLeague === fl) html += '<button type="button" class="pba-myteam-btn" data-act="clear" title="Remove as my team">Remove</button>';
+      else html += '<button type="button" class="pba-myteam-btn" data-act="set">\u2606 Set ' + esc(pageTeam) + ' as my team</button>';
+    }
+    box.innerHTML = html;
+    box.style.display = html ? "" : "none";
+    var btn = box.querySelector(".pba-myteam-btn");
+    if (btn) btn.addEventListener("click", function () {
+      btn.disabled = true;
+      var body = btn.getAttribute("data-act") === "clear" ? { clear: true } : { league_key: pageLeague, team_key: pageTeam };
+      save(body).then(function (ok) { if (ok) window.location.reload(); else { btn.disabled = false; btn.textContent = "Could not save"; } });
+    });
+  });
+})();
+</script><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Proliga </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a><a class="pba-context-nav-link" href="../scouting/next_opponent.html">Next Opponent</a><a class="pba-context-nav-link" href="../scouting/recruitment.html">Recruitment</a><a class="pba-context-nav-link" href="../glossary.html">Glossary</a></nav><div class="pba-context-pill">Proliga · 2026-2027 </div></div><div class="pba-context-freshness"><span class="pba-context-freshness-dot"></span>Data through Round 4 · 24 Oct 2026 · 31 games</div></header>
+  <div class="wrap">
+    <h1>Game Center</h1>
+    <div class="subtitle">Game boxscore plus editorial read, top performers, real lineup stretches and direct links into the strongest follow-up pages.</div>
+
+    <div class="toolbar">
+      <div class="control">
+        <label for="phase-filter">Phase</label>
+        <select id="phase-filter"></select>
+      </div>
+      <div class="control">
+        <label for="round-filter">Round</label>
+        <select id="round-filter"></select>
+      </div>
+      <div class="control">
+        <label for="game-filter">Game</label>
+        <select id="game-filter"></select>
+      </div>
+      <div class="status" id="page-status"></div>
+    </div>
+
+    <div id="empty-state" class="empty-state">Choose a game to load the boxscore.</div>
+
+    <div id="dashboard" style="display:none;">
+      <div class="card">
+        <div class="section-body" id="game-header"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">Score Flow</div>
+        <div class="section-body" id="score-flow"></div>
+      </div>
+      <div class="card">
+        <div class="section-head">Team Summary</div>
+        <div class="section-body" id="team-summary"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">Game vs Season Averages</div>
+        <div class="section-body" id="game-vs-season"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">Quick Read</div>
+        <div class="section-body" id="quick-read"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">Game Factors</div>
+        <div class="section-body" id="game-factors"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">Top Performers</div>
+        <div class="section-body" id="top-performers"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">Turning Points & Stretches</div>
+        <div class="section-body" id="game-flow"></div>
+      </div>
+
+      <div class="tables-grid" id="boxscore-tables"></div>
+
+      <div class="card">
+        <div class="section-head">Game Leaders</div>
+        <div class="section-body" id="game-leaders"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const RAW_GAMES = [{"game_code":"2922989","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · BSA-GALP vs AD Galomar","teams":[{"team_key":"BSA","team_name":"BSA-GALP"},{"team_key":"ADG","team_name":"AD Galomar"}]},{"game_code":"2922986","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · Futebol Clube Barreirense vs Clube dos Galitos","teams":[{"team_key":"FCB","team_name":"Futebol Clube Barreirense"},{"team_key":"GAL","team_name":"Clube dos Galitos"}]},{"game_code":"2922982","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · Illiabum Clube vs Académica Efapel","teams":[{"team_key":"ILL","team_name":"Illiabum Clube"},{"team_key":"AAC","team_name":"Académica Efapel"}]},{"game_code":"2922988","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · Maia Basket vs Ginásio ANTRIX","teams":[{"team_key":"MBC","team_name":"Maia Basket"},{"team_key":"GCO","team_name":"Ginásio ANTRIX"}]},{"game_code":"2922987","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · SC Lusitânia vs BC Barcelos","teams":[{"team_key":"SCL","team_name":"SC Lusitânia"},{"team_key":"BCB","team_name":"BC Barcelos"}]},{"game_code":"2922985","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · SC Vasco da Gama vs Sampaense Inspecentro","teams":[{"team_key":"VGA","team_name":"SC Vasco da Gama"},{"team_key":"SBC","team_name":"Sampaense Inspecentro"}]},{"game_code":"2922984","phase":"REGULAR","round":1,"game_date":"2026-10-03","label":"Round 1 · 2026-10-03 · Sangalhos vs Galitos BARREIRO","teams":[{"team_key":"SDC","team_name":"Sangalhos"},{"team_key":"GFC","team_name":"Galitos BARREIRO"}]},{"game_code":"2922983","phase":"REGULAR","round":1,"game_date":"2026-10-04","label":"Round 1 · 2026-10-04 · SL Benfica vs Clube Basket Queluz","teams":[{"team_key":"SLB","team_name":"SL Benfica"},{"team_key":"CBQ","team_name":"Clube Basket Queluz"}]},{"game_code":"2922990","phase":"REGULAR","round":2,"game_date":"2026-10-10","label":"Round 2 · 2026-10-10 · Académica Efapel vs BSA-GALP","teams":[{"team_key":"AAC","team_name":"Académica Efapel"},{"team_key":"BSA","team_name":"BSA-GALP"}]},{"game_code":"2922995","phase":"REGULAR","round":2,"game_date":"2026-10-10","label":"Round 2 · 2026-10-10 · BC Barcelos vs Futebol Clube Barreirense","teams":[{"team_key":"BCB","team_name":"BC Barcelos"},{"team_key":"FCB","team_name":"Futebol Clube Barreirense"}]},{"game_code":"2922991","phase":"REGULAR","round":2,"game_date":"2026-10-10","label":"Round 2 · 2026-10-10 · Clube Basket Queluz vs Illiabum Clube","teams":[{"team_key":"CBQ","team_name":"Clube Basket Queluz"},{"team_key":"ILL","team_name":"Illiabum Clube"}]},{"game_code":"2922994","phase":"REGULAR","round":2,"game_date":"2026-10-10","label":"Round 2 · 2026-10-10 · Clube dos Galitos vs SC Vasco da Gama","teams":[{"team_key":"GAL","team_name":"Clube dos Galitos"},{"team_key":"VGA","team_name":"SC Vasco da Gama"}]},{"game_code":"2922992","phase":"REGULAR","round":2,"game_date":"2026-10-10","label":"Round 2 · 2026-10-10 · Galitos BARREIRO vs SL Benfica","teams":[{"team_key":"GFC","team_name":"Galitos BARREIRO"},{"team_key":"SLB","team_name":"SL Benfica"}]},{"game_code":"2922993","phase":"REGULAR","round":2,"game_date":"2026-10-10","label":"Round 2 · 2026-10-10 · Sampaense Inspecentro vs Sangalhos","teams":[{"team_key":"SBC","team_name":"Sampaense Inspecentro"},{"team_key":"SDC","team_name":"Sangalhos"}]},{"game_code":"2922996","phase":"REGULAR","round":2,"game_date":"2026-10-11","label":"Round 2 · 2026-10-11 · Ginásio ANTRIX vs SC Lusitânia","teams":[{"team_key":"GCO","team_name":"Ginásio ANTRIX"},{"team_key":"SCL","team_name":"SC Lusitânia"}]},{"game_code":"2922998","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · Académica Efapel vs Clube Basket Queluz","teams":[{"team_key":"AAC","team_name":"Académica Efapel"},{"team_key":"CBQ","team_name":"Clube Basket Queluz"}]},{"game_code":"2923005","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · BSA-GALP vs Maia Basket","teams":[{"team_key":"BSA","team_name":"BSA-GALP"},{"team_key":"MBC","team_name":"Maia Basket"}]},{"game_code":"2923003","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · Futebol Clube Barreirense vs Ginásio ANTRIX","teams":[{"team_key":"FCB","team_name":"Futebol Clube Barreirense"},{"team_key":"GCO","team_name":"Ginásio ANTRIX"}]},{"game_code":"2922999","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · Illiabum Clube vs Galitos BARREIRO","teams":[{"team_key":"ILL","team_name":"Illiabum Clube"},{"team_key":"GFC","team_name":"Galitos BARREIRO"}]},{"game_code":"2923004","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · SC Lusitânia vs AD Galomar","teams":[{"team_key":"SCL","team_name":"SC Lusitânia"},{"team_key":"ADG","team_name":"AD Galomar"}]},{"game_code":"2923002","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · SC Vasco da Gama vs BC Barcelos","teams":[{"team_key":"VGA","team_name":"SC Vasco da Gama"},{"team_key":"BCB","team_name":"BC Barcelos"}]},{"game_code":"2923001","phase":"REGULAR","round":3,"game_date":"2026-10-17","label":"Round 3 · 2026-10-17 · Sangalhos vs Clube dos Galitos","teams":[{"team_key":"SDC","team_name":"Sangalhos"},{"team_key":"GAL","team_name":"Clube dos Galitos"}]},{"game_code":"2923000","phase":"REGULAR","round":3,"game_date":"2026-10-18","label":"Round 3 · 2026-10-18 · SL Benfica vs Sampaense Inspecentro","teams":[{"team_key":"SLB","team_name":"SL Benfica"},{"team_key":"SBC","team_name":"Sampaense Inspecentro"}]},{"game_code":"2923012","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · AD Galomar vs Futebol Clube Barreirense","teams":[{"team_key":"ADG","team_name":"AD Galomar"},{"team_key":"FCB","team_name":"Futebol Clube Barreirense"}]},{"game_code":"2923010","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · BC Barcelos vs Sangalhos","teams":[{"team_key":"BCB","team_name":"BC Barcelos"},{"team_key":"SDC","team_name":"Sangalhos"}]},{"game_code":"2923006","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · Clube Basket Queluz vs BSA-GALP","teams":[{"team_key":"CBQ","team_name":"Clube Basket Queluz"},{"team_key":"BSA","team_name":"BSA-GALP"}]},{"game_code":"2923009","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · Clube dos Galitos vs SL Benfica","teams":[{"team_key":"GAL","team_name":"Clube dos Galitos"},{"team_key":"SLB","team_name":"SL Benfica"}]},{"game_code":"2923007","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · Galitos BARREIRO vs Académica Efapel","teams":[{"team_key":"GFC","team_name":"Galitos BARREIRO"},{"team_key":"AAC","team_name":"Académica Efapel"}]},{"game_code":"2923011","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · Ginásio ANTRIX vs SC Vasco da Gama","teams":[{"team_key":"GCO","team_name":"Ginásio ANTRIX"},{"team_key":"VGA","team_name":"SC Vasco da Gama"}]},{"game_code":"2923013","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · Maia Basket vs SC Lusitânia","teams":[{"team_key":"MBC","team_name":"Maia Basket"},{"team_key":"SCL","team_name":"SC Lusitânia"}]},{"game_code":"2923008","phase":"REGULAR","round":4,"game_date":"2026-10-24","label":"Round 4 · 2026-10-24 · Sampaense Inspecentro vs Illiabum Clube","teams":[{"team_key":"SBC","team_name":"Sampaense Inspecentro"},{"team_key":"ILL","team_name":"Illiabum Clube"}]}];
+    let RAW_TEAM_TOTALS = [];
+    let RAW_PLAYERS = [];
+    let RAW_GAME_CONTEXT = [];
+    let RAW_ROTATION = [];
+    let RAW_SCORE_FLOW = null;
+ 
+async function loadGameData(gameCode) {
+  if (!gameCode) return;
+  const url = 'game_boxscores_data/' + encodeURIComponent(gameCode) + '.json';
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to load game data');
+  const data = await res.json();
+  RAW_TEAM_TOTALS = data.team_totals || [];
+  RAW_PLAYERS = data.players || [];
+  RAW_GAME_CONTEXT = data.context || [];
+  RAW_ROTATION = data.rotation || [];
+  RAW_SCORE_FLOW = data.score_flow || null;
+}
+
+    const TEAM_LINK_BASE = "../scouting/team_hub.html?team=";
+    const PLAYER_LINK_BASE = "../scouting/player_hubs/player_hub_{team_key}_{player_id}.html";
+
+    function escapeHtml(text) { return String(text ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+    function fmtNum(v, digits=1) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : Number(v).toFixed(digits); }
+    function fmtPct(v) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : (Number(v) * 100).toFixed(1) + '%'; }
+    function fmtInt(v) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : String(Math.round(Number(v))); }
+    function sortBy(arr, key, desc=true) {
+      return arr.slice().sort((a,b) => {
+        const av = a[key]; const bv = b[key];
+        const an = (av === null || av === undefined || Number.isNaN(av)) ? Number.NEGATIVE_INFINITY : Number(av);
+        const bn = (bv === null || bv === undefined || Number.isNaN(bv)) ? Number.NEGATIVE_INFINITY : Number(bv);
+        return desc ? (bn - an) : (an - bn);
+      });
+    }
+    function fmtSigned(v, digits=1) { return (v === null || v === undefined || Number.isNaN(v)) ? '' : ((Number(v) > 0 ? '+' : '') + Number(v).toFixed(digits)); }
+    function secsToClock(sec) {
+      if (sec === null || sec === undefined || Number.isNaN(sec)) return '—';
+      const s = Math.max(0, Math.round(Number(sec)));
+      const mm = String(Math.floor(s / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      return `${mm}:${ss}`;
+    }
+    function buildRotationHref(teamKey, gameCode) {
+      if (!teamKey || !gameCode) return '';
+      return `../scouting/rotation_timeline.html?team=${encodeURIComponent(teamKey)}&game=${encodeURIComponent(gameCode)}`;
+    }
+    function safeFilenameComponent(value) {
+      let text = String(value || '').trim();
+      if (!text) return 'unknown';
+
+      text = text.normalize('NFKD').replace(/[̀-ͯ]/g, '');
+      text = text.replace(/[^A-Za-z0-9._-]+/g, '_');
+      text = text.replace(/_+/g, '_');
+      text = text.replace(/^[._-]+|[._-]+$/g, '');
+
+      return text || 'unknown';
+    }
+    function buildPlayerHubHref(teamKey, playerId) {
+      if (!teamKey || !playerId) return '';
+      const safeTeamKey = safeFilenameComponent(teamKey);
+      const safePlayerId = safeFilenameComponent(playerId);
+      return PLAYER_LINK_BASE.replace('{team_key}', safeTeamKey).replace('{player_id}', safePlayerId);
+    }
+    function getTeamMeta(meta, teamKey) {
+      return (meta.teams || []).find(t => t.team_key === teamKey) || null;
+    }
+    function getTeamDisplayName(meta, teamKey) {
+      const team = getTeamMeta(meta, teamKey);
+      return team?.team_name || team?.team_key || teamKey || '';
+    }
+    function getRotationRows(gameCode) {
+      return RAW_ROTATION.filter(r => r.game_code === gameCode);
+    }
+    function parseScorePair(text) {
+      if (!text || typeof text !== 'string' || !text.includes('-')) return null;
+      const parts = text.split('-').map(v => Number(v));
+      if (parts.length !== 2 || Number.isNaN(parts[0]) || Number.isNaN(parts[1])) return null;
+      return parts;
+    }
+    function sameScorePair(a, b) {
+      if (!a || !b) return false;
+      return Number(a[0]) === Number(b[0]) && Number(a[1]) === Number(b[1]);
+    }
+    function buildStretchRuns(gameCode) {
+      const rows = getRotationRows(gameCode)
+        .filter(r => r && r.team_key && r.lineup_players && r.segment_start_second !== null && r.segment_end_second !== null)
+        .slice()
+        .sort((a,b) => Number(a.segment_start_second || 0) - Number(b.segment_start_second || 0));
+
+      const runs = [];
+      for (const row of rows) {
+        const last = runs[runs.length - 1];
+        const contiguousClock = last && Number(last.segment_end_second || 0) === Number(row.segment_start_second || 0);
+        const contiguousScore = last && sameScorePair(parseScorePair(last.score_end), parseScorePair(row.score_start));
+        const sameLineup = last && last.team_key === row.team_key && last.lineup_players === row.lineup_players;
+
+        if (sameLineup && (contiguousClock || contiguousScore)) {
+          last.segment_end_second = row.segment_end_second;
+          last.segment_net = Number(last.segment_net || 0) + Number(row.segment_net || 0);
+          last.score_end = row.score_end || last.score_end;
+        } else {
+          runs.push({
+            game_code: row.game_code,
+            team_key: row.team_key,
+            team_name: row.team_name,
+            lineup_players: row.lineup_players,
+            segment_start_second: row.segment_start_second,
+            segment_end_second: row.segment_end_second,
+            segment_net: Number(row.segment_net || 0),
+            score_start: row.score_start || '',
+            score_end: row.score_end || '',
+          });
+        }
+      }
+
+      return runs
+        .filter(r => r.segment_net !== null && r.segment_net !== undefined && !Number.isNaN(Number(r.segment_net)))
+        .sort((a,b) => {
+          const diff = Math.abs(Number(b.segment_net || 0)) - Math.abs(Number(a.segment_net || 0));
+          if (diff !== 0) return diff;
+          return Number(a.segment_start_second || 0) - Number(b.segment_start_second || 0);
+        });
+    }
+
+    function compositePerformance(row) {
+      const pts = Number(row.points || 0);
+      const reb = Number(row.rebounds_total || 0);
+      const ast = Number(row.assists || 0);
+      const stl = Number(row.steals || 0);
+      const blk = Number(row.blocks || 0);
+      const pm = Number(row.plus_minus || 0);
+      return pts + reb * 1.2 + ast * 1.6 + stl * 2.2 + blk * 2.2 + pm * 0.15;
+    }
+
+    function buildPhaseOptions() {
+      const select = document.getElementById('phase-filter');
+      const phases = [];
+      RAW_GAMES.forEach(g => {
+        const phase = String(g.phase || '').trim();
+        if (phase && !phases.includes(phase)) phases.push(phase);
+      });
+      select.innerHTML = phases.length
+        ? phases.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')
+        : '<option value="">All phases</option>';
+    }
+
+    function filteredGamesByPhase() {
+      const phaseValue = document.getElementById('phase-filter').value || '';
+      let games = RAW_GAMES.slice();
+      if (phaseValue) {
+        games = games.filter(g => String(g.phase || '').trim() === phaseValue);
+      }
+      return games;
+    }
+
+    function buildRoundOptions() {
+      const select = document.getElementById('round-filter');
+      const rounds = Array.from(new Set(filteredGamesByPhase().map(g => g.round).filter(v => v !== null && v !== undefined))).sort((a,b) => b-a);
+      select.innerHTML = '<option value="">Choose round</option>' + rounds.map(r => `<option value="${r}">Round ${r}</option>`).join('');
+    }
+
+    function buildGameOptions() {
+      const roundValue = document.getElementById('round-filter').value || '';
+      const select = document.getElementById('game-filter');
+      let games = filteredGamesByPhase();
+      if (roundValue) {
+        games = games.filter(g => String(g.round ?? '') === roundValue);
+      }
+      games.sort((a,b) => {
+        const roundCmp = Number(b.round || -Infinity) - Number(a.round || -Infinity);
+        if (roundCmp !== 0) return roundCmp;
+        const dateCmp = String(b.game_date || '').localeCompare(String(a.game_date || ''));
+        if (dateCmp !== 0) return dateCmp;
+        return String(a.label || '').localeCompare(String(b.label || ''));
+      });
+      select.innerHTML = '<option value="">Choose game</option>' + games.map(g => `<option value="${escapeHtml(g.game_code)}">${escapeHtml(g.label)}</option>`).join('');
+    }
+
+    function buildTeamSummaryFromPlayers(gameCode, teamKey) {
+      const rows = RAW_PLAYERS.filter(r => r.game_code === gameCode && r.team_key === teamKey);
+      const points = rows.reduce((s,r) => s + (r.points || 0), 0);
+      const fgm = rows.reduce((s,r) => s + (r.fgm || 0), 0);
+      const fga = rows.reduce((s,r) => s + (r.fga || 0), 0);
+      const tpm = rows.reduce((s,r) => s + (r.tpm || 0), 0);
+      const tpa = rows.reduce((s,r) => s + (r.tpa || 0), 0);
+      const ftm = rows.reduce((s,r) => s + (r.ftm || 0), 0);
+      const fta = rows.reduce((s,r) => s + (r.fta || 0), 0);
+      const reb = rows.reduce((s,r) => s + (r.rebounds_total || 0), 0);
+      const ast = rows.reduce((s,r) => s + (r.assists || 0), 0);
+      const tov = rows.reduce((s,r) => s + (r.turnovers || 0), 0);
+      return {
+        points, reb, ast, tov,
+        fg_text: `${fgm}/${fga}`,
+        tp_text: `${tpm}/${tpa}`,
+        ft_text: `${ftm}/${fta}`,
+      };
+    }
+
+
+    function getContextRow(gameCode, teamKey) {
+      return RAW_GAME_CONTEXT.find(r => r.game_code === gameCode && r.team_key === teamKey) || null;
+    }
+
+    function estPossessionsFromPlayers(gameCode, teamKey) {
+      const rows = RAW_PLAYERS.filter(r => r.game_code === gameCode && r.team_key === teamKey);
+      const fga = rows.reduce((s,r) => s + (r.fga || 0), 0);
+      const orb = rows.reduce((s,r) => s + (r.rebounds_offensive || 0), 0);
+      const tov = rows.reduce((s,r) => s + (r.turnovers || 0), 0);
+      const fta = rows.reduce((s,r) => s + (r.fta || 0), 0);
+      return fga - orb + tov + 0.44 * fta;
+    }
+
+    function renderGameHeader(meta, totals) {
+      const teams = meta.teams || [];
+      const first = teams[0] || {};
+      const second = teams[1] || {};
+      const firstTotal = totals.find(t => t.team_key === first.team_key) || {};
+      const secondTotal = totals.find(t => t.team_key === second.team_key) || {};
+
+      const firstName = escapeHtml(first.team_name || first.team_key || '');
+      const secondName = escapeHtml(second.team_name || second.team_key || '');
+      const firstLink = first.team_key ? `${escapeHtml(TEAM_LINK_BASE)}${escapeHtml(first.team_key)}` : '';
+      const secondLink = second.team_key ? `${escapeHtml(TEAM_LINK_BASE)}${escapeHtml(second.team_key)}` : '';
+      const firstRotation = buildRotationHref(first.team_key, meta.game_code);
+      const secondRotation = buildRotationHref(second.team_key, meta.game_code);
+
+      function teamHtml(name, key, href, right=false) {
+        const cls = right ? 'team-side right' : 'team-side';
+        const title = href ? `<a class="team-link" href="${href}">${name}</a>` : name;
+        return `<div class="${cls}"><div class="team-name">${title}</div><div class="team-key">${escapeHtml(key || '')}</div></div>`;
+      }
+
+      const periodKeys = Object.keys(firstTotal.period_scores || {}).sort();
+      const periodStrip = periodKeys.map(k => {
+        const label = k.replace('_score','').toUpperCase();
+        return `<span class="period-pill">${label}: ${fmtInt(firstTotal.period_scores?.[k])} - ${fmtInt(secondTotal.period_scores?.[k])}</span>`;
+      }).join('');
+
+      const actions = [
+        firstLink ? `<a class="hero-action" href="${firstLink}">${escapeHtml(first.team_key)} Team Hub</a>` : '',
+        secondLink ? `<a class="hero-action" href="${secondLink}">${escapeHtml(second.team_key)} Team Hub</a>` : '',
+        firstRotation ? `<a class="hero-action" href="${firstRotation}">${escapeHtml(first.team_key)} Rotation</a>` : '',
+        secondRotation ? `<a class="hero-action" href="${secondRotation}">${escapeHtml(second.team_key)} Rotation</a>` : '',
+      ].filter(Boolean).join('');
+
+      document.getElementById('game-header').innerHTML = `
+        <div class="game-header">
+          ${teamHtml(firstName, first.team_key, firstLink, false)}
+          <div>
+            <div class="scoreline"><span>${fmtInt(firstTotal.score)}</span><span class="dash">-</span><span>${fmtInt(secondTotal.score)}</span></div>
+          </div>
+          ${teamHtml(secondName, second.team_key, secondLink, true)}
+        </div>
+        <div class="game-meta">${escapeHtml([meta.round ? 'Round ' + meta.round : '', meta.game_date || '', firstTotal.game_in_ot ? 'OT' : ''].filter(Boolean).join(' · '))}</div>
+        <div class="period-strip">${periodStrip}</div>
+        <div class="hero-actions">${actions}</div>
+      `;
+    }
+
+
+    function renderTeamSummary(meta) {
+      const gamesTeams = meta.teams || [];
+      const htmlBlocks = gamesTeams.map(team => {
+        const s = buildTeamSummaryFromPlayers(meta.game_code, team.team_key);
+        const c = getContextRow(meta.game_code, team.team_key);
+        const poss = estPossessionsFromPlayers(meta.game_code, team.team_key);
+        const offRtg = c?.off_rating ?? (poss > 0 ? ((s.points || 0) * 100.0 / poss) : null);
+        return `
+          <div class="team-summary-card">
+            <div class="team-summary-title">${escapeHtml(team.team_name || team.team_key || '')}</div>
+            <div class="metrics-grid">
+              <div class="metric-card"><div class="metric-label">Points</div><div class="metric-value">${fmtInt(s.points)}</div></div>
+              <div class="metric-card"><div class="metric-label">Poss</div><div class="metric-value">${fmtNum(poss)}</div></div>
+              <div class="metric-card"><div class="metric-label">OffRtg</div><div class="metric-value">${fmtNum(offRtg)}</div></div>
+              <div class="metric-card"><div class="metric-label">eFG%</div><div class="metric-value">${fmtPct(c?.efg_pct_off)}</div></div>
+              <div class="metric-card"><div class="metric-label">TOV%</div><div class="metric-value">${fmtPct(c?.tov_pct_off)}</div></div>
+              <div class="metric-card"><div class="metric-label">ORB%</div><div class="metric-value">${fmtPct(c?.orb_pct_off)}</div></div>
+              <div class="metric-card"><div class="metric-label">FT Rate</div><div class="metric-value">${fmtPct(c?.ftr_off)}</div></div>
+              <div class="metric-card"><div class="metric-label">FG / 3PT / FT</div><div class="metric-value" style="font-size:16px;">${escapeHtml(s.fg_text)} · ${escapeHtml(s.tp_text)} · ${escapeHtml(s.ft_text)}</div></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('team-summary').innerHTML = `<div class="summary-grid">${htmlBlocks}</div>`;
+    }
+
+    function getSeasonAverages(teamKey, currentGameCode) {
+      const rows = RAW_GAME_CONTEXT.filter(r =>
+        r.team_key === teamKey &&
+        r.game_code !== currentGameCode
+      );
+
+      if (!rows.length) return null;
+
+      function avg(key) {
+        const vals = rows.map(r => r[key]).filter(v => v !== null && v !== undefined && !Number.isNaN(v));
+        if (!vals.length) return null;
+        return vals.reduce((a,b) => a + b, 0) / vals.length;
+      }
+
+      return {
+        off_rating: avg('off_rating'),
+        def_rating: avg('def_rating'),
+        net_rating: avg('net_rating'),
+        pace: avg('pace'),
+        efg_pct_off: avg('efg_pct_off'),
+        tov_pct_off: avg('tov_pct_off'),
+        orb_pct_off: avg('orb_pct_off'),
+        ftr_off: avg('ftr_off'),
+      };
+    }
+
+    function renderGameVsSeason(meta) {
+      const teams = meta.teams || [];
+      const metrics = [
+        { key:'off_rating', label:'OffRtg', pct:false },
+        { key:'def_rating', label:'DefRtg', pct:false },
+        { key:'net_rating', label:'NetRtg', pct:false },
+        { key:'pace', label:'Pace', pct:false },
+        { key:'efg_pct_off', label:'eFG%', pct:true },
+        { key:'tov_pct_off', label:'TOV%', pct:true },
+        { key:'orb_pct_off', label:'ORB%', pct:true },
+        { key:'ftr_off', label:'FT Rate', pct:true },
+      ];
+
+      const blocks = teams.map(team => {
+        const game = getContextRow(meta.game_code, team.team_key) || {};
+        const season = getSeasonAverages(team.team_key, meta.game_code);
+
+        if (!season) {
+          return `
+            <div class="team-summary-card">
+              <div class="team-summary-title">${escapeHtml(team.team_name || team.team_key || '')}</div>
+              <div class="empty">Not enough season context to compare this game against team averages.</div>
+            </div>
+          `;
+        }
+
+        const rows = metrics.map(m => {
+          const gv = game[m.key];
+          const sv = season[m.key];
+          const delta = (gv !== null && gv !== undefined && sv !== null && sv !== undefined && !Number.isNaN(gv) && !Number.isNaN(sv))
+            ? Number(gv) - Number(sv)
+            : null;
+          const valueFmt = m.pct ? fmtPct : fmtNum;
+          const deltaFmt = m.pct ? fmtSignedPct : (v => fmtSigned(v, 1));
+          const lowerIsBetter = ['def_rating', 'tov_pct_off'].includes(m.key);
+          let deltaClass = '';
+          if (delta !== null && Number(delta) !== 0) {
+            const isGood = lowerIsBetter ? Number(delta) < 0 : Number(delta) > 0;
+            deltaClass = isGood ? 'delta-good' : 'delta-bad';
+          }
+          return `
+            <div class="metric-card">
+              <div class="metric-label">${escapeHtml(m.label)}</div>
+              <div class="metric-value">${valueFmt(gv)}</div>
+              <div class="player-sub">Season ${valueFmt(sv)} · <span class="${deltaClass}">Δ ${delta === null ? '—' : deltaFmt(delta)}</span></div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="team-summary-card">
+            <div class="team-summary-title">${escapeHtml(team.team_name || team.team_key || '')}</div>
+            <div class="metrics-grid">${rows}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('game-vs-season').innerHTML = `<div class="summary-grid">${blocks}</div>`;
+    }
+
+    function renderQuickRead(meta) {
+      const teams = meta.teams || [];
+      const rows = RAW_PLAYERS.filter(r => r.game_code === meta.game_code);
+      const topPerformer = rows.slice().sort((a,b) => compositePerformance(b) - compositePerformance(a))[0] || null;
+      const contexts = teams.map(t => ({ team: t, ctx: getContextRow(meta.game_code, t.team_key) || {} }));
+      const factorCandidates = [];
+      ['efg_pct_off','tov_pct_off','orb_pct_off','ftr_off','pace'].forEach(key => {
+        if (contexts.length < 2) return;
+        const a = contexts[0].ctx[key], b = contexts[1].ctx[key];
+        if (a === null || a === undefined || b === null || b === undefined || Number.isNaN(a) || Number.isNaN(b)) return;
+        factorCandidates.push({ key, diff: Math.abs(Number(a) - Number(b)), a: Number(a), b: Number(b) });
+      });
+      factorCandidates.sort((x,y) => y.diff - x.diff);
+      const topFactor = factorCandidates[0] || null;
+
+      const stretches = buildStretchRuns(meta.game_code);
+      const bestStretch = stretches[0] || null;
+      const margin = (() => {
+        const totals = RAW_TEAM_TOTALS.filter(t => t.game_code === meta.game_code);
+        if (totals.length < 2) return null;
+        return Number(totals[0].score || 0) - Number(totals[1].score || 0);
+      })();
+
+      const cards = [
+        {
+          label: 'Final Margin',
+          title: margin === null ? '—' : fmtSigned(margin, 0),
+          sub: teams.length >= 2 ? `${escapeHtml(teams[0].team_key || '')} vs ${escapeHtml(teams[1].team_key || '')}` : 'Game result'
+        },
+        {
+          label: 'Top Performer',
+          title: topPerformer ? escapeHtml(topPerformer.player_name || '') : '—',
+          sub: topPerformer ? `${fmtInt(topPerformer.points)} pts · ${fmtInt(topPerformer.rebounds_total)} reb · ${fmtInt(topPerformer.assists)} ast` : 'No player data'
+        },
+        {
+          label: 'Biggest Team Edge',
+          title: topFactor ? escapeHtml(topFactor.key.replaceAll('_pct_off','').replaceAll('_',' ').toUpperCase()) : '—',
+          sub: topFactor && teams.length >= 2 ? `${escapeHtml(teams[topFactor.a >= topFactor.b ? 0 : 1].team_key || '')} led this factor most clearly` : 'No factor edge'
+        },
+        {
+          label: 'Strongest Stretch',
+          title: bestStretch ? `${escapeHtml(bestStretch.team_key || '')} ${fmtSigned(bestStretch.segment_net, 0)}` : '—',
+          sub: bestStretch ? `${secsToClock(bestStretch.segment_start_second)}–${secsToClock(bestStretch.segment_end_second)} · ${escapeHtml(bestStretch.lineup_players || '')}` : 'No rotation layer'
+        }
+      ];
+
+      document.getElementById('quick-read').innerHTML = `<div class="quick-grid">${cards.map(card => `
+        <div class="quick-card">
+          <div class="quick-label">${card.label}</div>
+          <div class="quick-title">${card.title}</div>
+          <div class="quick-sub">${card.sub}</div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function renderTopPerformers(meta) {
+      const rows = RAW_PLAYERS
+        .filter(r => r.game_code === meta.game_code)
+        .sort((a,b) => compositePerformance(b) - compositePerformance(a))
+        .slice(0, 6);
+
+      if (!rows.length) {
+        document.getElementById('top-performers').innerHTML = '<div class="empty">No player data.</div>';
+        return;
+      }
+
+      document.getElementById('top-performers').innerHTML = `<div class="performers-grid">${rows.map((row, idx) => `
+        <div class="performer-card">
+          <div class="performer-rank">#${idx + 1} performer</div>
+          <div class="performer-name">${playerNameHtml(row)}</div>
+          <div class="performer-meta">${escapeHtml(row.team_key || '')} · ${escapeHtml(row.playing_position || '—')} · ${escapeHtml(row.minutes || '')}</div>
+          <div class="performer-score">${fmtInt(row.points)} pts · ${fmtInt(row.rebounds_total)} reb · ${fmtInt(row.assists)} ast</div>
+          <div class="performer-meta">+/- ${fmtInt(row.plus_minus)} · TS ${fmtPct(row.ts_pct)}</div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    function renderGameFlow(meta) {
+      const rows = buildStretchRuns(meta.game_code).slice(0, 6);
+
+      if (!rows.length) {
+        document.getElementById('game-flow').innerHTML = '<div class="empty">No rotation timeline available for this game.</div>';
+        return;
+      }
+
+      document.getElementById('game-flow').innerHTML = `<div class="flow-grid">${rows.map(row => {
+        const rotationHref = buildRotationHref(row.team_key, row.game_code);
+        const scoreText = row.score_start && row.score_end ? `${row.score_start} → ${row.score_end}` : '';
+        return `
+          <div class="flow-card">
+            <div class="flow-top">
+              <div>
+                <div class="flow-team">${rotationHref ? `<a class="team-link" href="${rotationHref}">${escapeHtml(row.team_name || row.team_key || '')}</a>` : escapeHtml(row.team_name || row.team_key || '')}</div>
+                <div class="flow-time">${secsToClock(row.segment_start_second)}–${secsToClock(row.segment_end_second)}</div>
+              </div>
+              <div class="flow-net ${Number(row.segment_net) >= 0 ? 'good' : 'bad'}">${fmtSigned(row.segment_net, 0)}</div>
+            </div>
+            <div class="flow-lineup">${escapeHtml(row.lineup_players || '')}</div>
+            <div class="flow-score">${escapeHtml(scoreText)}</div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    }
+
+    function renderScoreFlow(meta) {
+      const root = document.getElementById('score-flow');
+      const flow = RAW_SCORE_FLOW;
+      const teams = meta.teams || [];
+      if (!flow || !flow.pts || flow.pts.length < 2 || teams.length < 2) {
+        root.innerHTML = '<div class="empty">No play-by-play score data for this game.</div>';
+        return;
+      }
+      const home = teams[0], away = teams[1];
+      const homeIsT1 = flow.t1 === home.team_key || flow.t2 !== home.team_key;
+      const pts = flow.pts.map(p => {
+        const hs = homeIsT1 ? p[1] : p[2], as = homeIsT1 ? p[2] : p[1];
+        return { t: p[0], hs, as, m: hs - as };
+      });
+      const total = Math.max(...flow.periods.map(p => p[1]), pts[pts.length - 1].t, 1);
+      // stats
+      let maxH = { v: 0, t: 0, s: '' }, maxA = { v: 0, t: 0, s: '' }, changes = 0, ties = 0, lastSign = 0;
+      pts.forEach((p, i) => {
+        if (p.m > maxH.v) maxH = { v: p.m, t: p.t, s: p.hs + '-' + p.as };
+        if (-p.m > maxA.v) maxA = { v: -p.m, t: p.t, s: p.hs + '-' + p.as };
+        const sign = Math.sign(p.m);
+        if (i > 0 && sign === 0 && pts[i - 1].m !== 0) ties += 1;
+        if (sign !== 0) { if (lastSign !== 0 && sign !== lastSign) changes += 1; lastSign = sign; }
+      });
+      let best = { team: null, pts: 0, opp: 0, t0: 0, t1: 0 }, cur = { team: null, pts: 0, t0: 0, t1: 0 };
+      for (let i = 1; i < pts.length; i++) {
+        const dh = pts[i].hs - pts[i - 1].hs, da = pts[i].as - pts[i - 1].as;
+        const who = dh > 0 && da === 0 ? 'H' : (da > 0 && dh === 0 ? 'A' : null);
+        if (who && who === cur.team) { cur.pts += dh + da; cur.t1 = pts[i].t; }
+        else if (who) { cur = { team: who, pts: dh + da, t0: pts[i - 1].t, t1: pts[i].t }; }
+        else { cur = { team: null, pts: 0, t0: 0, t1: 0 }; }
+        if (cur.team && cur.pts > best.pts) best = { ...cur };
+      }
+      function gameClock(t) {
+        const per = flow.periods.find(p => t >= p[0] && t <= p[1]) || flow.periods[flow.periods.length - 1];
+        const left = Math.max(0, per[1] - t);
+        return per[2] + ' ' + String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(Math.round(left % 60)).padStart(2, '0');
+      }
+      const hName = home.team_key || 'Home', aName = away.team_key || 'Away';
+      const stats = [
+        ['Largest lead ' + hName, maxH.v > 0 ? '+' + maxH.v : '—', maxH.v > 0 ? gameClock(maxH.t) + ' · ' + maxH.s : 'Never led'],
+        ['Largest lead ' + aName, maxA.v > 0 ? '+' + maxA.v : '—', maxA.v > 0 ? gameClock(maxA.t) + ' · ' + maxA.s : 'Never led'],
+        ['Lead changes', String(changes), ties + ' tie' + (ties === 1 ? '' : 's')],
+        ['Biggest run', best.team ? best.pts + '-0 ' + (best.team === 'H' ? hName : aName) : '—', best.team ? gameClock(best.t0) + ' → ' + gameClock(best.t1) : ''],
+      ];
+      // chart
+      const W = 1100, H = 300, padL = 44, padR = 16, padT = 16, padB = 30;
+      const maxAbs = Math.max(5, ...pts.map(p => Math.abs(p.m)));
+      const yMax = Math.ceil(maxAbs / 5) * 5;
+      const x = t => padL + (t / total) * (W - padL - padR);
+      const y = m => padT + (1 - (m + yMax) / (2 * yMax)) * (H - padT - padB);
+      let path = 'M' + x(pts[0].t).toFixed(1) + ' ' + y(0).toFixed(1);
+      for (let i = 1; i < pts.length; i++) {
+        path += ' L' + x(pts[i].t).toFixed(1) + ' ' + y(pts[i - 1].m).toFixed(1) + ' L' + x(pts[i].t).toFixed(1) + ' ' + y(pts[i].m).toFixed(1);
+      }
+      path += ' L' + x(total).toFixed(1) + ' ' + y(pts[pts.length - 1].m).toFixed(1);
+      const area = path + ' L' + x(total).toFixed(1) + ' ' + y(0).toFixed(1) + ' Z';
+      const grid = [];
+      for (let v = -yMax; v <= yMax; v += yMax / 2) {
+        grid.push('<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="' + (v === 0 ? '#64748b' : '#1f2937') + '" stroke-width="1"/>' +
+          '<text x="' + (padL - 6) + '" y="' + (y(v) + 4) + '" fill="#94a3b8" font-size="11" text-anchor="end">' + (v > 0 ? '+' : '') + v + '</text>');
+      }
+      const per = flow.periods.map(p => '<line x1="' + x(p[0]) + '" x2="' + x(p[0]) + '" y1="' + padT + '" y2="' + (H - padB) + '" stroke="#334155" stroke-dasharray="4 4"/>' +
+        '<text x="' + ((x(p[0]) + x(p[1])) / 2) + '" y="' + (H - 10) + '" fill="#94a3b8" font-size="12" text-anchor="middle">' + p[2] + '</text>').join('');
+      const svg = '<svg id="sf-svg" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block">' +
+        '<defs><clipPath id="sf-up"><rect x="0" y="0" width="' + W + '" height="' + y(0) + '"/></clipPath><clipPath id="sf-dn"><rect x="0" y="' + y(0) + '" width="' + W + '" height="' + H + '"/></clipPath></defs>' +
+        grid.join('') + per +
+        '<path d="' + area + '" fill="rgba(56,189,248,0.25)" clip-path="url(#sf-up)"/>' +
+        '<path d="' + area + '" fill="rgba(245,158,11,0.25)" clip-path="url(#sf-dn)"/>' +
+        '<path d="' + path + '" fill="none" stroke="#e5e7eb" stroke-width="1.6"/>' +
+        '<text x="' + (padL + 6) + '" y="' + (padT + 12) + '" fill="#38bdf8" font-size="12" font-weight="700">' + escapeHtml(hName) + ' ahead</text>' +
+        '<text x="' + (padL + 6) + '" y="' + (H - padB - 6) + '" fill="#f59e0b" font-size="12" font-weight="700">' + escapeHtml(aName) + ' ahead</text>' +
+        '<line id="sf-cursor" x1="0" x2="0" y1="' + padT + '" y2="' + (H - padB) + '" stroke="#e5e7eb" stroke-width="1" style="display:none"/>' +
+        '</svg>';
+      root.innerHTML =
+        '<div class="quick-grid" style="margin-bottom:14px">' + stats.map(s =>
+          '<div class="quick-card"><div class="quick-label">' + escapeHtml(s[0]) + '</div><div class="quick-title">' + escapeHtml(s[1]) + '</div><div class="quick-sub">' + escapeHtml(s[2]) + '</div></div>').join('') + '</div>' +
+        '<div style="position:relative">' + svg + '<div id="sf-tip" class="sf-tip"></div></div>' +
+        '<div class="player-sub" style="margin-top:8px">Score margin from ' + escapeHtml(hName) + ' perspective (home). Built from play-by-play, one step per scoring event.</div>';
+      const svgEl = document.getElementById('sf-svg'), tip = document.getElementById('sf-tip'), cursor = document.getElementById('sf-cursor');
+      svgEl.addEventListener('mousemove', ev => {
+        const rect = svgEl.getBoundingClientRect();
+        const vx = (ev.clientX - rect.left) * W / rect.width;
+        const t = Math.max(0, Math.min(total, (vx - padL) / (W - padL - padR) * total));
+        let p = pts[0];
+        for (const q of pts) { if (q.t <= t) p = q; else break; }
+        cursor.setAttribute('x1', x(t)); cursor.setAttribute('x2', x(t)); cursor.style.display = '';
+        tip.style.display = 'block';
+        tip.style.left = (ev.clientX - rect.left + 12) + 'px';
+        tip.style.top = (ev.clientY - rect.top - 10) + 'px';
+        tip.innerHTML = '<b>' + gameClock(t) + '</b><br>' + escapeHtml(hName) + ' ' + p.hs + ' - ' + p.as + ' ' + escapeHtml(aName) + '<br>Margin ' + (p.m > 0 ? '+' : '') + p.m;
+      });
+      svgEl.addEventListener('mouseleave', () => { tip.style.display = 'none'; cursor.style.display = 'none'; });
+    }
+    function renderGameFactors(meta) {
+      const teams = meta.teams || [];
+      const a = teams[0] || {};
+      const b = teams[1] || {};
+      const ca = getContextRow(meta.game_code, a.team_key) || {};
+      const cb = getContextRow(meta.game_code, b.team_key) || {};
+      const factors = [
+        { key:'efg_pct_off', label:'eFG%' },
+        { key:'tov_pct_off', label:'TOV%' },
+        { key:'orb_pct_off', label:'ORB%' },
+        { key:'ftr_off', label:'FT Rate' },
+      ];
+
+      const cards = factors.map(f => {
+        const av = ca[f.key];
+        const bv = cb[f.key];
+        const maxv = Math.max(av || 0, bv || 0, 0.0001);
+        const aw = av != null ? Math.max(0, (av / maxv) * 100) : 0;
+        const bw = bv != null ? Math.max(0, (bv / maxv) * 100) : 0;
+        return `
+          <div class="factor-card">
+            <div class="factor-title">${escapeHtml(f.label)}</div>
+            <div class="factor-row">
+              <div class="factor-side">${fmtPct(av)}</div>
+              <div class="factor-bar">
+                <div class="factor-fill left" style="width:${aw}%"></div>
+                <div class="factor-fill right" style="width:${bw}%"></div>
+              </div>
+              <div class="factor-side right">${fmtPct(bv)}</div>
+            </div>
+            <div class="factor-team-labels">
+              <div>${escapeHtml(a.team_key || '')}</div>
+              <div>${escapeHtml(b.team_key || '')}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('game-factors').innerHTML = `<div class="factors-grid">${cards}</div>`;
+    }
+
+    function playerNameHtml(row) {
+      const name = escapeHtml(row.player_name || '');
+      const sub = [row.playing_position || '', row.shirt_number || ''].filter(Boolean).join(' · ');
+      const inner = `<div><div>${name}</div><div class="player-sub">${escapeHtml(sub)}</div></div>`;
+      const href = buildPlayerHubHref(row.team_key, row.player_id);
+      return href ? `<a class="player-link" href="${escapeHtml(href)}">${inner}</a>` : inner;
+    }
+
+
+    function buildTeamTable(meta, team) {
+      const rows = RAW_PLAYERS
+        .filter(r => r.game_code === meta.game_code && r.team_key === team.team_key)
+        .sort((a,b) => {
+          const starterCmp = (b.starter || 0) - (a.starter || 0);
+          if (starterCmp !== 0) return starterCmp;
+          const minCmp = (b.minutes_decimal || 0) - (a.minutes_decimal || 0);
+          if (minCmp !== 0) return minCmp;
+          return String(a.player_name || '').localeCompare(String(b.player_name || ''));
+        });
+
+      const body = rows.map(r => `
+        <tr>
+          <td><span class="starter-pill">${r.starter ? 'S' : 'B'}</span></td>
+          <td>${playerNameHtml(r)}</td>
+          <td>${escapeHtml(r.minutes || '')}</td>
+          <td>${fmtInt(r.points)}</td>
+          <td>${fmtInt(r.rebounds_total)}</td>
+          <td>${fmtInt(r.assists)}</td>
+          <td>${fmtInt(r.steals)}</td>
+          <td>${fmtInt(r.blocks)}</td>
+          <td>${fmtInt(r.turnovers)}</td>
+          <td>${fmtInt(r.fouls_personal)}</td>
+          <td>${fmtInt(r.plus_minus)}</td>
+          <td>${fmtInt(r.fgm)}/${fmtInt(r.fga)}</td>
+          <td>${fmtInt(r.tpm)}/${fmtInt(r.tpa)}</td>
+          <td>${fmtInt(r.ftm)}/${fmtInt(r.fta)}</td>
+          <td>${fmtPct(r.efg_pct)}</td>
+          <td>${fmtPct(r.ts_pct)}</td>
+          <td>${fmtNum(r.pts_per_shot)}</td>
+          <td>${fmtNum(r.reb_per40)}</td>
+          <td>${fmtNum(r.ast_per40)}</td>
+          <td>${fmtNum(r.tov_per40)}</td>
+        </tr>
+      `).join('');
+
+      return `
+        <div class="card">
+          <div class="section-head">${escapeHtml(team.team_name || team.team_key || '')}</div>
+          <div class="section-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>S/B</th><th>Player</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>Tov</th><th>PF</th><th>+/-</th><th>FG</th><th>3PT</th><th>FT</th><th>eFG%</th><th>TS%</th><th>Pts/Sh</th><th>Reb/40</th><th>Ast/40</th><th>Tov/40</th>
+                </tr>
+              </thead>
+              <tbody>${body}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBoxscores(meta) {
+      const html = (meta.teams || []).map(team => buildTeamTable(meta, team)).join('');
+      document.getElementById('boxscore-tables').innerHTML = html;
+    }
+
+    function gameLeaders(meta) {
+      const rows = RAW_PLAYERS.filter(r => r.game_code === meta.game_code);
+      const leaders = [
+        ['Top Scorer', sortBy(rows, 'points')[0], r => fmtInt(r?.points) + ' pts'],
+        ['Top Rebounder', sortBy(rows, 'rebounds_total')[0], r => fmtInt(r?.rebounds_total) + ' reb'],
+        ['Top Assister', sortBy(rows, 'assists')[0], r => fmtInt(r?.assists) + ' ast'],
+        ['Best +/-', sortBy(rows, 'plus_minus')[0], r => fmtInt(r?.plus_minus)],
+        ['Most Minutes', sortBy(rows, 'minutes_decimal')[0], r => escapeHtml(r?.minutes || '')],
+      ];
+
+      document.getElementById('game-leaders').innerHTML = `
+        <div class="leaders-grid">
+          ${leaders.map(([label, row, valueFn]) => `
+            <div class="leader-card">
+              <div class="leader-label">${escapeHtml(label)}</div>
+              <div class="leader-player">${row ? playerNameHtml(row) : ''}</div>
+              <div class="leader-value">${row ? valueFn(row) : ''}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function renderSelectedGame() {
+      const gameCode = document.getElementById('game-filter').value || '';
+      const empty = document.getElementById('empty-state');
+      const dash = document.getElementById('dashboard');
+      const status = document.getElementById('page-status');
+
+      if (!gameCode) {
+        empty.style.display = '';
+        dash.style.display = 'none';
+        status.textContent = 'No game selected';
+        return;
+      }
+
+      const meta = RAW_GAMES.find(g => g.game_code === gameCode);
+
+      if (!meta) {
+        empty.style.display = '';
+        dash.style.display = 'none';
+        status.textContent = 'Game not found';
+        return;
+      }
+
+      try {
+        await loadGameData(gameCode);
+      } catch (err) {
+        empty.style.display = '';
+        dash.style.display = 'none';
+        status.textContent = 'Failed to load game data';
+        console.error(err);
+        return;
+      }
+
+      const totals = RAW_TEAM_TOTALS.filter(t => t.game_code === gameCode);
+
+      empty.style.display = 'none';
+      dash.style.display = '';
+      status.textContent = meta.label || gameCode;
+
+      renderGameHeader(meta, totals);
+      renderScoreFlow(meta);
+      renderTeamSummary(meta);
+      renderGameVsSeason(meta);
+      renderQuickRead(meta);
+      renderGameFactors(meta);
+      renderTopPerformers(meta);
+      renderGameFlow(meta);
+      renderBoxscores(meta);
+      gameLeaders(meta);
+    }
+
+    document.getElementById('phase-filter').addEventListener('change', () => {
+      buildRoundOptions();
+      buildGameOptions();
+      document.getElementById('round-filter').value = '';
+      document.getElementById('game-filter').value = '';
+      renderSelectedGame().catch(console.error);
+    });
+    document.getElementById('round-filter').addEventListener('change', () => {
+      buildGameOptions();
+      document.getElementById('game-filter').value = '';
+      renderSelectedGame().catch(console.error);
+    });
+    document.getElementById('game-filter').addEventListener('change', renderSelectedGame);
+
+    buildPhaseOptions();
+    buildRoundOptions();
+    buildGameOptions();
+    renderSelectedGame().catch(console.error);
+  </script>
+</body>
+</html>
