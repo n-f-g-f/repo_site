@@ -98,7 +98,9 @@ export async function getSessionBundle(env, request) {
          s.expires_at,
          u.email,
          u.full_name,
-         u.is_active
+         u.is_active,
+         u.favorite_league_key,
+         u.favorite_team_key
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.session_token = ?
@@ -158,6 +160,8 @@ export async function getSessionBundle(env, request) {
       id: sessionRow.user_id,
       email: sessionRow.email,
       full_name: sessionRow.full_name || "",
+      favorite_league_key: sessionRow.favorite_league_key || null,
+      favorite_team_key: sessionRow.favorite_team_key || null,
     },
     access: computeEntitlements(accessRow, leagueRows),
   };
