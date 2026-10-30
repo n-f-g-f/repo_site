@@ -1,0 +1,30 @@
+/* PBA mobile layout (screens up to 820px; never applied to print) */
+@media screen and (max-width: 820px) {
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+.wrap,.container,.public-page{padding-left:12px !important;padding-right:12px !important}
+h1{font-size:clamp(22px,6.5vw,30px) !important;line-height:1.15 !important}
+.hero,.hero-card,.cta-final{padding:22px 18px !important;border-radius:18px !important}
+input,select,textarea{font-size:16px !important}
+.two,.two-col,.three-col,.grid-3,.grid-4,.edges,.section-grid,.discover-grid,.report-grid,.team-grid,.card-grid,.choice-grid,.story-grid,.quick-path-grid,.pricing-grid,.content-grid,.content-grid-three,.league-grid,.season-grid,.g-grid,.trend-player-grid,.link-groups,.vs,.toolbar,.hero{grid-template-columns:1fr !important}
+.summary-grid,.metric-grid,.kpis,.quick-grid,.lx-cards{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+.stats{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+.ctl,.control{min-width:0 !important}
+.tm.r{justify-content:flex-start !important;text-align:left !important}
+.next{margin-left:0 !important}
+.pba-mscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.pba-mscroll-hint{font-size:11px;color:#64748b;margin:4px 0;text-align:right}
+table{font-size:12px}
+th,td{padding:6px 7px !important}
+.pba-context-inner,.pba-site-chrome-inner{padding:10px 12px !important;gap:10px !important}
+.pba-context-brand-sub,.pba-site-brand-sub,.pba-context-pill{display:none !important}
+.pba-search{flex:1 1 100% !important;max-width:none !important}
+.pba-search-results{min-width:0 !important}
+.pba-context-nav,.pba-site-nav{flex-wrap:nowrap !important;overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none}
+.pba-context-nav::-webkit-scrollbar,.pba-site-nav::-webkit-scrollbar{display:none}
+.pba-context-nav-link,.pba-site-nav-link{white-space:nowrap;flex:0 0 auto;padding:8px 11px !important}
+.pba-myteam{width:100%}
+.pba-context-freshness{padding:0 12px 8px !important}
+.pba-demo-banner{font-size:12px !important}
+.pba-gl-tip{max-width:calc(100vw - 24px) !important}
+}
