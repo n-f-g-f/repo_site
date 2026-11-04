@@ -96,6 +96,88 @@ a{color:inherit;text-decoration:none;}
     </div>
   </section>
 
+  <style>.pba-public-search{margin:0 0 28px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:18px 22px;box-shadow:0 1px 3px rgba(15,23,42,.05);}.pba-public-search-title{font-size:13px;font-weight:800;color:#0f172a;margin-bottom:8px;}.pba-public-search .pba-search{max-width:none;}.pba-search{position:relative;flex:1 1 240px;max-width:360px;}.pba-search input{width:100%;box-sizing:border-box;border:1px solid rgba(148,163,184,.45);border-radius:999px;padding:11px 16px;font-size:14px;color:#0f172a;background:#f8fafc;outline:none;}.pba-search input:focus{border-color:#93c5fd;background:#fff;box-shadow:0 0 0 3px rgba(147,197,253,.35);}.pba-search-results{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:280px;max-height:420px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.18);z-index:60;padding:6px;text-align:left;}.pba-search-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;text-decoration:none;color:#0f172a;}.pba-search-item:hover,.pba-search-item-first{background:#eff6ff;}.pba-search-type{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 7px;}.pba-search-type-player{background:#e0f2fe;color:#0369a1;}.pba-search-type-team{background:#ede9fe;color:#6d28d9;}.pba-search-text{display:flex;flex-direction:column;min-width:0;}.pba-search-name{font-size:14px;font-weight:700;}.pba-search-meta{font-size:12px;color:#64748b;}.pba-search-empty{padding:10px;font-size:13px;color:#64748b;}</style><section class="pba-public-search"><div class="pba-public-search-title">Members: search any player or team in the leagues of your plan</div><div class="pba-search" role="search"><input id="pba-search-input" type="search" placeholder="Search player or team…" autocomplete="off" aria-label="Search player or team"><div id="pba-search-results" class="pba-search-results"></div></div><script>
+(function () {
+  var LEAGUES = [{"key": "betclic", "name": "Betclic"}, {"key": "betclic_fem", "name": "Betclic_Fem"}, {"key": "proliga", "name": "Proliga"}];
+  var box = document.getElementById("pba-search-input");
+  var out = document.getElementById("pba-search-results");
+  if (!box || !out) return;
+  var DATA = null, loading = null, timer = null, signedIn = true;
+  function norm(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function load() {
+    if (loading) return loading;
+    loading = fetch("/api/session", { credentials: "include" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (s) {
+        var acc = s && s.authenticated ? s.access : null;
+        signedIn = !!(s && s.authenticated);
+        var keys = LEAGUES.map(function (l) { return l.key; });
+        if (!(acc && acc.can_access_all)) {
+          var allowed = acc && Array.isArray(acc.allowed_leagues) ? acc.allowed_leagues.map(function (x) { return String(x).toLowerCase(); }) : [];
+          keys = keys.filter(function (k) { return allowed.indexOf(k) >= 0; });
+        }
+        return Promise.all(keys.map(function (k) {
+          return fetch("/leagues/" + k + "/search_index.json", { credentials: "include" })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (lists) {
+        DATA = [];
+        lists.forEach(function (l) { if (Array.isArray(l)) DATA = DATA.concat(l); });
+        DATA.forEach(function (e) {
+          e._name = norm(e.name);
+          e._all = norm([e.name, e.team, e.team_key, e.league_name].join(" "));
+        });
+        return DATA;
+      });
+    return loading;
+  }
+  function score(e, q) {
+    var s = 0;
+    if (e._name.indexOf(q) === 0) s -= 100;
+    else if (e._name.indexOf(" " + q) >= 0 || e._name.indexOf("." + q) >= 0) s -= 60;
+    if (e.current) s -= 20;
+    if (e.type === "team") s -= 5;
+    return s;
+  }
+  function render() {
+    var q = norm(box.value);
+    if (q.length < 2) { out.style.display = "none"; out.innerHTML = ""; return; }
+    load().then(function () {
+      var tokens = q.split(/\s+/);
+      var hits = DATA.filter(function (e) { return tokens.every(function (t) { return e._all.indexOf(t) >= 0; }); });
+      hits.sort(function (a, b) {
+        return (score(a, q) - score(b, q)) || String(b.season || "").localeCompare(String(a.season || "")) || String(a.name).localeCompare(String(b.name));
+      });
+      hits = hits.slice(0, 12);
+      if (!hits.length) {
+        out.innerHTML = '<div class="pba-search-empty">' + (signedIn ? "No players or teams found in the leagues of your plan." : "Sign in to search players and teams.") + "</div>";
+      } else {
+        out.innerHTML = hits.map(function (e, i) {
+          var meta = e.type === "team"
+            ? esc(e.league_name) + " · " + esc(e.season_label)
+            : esc(e.team || e.team_key) + " · " + esc(e.league_name) + " " + esc(e.season_label);
+          return '<a class="pba-search-item' + (i === 0 ? " pba-search-item-first" : "") + '" hr' + 'ef="' + esc(e.href) + '">' +
+            '<span class="pba-search-type pba-search-type-' + esc(e.type) + '">' + (e.type === "team" ? "Team" : "Player") + "</span>" +
+            '<span class="pba-search-text"><span class="pba-search-name">' + esc(e.name) + "</span>" +
+            '<span class="pba-search-meta">' + meta + (e.current ? ' · <b>current</b>' : "") + "</span></span></a>";
+        }).join("");
+      }
+      out.style.display = "block";
+    });
+  }
+  box.addEventListener("focus", function () { load(); if (box.value) render(); });
+  box.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(render, 120); });
+  box.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { out.style.display = "none"; box.blur(); }
+    if (ev.key === "Enter") { var first = out.querySelector("a.pba-search-item"); if (first) window.location.href = first.getAttribute("href"); }
+  });
+  document.addEventListener("click", function (ev) { if (!ev.target.closest(".pba-search")) out.style.display = "none"; });
+})();
+</script></section>
   <div class="credibility">
     Built on real play-by-play data from <strong>Betclic</strong> · <strong>Betclic Fem</strong> · <strong>Proliga</strong>
   </div>

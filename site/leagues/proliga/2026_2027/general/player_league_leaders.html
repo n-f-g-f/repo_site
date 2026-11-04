@@ -49,6 +49,8 @@
     .discover-card a { color:inherit; text-decoration:none; }
     .discover-card a:hover .player-main { color:var(--accent); }
     .empty { color:var(--muted); font-size:13px; }
+    .sample-note { display:none; margin-bottom:14px; padding:10px 14px; border-radius:12px; border:1px solid rgba(245,158,11,0.45); background:rgba(245,158,11,0.10); color:#fde68a; font-size:13px; }
+    .sample-note strong { color:#fbbf24; }
     @media (max-width: 1300px) { .section-grid,.discover-grid,.toolbar { grid-template-columns:1fr 1fr; } }
     @media (max-width: 900px) { .section-grid,.discover-grid,.toolbar { grid-template-columns:1fr; } }
   </style>
@@ -178,6 +180,7 @@
   <div class="wrap">
     <h1>Player League Leaders</h1>
     <div class="subtitle">Explore leaders by profile, then jump straight into the Player Hubs worth opening next.</div>
+    <div class="sample-note" id="sample-note"></div>
 
     <div class="toolbar">
       <div class="control">
@@ -356,6 +359,12 @@
       const response = await fetch(DATA_URL);
       if (!response.ok) throw new Error(`Failed to load ${DATA_URL}`);
       DATASET = await response.json();
+      if (DATASET.small_sample) {
+        const n = Number(DATASET.season_max_games || 0);
+        const note = document.getElementById('sample-note');
+        note.innerHTML = `<strong>Small sample · ${n} game${n === 1 ? '' : 's'} played</strong> — early-season leaders can change quickly. Minimum games rise automatically to the full threshold as the season progresses.`;
+        note.style.display = 'block';
+      }
 
       const groups = DATASET.groups || [];
       populateSelect('group-filter', groups.map(g => ({ value: g.key, label: g.title })), 'Choose section');
