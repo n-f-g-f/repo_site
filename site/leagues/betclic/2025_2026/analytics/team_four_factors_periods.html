@@ -98,6 +98,11 @@
     thead .sticky-left{z-index:3;background:var(--panel-2)}
     .notes{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.45}
     .neg{color:var(--neg);font-weight:700}
+    th.sortable{cursor:pointer;user-select:none}
+    th.sortable:hover{color:var(--accent)}
+    th.sortable::after{content:" 95";color:var(--muted);font-weight:400}
+    th.sorted-asc::after{content:" 91";color:var(--accent)}
+    th.sorted-desc::after{content:" 93";color:var(--accent)}
     @media (max-width:1100px){
       .main-grid{grid-template-columns:1fr}
       .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -243,9 +248,7 @@
           <span class="hero-note">Same factor logic as season team totals</span>
         </div>
       </div>
-      <div class="hero-logo-wrap">
-        <img src="../assets/logos/LPB.png" alt="League logo" onerror="this.style.display='none'">
-      </div>
+
     </section>
 
     <section class="toolbar">
@@ -290,21 +293,21 @@
         <table>
           <thead>
             <tr>
-              <th class="sticky-left">Team</th>
-              <th>Quarter</th>
-              <th>eFG%</th>
-              <th>ORB%</th>
-              <th>TOV%</th>
-              <th>FT Rate</th>
-              <th>FGM</th>
-              <th>FGA</th>
-              <th>3PM</th>
-              <th>FTA</th>
-              <th>ORB</th>
-              <th>DRB</th>
-              <th>Opp DRB</th>
-              <th>TOV</th>
-              <th>Poss</th>
+              <th class="sticky-left sortable" data-col="team_name" data-type="text">Team</th>
+              <th class="sortable" data-col="period_label" data-type="text">Quarter</th>
+              <th class="sortable" data-col="efg_pct" data-type="num">eFG%</th>
+              <th class="sortable" data-col="orb_pct" data-type="num">ORB%</th>
+              <th class="sortable" data-col="tov_pct" data-type="num">TOV%</th>
+              <th class="sortable" data-col="ftr" data-type="num">FT Rate</th>
+              <th class="sortable" data-col="fgm" data-type="num">FGM</th>
+              <th class="sortable" data-col="fga" data-type="num">FGA</th>
+              <th class="sortable" data-col="fg3m" data-type="num">3PM</th>
+              <th class="sortable" data-col="fta" data-type="num">FTA</th>
+              <th class="sortable" data-col="orb" data-type="num">ORB</th>
+              <th class="sortable" data-col="drb" data-type="num">DRB</th>
+              <th class="sortable" data-col="opp_drb" data-type="num">Opp DRB</th>
+              <th class="sortable" data-col="tov" data-type="num">TOV</th>
+              <th class="sortable" data-col="poss_est" data-type="num">Poss</th>
             </tr>
           </thead>
           <tbody id="table-body"></tbody>
@@ -532,14 +535,43 @@
       `;
     }
 
+    const SORT_STATE = { col: "", type: "num", dir: "desc" };
+
+    function compareBy(a, b, col, type) {
+      if (type === "text") {
+        return String(a[col] || "").localeCompare(String(b[col] || ""), undefined, { sensitivity: "base", numeric: true });
+      }
+      const av = a[col], bv = b[col];
+      const aMissing = av === null || av === undefined || Number.isNaN(Number(av));
+      const bMissing = bv === null || bv === undefined || Number.isNaN(Number(bv));
+      if (aMissing && bMissing) return 0;
+      if (aMissing) return SORT_STATE.dir === "asc" ? 1 : -1;
+      if (bMissing) return SORT_STATE.dir === "asc" ? -1 : 1;
+      return Number(av) - Number(bv);
+    }
+
+    function syncSortHeaders() {
+      document.querySelectorAll("th.sortable").forEach(th => {
+        th.classList.remove("sorted-asc", "sorted-desc");
+        if (th.dataset.col === SORT_STATE.col) {
+          th.classList.add(SORT_STATE.dir === "asc" ? "sorted-asc" : "sorted-desc");
+        }
+      });
+    }
+
     function renderTable(rows) {
       const body = document.getElementById("table-body");
       if (!body) return;
       const ordered = rows.slice().sort((a,b) => {
+        if (SORT_STATE.col) {
+          const cmp = compareBy(a, b, SORT_STATE.col, SORT_STATE.type);
+          if (cmp !== 0) return SORT_STATE.dir === "asc" ? cmp : -cmp;
+        }
         const tn = String(a.team_name).localeCompare(String(b.team_name));
         if (tn !== 0) return tn;
         return String(a.period_label).localeCompare(String(b.period_label));
       });
+      syncSortHeaders();
 
       body.innerHTML = ordered.map(row => `
         <tr>
@@ -577,6 +609,20 @@
     document.getElementById("team-filter").addEventListener("change", render);
     document.getElementById("period-filter").addEventListener("change", render);
     document.getElementById("metric-filter").addEventListener("change", render);
+    document.querySelectorAll("th.sortable").forEach(th => {
+      th.addEventListener("click", () => {
+        const col = th.dataset.col;
+        const type = th.dataset.type || "num";
+        if (SORT_STATE.col === col) {
+          SORT_STATE.dir = SORT_STATE.dir === "desc" ? "asc" : "desc";
+        } else {
+          SORT_STATE.col = col;
+          SORT_STATE.type = type;
+          SORT_STATE.dir = type === "text" ? "asc" : "desc";
+        }
+        render();
+      });
+    });
 
     render();
   </script>

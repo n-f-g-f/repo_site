@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Rankings · Strength of Schedule</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0f172a;color:#e5e7eb}
+.wrap{max-width:1500px;margin:0 auto;padding:24px}
+h1{margin:0 0 6px;font-size:28px}.sub{color:#94a3b8;font-size:14px;line-height:1.55;max-width:980px;margin-bottom:16px}
+.bar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+.ctl{display:flex;flex-direction:column;gap:5px}.ctl label{font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8}
+.ctl select{height:38px;border-radius:10px;border:1px solid #334155;background:#111827;color:#e5e7eb;padding:0 10px;font-size:14px}
+.card{background:#111827;border:1px solid #334155;border-radius:16px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1150px}
+th,td{padding:9px 10px;border-bottom:1px solid #1f2937;text-align:right;white-space:nowrap}
+th:nth-child(2),td:nth-child(2),th:nth-child(11),td:nth-child(11){text-align:left}
+thead th{background:#1f2937;color:#cbd5e1;font-size:12px;cursor:pointer;user-select:none;position:sticky;top:0}
+thead th:hover{color:#38bdf8}th.asc::after{content:" \2191";color:#38bdf8}th.desc::after{content:" \2193";color:#38bdf8}
+td a{color:#38bdf8;font-weight:700;text-decoration:none}td a:hover{text-decoration:underline}
+.pos{color:#4ade80;font-weight:700}.neg{color:#fca5a5;font-weight:700}.mut{color:#94a3b8}
+.up{color:#4ade80;font-weight:800}.dn{color:#fca5a5;font-weight:800}
+.chip{display:inline-block;margin-right:6px;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:700;background:#1f2937}
+.chip.g{background:rgba(74,222,128,.15);color:#bbf7d0}.chip.b{background:rgba(252,165,165,.15);color:#fecaca}
+.note{color:#94a3b8;font-size:12px;line-height:1.6;margin-top:12px;max-width:1100px}
+</style><style>.pba-context-header{position:relative;z-index:20;background:#ffffff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 1px 2px rgba(15,23,42,.04);}.pba-context-inner{max-width:1380px;margin:0 auto;padding:14px 20px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;}.pba-context-brand{display:flex;align-items:center;gap:14px;min-width:0;}.pba-context-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0f172a 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:800;letter-spacing:.04em;text-decoration:none;}.pba-context-brand-copy{min-width:0;}.pba-context-brand-name{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1;}.pba-context-brand-sub{font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}.pba-context-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}.pba-context-nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#0f172a;background:#fff;border:1px solid rgba(148,163,184,.32);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;line-height:1;}.pba-context-nav-link:hover{background:#eff6ff;border-color:#93c5fd;}.pba-context-nav-link-active{background:#0f172a;color:#fff;border-color:#0f172a;}.pba-context-nav-link-active:hover{background:#111827;border-color:#111827;}.pba-context-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:12px;font-weight:700;}.pba-search{position:relative;flex:1 1 240px;max-width:360px;}.pba-search input{width:100%;box-sizing:border-box;border:1px solid rgba(148,163,184,.45);border-radius:999px;padding:9px 14px;font-size:13px;color:#0f172a;background:#f8fafc;outline:none;}.pba-search input:focus{border-color:#93c5fd;background:#fff;box-shadow:0 0 0 3px rgba(147,197,253,.35);}.pba-search-results{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:300px;max-height:420px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.18);z-index:60;padding:6px;}.pba-search-item{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;text-decoration:none;color:#0f172a;}.pba-search-item:hover,.pba-search-item-first{background:#eff6ff;}.pba-search-type{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:999px;padding:3px 7px;}.pba-search-type-player{background:#e0f2fe;color:#0369a1;}.pba-search-type-team{background:#ede9fe;color:#6d28d9;}.pba-search-text{display:flex;flex-direction:column;min-width:0;}.pba-search-name{font-size:14px;font-weight:700;}.pba-search-meta{font-size:12px;color:#64748b;}.pba-search-empty{padding:10px;font-size:13px;color:#64748b;}.pba-myteam{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}.pba-myteam-link{display:inline-flex;align-items:center;text-decoration:none;background:#fef3c7;border:1px solid #fcd34d;color:#92400e;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;}.pba-myteam-link:hover{background:#fde68a;}.pba-myteam-sub{font-size:12px;font-weight:700;color:#1d4ed8;text-decoration:none;}.pba-myteam-sub:hover{text-decoration:underline;}.pba-myteam-btn{border:1px solid #cbd5e1;background:#fff;color:#0f172a;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;}.pba-myteam-btn:hover{border-color:#f59e0b;background:#fffbeb;}.pba-context-freshness{max-width:1380px;margin:0 auto;padding:0 20px 10px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#475569;}.pba-context-freshness-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.15);flex:0 0 auto;}@media (max-width:760px){.pba-context-inner{padding:12px 16px;}.pba-context-nav{gap:8px;}.pba-context-freshness{padding:0 16px 10px;}}</style><script src="/pba-glossary.js" defer></script><link rel="stylesheet" href="/pba-mobile.css"><script src="/pba-mobile.js" defer></script></head><body><header class="pba-context-header" data-pba-context-chrome="1"><div class="pba-context-inner"><div class="pba-context-brand"><a class="pba-context-brand-mark" href="../../../../index.html">PBA</a><div class="pba-context-brand-copy"><div class="pba-context-brand-name">Betclic </div><div class="pba-context-brand-sub">2024-2025 · Context overview</div></div></div><div class="pba-search" role="search"><input id="pba-search-input" type="search" placeholder="Search player or team…" autocomplete="off" aria-label="Search player or team"><div id="pba-search-results" class="pba-search-results"></div></div><script>
+(function () {
+  var LEAGUES = [{"key": "betclic", "name": "Betclic"}, {"key": "betclic_fem", "name": "Betclic_Fem"}, {"key": "proliga", "name": "Proliga"}];
+  var box = document.getElementById("pba-search-input");
+  var out = document.getElementById("pba-search-results");
+  if (!box || !out) return;
+  var DATA = null, loading = null, timer = null, signedIn = true;
+  function norm(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function load() {
+    if (loading) return loading;
+    loading = fetch("/api/session", { credentials: "include" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (s) {
+        var acc = s && s.authenticated ? s.access : null;
+        signedIn = !!(s && s.authenticated);
+        var keys = LEAGUES.map(function (l) { return l.key; });
+        if (!(acc && acc.can_access_all)) {
+          var allowed = acc && Array.isArray(acc.allowed_leagues) ? acc.allowed_leagues.map(function (x) { return String(x).toLowerCase(); }) : [];
+          keys = keys.filter(function (k) { return allowed.indexOf(k) >= 0; });
+        }
+        return Promise.all(keys.map(function (k) {
+          return fetch("/leagues/" + k + "/search_index.json", { credentials: "include" })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (lists) {
+        DATA = [];
+        lists.forEach(function (l) { if (Array.isArray(l)) DATA = DATA.concat(l); });
+        DATA.forEach(function (e) {
+          e._name = norm(e.name);
+          e._all = norm([e.name, e.team, e.team_key, e.league_name].join(" "));
+        });
+        return DATA;
+      });
+    return loading;
+  }
+  function score(e, q) {
+    var s = 0;
+    if (e._name.indexOf(q) === 0) s -= 100;
+    else if (e._name.indexOf(" " + q) >= 0 || e._name.indexOf("." + q) >= 0) s -= 60;
+    if (e.current) s -= 20;
+    if (e.type === "team") s -= 5;
+    return s;
+  }
+  function render() {
+    var q = norm(box.value);
+    if (q.length < 2) { out.style.display = "none"; out.innerHTML = ""; return; }
+    load().then(function () {
+      var tokens = q.split(/\s+/);
+      var hits = DATA.filter(function (e) { return tokens.every(function (t) { return e._all.indexOf(t) >= 0; }); });
+      hits.sort(function (a, b) {
+        return (score(a, q) - score(b, q)) || String(b.season || "").localeCompare(String(a.season || "")) || String(a.name).localeCompare(String(b.name));
+      });
+      hits = hits.slice(0, 12);
+      if (!hits.length) {
+        out.innerHTML = '<div class="pba-search-empty">' + (signedIn ? "No players or teams found in the leagues of your plan." : "Sign in to search players and teams.") + "</div>";
+      } else {
+        out.innerHTML = hits.map(function (e, i) {
+          var meta = e.type === "team"
+            ? esc(e.league_name) + " · " + esc(e.season_label)
+            : esc(e.team || e.team_key) + " · " + esc(e.league_name) + " " + esc(e.season_label);
+          return '<a class="pba-search-item' + (i === 0 ? " pba-search-item-first" : "") + '" hr' + 'ef="' + esc(e.href) + '">' +
+            '<span class="pba-search-type pba-search-type-' + esc(e.type) + '">' + (e.type === "team" ? "Team" : "Player") + "</span>" +
+            '<span class="pba-search-text"><span class="pba-search-name">' + esc(e.name) + "</span>" +
+            '<span class="pba-search-meta">' + meta + (e.current ? ' · <b>current</b>' : "") + "</span></span></a>";
+        }).join("");
+      }
+      out.style.display = "block";
+    });
+  }
+  box.addEventListener("focus", function () { load(); if (box.value) render(); });
+  box.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(render, 120); });
+  box.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { out.style.display = "none"; box.blur(); }
+    if (ev.key === "Enter") { var first = out.querySelector("a.pba-search-item"); if (first) window.location.href = first.getAttribute("href"); }
+  });
+  document.addEventListener("click", function (ev) { if (!ev.target.closest(".pba-search")) out.style.display = "none"; });
+})();
+</script><div class="pba-myteam" id="pba-myteam" style="display:none"></div><script>
+(function () {
+  var box = document.getElementById("pba-myteam");
+  if (!box) return;
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  var parts = window.location.pathname.split("/").filter(Boolean);
+  var pageLeague = parts[0] === "leagues" ? String(parts[1] || "").toLowerCase() : "";
+  var pageTeam = (new URLSearchParams(window.location.search).get("team") || "").toUpperCase();
+  if (!/^[A-Z0-9]{2,6}$/.test(pageTeam) || parts.indexOf("scouting") < 0) pageTeam = "";
+  function save(body) {
+    return fetch("/api/preferences", { method: "POST", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+  Promise.all([
+    fetch("/api/session", { credentials: "include" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+    fetch("/current_seasons.json", { credentials: "include" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
+  ]).then(function (res) {
+    var s = res[0], seasons = res[1] || {};
+    if (!s || !s.authenticated) return;
+    var u = s.user || {}, fl = String(u.favorite_league_key || "").toLowerCase(), ft = String(u.favorite_team_key || "").toUpperCase();
+    var html = "";
+    if (fl && ft && seasons[fl]) {
+      var base = "/leagues/" + fl + "/" + seasons[fl] + "/scouting/";
+      html += '<a class="pba-myteam-link" hr' + 'ef="' + esc(base + "team_hub.html?team=" + ft) + '" title="Open my team">\u2605 My team: ' + esc(ft) + '</a>' +
+              '<a class="pba-myteam-sub" hr' + 'ef="' + esc(base + "next_opponent.html?team=" + ft) + '">Next opponent</a>';
+    }
+    if (pageTeam && pageLeague) {
+      if (pageTeam === ft && pageLeague === fl) html += '<button type="button" class="pba-myteam-btn" data-act="clear" title="Remove as my team">Remove</button>';
+      else html += '<button type="button" class="pba-myteam-btn" data-act="set">\u2606 Set ' + esc(pageTeam) + ' as my team</button>';
+    }
+    box.innerHTML = html;
+    box.style.display = html ? "" : "none";
+    var btn = box.querySelector(".pba-myteam-btn");
+    if (btn) btn.addEventListener("click", function () {
+      btn.disabled = true;
+      var body = btn.getAttribute("data-act") === "clear" ? { clear: true } : { league_key: pageLeague, team_key: pageTeam };
+      save(body).then(function (ok) { if (ok) window.location.reload(); else { btn.disabled = false; btn.textContent = "Could not save"; } });
+    });
+  });
+})();
+</script><nav class="pba-context-nav"><a class="pba-context-nav-link" href="../../../../index.html">PBA Home</a><a class="pba-context-nav-link" href="../../index.html">Betclic </a><a class="pba-context-nav-link pba-context-nav-link-active" href="../index.html">Overview</a><a class="pba-context-nav-link" href="../analytics/index.html">Analytics</a><a class="pba-context-nav-link pba-context-nav-link-active" href="../general/index.html">General</a><a class="pba-context-nav-link" href="../scouting/index.html">Scouting</a><a class="pba-context-nav-link" href="../scouting/next_opponent.html">Next Opponent</a><a class="pba-context-nav-link" href="../scouting/recruitment.html">Recruitment</a><a class="pba-context-nav-link" href="../glossary.html">Glossary</a></nav><div class="pba-context-pill">Betclic · 2024-2025 </div></div><div class="pba-context-freshness"><span class="pba-context-freshness-dot"></span>Data through Round 22 · 26 Apr 2025 · 132 games</div></header><div class="wrap">
+<h1>Power Rankings</h1>
+<div class="sub">Teams ranked by <b>Power</b>: net rating per 100 possessions adjusted for the strength of the opponents faced, so beating strong teams counts more. <b>SOS</b> = strength of schedule (rank 1 = hardest). <b>Proj W-L</b> adds the win probability of every remaining game to the current record.</div>
+<div class="bar"><div class="ctl"><label for="ph">Phase</label><select id="ph"></select></div><div class="mut" id="meta"></div></div>
+<div class="card"><table><thead><tr>
+<th data-k="rank">#</th><th data-k="n">Team</th><th data-k="mv">±</th><th data-k="wl">W-L</th><th data-k="pw">Power</th><th data-k="net">NetRtg</th>
+<th data-k="l5">Last 5</th><th data-k="sos_p_rk">SOS played</th><th data-k="sos_r_rk">SOS left</th><th data-k="proj">Proj W-L</th><th data-k="next">Next 3</th>
+</tr></thead><tbody id="tb"></tbody></table></div>
+<div class="note">Method: per-game net rating, iteratively adjusted for each opponent's own adjusted rating (simple rating system), centred on 0 and shrunk toward 0 early in the season. Rankings are computed within each regular-season phase, because teams of different groups do not meet. SOS left accounts for home and away. Win probabilities use power, pace and the league's observed home advantage. Movement (±) compares with the ranking before the latest round.</div>
+</div>
+<script>
+(function(){
+var D={"phases":["REGULAR"],"data":{"REGULAR":{"rows":[{"t":"SLB","n":"SL Benfica","rank":1,"mv":0,"w":21,"l":1,"pw":14.93,"net":18.5134,"l5":16.663,"sos_p":-1.36,"sos_r":null,"left":0,"pw_w":21.0,"pw_l":1.0,"next":[],"sos_p_rk":12,"sos_r_rk":null},{"t":"FCP","n":"Futebol Clube do Porto","rank":2,"mv":0,"w":19,"l":3,"pw":11.43,"net":14.1673,"l5":17.1242,"sos_p":-1.04,"sos_r":null,"left":0,"pw_w":19.0,"pw_l":3.0,"next":[],"sos_p_rk":11,"sos_r_rk":null},{"t":"SCP","n":"Sporting Clube Portugal","rank":3,"mv":0,"w":15,"l":7,"pw":8.14,"net":10.0849,"l5":14.6369,"sos_p":-0.74,"sos_r":null,"left":0,"pw_w":15.0,"pw_l":7.0,"next":[],"sos_p_rk":10,"sos_r_rk":null},{"t":"UDO","n":"UD Oliveirense","rank":4,"mv":0,"w":13,"l":9,"pw":5.65,"net":7.0001,"l5":9.189,"sos_p":-0.51,"sos_r":null,"left":0,"pw_w":13.0,"pw_l":9.0,"next":[],"sos_p_rk":9,"sos_r_rk":null},{"t":"GFC","n":"Galitos BARREIRO","rank":5,"mv":0,"w":10,"l":12,"pw":-0.72,"net":-0.8947,"l5":-7.0954,"sos_p":0.07,"sos_r":null,"left":0,"pw_w":10.0,"pw_l":12.0,"next":[],"sos_p_rk":8,"sos_r_rk":null},{"t":"ADO","n":"AD Ovarense","rank":6,"mv":0,"w":13,"l":9,"pw":-1.32,"net":-1.6321,"l5":-12.4505,"sos_p":0.12,"sos_r":null,"left":0,"pw_w":13.0,"pw_l":9.0,"next":[],"sos_p_rk":7,"sos_r_rk":null},{"t":"VSC","n":"Vitória Sport Clube","rank":7,"mv":0,"w":9,"l":13,"pw":-2.56,"net":-3.1719,"l5":-2.6268,"sos_p":0.23,"sos_r":null,"left":0,"pw_w":9.0,"pw_l":13.0,"next":[],"sos_p_rk":6,"sos_r_rk":null},{"t":"IBC","n":"Imortal LUZiGÁS","rank":8,"mv":1,"w":10,"l":12,"pw":-5.68,"net":-7.0434,"l5":1.3549,"sos_p":0.52,"sos_r":null,"left":0,"pw_w":10.0,"pw_l":12.0,"next":[],"sos_p_rk":4,"sos_r_rk":null},{"t":"ESG","n":"Esgueira Aveiro OLI","rank":9,"mv":-1,"w":9,"l":13,"pw":-5.75,"net":-7.1339,"l5":-10.3412,"sos_p":0.52,"sos_r":null,"left":0,"pw_w":9.0,"pw_l":13.0,"next":[],"sos_p_rk":4,"sos_r_rk":null},{"t":"ADG","n":"AD Galomar","rank":10,"mv":1,"w":3,"l":19,"pw":-7.02,"net":-8.6985,"l5":-0.2402,"sos_p":0.64,"sos_r":null,"left":0,"pw_w":3.0,"pw_l":19.0,"next":[],"sos_p_rk":3,"sos_r_rk":null},{"t":"CAQ","n":"Queluz O NOSSO PREGO","rank":11,"mv":-1,"w":5,"l":17,"pw":-7.95,"net":-9.8506,"l5":-13.158,"sos_p":0.72,"sos_r":null,"left":0,"pw_w":5.0,"pw_l":17.0,"next":[],"sos_p_rk":2,"sos_r_rk":null},{"t":"CDP","n":"CD Póvoa Esc Online","rank":12,"mv":0,"w":5,"l":17,"pw":-9.15,"net":-11.3407,"l5":-13.0559,"sos_p":0.83,"sos_r":null,"left":0,"pw_w":5.0,"pw_l":17.0,"next":[],"sos_p_rk":1,"sos_r_rk":null}],"round":22.0,"n":12}},"names":{"CAQ":"Queluz O NOSSO PREGO","ADO":"AD Ovarense","ESG":"Esgueira Aveiro OLI","GFC":"Galitos BARREIRO","FCP":"Futebol Clube do Porto","CDP":"CD Póvoa Esc Online","SCP":"Sporting Clube Portugal","IBC":"Imortal LUZiGÁS","UDO":"UD Oliveirense","VSC":"Vitória Sport Clube","ADG":"AD Galomar","SLB":"SL Benfica"},"fresh":"Data through Round 22 · 26 Apr 2025 · 132 games"};
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function sg(v){return v==null?"—":(v>0?"+":"")+Number(v).toFixed(1);}
+function cl(v){return v==null?"":(v>0?"pos":(v<0?"neg":""));}
+var phase=D.phases[0],sortK="rank",sortD="asc";
+$("ph").innerHTML=D.phases.map(function(p){return '<option value="'+esc(p)+'">'+esc(p)+'</option>';}).join("");
+$("ph").addEventListener("change",function(){phase=this.value;render();});
+function val(r,k){if(k==="wl")return (r.w+r.l)?r.w/(r.w+r.l):0;if(k==="proj")return r.pw_w;if(k==="next")return r.next.length?r.next.reduce(function(a,x){return a+x.p;},0)/r.next.length:null;return r[k];}
+document.querySelector("thead").addEventListener("click",function(ev){var th=ev.target.closest("th");if(!th)return;var k=th.dataset.k;
+ if(sortK===k)sortD=sortD==="asc"?"desc":"asc";else{sortK=k;sortD=(["rank","n","sos_p_rk","sos_r_rk"].indexOf(k)>=0)?"asc":"desc";}render();});
+function render(){var d=D.data[phase];if(!d){$("tb").innerHTML="";return;}
+ $("meta").textContent=d.n+" teams"+(d.round!=null?" · through round "+d.round:"")+(D.fresh?" · "+D.fresh:"");
+ var rows=d.rows.slice().sort(function(a,b){var x=val(a,sortK),y=val(b,sortK);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;
+  var c=(typeof x==="number"&&typeof y==="number")?x-y:String(x).localeCompare(String(y));return sortD==="asc"?c:-c;});
+ document.querySelectorAll("thead th").forEach(function(th){th.className=th.dataset.k===sortK?sortD:"";});
+ $("tb").innerHTML=rows.map(function(r){
+  var mv=r.mv==null?'<span class="mut">—</span>':(r.mv>0?'<span class="up">▲'+r.mv+'</span>':(r.mv<0?'<span class="dn">▼'+(-r.mv)+'</span>':'<span class="mut">=</span>'));
+  var nx=r.next.length?r.next.map(function(x){var p=Math.round(x.p*100);return '<span class="chip '+(p>=60?"g":(p<=40?"b":""))+'">'+x.ha+" "+esc(x.o)+" "+p+'%</span>';}).join(""):'<span class="mut">—</span>';
+  var team='<a hr'+'ef="../scouting/team_hub.html?team='+encodeURIComponent(r.t)+'">'+esc(r.n)+'</a>';
+  return "<tr><td>"+r.rank+"</td><td>"+team+"</td><td>"+mv+"</td><td>"+r.w+"-"+r.l+"</td><td class='"+cl(r.pw)+"'>"+sg(r.pw)+"</td><td class='"+cl(r.net)+"'>"+sg(r.net)+"</td><td class='"+cl(r.l5)+"'>"+sg(r.l5)+"</td>"+
+   "<td>"+(r.sos_p_rk==null?"—":r.sos_p_rk+' <span class="mut">('+sg(r.sos_p)+')</span>')+"</td>"+
+   "<td>"+(r.sos_r_rk==null?'<span class="mut">—</span>':r.sos_r_rk+' <span class="mut">('+sg(r.sos_r)+', '+r.left+' left)</span>')+"</td>"+
+   "<td>"+(r.left?r.pw_w.toFixed(1)+"-"+r.pw_l.toFixed(1):r.w+"-"+r.l)+"</td><td>"+nx+"</td></tr>";}).join("");}
+render();
+})();
+</script></body></html>
