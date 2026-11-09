@@ -49,6 +49,8 @@
     .discover-card a { color:inherit; text-decoration:none; }
     .discover-card a:hover .player-main { color:var(--accent); }
     .empty { color:var(--muted); font-size:13px; }
+    .neg-val { color:#fca5a5; font-weight:700; }
+    .neg-badge { display:inline-block; margin-left:8px; padding:2px 7px; border-radius:999px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); vertical-align:middle; }
     .sample-note { display:none; margin-bottom:14px; padding:10px 14px; border-radius:12px; border:1px solid rgba(245,158,11,0.45); background:rgba(245,158,11,0.10); color:#fde68a; font-size:13px; }
     .sample-note strong { color:#fbbf24; }
     @media (max-width: 1300px) { .section-grid,.discover-grid,.toolbar { grid-template-columns:1fr 1fr; } }
@@ -256,14 +258,14 @@
           <td>${playerCellHtml(row)}</td>
           <td>${row.games ?? ''}</td>
           <td>${fmtNumber(row.mpg)}</td>
-          <td>${escapeHtml(row.value_text || '')}</td>
+          <td class="${cat.negative ? 'neg-val' : ''}">${escapeHtml(row.value_text || '')}</td>
         </tr>
       `).join('');
       return `
         <div class="card">
           <div class="card-head">
             <div>
-              <div class="card-title">${escapeHtml(cat.title)}</div>
+              <div class="card-title">${escapeHtml(cat.title)}${cat.negative ? '<span class="neg-badge">Negative</span>' : ''}</div>
               <div class="card-sub">${escapeHtml(cat.qualification_text || '')}</div>
             </div>
           </div>
