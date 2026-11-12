@@ -52,6 +52,59 @@ export async function hashPassword(password, salt) {
   return bytes.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// ── Password hashing ───────────────────────────────────────────────────
+// New format (November 2026): "pbkdf2$<iterations>$<hex>", PBKDF2-HMAC-SHA256
+// over the UTF-8 password with the UTF-8 bytes of users.salt, 32-byte key.
+// 100,000 iterations is the maximum supported by Cloudflare Workers WebCrypto.
+// Legacy format: plain hex SHA-256(salt + password), still accepted and
+// upgraded to PBKDF2 on the next successful login (see login.js).
+export const PBKDF2_ITERATIONS = 100000;
+
+function toHex(buffer) {
+  return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export async function hashPasswordPbkdf2(password, salt, iterations = PBKDF2_ITERATIONS) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", enc.encode(String(password)), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", hash: "SHA-256", salt: enc.encode(String(salt || "")), iterations },
+    key,
+    256
+  );
+  return `pbkdf2$${iterations}$${toHex(bits)}`;
+}
+
+function constantTimeEqual(a, b) {
+  const x = String(a || ""), y = String(b || "");
+  if (x.length !== y.length) return false;
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x.charCodeAt(i) ^ y.charCodeAt(i);
+  return diff === 0;
+}
+
+export function isLegacyPasswordHash(stored) {
+  return !String(stored || "").startsWith("pbkdf2$");
+}
+
+// Returns { ok, needsUpgrade }.
+export async function verifyPassword(password, salt, stored) {
+  const value = String(stored || "");
+  if (value.startsWith("pbkdf2$")) {
+    const parts = value.split("$");
+    const iterations = parseInt(parts[1], 10);
+    if (parts.length !== 3 || !Number.isFinite(iterations) || iterations < 1 || iterations > PBKDF2_ITERATIONS) {
+      return { ok: false, needsUpgrade: false };
+    }
+    const computed = await hashPasswordPbkdf2(password, salt, iterations);
+    const ok = constantTimeEqual(computed, value);
+    return { ok, needsUpgrade: ok && iterations < PBKDF2_ITERATIONS };
+  }
+  const legacy = await hashPassword(password, salt || "");
+  const ok = constantTimeEqual(legacy, value);
+  return { ok, needsUpgrade: ok };
+}
+
 export function randomToken() {
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);

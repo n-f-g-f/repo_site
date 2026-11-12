@@ -1,9 +1,10 @@
 import {
     buildSessionCookie,
     clearSessionCookie,
-    hashPassword,
+    hashPasswordPbkdf2,
     json,
     randomToken,
+    verifyPassword,
 } from "./_auth.js";
 
 function logEvent(event, data = {}) {
@@ -136,10 +137,23 @@ export async function onRequestPost(context) {
             return json({ ok: false, error: "Invalid email or password." }, 401);
         }
 
-        const expectedHash = await hashPassword(password, user.salt || "");
-        if (expectedHash !== user.password_hash) {
+        const check = await verifyPassword(password, user.salt || "", user.password_hash);
+        if (!check.ok) {
             logEvent("login_failed", { email, ip, user_id: user.id, reason: "wrong_password" });
             return json({ ok: false, error: "Invalid email or password." }, 401);
+        }
+        if (check.needsUpgrade) {
+            // Transparent migration: legacy SHA-256 -> PBKDF2, same salt.
+            try {
+                const upgraded = await hashPasswordPbkdf2(password, user.salt || "");
+                await context.env.AUTH_DB
+                    .prepare("UPDATE users SET password_hash = ? WHERE id = ?")
+                    .bind(upgraded, user.id)
+                    .run();
+                logEvent("password_hash_upgraded", { user_id: user.id });
+            } catch (e) {
+                logEvent("password_hash_upgrade_failed", { user_id: user.id, error: String(e?.message || e) });
+            }
         }
 
         const token = randomToken();
