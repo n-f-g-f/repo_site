@@ -5,5 +5,6 @@ Disallow: /api/
 Disallow: /password_reset.html
 Disallow: /404.html
 Disallow: /account.html
+Disallow: /p/
 
 Sitemap: https://ptbballanalytics.com/sitemap.xml

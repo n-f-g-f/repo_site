@@ -6,9 +6,31 @@
 //   { action: "follow", league_key, season_key, team_key, player_key, player_name, hub_path }
 //   { action: "unfollow", league_key, team_key, player_key }
 //   { action: "digest", enabled: true|false }      weekly digest consent (users.digest_opt_in)
+//   { action: "share", hub_path, player_name }     create a 14-day public link /p/<token> (max 20 active)
+//   { action: "unshare", token }                   revoke a shared link
 import { getSessionBundle, json } from "./_auth.js";
 
 const MAX_FOLLOWED = 30;
+const MAX_SHARES = 20;
+const SHARE_DAYS = 14;
+
+function newToken() {
+  const b = new Uint8Array(12);
+  crypto.getRandomValues(b);
+  return Array.from(b).map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+async function loadShares(env, userId) {
+  try {
+    const r = await env.AUTH_DB.prepare(
+      "SELECT token, league_key, season_key, team_key, hub_path, player_name, created_at, expires_at, views FROM shared_profiles " +
+      "WHERE user_id = ? AND revoked = 0 AND expires_at > ? ORDER BY created_at DESC"
+    ).bind(userId, new Date().toISOString()).all();
+    return Array.isArray(r?.results) ? r.results : [];
+  } catch (e) {
+    return [];
+  }
+}
 
 function leagueAllowed(access, leagueKey) {
   const allowed = Array.isArray(access?.allowed_leagues) ? access.allowed_leagues : [];
@@ -44,6 +66,7 @@ export async function onRequestGet({ request, env }) {
       team_key: bundle.user.favorite_team_key || null,
     },
     followed,
+    shares: await loadShares(env, bundle.user.id),
     digest_opt_in: digest === 1,
   });
 }
@@ -60,6 +83,36 @@ export async function onRequestPost({ request, env }) {
     const on = body.enabled ? 1 : 0;
     await env.AUTH_DB.prepare("UPDATE users SET digest_opt_in = ? WHERE id = ?").bind(on, uid).run();
     return json({ ok: true, digest_opt_in: on === 1 });
+  }
+
+  // ---- shared profiles
+  if (body.action === "unshare") {
+    const token = String(body.token || "").trim();
+    if (!/^[a-f0-9]{24}$/.test(token)) return json({ ok: false, error: "Invalid link." }, 400);
+    await env.AUTH_DB.prepare("UPDATE shared_profiles SET revoked = 1 WHERE token = ? AND user_id = ?").bind(token, uid).run();
+    return json({ ok: true });
+  }
+  if (body.action === "share") {
+    const hub = String(body.hub_path || "").trim();
+    const m = /^\/leagues\/([a-z0-9_]{2,30})\/(\d{4}_\d{4})\/scouting\/player_hubs\/player_hub_([A-Za-z0-9]{2,6})_[A-Za-z0-9._-]{1,80}\.html$/.exec(hub);
+    if (!m) return json({ ok: false, error: "Invalid player page." }, 400);
+    const [, leagueKey, seasonKey, teamKey] = m;
+    if (!leagueAllowed(bundle.access, leagueKey)) {
+      return json({ ok: false, error: "League not included in your plan." }, 403);
+    }
+    const active = await loadShares(env, uid);
+    const existing = active.find((x) => x.hub_path === hub);
+    if (existing) return json({ ok: true, token: existing.token, expires_at: existing.expires_at, reused: true });
+    if (active.length >= MAX_SHARES) {
+      return json({ ok: false, error: "You can have up to " + MAX_SHARES + " active shared links. Revoke one in My account." }, 400);
+    }
+    const token = newToken();
+    const expires = new Date(Date.now() + SHARE_DAYS * 86400000).toISOString();
+    const name = String(body.player_name || "").trim().slice(0, 80);
+    await env.AUTH_DB.prepare(
+      "INSERT INTO shared_profiles (token, user_id, league_key, season_key, team_key, hub_path, player_name, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    ).bind(token, uid, leagueKey, seasonKey, teamKey.toUpperCase(), hub, name, expires).run();
+    return json({ ok: true, token, expires_at: expires });
   }
 
   // ---- followed players

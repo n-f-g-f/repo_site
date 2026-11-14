@@ -446,5 +446,51 @@ refreshAll();
       }).catch(function () { btn.disabled = false; paint(); });
   });
 })();
+</script><script>
+(function () {
+  var path = window.location.pathname;
+  if (path.indexOf("/leagues/") !== 0 || path.indexOf("/player_hubs/player_hub_") < 0) return;
+  var hub = path.replace(/\/+$/, "");
+  if (!/\.html$/.test(hub)) hub += ".html";
+  var nav = document.querySelector(".hub-nav");
+  if (!nav) return;
+  var h = document.querySelector(".player-headline h2");
+  var name = h ? h.textContent.trim() : "";
+  var btn = document.createElement("button");
+  btn.type = "button"; btn.className = "pba-share-btn"; btn.style.display = "none";
+  btn.textContent = "\u2197 Share profile";
+  btn.title = "Create a 14-day link to this profile that works without an account";
+  nav.appendChild(btn);
+  var box = document.createElement("div"); box.className = "pba-share-box"; box.style.display = "none";
+  nav.parentNode.insertBefore(box, nav.nextSibling);
+  var css = document.createElement("style");
+  css.textContent = ".pba-share-btn{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid #93c5fd;background:#eff6ff;color:#1d4ed8;font-size:13px;font-weight:800;cursor:pointer}" +
+    ".pba-share-box{margin:-6px 0 16px;padding:12px 14px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;font-size:13px;color:#1e3a8a;display:flex;gap:8px;align-items:center;flex-wrap:wrap}" +
+    ".pba-share-box input{flex:1 1 320px;min-width:0;border:1px solid #bfdbfe;border-radius:8px;padding:8px 10px;font-size:13px;color:#0f172a;background:#fff}" +
+    ".pba-share-box button{border:0;border-radius:999px;padding:8px 12px;font-weight:800;background:#1d4ed8;color:#fff;cursor:pointer}";
+  document.head.appendChild(css);
+  fetch("/api/preferences", { credentials: "include" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    .then(function (p) { if (p && p.ok) btn.style.display = ""; });
+  btn.addEventListener("click", function () {
+    btn.disabled = true;
+    fetch("/api/preferences", { method: "POST", credentials: "include", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "share", hub_path: hub, player_name: name }) })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .then(function (d) {
+        btn.disabled = false;
+        if (!d || !d.ok) { box.style.display = "flex"; box.textContent = (d && d.error) || "Could not create the link."; return; }
+        var url = window.location.origin + "/p/" + d.token;
+        box.innerHTML = "<span>Public link (valid until " + String(d.expires_at).slice(0, 10) + "):</span>";
+        var inp = document.createElement("input"); inp.readOnly = true; inp.value = url; box.appendChild(inp);
+        var cp = document.createElement("button"); cp.type = "button"; cp.textContent = "Copy"; box.appendChild(cp);
+        cp.addEventListener("click", function () {
+          inp.select();
+          (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { cp.textContent = "Copied"; })
+            .catch(function () { document.execCommand("copy"); cp.textContent = "Copied"; });
+        });
+        box.style.display = "flex";
+      }).catch(function () { btn.disabled = false; });
+  });
+})();
 </script></body>
 </html>
