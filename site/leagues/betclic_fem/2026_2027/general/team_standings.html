@@ -444,16 +444,16 @@
     const SORT = { col: null, dir: 'desc' };
     const ASC_FIRST = ['Team', 'PA/G', 'DefRtg', '#', 'Base', 'Split'];
     function cellVal(td) {
-      const t = (td ? td.textContent : '').replace(/\\s+/g, ' ').trim();
+      const t = (td ? td.textContent : '').replace(/\s+/g, ' ').trim();
       if (!t || t === '—' || t === '-') return null;
-      const rec = t.match(/^(\\d+)-(\\d+)$/);
+      const rec = t.match(/^(\d+)-(\d+)(?:[WLT\s]*)$/);
       if (rec) { const w = +rec[1], l = +rec[2]; return (w + l) ? w / (w + l) + w / 1000 : 0; }
-      const st = t.match(/^([WL])(\\d+)$/);
+      const st = t.match(/^([WL])(\d+)$/);
       if (st) return st[1] === 'W' ? +st[2] : -(+st[2]);
-      const form = t.replace(/\\s/g, '');
+      const form = t.replace(/\s/g, '');
       if (/^[WL]+$/.test(form)) return form.split('').filter(c => c === 'W').length;
-      const num = t.replace(/[%+\\s]/g, '').replace(',', '.');
-      if (/^-?\\d+(\\.\\d+)?$/.test(num)) return parseFloat(num);
+      const num = t.replace(/[%+\s]/g, '').replace(',', '.');
+      if (/^-?\d+(\.\d+)?$/.test(num)) return parseFloat(num);
       return t.toLowerCase();
     }
     function pbaSortIndex(th) {
