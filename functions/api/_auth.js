@@ -184,7 +184,10 @@ export async function getSessionBundle(env, request) {
          ends_at,
          is_active
        FROM access_rights
-       WHERE user_id = ? AND is_active = 1
+       WHERE user_id = ?
+         AND is_active = 1
+         AND (starts_at IS NULL OR date(starts_at) <= date('now'))
+         AND (ends_at   IS NULL OR date(ends_at)   >= date('now'))
        ORDER BY id DESC
        LIMIT 1`
     )
