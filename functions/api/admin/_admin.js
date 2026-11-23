@@ -1,4 +1,4 @@
-// PBA — Admin helpers (Fase 1)
+// PBA — Admin helpers (Fases 1 e 2)
 // Shared by every endpoint in functions/api/admin/ and by functions/admin.js.
 // Access: only emails listed in the Cloudflare Pages variable ADMIN_EMAILS
 // (comma-separated). If the variable is missing, nobody is admin (fail closed).
@@ -8,9 +8,11 @@ import { getSessionBundle, randomToken, hashPasswordPbkdf2 } from "../_auth.js";
 // ── Configuração ───────────────────────────────────────────────────────
 // leagues: "none" = acesso a todas, sem escolher ligas
 //          "one"  = exatamente uma liga
+//          "two"  = exatamente duas ligas
 //          "many" = uma ou mais ligas
 export const PLAN_DEFS = {
   single_league_current: { label: "Uma liga (época atual)", leagues: "one" },
+  two_leagues:           { label: "Duas ligas",              leagues: "two" },
   all_leagues:           { label: "Todas as ligas",          leagues: "none" },
   full_access_yearly:    { label: "Acesso total",            leagues: "none" },
 };
@@ -143,6 +145,7 @@ export async function validatePlan(db, body) {
     }
     leagues = requested.map((key) => known.get(key));
     if (def.leagues === "one" && leagues.length !== 1) return { error: "Este plano exige exatamente uma liga." };
+    if (def.leagues === "two" && leagues.length !== 2) return { error: "Este plano exige exatamente duas ligas." };
     if (def.leagues === "many" && leagues.length < 1) return { error: "Este plano exige pelo menos uma liga." };
   }
 
