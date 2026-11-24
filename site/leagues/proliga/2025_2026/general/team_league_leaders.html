@@ -176,7 +176,6 @@ var SECS=[["eff","Efficiency"],["off","Offense · four factors"],["def","Defense
 SECS=SECS.filter(function(s){if(s[0]==="zones")return Object.keys(D.zones||{}).length>0;return D.metrics.some(function(m){return m.sec===s[0];});});
 var sec="eff",sortK="r0",sortD="asc";
 function fmt(kind,v){if(v==null)return "—";if(kind==="wl")return v[0]+"-"+v[1];return kind==="pct"?(v*100).toFixed(1)+"%":Number(v).toFixed(kind==="pps"||kind==="num2"?2:1);}
-function wpct(v){return (v&&(v[0]+v[1]))?v[0]/(v[0]+v[1]):null;}
 function rk(r,n){if(r==null)return '<span class="rk" title="Small sample: not ranked">n/r</span>';var c=r<=3?"top":(r>n-3?"bot":"");return '<span class="rk '+c+'">'+r+'</span>';}
 $("tabs").innerHTML=SECS.map(function(s){return '<button type="button" class="tab" data-s="'+s[0]+'">'+esc(s[1])+'</button>';}).join("");
 $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;sec=b.dataset.s;sortK="r0";sortD="asc";render();});
@@ -200,8 +199,8 @@ function render(){
  var head='<tr><th data-k="rank">#</th><th data-k="n">Team</th><th data-k="g">G</th>'+C.map(function(c,i){return '<th data-k="r'+i+'">'+esc(c.l)+'</th>';}).join("")+'</tr>';
  $("th").innerHTML=head;
  var rows=D.teams.map(function(t){var cs=C.map(function(c){return cell(t,c);});return {t:t,cs:cs};});
- function val(o,k){if(k==="n")return o.t.n;if(k==="g")return o.t.g;if(k==="rank")return o.cs[0]?o.cs[0].r:null;var i=+k.slice(1);if(!o.cs[i])return null;if(sortD==="asc")return o.cs[i].r;var v=o.cs[i].v;return Array.isArray(v)?wpct(v):v;}
- // column click: ascending = by rank (best first), descending = by raw value
+ function val(o,k){if(k==="n")return o.t.n;if(k==="g")return o.t.g;if(k==="rank")return o.cs[0]?o.cs[0].r:null;var i=+k.slice(1);return o.cs[i]?o.cs[i].r:null;}
+ // column click: first click = by rank, best first; second click = worst first (n/r always at the bottom)
  rows.sort(function(a,b){var x=val(a,sortK),y=val(b,sortK);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;
   var c=(typeof x==="number"&&typeof y==="number")?x-y:String(x).localeCompare(String(y));return sortD==="asc"?c:-c;});
  document.querySelectorAll("#th th").forEach(function(th){th.className=th.dataset.k===sortK?sortD:"";});
@@ -218,7 +217,7 @@ function render(){
   style:"3PA Rate = 3PA ÷ FGA (style: 1 = shoots the most threes). Opp 3PA Rate = share of opponents' shots taken from three (lower = better). Assisted FG% = made baskets that were assisted. Stocks/100 = steals + blocks per 100 possessions. Fouls/G lower is better. Bench PTS/G = points scored by players who did not start. Starters MIN% = share of minutes played by the starting five (style: 1 = shortest rotation).",
   ctx:"Record (W-L, ranked by win %) and average NetRtg per situation. Top / Bottom half = opponent's position in the current standings (win %, then NetRtg). Close = games decided by "+5+" points or fewer. Clutch = last 5 minutes of Q4/OT within 7 points (same definition as the Clutch page). A team needs at least "+(D.ctx_min||2)+" games in a situation to be ranked (n/r otherwise).",
   zones:"Offense = the team's own shots; Defense = shots taken by opponents against the team. Defense rank 1 = allows the fewest attempts / lowest efficiency. FG% and points per shot are ranked only with at least 10 attempts and 1 per game in the zone (n/r = not ranked)."};
- $("note").textContent=notes[sec]+" Sorting a column ascending orders by rank (best first); descending orders by the raw value. Green rank = top 3, red = bottom 3.";
+ $("note").textContent=notes[sec]+" Click a column to sort best first; click again for worst first (n/r always at the bottom). Green rank = top 3, red = bottom 3.";
 }
 render();
 })();
