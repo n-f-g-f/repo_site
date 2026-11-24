@@ -248,7 +248,46 @@ tbody tr:hover {
 .compact-table td {
     padding:9px 8px;
 }
+/* Shot Zones vs League (Nov 2026) */
+.lz-wrap {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-top:14px;
+}
+.lz-title {
+    margin:0 0 8px 0;
+    font-size:16px;
+}
+.lz-wrap td, .lz-wrap th {
+    text-align:right;
+    white-space:nowrap;
+}
+.lz-wrap td:first-child, .lz-wrap th:first-child {
+    text-align:left;
+}
+.lz-wrap tr.lz-group td {
+    font-weight:700;
+    background:rgba(148,163,184,.08);
+}
+.lz-rank {
+    display:block;
+    font-size:11px;
+    color:var(--muted);
+    font-weight:400;
+}
+.lz-good { color:var(--good); font-weight:700; }
+.lz-bad { color:var(--bad); font-weight:700; }
+.lz-note {
+    font-size:12px;
+    color:var(--muted);
+    margin:12px 0 0 0;
+    line-height:1.5;
+}
 @media (max-width: 1100px) {
+    .lz-wrap {
+        grid-template-columns:1fr;
+    }
     .section-grid, .top-grid {
         grid-template-columns:1fr;
     }
@@ -442,6 +481,16 @@ tbody tr:hover {
                 <tbody><tr><td><div class="player-cell"><div class="avatar avatar-empty">?</div><span class="player-name">I. Capela</span></div></td><td>Closeout | Preferred Area</td><td>19</td><td>47.4%</td><td>34.5%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_M._ROSEIRO.jpeg"></div><span class="player-name">M. Roseiro</span></div></td><td>Closeout | Preferred Area</td><td>43</td><td>39.5%</td><td>65.2%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_I._PEREZ.png"></div><span class="player-name">I. Perez</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>20</td><td>30.0%</td><td>35.7%</td><td>Paint Non-RA</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_S._OLSEN.jpeg"></div><span class="player-name">S. Olsen</span></div></td><td>Closeout | Volume 3PT | Preferred Area</td><td>27</td><td>25.9%</td><td>65.9%</td><td>Above the Break 3</td><td>Top closeout</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_C._GONCALVES.png"></div><span class="player-name">C. Goncalves</span></div></td><td>Volume 3PT | Preferred Area</td><td>17</td><td>5.9%</td><td>22.1%</td><td>Restricted Area</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_T._CABRITA.jpeg"></div><span class="player-name">T. Cabrita</span></div></td><td>Volume 3PT | Preferred Area</td><td>9</td><td>0.0%</td><td>64.3%</td><td>Above the Break 3</td><td>Live with volume</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_S._NEVERSON.jpeg"></div><span class="player-name">S. Neverson</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Paint Non-RA</td><td>Wall off paint</td></tr><tr><td><div class="player-cell"><div class="avatar"><img src="../../assets/player_photos/ESA/ESA_L._VIEIRA.jpeg"></div><span class="player-name">L. Vieira</span></div></td><td>Preferred Area</td><td></td><td></td><td></td><td>Above the Break 3</td><td>Gap and recover</td></tr></tbody>
             </table>
         </div>
+    </section>
+    
+
+    <section class="block">
+        <h2>Shot Zones vs League</h2>
+        <div class="keys-card lz-keys"><ul><li>Attack Corner 3 (both): they allow 33.3% FG% (#8 of 12; league 30.3%).</li></ul></div>
+        <div class="lz-wrap"><div><h3 class="lz-title">Offense · where they shoot</h3><div class="table-wrap compact-table"><table><thead><tr><th>Zone</th><th>Att/G</th><th>Share</th><th>FG%</th><th>Lg FG%</th><th>Pts/Shot</th><th>Lg Pts/Shot</th></tr></thead><tbody><tr><td>Restricted Area</td><td>12.9<span class="lz-rank">#9 of 12</span></td><td>20.5%</td><td class='lz-good'>71.1%<span class="lz-rank">#2 of 12</span></td><td>60.8%</td><td class='lz-good'>1.42<span class="lz-rank">#2 of 12</span></td><td>1.22</td></tr><tr><td>Paint Non-RA</td><td>20.1<span class="lz-rank">#2 of 12</span></td><td>32.0%</td><td class='lz-good'>44.7%<span class="lz-rank">#4 of 12</span></td><td>39.7%</td><td class='lz-good'>0.89<span class="lz-rank">#4 of 12</span></td><td>0.79</td></tr><tr class="lz-group"><td>Paint (all)</td><td>33.0<span class="lz-rank">#7 of 12</span></td><td>52.5%</td><td class='lz-good'>55.0%<span class="lz-rank">#2 of 12</span></td><td>49.2%</td><td class='lz-good'>1.10<span class="lz-rank">#2 of 12</span></td><td>0.98</td></tr><tr><td>Mid-Range</td><td>7.3<span class="lz-rank">#8 of 12</span></td><td>11.6%</td><td class=''>31.4%<span class="lz-rank">#6 of 12</span></td><td>31.2%</td><td class=''>0.63<span class="lz-rank">#6 of 12</span></td><td>0.62</td></tr><tr><td>Corner 3 Left</td><td>2.4<span class="lz-rank">#6 of 12</span></td><td>3.9%</td><td class='lz-bad'>5.9%<span class="lz-rank">#11 of 11</span></td><td>29.4%</td><td class='lz-bad'>0.18<span class="lz-rank">#11 of 11</span></td><td>0.88</td></tr><tr><td>Corner 3 Right</td><td>1.7<span class="lz-rank">#6 of 12</span></td><td>2.7%</td><td class='lz-good'>50.0%<span class="lz-rank">#1 of 9</span></td><td>31.6%</td><td class='lz-good'>1.50<span class="lz-rank">#1 of 9</span></td><td>0.95</td></tr><tr class="lz-group"><td>Corner 3 (both)</td><td>4.1<span class="lz-rank">#5 of 12</span></td><td>6.6%</td><td class='lz-bad'>24.1%<span class="lz-rank">#10 of 12</span></td><td>30.3%</td><td class='lz-bad'>0.72<span class="lz-rank">#10 of 12</span></td><td>0.91</td></tr><tr><td>Above the Break 3</td><td>18.4<span class="lz-rank">#5 of 12</span></td><td>29.3%</td><td class=''>30.2%<span class="lz-rank">#9 of 12</span></td><td>29.6%</td><td class='lz-good'>0.91<span class="lz-rank">#9 of 12</span></td><td>0.89</td></tr><tr class="lz-group"><td>3PT (all)</td><td>22.6<span class="lz-rank">#5 of 12</span></td><td>35.9%</td><td class=''>29.1%<span class="lz-rank">#9 of 12</span></td><td>29.7%</td><td class='lz-bad'>0.87<span class="lz-rank">#9 of 12</span></td><td>0.89</td></tr></tbody></table></div></div><div><h3 class="lz-title">Defense · what they allow</h3><div class="table-wrap compact-table"><table><thead><tr><th>Zone</th><th>Att/G</th><th>Share</th><th>FG%</th><th>Lg FG%</th><th>Pts/Shot</th><th>Lg Pts/Shot</th></tr></thead><tbody><tr><td>Restricted Area</td><td>14.1<span class="lz-rank">#5 of 12</span></td><td>22.1%</td><td class='lz-bad'>67.7%<span class="lz-rank">#11 of 12</span></td><td>60.8%</td><td class='lz-bad'>1.35<span class="lz-rank">#11 of 12</span></td><td>1.22</td></tr><tr><td>Paint Non-RA</td><td>21.1<span class="lz-rank">#11 of 12</span></td><td>33.1%</td><td class=''>39.2%<span class="lz-rank">#7 of 12</span></td><td>39.7%</td><td class='lz-good'>0.78<span class="lz-rank">#7 of 12</span></td><td>0.79</td></tr><tr class="lz-group"><td>Paint (all)</td><td>35.3<span class="lz-rank">#11 of 12</span></td><td>55.3%</td><td class='lz-bad'>50.6%<span class="lz-rank">#7 of 12</span></td><td>49.2%</td><td class='lz-bad'>1.01<span class="lz-rank">#7 of 12</span></td><td>0.98</td></tr><tr><td>Mid-Range</td><td>7.7<span class="lz-rank">#5 of 12</span></td><td>12.1%</td><td class='lz-bad'>33.3%<span class="lz-rank">#8 of 12</span></td><td>31.2%</td><td class='lz-bad'>0.67<span class="lz-rank">#8 of 12</span></td><td>0.62</td></tr><tr><td>Corner 3 Left</td><td>2.6<span class="lz-rank">#7 of 12</span></td><td>4.0%</td><td class='lz-bad'>38.9%<span class="lz-rank">#9 of 11</span></td><td>29.4%</td><td class='lz-bad'>1.17<span class="lz-rank">#9 of 11</span></td><td>0.88</td></tr><tr><td>Corner 3 Right</td><td>0.9<span class="lz-rank">#1 of 12</span></td><td>1.3%</td><td class='lz-good'>16.7%<span class="lz-rank" title="Small sample: not ranked">n/r</span></td><td>31.6%</td><td class='lz-good'>0.50<span class="lz-rank" title="Small sample: not ranked">n/r</span></td><td>0.95</td></tr><tr class="lz-group"><td>Corner 3 (both)</td><td>3.4<span class="lz-rank">#3 of 12</span></td><td>5.4%</td><td class='lz-bad'>33.3%<span class="lz-rank">#8 of 12</span></td><td>30.3%</td><td class='lz-bad'>1.00<span class="lz-rank">#8 of 12</span></td><td>0.91</td></tr><tr><td>Above the Break 3</td><td>17.4<span class="lz-rank">#5 of 12</span></td><td>27.3%</td><td class=''>30.3%<span class="lz-rank">#8 of 12</span></td><td>29.6%</td><td class='lz-bad'>0.91<span class="lz-rank">#8 of 12</span></td><td>0.89</td></tr><tr class="lz-group"><td>3PT (all)</td><td>20.9<span class="lz-rank">#4 of 12</span></td><td>32.7%</td><td class='lz-bad'>30.8%<span class="lz-rank">#8 of 12</span></td><td>29.7%</td><td class='lz-bad'>0.92<span class="lz-rank">#8 of 12</span></td><td>0.89</td></tr></tbody></table></div></div></div>
+        <p class="lz-note">Ranks within the league. Offense: #1 = most attempts / best efficiency.
+        Defense: #1 = fewest attempts / lowest efficiency allowed (best defense). Green = better than league average,
+        red = worse. FG% and Pts/Shot are ranked only with at least 10 attempts and 1 per game in the zone (n/r = not ranked).</p>
     </section>
     
 
